@@ -722,11 +722,11 @@ Expected: a table showing your SAP client(s).
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File C:\\Users\\<your-username>\\abap\\scripts\\sync-md.ps1"
+            "command": "powershell -ExecutionPolicy Bypass -File scripts/sync-md.ps1"
           },
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File C:\\Users\\<your-username>\\abap\\scripts\\git-sync.ps1"
+            "command": "powershell -ExecutionPolicy Bypass -File scripts/git-sync.ps1"
           }
         ]
       }
