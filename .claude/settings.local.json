@@ -8,7 +8,7 @@
       "mcp__abap__GetConnectionInfo",
       "mcp__abap__GetSystemInfo",
       "mcp__abap__EditSource",
-      "Bash(rename \"C:\\\\git\\\\abap\\\\MEMORY.MD\" \"MEMORY.md\")",
+      "Bash(rename \"MEMORY.MD\" \"MEMORY.md\")",
       "Bash(git init *)",
       "Bash(git branch *)",
       "Bash(git add *)",

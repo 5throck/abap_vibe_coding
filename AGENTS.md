@@ -9,7 +9,7 @@ This file defines the roles and responsibilities of each agent operating within 
 - **Responsibilities**:
     - **Initial Triage**: Receive and analyze all user requests first.
     - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
-    - **Consistency Check**: Ensure all changes are reflected across `CLAUDE.md`, `GEMINI.md`, and `AGENTS.md`.
+    - **Consistency Check**: Ensure all changes are reflected across `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
     - **Deployment Oversight**: Verify that all work is committed to the Git repository.
 - **Key Tools**: `browser_subagent`, `memory/`, Project Dashboards.
 

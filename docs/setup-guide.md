@@ -370,7 +370,7 @@ VSP_ALLOWED_PACKAGES=Z*,$TMP
 ```bash
 SAP_URL=http://vhcalnplci:50000
 SAP_USER=DEVELOPER
-SAP_PASSWORD=Down1oad
+SAP_PASSWORD=<YOUR_PASSWORD>
 SAP_CLIENT=001
 SAP_LANGUAGE=EN
 VSP_MODE=hyperfocused
@@ -1042,7 +1042,7 @@ cat .env
 grep vhcalnplci /c/Windows/System32/drivers/etc/hosts
 
 # 4. Test with curl directly
-curl -u DEVELOPER:Down1oad http://vhcalnplci:50000/sap/bc/adt/
+curl -u DEVELOPER:<YOUR_PASSWORD> http://vhcalnplci:50000/sap/bc/adt/
 ```
 
 **macOS/Linux**:
@@ -1057,7 +1057,7 @@ cat .env
 grep vhcalnplci /etc/hosts
 
 # 4. Test with curl directly
-curl -u DEVELOPER:Down1oad http://vhcalnplci:50000/sap/bc/adt/
+curl -u DEVELOPER:<YOUR_PASSWORD> http://vhcalnplci:50000/sap/bc/adt/
 ```
 
 ---
