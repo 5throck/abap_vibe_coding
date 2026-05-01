@@ -8,7 +8,7 @@ This project aims to revolutionize SAP ABAP development by establishing a **Harn
 The system operates as a bridge between Modern AI interfaces and legacy SAP environments:
 
 1.  **Agent Tier**: AI agents (Claude Code, Gemini CLI) act as the "brain," orchestrating tasks based on predefined roles.
-2.  **MCP Tier (vsp)**: The **vsp** server provides a standard protocol (Model Context Protocol) to expose SAP ADT (ABAP Development Tools) capabilities to AI.
+2.  **MCP Tier (vsp)**: The **[vsp](https://github.com/oisee/vibing-steampunk)** server provides a standard protocol (Model Context Protocol) to expose SAP ADT (ABAP Development Tools) capabilities to AI.
 3.  **SAP Tier**: Interaction with SAP systems via REST APIs and WebSocket (ZADT_VSP) for stateful operations like debugging and RFC execution.
 
 ### Harness Engineering Concept
@@ -44,7 +44,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`SKILL.md`** | Technical guidelines, tool boundaries, and custom AI skills. |
 | **`SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
 | **`MCP_USAGE.md`** | Technical reference for MCP tool usage (RunQuery, EditSource, etc.). |
-| **`vsp.exe`** | Go-native MCP server for SAP ADT integration. |
+| **`vsp.exe`** | [vsp](https://github.com/oisee/vibing-steampunk) — Go-native MCP server for SAP ADT integration. |
 
 ## Operational Workflow (Harness Advanced Governance)
 

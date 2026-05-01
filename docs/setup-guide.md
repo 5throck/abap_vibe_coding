@@ -312,7 +312,7 @@ cd ~/abap
 
 ## 5. Configure vsp (MCP Server)
 
-`vsp` is the local MCP server that bridges Claude/Gemini to SAP ADT.
+**vsp** ([github.com/oisee/vibing-steampunk](https://github.com/oisee/vibing-steampunk)) is a Go-native MCP server that exposes SAP ADT (ABAP Development Tools) capabilities to AI agents via the Model Context Protocol. It handles authentication, CSRF token management, session handling, and translates AI tool calls into SAP REST API operations — allowing Claude and Gemini to read, write, and debug ABAP objects without direct SAP GUI access.
 
 ### 5-A. Download the vsp binary
 
