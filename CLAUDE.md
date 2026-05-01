@@ -61,7 +61,7 @@ go test -tags=integration -v ./pkg/adt/ # Integration (needs SAP)
 make build-all                          # 9 platforms
 ```
 
-Key flags: `--mode focused|expert|hyperfocused`, `--read-only`, `--allowed-packages "Z*"`, `--disabled-groups 5THD`
+Key flags: `--mode hyperfocused|focused|expert` (Note: `hyperfocused` is the standard mode for all AI agents), `--read-only`, `--allowed-packages "Z*"`, `--disabled-groups 5THD`
 
 ---
 
@@ -138,7 +138,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - Package: `$TMP` (no transport required)
 - Naming: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program)
 - Always run SyntaxCheck before WriteSource
-- Run RunUnitTests after logic changes
+- Run RunUnitTests after logic changes (refer to `docs/testing-guidelines.md`)
 - Use EditSource for small changes
 
 ### Workflow (Harness Advanced)
@@ -163,9 +163,9 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 4. **Parallel Execution** — Independent read/search tasks run as subagents.
    Write operations (EditSource, WriteSource) remain serial per object to avoid lock conflicts.
 
-5. **Sync & Report** — Before `git commit`:
+5. **Sync & Report** — Finalize the task and commit:
    a. Append to `memory/YYYY-MM-DD.md` (object name, type, package, ADT URL, decisions, issues).
-   b. Run `git add -A && git commit -m "<type>: <summary>"`.
+   b. **Crucial Step**: Run `git add -A && git commit -m "<type>: <summary>"`. (Auto-commits are disabled to reduce noise, so PM MUST do this manually at the end of the task).
    c. Report outcome to user with object URL and test results.
 
 ---

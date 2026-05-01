@@ -27,10 +27,6 @@
           {
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File scripts/sync-md.ps1"
-          },
-          {
-            "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File scripts/git-sync.ps1"
           }
         ]
       }

@@ -149,6 +149,7 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 - **Role**: Stability verification and bug detection.
 - **Responsibilities**:
     - Author and execute Unit Tests based on Analyst's Acceptance Criteria.
+    - Follow `docs/testing-guidelines.md` for ABAP Unit structures and TEST-SEAMS.
     - Analyze runtime errors and provide debugging guides.
 - **Key Tools**: `RunUnitTests`, `vsp debug`, `vsp amdp`.
 
@@ -202,7 +203,7 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 
 5.  **Finalization & Sync**:
     *   **Memory Logging**: Before git commitment, PM ensures all important decisions, technical changes, and issues are documented in the **current date's memory file** (`memory/YYYY-MM-DD.md`).
-    *   **Git Sync**: Once logged, PM commits all artifacts and the updated memory file to the Git repository.
+    *   **Git Sync**: Once logged, PM MUST manually run `git add` and `git commit` in the terminal to save all artifacts and the updated memory file to the Git repository. (Auto-commits are disabled to reduce noise).
     *   **Reporting**: PM reports the final results to the user.
 
 ### 🤖 PM Subagent Dispatch Protocol

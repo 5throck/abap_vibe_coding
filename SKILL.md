@@ -18,21 +18,12 @@ This file defines the ABAP development capabilities and optimized workflow patte
 - `/celebrate`: Displays a celebratory message upon successful completion of complex tasks or milestones.
 - `/debug`: Starts a stateful debugging session based on WebSocket. (Requires ZADT_VSP installation)
 
-## Tool Boundaries — When NOT to Use
 
-| Tool | Do NOT use when... |
-|------|--------------------|
-| `EditSource` | Change spans >50 lines or requires restructuring multiple methods — use `WriteSource` instead |
-| `WriteSource` | Only a single value/string changes — unnecessary lock churn; use `EditSource` |
-| `GrepPackages` | Target is a single known object — `GrepObjects` is faster |
-| `RunQuery` | You need table structure, not data — use `GetTable` |
-| `AnalyzeCallGraph` | Object has no callers yet (new code) — no graph exists; start with `GrepPackages` |
-| `vsp source context` | Object is under 200 lines — full `GetSource` is faster and complete |
 
 ## Best Practices
 - Always execute `SyntaxCheck` after any modification to verify quality.
 - Focus operations primarily within `Z*` and `$TMP` packages.
-- Parameter references and error tables: see [MCP_USAGE.md](MCP_USAGE.md). Tool selection: apply the "When NOT to Use" table above first.
+- Parameter references and tool boundaries: see [MCP_USAGE.md](MCP_USAGE.md).
 
 ---
 *Last Updated: 2026-05-01*

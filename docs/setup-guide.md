@@ -501,10 +501,6 @@ This file is committed and shared. Current content:
           {
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File <repo-root>\\scripts\\sync-md.ps1"
-          },
-          {
-            "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File <repo-root>\\scripts\\git-sync.ps1"
           }
         ]
       }
@@ -516,7 +512,7 @@ This file is committed and shared. Current content:
 This sets up:
 - **Read-only MCP tools auto-approved** (GetSource, RunQuery, GrepPackages, etc.)
 - **Claude Preview tools auto-approved** (screenshot, snapshot, logs)
-- **PostToolUse hooks**: runs `sync-md.ps1` then `git-sync.ps1` after every Write/Edit
+- **PostToolUse hooks**: runs `sync-md.ps1` after every Write/Edit
 
 > **`<repo-root>`** in the hook commands is replaced with your actual repo path when you commit this file to your machine. See §6-B for the per-developer path binding.
 
@@ -599,7 +595,7 @@ This file grants additional permissions for your local machine. It is **not comm
 }
 ```
 
-> **Note (macOS)**: `"Bash(powershell -Command *)"` is omitted — the git-sync hook uses `scripts/git-sync.sh` instead.
+> **Note (macOS)**: `"Bash(powershell -Command *)"` is omitted.
 
 > **Minimal setup (read-only first)**: Start with only the `mcp__abap__*` entries.
 > Add `WriteSource` and `EditSource` only after verifying the connection works.
@@ -724,10 +720,6 @@ Expected: a table showing your SAP client(s).
           {
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File scripts/sync-md.ps1"
-          },
-          {
-            "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File scripts/git-sync.ps1"
           }
         ]
       }
@@ -812,10 +804,6 @@ Expected: a table showing your SAP client(s).
           {
             "type": "command",
             "command": "bash scripts/sync-md.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash scripts/git-sync.sh"
           }
         ]
       }
@@ -826,7 +814,7 @@ Expected: a table showing your SAP client(s).
 }
 ```
 
-If you have PowerShell installed on macOS, you may also use `pwsh -File ~/abap/scripts/git-sync.ps1` as the hook command.
+If you have PowerShell installed on macOS, you may also use `pwsh -File ~/abap/scripts/sync-md.ps1` as the hook command.
 
 ### 7-B. Verify Gemini sees the MCP server
 

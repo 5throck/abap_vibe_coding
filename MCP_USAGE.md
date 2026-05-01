@@ -486,6 +486,18 @@ flowchart TD
     Q4 -->|Complex SQL| RQ[RunQuery]
 ```
 
+### Tool Boundaries — When NOT to Use
+
+| Tool | Do NOT use when... |
+|------|--------------------|
+| `EditSource` | Change spans >50 lines or requires restructuring multiple methods — use `WriteSource` instead |
+| `WriteSource` | Only a single value/string changes — unnecessary lock churn; use `EditSource` |
+| `GrepPackages` | Target is a single known object — `GrepObjects` is faster |
+| `RunQuery` | You need table structure, not data — use `GetTable` |
+| `AnalyzeCallGraph` | Object has no callers yet (new code) — no graph exists; start with `GrepPackages` |
+| `vsp source context` | Object is under 200 lines — full `GetSource` is faster and complete |
+
+
 ---
 
 **Last Updated:** 2026-05-01
