@@ -2,9 +2,12 @@
 
 **vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
-> **Doc intent:** CLAUDE.md = dev context. README.md = user onboarding. reports/ = research/history. contexts/ = session handoff. **MEMORY.md = ABAP development history (objects, decisions, issues).**
+> **Doc intent:** CLAUDE.md = dev context. README.md = user onboarding. reports/ = research/history. contexts/ = session handoff. **MEMORY.md = ABAP development history.** **SKILL.md = Agent technical guidelines & custom skills.**
 
-## MEMORY.md Rules
+## SKILL.md Rules
+
+### When to read
+**You MUST read `SKILL.md` at the start of every session or before using any ABAP-related tools.** This file contains the primary technical guidelines, optimization settings, and custom skill definitions that take precedence over general knowledge.
 
 ### When to write
 Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to `MEMORY.md`.
@@ -25,6 +28,9 @@ Only consult it when a problem occurs — for example:
 
 ### Format
 All entries in `MEMORY.md` must be written in English.
+
+### Documentation Language Rule
+**All `.md` files (including `SKILL.md`, `AGENTS.md`, `MEMORY.md`, etc.) must be written in English at all times.** This ensures global accessibility and consistency for all AI agents and human developers.
 
 ---
 
@@ -133,7 +139,7 @@ Anything that does belongs under `.local/` (gitignored) and never in
 - System aliases that name a live box — use `devsys`, `devsys-adt`, `prodsys-a`, `prodsys-b`
 - Live transport numbers (`DEVK[0-9]+`, `R[0-9]{2}K[0-9]+`, `D[0-9]{2}K[0-9]+`) — use `TR-EXAMPLE`
 - Live change request IDs — use `CR-EXAMPLE`
-- Customer ABAP namespaces from real projects — use synthetic `ZDEMO_*`, `ZCL_DEMO_*`, `ZIF_DEMO_*`, `$ZDEMO`
+- Customer ABAP namespaces from real projects — use synthetic `ZDEMO_*`, `ZCL_DEMO_*`, `ZIF_DEMO_*`, `$ZDEMO$
 - Customer transport attribute names — use `Z_CR_ATTR`
 - Real passwords, API keys, bearer tokens (obvious, but stated)
 - Real person names tied to private systems (OSS attribution for upstream libraries is fine — "user X on private host Y" is not)

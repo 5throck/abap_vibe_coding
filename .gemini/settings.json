@@ -1,0 +1,82 @@
+{
+  "mcpServers": {
+    "abap": {
+      "command": "C:\\git\\abap\\vsp.exe",
+      "args": [],
+      "env": {
+        "VSP_MODE": "hyperfocused",
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP",
+        "VSP_FEATURE_ABAPGIT": "off"
+      }
+    },
+    "abap-docs": {
+      "type": "http",
+      "url": "https://mcp-abap.marianzeis.de/mcp"
+    },
+    "sap-docs": {
+      "type": "http",
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
+    }
+  },
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_console_logs",
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_snapshot",
+      "mcp__Claude_Preview__preview_logs",
+      "mcp__Claude_Preview__preview_list",
+      "mcp__abap__GetSource",
+      "mcp__abap__SearchObject",
+      "mcp__abap__GrepObjects",
+      "mcp__abap__GrepPackages",
+      "mcp__abap__FindDefinition",
+      "mcp__abap__FindReferences",
+      "mcp__abap__GetTableContents",
+      "mcp__abap__RunQuery",
+      "mcp__abap__GetCDSDependencies",
+      "mcp__abap__SyntaxCheck",
+      "mcp__abap__RunUnitTests",
+      "Bash(python3 -)",
+      "WebFetch(domain:github.com)",
+      "mcp__abap__GetTable",
+      "mcp__abap__WriteSource",
+      "mcp__abap__GetConnectionInfo",
+      "mcp__abap__GetSystemInfo",
+      "mcp__abap__EditSource",
+      "Bash(rename \"C:\\\\git\\\\abap\\\\MEMORY.MD\" \"MEMORY.md\")",
+      "Bash(git init *)",
+      "Bash(git branch *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(powershell -Command *)",
+      "Bash(git credential *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(git check-ignore *)",
+      "mcp__abap__RunReport",
+      "mcp__abap__InstallZADTVSP",
+      "mcp__abap__InstallAbapGit",
+      "mcp__abap__GetInactiveObjects",
+      "mcp__abap__GetPackage",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:\\git\\abap\\scripts\\sync-md.ps1"
+          }
+        ]
+      }
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "abap"
+  ]
+}

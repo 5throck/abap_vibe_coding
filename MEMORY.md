@@ -73,5 +73,8 @@ Queries the Sflight demo database across four joined tables (SBOOK, SCARR, SPFLI
 | 2026-04-29 | Switched to `-s npl` flag → reads from `.vsp.json` |
 | 2026-04-29 | Migrated to `.env` + args `[]`; discovered global config is actual connection source |
 | 2026-04-29 | Deleted `.vsp.json`; fixed `.mcp.json` command path to `C:\git\abap\vsp.exe` |
+| 2026-05-01 | Deployed ZADT_VSP objects with 7.52 compatibility patches. |
+| 2026-05-01 | Configured hyperfocused mode in `.gemini/settings.json`, `.mcp.json`, and `.env`. |
+| 2026-05-01 | Created `SKILL.md` and installed `/celebrate` skill in `.claude/commands/`. |
 
 ---

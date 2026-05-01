@@ -17,7 +17,14 @@
       "Bash(git credential *)",
       "Bash(git remote *)",
       "Bash(git push *)",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "mcp__abap__RunReport",
+      "mcp__abap__InstallZADTVSP",
+      "mcp__abap__InstallAbapGit",
+      "mcp__abap__GetInactiveObjects",
+      "mcp__abap__GetPackage",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

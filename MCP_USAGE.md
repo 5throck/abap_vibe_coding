@@ -108,7 +108,13 @@ flowchart TD
         W --> CC[CreateClassWithTests]
     end
 
+    subgraph Hyperfocused["Hyperfocused Mode (AI Optimized)"]
+        U2[Universal Tool]
+        U2 --> SAP[sap_execute]
+    end
+
     Focused -.->|--mode=expert| Expert
+    Focused -.->|--mode=hyperfocused| Hyperfocused
 ```
 
 ### Mode Selection Guide
@@ -117,6 +123,7 @@ flowchart TD
 |----------|------|--------|
 | Standard development | Focused | Simpler, fewer choices |
 | Existing workflow scripts | Expert | Backward compatibility |
+| AI Agent Optimization | Hyperfocused | **Recommended.** Best for Gemini/Claude. Single tool reduces hallucinations. |
 | Debugging lock issues | Expert | Direct LockObject access |
 | Learning the API | Expert | See all atomic operations |
 
