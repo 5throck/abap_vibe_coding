@@ -48,9 +48,30 @@ Queries the Sflight demo database across four joined tables (SBOOK, SCARR, SPFLI
 
 ## MCP Configuration
 
-### .mcp.json (`C:\git\abap\.mcp.json`)
-- `abap` server command: `C:\git\vsp.exe -s npl`
-- Reads credentials from `.vsp.json` (`npl` system entry).
-- **Change history**: Initial approach used `${SAP_URL}` env var placeholders — switched to `-s npl` flag because env vars were not expanded by the Claude Code MCP host.
+### Actual connection source: `claude_desktop_config.json` (global)
+- **Binary**: `C:\git\abap\vsp.exe`
+- **Args**: `[]` (none)
+- **Credentials**: injected via `env` block (`SAP_URL`, `SAP_USER`, `SAP_PASSWORD`, `SAP_CLIENT`, `SAP_MODE`)
+- The global config takes precedence over the project `.mcp.json`.
+
+### Project `.mcp.json` (`C:\git\abap\.mcp.json`)
+- Secondary config; kept in sync with global for consistency.
+- `command`: `C:\git\abap\vsp.exe`, `args`: `[]`
+
+### `.env` (`C:\git\abap\.env`) — gitignored
+- Fallback for CLI direct execution (`vsp system info`, etc.)
+- Contains `SAP_URL`, `SAP_USER`, `SAP_CLIENT`, `SAP_LANGUAGE`; loaded automatically via `godotenv`.
+
+### `.vsp.json` — deleted
+- Was used with `-s npl` flag; no longer needed.
+- All credentials now supplied via env vars in global config and `.env`.
+
+### Change history
+| Date | Change |
+|------|--------|
+| 2026-04-29 | Initial: `${SAP_URL}` env placeholders in `.mcp.json` — failed (not expanded by Claude Code) |
+| 2026-04-29 | Switched to `-s npl` flag → reads from `.vsp.json` |
+| 2026-04-29 | Migrated to `.env` + args `[]`; discovered global config is actual connection source |
+| 2026-04-29 | Deleted `.vsp.json`; fixed `.mcp.json` command path to `C:\git\abap\vsp.exe` |
 
 ---
