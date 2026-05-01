@@ -42,9 +42,9 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, output format, and handoff rules. |
 | **`CLAUDE.md`** | Primary AI dev context: build, codebase map, priorities, common issues, ABAP rules. |
 | **`GEMINI.md`** | Gemini-specific overrides only (hyperfocused mode config, skill additions). |
-| **`SKILL.md`** | Technical guidelines, tool boundaries, and custom AI skills. |
+| **`SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
 | **`SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
-| **`MCP_USAGE.md`** | Technical reference for MCP tool usage (RunQuery, EditSource, etc.). |
+| **`MCP_USAGE.md`** | Technical reference for MCP tool usage, tool boundaries, and error handling. |
 | **`vsp.exe`** | [vsp](https://github.com/oisee/vibing-steampunk) — Go-native MCP server for SAP ADT integration. |
 
 ## Operational Workflow (Harness Advanced Governance)
@@ -53,11 +53,11 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 2.  **Agenda** — Gather context via `SearchObject`/`GrepPackages`; select agents; produce Implementation Plan before any write.
 3.  **Execution Design** — Define tool order and parallelism (read tasks parallel, write tasks serial).
 4.  **Parallel Execution** — Independent read/search tasks run as subagents; write operations remain serial to avoid lock conflicts.
-5.  **Sync & Report** — Append to `memory/YYYY-MM-DD.md`, commit to Git, report outcome with object URL and test results.
+5.  **Sync & Report** — Append to `memory/YYYY-MM-DD.md`, manually commit to Git (auto-commits disabled), and report outcome with object URL and test results.
 
 ---
 > [!TIP]
-> **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (30–60 min).
+> **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (includes vsp, abapGit, and AI agent configuration).
 
 ---
 *Maintained by the Harness Engineering Team | Last Updated: 2026-05-01*
