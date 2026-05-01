@@ -111,12 +111,27 @@ This file defines the roles and responsibilities of each agent operating within 
 
 ## Collaboration & System Rules
 
-### 🔄 Agent Coordination Workflow
-1. **Entry**: The **Global PM** receives all user requests.
-2. **Discussion**: PM consults with Functional Analysts (SD, MM, etc.) or Technical Agents to define the scope.
-3. **Execution**: Relevant agents execute the task under PM supervision.
-4. **Synchronization**: If documentation changes, PM ensures `CLAUDE.md` and `GEMINI.md` are synchronized.
-5. **Finalization**: All changes must be committed to the Git repository before session end.
+### 🔄 Agent Coordination Workflow (Harness Advanced)
+
+1.  **Triage & Agenda (PM)**:
+    *   The **Global PM** receives the request and determines its nature.
+    *   PM selects relevant **Business Group** (SD, MM, etc.) and **Technical Group** (Architect, Developer, etc.) agents.
+    *   PM facilitates a discussion on the agenda, summarizes the solution, and presents an **Implementation Plan** for approval.
+
+2.  **Deep Search & Research**:
+    *   If additional context or pattern search is required, the **Intelligence Investigator** or **browser_subagent** is deployed to gather intel before finalizing the design.
+
+3.  **Execution Workflow Design**:
+    *   Once the plan is approved, PM creates a step-by-step **Execution Workflow** defining how each agent will contribute.
+    *   This workflow is documented in a temporary `task.md` or as a plan artifact.
+
+4.  **Parallel Execution (Subagents)**:
+    *   PM utilizes **subagents** (e.g., `browser_subagent`, `sap_execute` in parallel) to handle independent tasks simultaneously to optimize speed.
+    *   PM manages task dependencies to prevent conflicts.
+
+5.  **Finalization & Sync**:
+    *   Upon completion, PM reports the results to the user.
+    *   PM ensures all changes (ABAP, Docs, Research) are synchronized across `CLAUDE.md`/`GEMINI.md` and committed to the **Git repository**.
 
 ### 📜 Documentation Synchronization Rule
 - **Strict Bidirectional Sync**: Any modification to `CLAUDE.md` must be immediately reflected in `GEMINI.md`, and vice-versa.

@@ -41,13 +41,13 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`MCP_USAGE.md`** | Technical manual for optimal MCP tool (RunQuery, EditSource, etc.) usage. |
 | **`vsp.exe`** | The core Go-native MCP server for SAP ADT integration. |
 
-## Operational Workflow (Governance)
+## Operational Workflow (Harness Advanced Governance)
 
-1.  **Entry**: All user requests are received by the **Global PM**.
-2.  **Orchestration**: PM consults with relevant Analysts and Technical agents to define scope.
-3.  **Implementation**: Developers and experts execute tasks in **Hyperfocused Mode**.
-4.  **Verification**: QA validates against requirements; PM ensures documentation sync.
-5.  **Persistence**: All work is logged in **`memory/`** and committed to **Git**.
+1.  **Triage & Agenda**: **Global PM** analyzes the request, selects appropriate Business/Technical agents, and facilitates a solution discussion.
+2.  **Implementation Plan**: PM presents a summarized agenda and execution plan for approval.
+3.  **Execution Workflow**: Once approved, PM defines specific roles and sequences for the agents involved.
+4.  **Parallel Execution**: Tasks are executed using **subagents** in parallel where possible, under PM orchestration.
+5.  **Report & Sync**: Results are reported, documents synchronized, and all changes committed to **Git**.
 
 ---
 > [!TIP]

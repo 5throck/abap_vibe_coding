@@ -190,12 +190,12 @@ customer, the system, or a live account?" If yes, redact.
 - Run RunUnitTests after logic changes
 - Use EditSource for small changes
 
-### Workflow
-1. **Entry**: All requests are first handled by the **Global PM**.
-2. **Analysis**: PM discusses with Functional/Technical agents.
-3. **Execution**: Follow the standard ADT workflow (Search -> Read -> Write -> Check -> Test).
-4. **Sync**: Ensure bidirectional sync between `CLAUDE.md` and `GEMINI.md`.
-5. **Git**: Commit all changes to the repository.
+### Workflow (Harness Advanced)
+1. **Triage**: Global PM receives the request and analyzes the nature.
+2. **Agenda**: PM selects Business/Technical agents, discusses the solution, and provides an Implementation Plan.
+3. **Execution Design**: PM creates a detailed workflow for agent collaboration.
+4. **Parallel Execution**: Use subagents for simultaneous task execution.
+5. **Sync & Report**: Synchronize `CLAUDE.md`/`GEMINI.md`, commit to Git, and report results.
 
 ---
 
