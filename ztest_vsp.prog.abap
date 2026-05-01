@@ -1,1 +1,0 @@
-﻿REPORT ztest_vsp. WRITE 'hello'.
