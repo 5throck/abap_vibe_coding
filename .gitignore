@@ -1,6 +1,7 @@
 # Secrets and local config
 .env
 .env.*
+!.env.sample
 cookies.txt
 .mcp.json
 *.mcp.json
