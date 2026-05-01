@@ -5,12 +5,13 @@ This file defines the roles and responsibilities of each agent operating within 
 ## 🏢 Business Group (Project Governance & Analysis)
 
 ### 1. 👑 Global Project Manager (PM)
-- **Role**: Overall project management, roadmap definition, and stakeholder coordination.
+- **Role**: Overall project management, roadmap definition, and single point of entry for all requests.
 - **Responsibilities**:
-    - Manage the entire project lifecycle and milestones.
-    - Coordinate between different functional modules.
-    - Ensure alignment between business goals and technical delivery.
-- **Key Tools**: `browser_subagent`, `MEMORY.md`, Project Dashboards.
+    - **Initial Triage**: Receive and analyze all user requests first.
+    - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
+    - **Consistency Check**: Ensure all changes are reflected across `CLAUDE.md`, `GEMINI.md`, and `AGENTS.md`.
+    - **Deployment Oversight**: Verify that all work is committed to the Git repository.
+- **Key Tools**: `browser_subagent`, `memory/`, Project Dashboards.
 
 ### 2. 📦 SD Analyst (Sales and Distribution)
 - **Role**: Sales requirements analysis and pricing logic management.
@@ -100,14 +101,22 @@ This file defines the roles and responsibilities of each agent operating within 
 
 ---
 
-## Collaboration Workflow
-1. **Initiation**: Global PM defines the high-level roadmap.
-2. **Analysis**: Functional Analysts (SD, MM, etc.) perform BA work and author PRDs.
-3. **Investigation**: Investigator researches existing objects related to the PRD.
-4. **Design**: Architect and DBA design the technical and data structures.
-5. **Implementation**: Developer writes code and SQL.
-6. **Verification**: QA Engineer verifies against Acceptance Criteria.
-7. **Deployment**: DevOps completes the deployment.
+## Collaboration & System Rules
+
+### 🔄 Agent Coordination Workflow
+1. **Entry**: The **Global PM** receives all user requests.
+2. **Discussion**: PM consults with Functional Analysts (SD, MM, etc.) or Technical Agents to define the scope.
+3. **Execution**: Relevant agents execute the task under PM supervision.
+4. **Synchronization**: If documentation changes, PM ensures `CLAUDE.md` and `GEMINI.md` are synchronized.
+5. **Finalization**: All changes must be committed to the Git repository before session end.
+
+### 📜 Documentation Synchronization Rule
+- **Strict Bidirectional Sync**: Any modification to `CLAUDE.md` must be immediately reflected in `GEMINI.md`, and vice-versa.
+- **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.
+
+### 📦 Git Reflection Rule
+- **Continuous Commitment**: All development artifacts (ABAP sources, docs, research reports) must be committed to the local Git repository.
+- **Verification**: The PM agent verifies the repository status at the end of each major task.
 
 ---
 *Last Updated: 2026-05-01*

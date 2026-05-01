@@ -27,6 +27,10 @@
           {
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File C:\\git\\abap\\scripts\\sync-md.ps1"
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:\\git\\abap\\scripts\\git-sync.ps1"
           }
         ]
       }

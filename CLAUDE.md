@@ -2,7 +2,7 @@
 
 **vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
-> **Doc intent:** CLAUDE.md = dev context. README.md = user onboarding. reports/ = research/history. contexts/ = session handoff. **MEMORY.md = ABAP development history.** **SKILL.md = Agent technical guidelines & custom skills.**
+> **Doc intent:** CLAUDE.md = dev context. README.md = user onboarding. reports/ = research/history. contexts/ = session handoff. **memory/ = ABAP development history (archived by date).** **SKILL.md = Agent technical guidelines & custom skills.**
 
 ## SKILL.md Rules
 
@@ -10,7 +10,7 @@
 **You MUST read `SKILL.md` at the start of every session or before using any ABAP-related tools.** This file contains the primary technical guidelines, optimization settings, and custom skill definitions that take precedence over general knowledge.
 
 ### When to write
-Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to `MEMORY.md`.
+Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to the **current date's memory file in the `memory/` directory** (e.g., `memory/YYYY-MM-DD.md`).
 
 Required entries:
 - **Object name, type, package, and ADT URL**
@@ -20,14 +20,14 @@ Required entries:
 - **MCP / config changes** (`.mcp.json`, `.vsp.json`, etc.)
 
 ### When to read
-**Do NOT read `MEMORY.md` on every task or session start.**
-Only consult it when a problem occurs — for example:
+**Do NOT read the memory files on every task or session start.**
+Only consult the relevant date's memory file in the `memory/` directory when a problem occurs — for example:
 - A recurring or hard-to-diagnose error
 - Uncertainty about a past design decision
 - Investigating why something was implemented a certain way
 
 ### Format
-All entries in `MEMORY.md` must be written in English.
+All entries in the memory files must be written in English.
 
 ### Documentation Language Rule
 **All `.md` files (including `SKILL.md`, `AGENTS.md`, `MEMORY.md`, etc.) must be written in English at all times.** This ensures global accessibility and consistency for all AI agents and human developers.
@@ -191,11 +191,11 @@ customer, the system, or a live account?" If yes, redact.
 - Use EditSource for small changes
 
 ### Workflow
-1. SearchObject — check for existing objects
-2. GetSource — read current code
-3. WriteSource / EditSource — apply changes
-4. SyntaxCheck — validate
-5. RunUnitTests — verify
+1. **Entry**: All requests are first handled by the **Global PM**.
+2. **Analysis**: PM discusses with Functional/Technical agents.
+3. **Execution**: Follow the standard ADT workflow (Search -> Read -> Write -> Check -> Test).
+4. **Sync**: Ensure bidirectional sync between `CLAUDE.md` and `GEMINI.md`.
+5. **Git**: Commit all changes to the repository.
 
 ---
 
