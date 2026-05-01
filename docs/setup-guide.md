@@ -15,9 +15,10 @@
 6. [Configure Claude Code](#6-configure-claude-code)
 7. [Configure Gemini CLI (Optional)](#7-configure-gemini-cli-optional)
 8. [Install ZADT_VSP on SAP (Optional)](#8-install-zadt_vsp-on-sap-optional)
-9. [Verify the Setup](#9-verify-the-setup)
-10. [Troubleshooting](#10-troubleshooting)
-11. [Team Onboarding Checklist](#11-team-onboarding-checklist)
+9. [Install abapGit on SAP (Optional)](#9-install-abapgit-on-sap-optional)
+10. [Verify the Setup](#10-verify-the-setup)
+11. [Troubleshooting](#11-troubleshooting)
+12. [Team Onboarding Checklist](#12-team-onboarding-checklist)
 
 ---
 
@@ -901,7 +902,62 @@ ZADT_VSP: installed (version x.x)
 
 ---
 
-## 9. Verify the Setup
+## 9. Install abapGit on SAP (Optional)
+
+abapGit exists in 2 flavours: standalone version or developer version.
+- **Standalone version**: Targeted at users. You run it in transaction `SE38`.
+- **Developer version**: Targeted at developers contributing to the abapGit codebase. You run it with transaction `ZABAPGIT`. It supports parallel processing.
+
+> **Note**: There's also an SAP version of abapGit available that is part of SAP Business Technology Platform and SAP S/4HANA Cloud.
+
+### 9-A. Install via Claude Code (Recommended)
+
+```bash
+cd ~/abap   # Git Bash on Windows, or terminal on macOS
+claude
+```
+
+Inside the Claude session:
+```
+Install abapGit on the SAP system
+```
+
+Claude will call `mcp__abap__InstallAbapGit` automatically.
+
+### 9-B. Manual Installation - Standalone Version
+
+1. Download the [ABAP code](https://raw.githubusercontent.com/abapGit/build/main/zabapgit_standalone.prog.abap) (right click -> save-as) to a file.
+2. Via `SE38`, `SE80`, or ADT, create a new report named `ZABAPGIT_STANDALONE`. (Note: Do not use the name `ZABAPGIT` if you plan to install the developer version).
+3. In source code change mode, upload the code from the file using Utilities -> More Utilities -> Upload/Download -> Upload.
+4. Activate the report.
+
+Typically, abapGit will only be used in the development system, so it can be installed in a local package (e.g. `$ABAPGIT`).
+Now you can use abapGit by executing the report `ZABAPGIT_STANDALONE` in transaction `SE38`.
+
+### 9-C. Manual Installation - Developer Version
+
+In order to contribute to the abapGit project, you install the developer version. First, install the standalone version (see above).
+
+**Online (Recommended):**
+1. Run the standalone version of abapGit.
+2. On the repository list page, select **"New Online"**.
+3. Enter `https://github.com/abapGit/abapGit/` for the URL.
+4. Enter package name `$ABAPGIT` (or select an existing/create a new package).
+5. Select **"Create Online Repo"**, then **"Pull"**.
+
+**Offline:**
+Download the latest version of the abapGit developer version from [https://github.com/abapGit/abapGit/](https://github.com/abapGit/abapGit/). Select Code > Download ZIP and save the file locally.
+1. Run the standalone version of abapGit.
+2. On the repository list page, select **"New Offline"**.
+3. Enter repo name `abapGit` and package name `$ABAPGIT`.
+4. Select **"Create Offline Repo"**, then **"Import zip"**.
+5. Select the `abapGit-main.zip` file, then **"Pull zip"**.
+
+Transaction `ZABAPGIT` is now available to run the developer version.
+
+---
+
+## 10. Verify the Setup
 
 Run through this checklist in order. Each step depends on the previous.
 
@@ -980,7 +1036,7 @@ git log --oneline -3
 
 ---
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 ### Problem: vsp cannot connect to SAP
 
@@ -1128,7 +1184,7 @@ ORDER BY field DESCENDING
 
 ---
 
-## 11. Team Onboarding Checklist
+## 12. Team Onboarding Checklist
 
 Use this list when onboarding a new team member.
 
@@ -1153,7 +1209,7 @@ Use this list when onboarding a new team member.
 - [ ] Create `.claude/settings.local.json` using template from §6-B for your OS
 - [ ] Run `./vsp system info` (Windows: `./vsp.exe system info`) — confirm green output
 - [ ] Start `claude` in repo directory, run `/mcp` — confirm `abap` listed
-- [ ] Run Checkpoint 3–6 from Section 9
+- [ ] Run Checkpoint 3–6 from Section 10
 
 ### First session orientation (30 min)
 
