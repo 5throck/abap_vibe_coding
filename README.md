@@ -47,7 +47,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 2.  **Implementation Plan**: PM presents a summarized agenda and execution plan for approval.
 3.  **Execution Workflow**: Once approved, PM defines specific roles and sequences for the agents involved.
 4.  **Parallel Execution**: Tasks are executed using **subagents** in parallel where possible, under PM orchestration.
-5.  **Report & Sync**: Results are reported, documents synchronized, and all changes committed to **Git**.
+5.  **Report & Sync**: Important details are logged to the **`memory/`** directory, then all changes are committed to **Git** and reported to the user.
 
 ---
 > [!TIP]

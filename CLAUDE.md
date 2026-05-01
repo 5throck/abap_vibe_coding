@@ -195,7 +195,7 @@ customer, the system, or a live account?" If yes, redact.
 2. **Agenda**: PM selects Business/Technical agents, discusses the solution, and provides an Implementation Plan.
 3. **Execution Design**: PM creates a detailed workflow for agent collaboration.
 4. **Parallel Execution**: Use subagents for simultaneous task execution.
-5. **Sync & Report**: Synchronize `CLAUDE.md`/`GEMINI.md`, commit to Git, and report results.
+5. **Sync & Report**: Log important details to the current date's memory file, commit to Git, and report results.
 
 ---
 

@@ -130,16 +130,17 @@ This file defines the roles and responsibilities of each agent operating within 
     *   PM manages task dependencies to prevent conflicts.
 
 5.  **Finalization & Sync**:
-    *   Upon completion, PM reports the results to the user.
-    *   PM ensures all changes (ABAP, Docs, Research) are synchronized across `CLAUDE.md`/`GEMINI.md` and committed to the **Git repository**.
+    *   **Memory Logging**: Before git commitment, PM ensures all important decisions, technical changes, and issues are documented in the **current date's memory file** (`memory/YYYY-MM-DD.md`).
+    *   **Git Sync**: Once logged, PM commits all artifacts and the updated memory file to the Git repository.
+    *   **Reporting**: PM reports the final results to the user.
 
 ### 📜 Documentation Synchronization Rule
 - **Strict Bidirectional Sync**: Any modification to `CLAUDE.md` must be immediately reflected in `GEMINI.md`, and vice-versa.
 - **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.
 
 ### 📦 Git Reflection Rule
-- **Continuous Commitment**: All development artifacts (ABAP sources, docs, research reports) must be committed to the local Git repository.
-- **Verification**: The PM agent verifies the repository status at the end of each major task.
+- **Continuous Commitment**: All development artifacts (ABAP sources, docs, research reports) and **memory logs** must be committed to the local Git repository.
+- **Verification**: The PM agent verifies the repository status and memory file existence at the end of each major task.
 
 ---
 *Last Updated: 2026-05-01*
