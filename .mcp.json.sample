@@ -1,7 +1,17 @@
 {
+  "//": "MCP Server configuration for vsp. Choose the block corresponding to your OS and rename it to 'abap'.",
   "mcpServers": {
-    "abap": {
+    "abap-windows": {
       "command": "./vsp.exe",
+      "args": [],
+      "env": {
+        "VSP_MODE": "hyperfocused",
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP",
+        "VSP_FEATURE_ABAPGIT": "off"
+      }
+    },
+    "abap-macos": {
+      "command": "./vsp",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
