@@ -2,7 +2,7 @@
 
 **vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
-> **Doc intent:** CLAUDE.md = dev context. README.md = user onboarding. reports/ = research/history. contexts/ = session handoff. **memory/ = ABAP development history (archived by date).** **SKILL.md = Agent technical guidelines & custom skills.**
+> **Doc intent:** CLAUDE.md = dev context. README.md = user onboarding. reports/ = research/history. **contexts/ = module analyst deep-knowledge files.** **memory/ = ABAP development history (archived by date).** **SKILL.md = Agent technical guidelines & custom skills.**
 
 ## SKILL.md Rules
 
@@ -94,6 +94,8 @@ pkg/
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
 | Fix MCP/docs/config | `README.md`, `docs/cli-agents/*`, `handlers_universal.go` |
+| Add/update analyst context | `contexts/<module>-analyst.md` |
+| New task handoff | copy `docs/task-template.md` → `scratch/task-YYYY-MM-DD-NNN.md` |
 
 ---
 
@@ -146,7 +148,8 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
    Identify the package (`$TMP` or named) and affected object types.
 
 2. **Agenda (PM + Agents)** — Call `SearchObject` or `GrepPackages` to gather context,
-   then select agents from `AGENTS.md`. Produce an Implementation Plan before any write operation.
+   then select agents from `AGENTS.md`. Load the matching `contexts/<module>-analyst.md` for domain depth.
+   Produce an Implementation Plan before any write operation.
 
 3. **Execution Design** — Define tool execution order and parallelism:
    ```

@@ -20,7 +20,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 
 ### 🏢 Business Group
 - **👑 Global PM**: The **single point of entry** for all requests. Orchestrates agents and ensures doc/git consistency.
-- **📦 Functional Analysts (SD, MM, etc.)**: Bridge business needs and technology by authoring module-specific PRDs.
+- **📦 Functional Analysts (SD, LE, PP, MM, FI, CO)**: Activate on trigger keywords, query SAP directly via read-only MCP tools, produce structured PRDs with Acceptance Criteria, and hand off to the Technical Group. Each analyst loads a dedicated `contexts/<module>-analyst.md` for deep domain knowledge.
 
 ### 🛠️ Technical Group
 - **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
@@ -35,7 +35,9 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | Directory/File | Purpose |
 | :--- | :--- |
 | **`memory/`** | Date-based development history. See `memory/MEMORY.md` for the index. |
-| **`AGENTS.md`** | Source of truth for agent roles and PM-led workflows. |
+| **`contexts/`** | Module analyst deep-knowledge files (sd, le, pp, mm, fi, co). Loaded at agent activation. |
+| **`docs/task-template.md`** | Handoff template — copy to `scratch/` at task start; each agent fills their section. |
+| **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, output format, and handoff rules. |
 | **`CLAUDE.md`** | Primary AI dev context: build, codebase map, priorities, common issues, ABAP rules. |
 | **`GEMINI.md`** | Gemini-specific overrides only (hyperfocused mode config, skill additions). |
 | **`SKILL.md`** | Technical guidelines, tool boundaries, and custom AI skills. |
