@@ -22,6 +22,36 @@
 
 ---
 
+## 0-A. PM Parallel Dispatch (Phase 1 — Read-Only)
+
+> PM dispatches all read-only subagents **in a single message** (parallel).
+> Wait for all 3 results before proceeding to §1 Business Analysis.
+
+```
+Agent 1 — sap-investigator  (prompt: docs/subagents/sap-investigator.md)
+  Task: Scan existing codebase for related objects
+  Input: package=$TMP, keywords=["<keyword1>", "<keyword2>"]
+  Expected output: matching object list + source snippets
+
+Agent 2 — read-only-analyst  (prompt: docs/subagents/read-only-analyst.md)
+  Task: Query SAP tables for AS-IS data
+  Input: module=<SD|MM|FI|...>, context_file=contexts/<module>-analyst.md
+  Queries to run:
+    - <!-- AS-IS query 1 -->
+    - <!-- AS-IS query 2 -->
+  Expected output: PRD draft with AS-IS findings and AC candidates
+
+Agent 3 — schema-inspector  (prompt: docs/subagents/schema-inspector.md)
+  Task: Inspect table structures and CDS dependencies
+  Input: tables=["<TABLE1>", "<TABLE2>"], cds_views=["<VIEW1>"]
+  Expected output: field lists, key fields, CDS dependency tree
+```
+
+**Merge rule**: Collect all 3 outputs → PM synthesizes into §1 and §2.
+**Abort condition**: If any subagent returns an error, PM resolves before proceeding.
+
+---
+
 ## 1. Business Analysis
 
 **Agent**: <!-- e.g., SD Analyst -->
@@ -81,10 +111,46 @@
 
 ### Execution Plan
 
+> Copy the applicable pattern below. Parallel blocks must complete before the first serial step.
+
+**Pattern A — Small edit (single object, <50 lines)**
 ```
-[parallel] <read tasks>
-[serial]   SyntaxCheck → EditSource/WriteSource → RunUnitTests
-[serial]   memory log → git commit
+[parallel — dispatch as subagents in one message]
+  Agent(sap-investigator): GrepObjects(object_url, "<old_string_pattern>")
+  Agent(schema-inspector): GetSource(type, name)  ← confirm current state
+
+[serial — PM executes directly, do NOT delegate]
+  SyntaxCheck(object_url)
+  EditSource(object_url, old_string, new_string)
+  RunUnitTests(object_url)
+  memory log → git commit
+```
+
+**Pattern B — New object or full rewrite**
+```
+[parallel — dispatch as subagents in one message]
+  Agent(sap-investigator): GrepPackages(packages, pattern)  ← avoid naming conflicts
+  Agent(read-only-analyst): RunQuery(...)  ← validate data model assumptions
+  Agent(schema-inspector): GetTable(table_name) × N  ← all dependent tables
+
+[serial — PM executes directly]
+  WriteSource(object_url, source, mode=create|update)
+  SyntaxCheck(object_url)
+  RunUnitTests(object_url)
+  memory log → git commit
+```
+
+**Pattern C — Multi-object refactor**
+```
+[parallel — dispatch as subagents in one message]
+  Agent(sap-investigator): GrepPackages(packages, old_pattern)  ← find all occurrences
+  Agent(schema-inspector): GetCDSDependencies(ddls_name)  ← impact on CDS layer
+
+[serial per object — never parallelize writes]
+  for each object in impact_list:
+    SyntaxCheck → EditSource(replace_all=true) → verify
+  RunUnitTests(all affected objects)
+  memory log → git commit
 ```
 
 **Risk level**: `Low` / `Medium` / `High`

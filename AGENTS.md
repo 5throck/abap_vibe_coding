@@ -205,6 +205,57 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
     *   **Git Sync**: Once logged, PM commits all artifacts and the updated memory file to the Git repository.
     *   **Reporting**: PM reports the final results to the user.
 
+### 🤖 PM Subagent Dispatch Protocol
+
+This protocol defines **when and how** PM dispatches parallel subagents.
+Subagent prompt templates live in `docs/subagents/`.
+
+#### Dispatch Decision Tree
+
+```
+Request received
+  │
+  ├─ Read-only? (analyze, search, query, inspect)
+  │    └─► PARALLEL — dispatch all applicable subagents in ONE message
+  │          ├── sap-investigator   → codebase scan (GrepPackages/GrepObjects/SearchObject)
+  │          ├── read-only-analyst  → business data queries (RunQuery/GetTableContents)
+  │          └── schema-inspector   → table/CDS structure (GetTable/GetCDSDependencies)
+  │
+  └─ Write? (EditSource, WriteSource, SyntaxCheck)
+       └─► SERIAL — PM executes directly, never delegate to subagent
+             One object at a time to prevent lock conflicts.
+```
+
+#### Subagent Roster
+
+| Subagent | Prompt file | Parallelizable | Tools allowed |
+|----------|-------------|:--------------:|---------------|
+| `sap-investigator` | `docs/subagents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
+| `read-only-analyst` | `docs/subagents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
+| `schema-inspector` | `docs/subagents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
+| `code-writer` | PM executes directly | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
+| `test-runner` | PM executes directly | ❌ After write | `RunUnitTests` |
+
+#### Parallel Dispatch Rules
+
+1. **Single message, multiple Agent() calls** — all parallel subagents must be dispatched in one turn.
+2. **No write delegation** — `EditSource`, `WriteSource`, `SyntaxCheck` are always executed by PM directly.
+3. **Merge before proceeding** — PM waits for ALL parallel subagents to return before moving to the next serial step.
+4. **Error handling** — if any parallel subagent fails, PM resolves the failure before proceeding. Do not skip.
+5. **Context passing** — PM includes the relevant `contexts/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
+
+#### Typical Dispatch Sequences by Task Type
+
+| Task type | Phase 1 (parallel) | Phase 2 (serial) |
+|-----------|--------------------|------------------|
+| New ABAP object | investigator + analyst + schema | WriteSource → SyntaxCheck → RunUnitTests |
+| Bug fix | investigator (find occurrences) + schema (confirm structure) | EditSource → SyntaxCheck → RunUnitTests |
+| Data analysis report | analyst + schema (parallel, no write) | — (read-only task ends here) |
+| Refactor across package | investigator (all occurrences) + schema (CDS impact) | serial EditSource per object |
+| Interface design | analyst + schema + investigator | Interface Expert designs → Developer implements |
+
+---
+
 ### 📜 Documentation Synchronization Rule
 - **Single Source of Truth**: `CLAUDE.md` holds all shared dev context. `GEMINI.md` contains Gemini-specific overrides only — do not mirror shared sections into it.
 - **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.

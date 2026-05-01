@@ -37,6 +37,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`memory/`** | Date-based development history. See `memory/MEMORY.md` for the index. |
 | **`contexts/`** | Module analyst deep-knowledge files (sd, le, pp, mm, fi, co). Loaded at agent activation. |
 | **`docs/task-template.md`** | Handoff template — copy to `scratch/` at task start; each agent fills their section. |
+| **`docs/subagents/`** | Subagent prompt templates: `sap-investigator`, `read-only-analyst`, `schema-inspector`. |
 | **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, output format, and handoff rules. |
 | **`CLAUDE.md`** | Primary AI dev context: build, codebase map, priorities, common issues, ABAP rules. |
 | **`GEMINI.md`** | Gemini-specific overrides only (hyperfocused mode config, skill additions). |

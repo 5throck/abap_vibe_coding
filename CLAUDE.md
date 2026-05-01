@@ -96,6 +96,7 @@ pkg/
 | Fix MCP/docs/config | `README.md`, `docs/cli-agents/*`, `handlers_universal.go` |
 | Add/update analyst context | `contexts/<module>-analyst.md` |
 | New task handoff | copy `docs/task-template.md` → `scratch/task-YYYY-MM-DD-NNN.md` |
+| Add/update subagent prompt | `docs/subagents/<role>.md` |
 
 ---
 
@@ -147,8 +148,9 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 1. **Triage (PM)** — Classify the request: ABAP dev / graph / debug / infra.
    Identify the package (`$TMP` or named) and affected object types.
 
-2. **Agenda (PM + Agents)** — Call `SearchObject` or `GrepPackages` to gather context,
-   then select agents from `AGENTS.md`. Load the matching `contexts/<module>-analyst.md` for domain depth.
+2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (sap-investigator +
+   read-only-analyst + schema-inspector) in a **single message**. Load `contexts/<module>-analyst.md`
+   in the analyst subagent prompt. See `AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
    Produce an Implementation Plan before any write operation.
 
 3. **Execution Design** — Define tool execution order and parallelism:
