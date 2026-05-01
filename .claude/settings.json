@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_console_logs",
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_snapshot",
+      "mcp__Claude_Preview__preview_logs",
+      "mcp__Claude_Preview__preview_list",
+      "mcp__abap__GetSource",
+      "mcp__abap__SearchObject",
+      "mcp__abap__GrepObjects",
+      "mcp__abap__GrepPackages",
+      "mcp__abap__FindDefinition",
+      "mcp__abap__FindReferences",
+      "mcp__abap__GetTableContents",
+      "mcp__abap__RunQuery",
+      "mcp__abap__GetCDSDependencies",
+      "mcp__abap__SyntaxCheck",
+      "mcp__abap__RunUnitTests"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:\\git\\abap\\scripts\\sync-md.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}

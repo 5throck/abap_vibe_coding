@@ -1,0 +1,15 @@
+# Secrets and local config
+.env
+.env.*
+cookies.txt
+.mcp.json
+*.mcp.json
+
+# Local scratch
+.local/
+
+# Build output
+vsp
+vsp.exe
+build/
+dist/
