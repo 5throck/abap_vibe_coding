@@ -1149,7 +1149,7 @@ Use this list when onboarding a new team member.
   - Windows: `~/abap/vsp.exe`
   - macOS/Linux: `~/abap/vsp` + `chmod +x ~/abap/vsp`
 - [ ] Create `.env` with SAP credentials
-- [ ] Create `.mcp.json` using template from §5-D — **replace `<your-username>` with actual username**
+- [ ] Create `.mcp.json` using template from §5-D
 - [ ] Create `.claude/settings.local.json` using template from §6-B for your OS
 - [ ] Run `./vsp system info` (Windows: `./vsp.exe system info`) — confirm green output
 - [ ] Start `claude` in repo directory, run `/mcp` — confirm `abap` listed
