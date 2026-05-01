@@ -24,7 +24,12 @@
       "mcp__abap__GetInactiveObjects",
       "mcp__abap__GetPackage",
       "WebSearch",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(grep -c \"git/abap\\\\|git\\\\\\\\\\\\\\\\abap\\\\|git\\\\\\\\\\\\\\\\\\\\\\\\\\\\abap\" docs/setup-guide.md)",
+      "Bash(grep -n \"git.abap\\\\|git\\\\\\\\\\\\\\\\abap\" docs/setup-guide.md)",
+      "Bash(grep -n \"git.abap\\\\|git\\\\\\\\\\\\\\\\abap\\\\|~/git\\\\b\" docs/setup-guide.md)",
+      "Bash(grep -n \"vsp.*MCP\\\\|MCP server\\\\|vsp is\\\\|vsp bridges\\\\|\\\\`vsp\\\\`\" docs/setup-guide.md)",
+      "Bash(grep -n \"git\\\\\\\\\\\\\\\\abap\\\\|git/abap\" docs/setup-guide.md)"
     ]
   },
   "enableAllProjectMcpServers": true,

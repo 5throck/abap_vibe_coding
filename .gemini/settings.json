@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "abap": {
-      "command": "C:\\git\\abap\\vsp.exe",
+      "command": "./vsp.exe",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -36,29 +36,27 @@
       "mcp__abap__GetCDSDependencies",
       "mcp__abap__SyntaxCheck",
       "mcp__abap__RunUnitTests",
-      "Bash(python3 -)",
-      "WebFetch(domain:github.com)",
       "mcp__abap__GetTable",
       "mcp__abap__WriteSource",
+      "mcp__abap__EditSource",
       "mcp__abap__GetConnectionInfo",
       "mcp__abap__GetSystemInfo",
-      "mcp__abap__EditSource",
-      "Bash(rename \"C:\\\\git\\\\abap\\\\MEMORY.MD\" \"MEMORY.md\")",
-      "Bash(git init *)",
-      "Bash(git branch *)",
-      "Bash(git add *)",
-      "Bash(git commit -m ' *)",
-      "Bash(powershell -Command *)",
-      "Bash(git credential *)",
-      "Bash(git remote *)",
-      "Bash(git push *)",
-      "Bash(git check-ignore *)",
       "mcp__abap__RunReport",
       "mcp__abap__InstallZADTVSP",
       "mcp__abap__InstallAbapGit",
       "mcp__abap__GetInactiveObjects",
       "mcp__abap__GetPackage",
+      "Bash(git init *)",
+      "Bash(git branch *)",
+      "Bash(git add *)",
+      "Bash(git commit -m '*)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(git credential *)",
+      "Bash(git check-ignore *)",
+      "Bash(powershell -Command *)",
       "WebSearch",
+      "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
@@ -69,11 +67,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File C:\\git\\abap\\scripts\\sync-md.ps1"
+            "command": "powershell -ExecutionPolicy Bypass -File scripts/sync-md.ps1"
           },
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File C:\\git\\abap\\scripts\\git-sync.ps1"
+            "command": "powershell -ExecutionPolicy Bypass -File scripts/git-sync.ps1"
           }
         ]
       }
