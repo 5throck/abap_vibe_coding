@@ -96,8 +96,16 @@ This file defines the roles and responsibilities of each agent operating within 
 ### 6. 🔍 Intelligence Investigator
 - **Role**: Codebase exploration and knowledge extraction.
 - **Responsibilities**:
-    - Perform global pattern searches and manage `MEMORY.md`.
+    - Perform global pattern searches and manage `memory/`.
 - **Key Tools**: `GrepPackages`, `GrepObjects`, `SearchObject`.
+
+### 7. 🔌 Interface Expert
+- **Role**: API design and external system integration management.
+- **Responsibilities**:
+    - Design and implement OData, RFC, IDoc, and RESTful APIs.
+    - Troubleshoot connectivity, authentication, and integration payloads.
+    - Optimize data exchange performance between SAP and external platforms.
+- **Key Tools**: `/IWFND/MAINT_SERVICE`, `SICF`, `vsp debug`, `browser_subagent`.
 
 ---
 
