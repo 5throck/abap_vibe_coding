@@ -652,13 +652,11 @@ Expected: a table showing your SAP client(s).
 
 **Windows** — create `%USERPROFILE%\abap\.gemini\settings.json`:
 
-> Replace `<your-username>` with your actual Windows username (run `echo $USERNAME` in Git Bash).
-
 ```json
 {
   "mcpServers": {
     "abap": {
-      "command": "C:\\Users\\<your-username>\\abap\\vsp.exe",
+      "command": "./vsp.exe",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
