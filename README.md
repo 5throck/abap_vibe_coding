@@ -1,7 +1,7 @@
 # VSP Harness Engineering for ABAP
 
 ## Project Mission
-This project aims to revolutionize SAP ABAP development by establishing a **Harness Engineering** framework. It leverages AI agents and the **vsp** (Vibing Steampunk) MCP server to automate and optimize the entire development lifecycle—from business requirements analysis to system deployment.
+This project aims to revolutionize SAP ABAP development by establishing a **Harness Engineering** framework. It leverages AI agents and the **vsp** MCP server to automate and optimize the entire development lifecycle—from business requirements analysis to system deployment.
 
 ## System Architecture & Operating Principles
 
@@ -34,20 +34,22 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 
 | Directory/File | Purpose |
 | :--- | :--- |
-| **`memory/`** | **Date-based development history.** Replaces the flat `MEMORY.md`. |
-| **`AGENTS.md`** | Source of truth for agent roles and **strict PM-led workflows**. |
-| **`CLAUDE.md` / `GEMINI.md`** | Synchronized AI context and development guidelines. |
-| **`SKILL.md`** | Mandatory technical guidelines and custom AI skills. |
-| **`MCP_USAGE.md`** | Technical manual for optimal MCP tool (RunQuery, EditSource, etc.) usage. |
-| **`vsp.exe`** | The core Go-native MCP server for SAP ADT integration. |
+| **`memory/`** | Date-based development history. See `memory/MEMORY.md` for the index. |
+| **`AGENTS.md`** | Source of truth for agent roles and PM-led workflows. |
+| **`CLAUDE.md`** | Primary AI dev context: build, codebase map, priorities, common issues, ABAP rules. |
+| **`GEMINI.md`** | Gemini-specific overrides only (hyperfocused mode config, skill additions). |
+| **`SKILL.md`** | Technical guidelines, tool boundaries, and custom AI skills. |
+| **`SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
+| **`MCP_USAGE.md`** | Technical reference for MCP tool usage (RunQuery, EditSource, etc.). |
+| **`vsp.exe`** | Go-native MCP server for SAP ADT integration. |
 
 ## Operational Workflow (Harness Advanced Governance)
 
-1.  **Triage & Agenda**: **Global PM** analyzes the request, selects appropriate Business/Technical agents, and facilitates a solution discussion.
-2.  **Implementation Plan**: PM presents a summarized agenda and execution plan for approval.
-3.  **Execution Workflow**: Once approved, PM defines specific roles and sequences for the agents involved.
-4.  **Parallel Execution**: Tasks are executed using **subagents** in parallel where possible, under PM orchestration.
-5.  **Report & Sync**: Important details are logged to the **`memory/`** directory, then all changes are committed to **Git** and reported to the user.
+1.  **Triage (PM)** — Classify request type; identify package and affected objects.
+2.  **Agenda** — Gather context via `SearchObject`/`GrepPackages`; select agents; produce Implementation Plan before any write.
+3.  **Execution Design** — Define tool order and parallelism (read tasks parallel, write tasks serial).
+4.  **Parallel Execution** — Independent read/search tasks run as subagents; write operations remain serial to avoid lock conflicts.
+5.  **Sync & Report** — Append to `memory/YYYY-MM-DD.md`, commit to Git, report outcome with object URL and test results.
 
 ---
 > [!TIP]

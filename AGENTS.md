@@ -13,48 +13,19 @@ This file defines the roles and responsibilities of each agent operating within 
     - **Deployment Oversight**: Verify that all work is committed to the Git repository.
 - **Key Tools**: `browser_subagent`, `memory/`, Project Dashboards.
 
-### 2. 📦 SD Analyst (Sales and Distribution)
-- **Role**: Sales requirements analysis and pricing logic management.
-- **Responsibilities**:
-    - Perform business analysis for Sales, Delivery, and Billing processes.
-    - Author module-specific PRDs and Acceptance Criteria.
-    - Handle complex Pricing Procedures (VKOA, VK11).
-- **Key Knowledge**: VBAK/VBAP, LIKP/LIPS, VBRK/VBRP tables.
+### Business Analysts
 
-### 3. 🚛 LE Analyst (Logistics Execution)
-- **Role**: Logistics requirements analysis and warehouse management.
-- **Responsibilities**:
-    - Analyze Shipping, Transportation, and Route determination requirements.
-    - Design Warehouse integration flows (WM/EWM).
-- **Key Knowledge**: VEKP/VEPO (Handling Units), VTTP (Shipment) tables.
+Each analyst handles requirements, authors PRDs and Acceptance Criteria, and supplies
+domain knowledge to the Technical Group.
 
-### 4. 🏭 PP Analyst (Production Planning)
-- **Role**: Manufacturing process analysis and MRP coordination.
-- **Responsibilities**:
-    - Analyze BOM, Routings, and Production Order requirements.
-    - Define Capacity Planning and MRP logic.
-- **Key Knowledge**: MAST/STKO/STPO, AFKO/AFPO tables.
-
-### 5. 🛒 MM Analyst (Materials Management)
-- **Role**: Procurement analysis and inventory management.
-- **Responsibilities**:
-    - Analyze Purchasing and Goods Receipt processes.
-    - Manage Material Master data and Inventory logic.
-- **Key Knowledge**: MARA/MARC/MARD, EKKO/EKPO, MKPF/MSEG tables.
-
-### 6. 💰 FI Analyst (Financial Accounting)
-- **Role**: Financial process analysis and reporting integrity.
-- **Responsibilities**:
-    - Analyze General Ledger, AR/AP, and Fixed Assets requirements.
-    - Define Financial Statement structures and compliance rules.
-- **Key Knowledge**: BKPF/BSEG, ACDOCA (Universal Journal) tables.
-
-### 7. 📊 CO Analyst (Controlling)
-- **Role**: Cost management analysis and profitability logic.
-- **Responsibilities**:
-    - Analyze Cost Center and Internal Order requirements.
-    - Design Profitability Analysis (CO-PA) models.
-- **Key Knowledge**: CSKS/CSKP, COEP, COSP tables.
+| Role | Domain | Core Responsibilities | Key Tables |
+|------|--------|-----------------------|------------|
+| SD Analyst | Sales & Distribution | Sales/Delivery/Billing analysis; Pricing Procedures (VKOA, VK11) | VBAK/VBAP, LIKP/LIPS, VBRK/VBRP |
+| LE Analyst | Logistics Execution | Shipping/Transport/Route; WM/EWM integration design | VEKP/VEPO, VTTP |
+| PP Analyst | Production Planning | BOM/Routing/Production Order; Capacity Planning & MRP | MAST/STKO/STPO, AFKO/AFPO |
+| MM Analyst | Materials Management | Purchasing/Goods Receipt; Material Master & Inventory | MARA/MARC/MARD, EKKO/EKPO, MKPF/MSEG |
+| FI Analyst | Financial Accounting | GL/AR/AP/Fixed Assets; Financial Statement & compliance | BKPF/BSEG, ACDOCA |
+| CO Analyst | Controlling | Cost Center/Internal Order; CO-PA model design | CSKS/CSKP, COEP, COSP |
 
 ---
 
@@ -135,7 +106,7 @@ This file defines the roles and responsibilities of each agent operating within 
     *   **Reporting**: PM reports the final results to the user.
 
 ### 📜 Documentation Synchronization Rule
-- **Strict Bidirectional Sync**: Any modification to `CLAUDE.md` must be immediately reflected in `GEMINI.md`, and vice-versa.
+- **Single Source of Truth**: `CLAUDE.md` holds all shared dev context. `GEMINI.md` contains Gemini-specific overrides only — do not mirror shared sections into it.
 - **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.
 
 ### 📦 Git Reflection Rule
