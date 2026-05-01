@@ -16,38 +16,44 @@ Harness Engineering is a methodology where specialized AI agents collaborate wit
 
 ## Agent Framework (AGENTS.md)
 
-Agents are categorized into two strategic groups to ensure both business alignment and technical excellence:
+Agents are categorized into two strategic groups, operating under a **PM-led Governance** model:
 
 ### 🏢 Business Group
-- **Global PM**: Manages project roadmap and cross-module synchronization.
-- **Functional Analysts (SD, LE, PP, MM, FI, CO)**: Bridge business needs and technology by authoring module-specific PRDs and Acceptance Criteria.
+- **👑 Global PM**: The **single point of entry** for all requests. Orchestrates agents and ensures doc/git consistency.
+- **📦 Functional Analysts (SD, MM, etc.)**: Bridge business needs and technology by authoring module-specific PRDs.
 
 ### 🛠️ Technical Group
-- **Architect & DBA**: Design system blueprints and optimized data models (CDS Views).
-- **ABAP Developer**: Executes precision coding and refactoring.
-- **QA Engineer**: Ensures stability through automated Unit Testing and debugging.
-- **DevOps/Admin**: Handles infrastructure setup and transport management.
-- **Intelligence Investigator**: Maintains the project's knowledge base and explores existing code patterns.
+- **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
+- **💻 ABAP Developer**: Executes precision coding and refactoring via `vsp`.
+- **🔌 Interface Expert**: Manages OData, RFC, and external API integrations.
+- **🧪 QA Engineer**: Ensures stability through Unit Testing and debugging.
+- **🚀 DevOps/Admin**: Handles infrastructure and deployment.
+- **🔍 Intelligence Investigator**: Explores codebase patterns and extracts knowledge.
 
 ## File Structure
 
 | Directory/File | Purpose |
 | :--- | :--- |
-| **`.gemini/`, `.claude/`** | Agent-specific settings, permissions, and custom commands (Skills). |
-| **`scripts/`** | Automation tools for document syncing and synchronization. |
-| **`AGENTS.md`** | Source of truth for agent roles and collaboration workflows. |
-| **`SKILL.md`** | Mandatory technical guidelines and AI-native skill definitions. |
-| **`MEMORY.md`** | Living log of architectural decisions and system changes. |
-| **`MCP_USAGE.md`** | Technical manual for optimal MCP tool utilization. |
-| **`vsp.exe`** | The core MCP server and CLI tool for SAP ADT integration. |
+| **`memory/`** | **Date-based development history.** Replaces the flat `MEMORY.md`. |
+| **`AGENTS.md`** | Source of truth for agent roles and **strict PM-led workflows**. |
+| **`CLAUDE.md` / `GEMINI.md`** | Synchronized AI context and development guidelines. |
+| **`SKILL.md`** | Mandatory technical guidelines and custom AI skills. |
+| **`MCP_USAGE.md`** | Technical manual for optimal MCP tool (RunQuery, EditSource, etc.) usage. |
+| **`vsp.exe`** | The core Go-native MCP server for SAP ADT integration. |
 
-## Operational Workflow
+## Operational Workflow (Governance)
 
-1.  **Analysis**: The process starts with a **Functional Analyst** defining requirements in a PRD.
-2.  **Design**: The **Architect** and **DBA** create a technical design while the **Investigator** researches existing objects.
-3.  **Implementation**: The **Developer** writes code in **Hyperfocused Mode** directly on the SAP system.
-4.  **Verification**: The **QA Engineer** validates the results against the **Acceptance Criteria** defined in step 1.
-5.  **Documentation**: All changes are automatically logged in **MEMORY.md** for future context.
+1.  **Entry**: All user requests are received by the **Global PM**.
+2.  **Orchestration**: PM consults with relevant Analysts and Technical agents to define scope.
+3.  **Implementation**: Developers and experts execute tasks in **Hyperfocused Mode**.
+4.  **Verification**: QA validates against requirements; PM ensures documentation sync.
+5.  **Persistence**: All work is logged in **`memory/`** and committed to **Git**.
+
+---
+> [!TIP]
+> **Reference Artifacts**
+> - [walkthrough.md](walkthrough.md): SAP Demo Data (GWSAMPLE_BASIC/EPM) Guide.
+> - [troubleshooting_guide.md](troubleshooting_guide.md): Gateway Maintenance Troubleshooting.
 
 ---
 *Maintained by the Harness Engineering Team | Last Updated: 2026-05-01*
