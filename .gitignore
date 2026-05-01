@@ -4,6 +4,8 @@
 cookies.txt
 .mcp.json
 *.mcp.json
+.vsp.json
+*.vsp.json
 
 # Local scratch
 .local/

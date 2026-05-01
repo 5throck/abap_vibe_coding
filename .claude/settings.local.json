@@ -11,7 +11,13 @@
       "Bash(rename \"C:\\\\git\\\\abap\\\\MEMORY.MD\" \"MEMORY.md\")",
       "Bash(git init *)",
       "Bash(git branch *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(powershell -Command *)",
+      "Bash(git credential *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(git check-ignore *)"
     ]
   },
   "enableAllProjectMcpServers": true,
