@@ -56,6 +56,10 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 
 ---
 > [!TIP]
+> **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (30–60 min).
+
+---
+> [!TIP]
 > **Reference Artifacts**
 > - [walkthrough.md](walkthrough.md): SAP Demo Data (GWSAMPLE_BASIC/EPM) Guide.
 > - [troubleshooting_guide.md](troubleshooting_guide.md): Gateway Maintenance Troubleshooting.
