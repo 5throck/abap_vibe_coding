@@ -33,10 +33,11 @@
 | Network | SAP system reachable via HTTP | Same network segment as SAP |
 
 > **Path convention used in this guide**:
-> - Windows: `C:\git\abap`
+> - Windows: `%USERPROFILE%\git\abap` (e.g. `C:\Users\john\git\abap`)
 > - macOS/Linux: `~/git/abap`
 >
-> Both are equivalent. Substitute your OS path wherever you see these throughout this document.
+> On Windows, `%USERPROFILE%` resolves to your home directory. In Git Bash you can use `~` as an equivalent shorthand.
+> Both platforms use the same relative structure — substitute your own username wherever `<your-username>` appears.
 
 ### 1-B. Accounts Required
 
@@ -123,7 +124,7 @@ No additional installation needed. Skip to [Section 3](#3-install-core-tools).
 ```
 https://git-scm.com/download/win
 ```
-Accept all defaults.
+Accept all defaults. This installs **Git Bash**, which supports `~` as your home directory shortcut and is used for all Windows shell commands in this guide.
 
 **macOS**:
 ```bash
@@ -225,16 +226,19 @@ pwsh --version
 
 ## 4. Clone the Repository
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
-# Create workspace directory
-mkdir C:\git
-cd C:\git
+# Create workspace directory under your home folder
+mkdir ~/git
+cd ~/git
 
 # Clone
 git clone https://github.com/<your-org>/abap_vibe_coding.git abap
 cd abap
 ```
+
+> **Windows tip**: `~/git` in Git Bash resolves to `%USERPROFILE%\git` (e.g. `C:\Users\john\git`).
+> You can verify with `echo $HOME`.
 
 **macOS/Linux**:
 ```bash
@@ -252,9 +256,9 @@ cd abap
 
 ### Resulting directory structure after clone
 
-**Windows** (`C:\git\abap\`):
+**Windows** (`%USERPROFILE%\git\abap\`):
 ```
-C:\git\abap\
+%USERPROFILE%\git\abap\
 ├── .claude\
 │   ├── settings.json          ← Claude Code permissions + hooks
 │   └── settings.local.json    ← Local extended permissions (create manually)
@@ -324,32 +328,32 @@ C:\git\abap\
 https://github.com/5throck/vsp/releases/latest
 ```
 
-**Windows**: Download `vsp_windows_amd64.exe`, then:
+**Windows** (Git Bash): Download `vsp_windows_amd64.exe`, then:
 ```bash
-mv vsp_windows_amd64.exe C:\git\abap\vsp.exe
+mv ~/Downloads/vsp_windows_amd64.exe ~/git/abap/vsp.exe
 ```
 
 **macOS (Apple Silicon)**:
 ```bash
-mv vsp_darwin_arm64 ~/git/abap/vsp
+mv ~/Downloads/vsp_darwin_arm64 ~/git/abap/vsp
 chmod +x ~/git/abap/vsp
 ```
 
 **macOS (Intel)**:
 ```bash
-mv vsp_darwin_amd64 ~/git/abap/vsp
+mv ~/Downloads/vsp_darwin_amd64 ~/git/abap/vsp
 chmod +x ~/git/abap/vsp
 ```
 
 **Linux**:
 ```bash
-mv vsp_linux_amd64 ~/git/abap/vsp
+mv ~/Downloads/vsp_linux_amd64 ~/git/abap/vsp
 chmod +x ~/git/abap/vsp
 ```
 
 ### 5-B. Create .env
 
-**Windows** — create `C:\git\abap\.env`
+**Windows** — create `%USERPROFILE%\git\abap\.env`
 
 **macOS/Linux** — create `~/git/abap/.env`
 
@@ -399,10 +403,10 @@ VSP_ALLOWED_PACKAGES=Z*,Y*,$TMP
 
 ### 5-C. Test vsp connection
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
-cd C:\git\abap
-.\vsp.exe system info
+cd ~/git/abap
+./vsp.exe system info
 ```
 
 **macOS/Linux**:
@@ -426,12 +430,15 @@ If you get an error, check:
 
 ### 5-D. Create .mcp.json
 
-**Windows** — create `C:\git\abap\.mcp.json`:
+**Windows** — create `%USERPROFILE%\git\abap\.mcp.json`:
+
+> JSON files do not expand `%USERPROFILE%`. Use the full path with your actual username (run `echo $USERNAME` in Git Bash to confirm).
+
 ```json
 {
   "mcpServers": {
     "abap": {
-      "command": "C:\\git\\abap\\vsp.exe",
+      "command": "C:\\Users\\<your-username>\\git\\abap\\vsp.exe",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -442,6 +449,8 @@ If you get an error, check:
   }
 }
 ```
+
+Replace `<your-username>` with your Windows username (e.g. `john`).
 
 **macOS/Linux** — create `~/git/abap/.mcp.json`:
 ```json
@@ -460,7 +469,7 @@ If you get an error, check:
 }
 ```
 
-Replace `<your-username>` with your macOS username (output of `whoami`). Alternatively use the absolute path from `pwd` when inside the repo directory.
+Replace `<your-username>` with your macOS username (output of `whoami`).
 
 > **Expert mode** (more tools, use for debugging or advanced operations):
 > Change `"VSP_MODE": "focused"` — gives access to 45 tools instead of 1.
@@ -482,7 +491,7 @@ The file is at `.claude/settings.json` in the repo — no action needed.
 
 This file grants additional permissions for your local machine. It is **not committed to git**.
 
-**Windows** — create `C:\git\abap\.claude\settings.local.json`:
+**Windows** — create `%USERPROFILE%\git\abap\.claude\settings.local.json`:
 
 ```json
 {
@@ -562,9 +571,9 @@ This file grants additional permissions for your local machine. It is **not comm
 
 ### 6-C. Verify Claude Code sees the MCP server
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
-cd C:\git\abap
+cd ~/git/abap
 claude
 ```
 
@@ -588,6 +597,7 @@ Connected MCP servers:
 
 If `abap` does not appear:
 - Confirm `.mcp.json` exists in the project root
+- Confirm the path in `.mcp.json` matches your actual username
 - Confirm the `vsp` binary is in the project root (and is executable on macOS/Linux)
 - Restart Claude Code
 
@@ -606,13 +616,15 @@ Expected: a table showing your SAP client(s).
 
 ### 7-A. Create .gemini/settings.json
 
-**Windows** — create `C:\git\abap\.gemini\settings.json`:
+**Windows** — create `%USERPROFILE%\git\abap\.gemini\settings.json`:
+
+> Replace `<your-username>` with your actual Windows username in the `command` and hook `command` fields.
 
 ```json
 {
   "mcpServers": {
     "abap": {
-      "command": "C:\\git\\abap\\vsp.exe",
+      "command": "C:\\Users\\<your-username>\\git\\abap\\vsp.exe",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -661,7 +673,7 @@ Expected: a table showing your SAP client(s).
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File C:\\git\\abap\\scripts\\git-sync.ps1"
+            "command": "powershell -ExecutionPolicy Bypass -File C:\\Users\\<your-username>\\git\\abap\\scripts\\git-sync.ps1"
           }
         ]
       }
@@ -673,6 +685,8 @@ Expected: a table showing your SAP client(s).
 ```
 
 **macOS/Linux** — create `~/git/abap/.gemini/settings.json`:
+
+> Replace `<your-username>` with your macOS username (output of `whoami`).
 
 ```json
 {
@@ -738,17 +752,11 @@ Expected: a table showing your SAP client(s).
 }
 ```
 
-Replace `<your-username>` with your macOS username. If you have PowerShell installed on macOS, you may also use `pwsh -File ~/git/abap/scripts/git-sync.ps1` as the hook command.
+If you have PowerShell installed on macOS, you may also use `pwsh -File ~/git/abap/scripts/git-sync.ps1` as the hook command.
 
 ### 7-B. Verify Gemini sees the MCP server
 
-**Windows**:
-```bash
-cd C:\git\abap
-gemini
-```
-
-**macOS/Linux**:
+**Both platforms** (from Git Bash / terminal):
 ```bash
 cd ~/git/abap
 gemini
@@ -777,15 +785,8 @@ ZADT_VSP is a SAP-side ABAP program that enables WebSocket-based debugging, RFC 
 
 ### 8-A. Install via Claude Code (Recommended)
 
-**Windows**:
 ```bash
-cd C:\git\abap
-claude
-```
-
-**macOS/Linux**:
-```bash
-cd ~/git/abap
+cd ~/git/abap   # Git Bash on Windows, or terminal on macOS
 claude
 ```
 
@@ -810,9 +811,9 @@ If automatic install fails (e.g., permissions issue):
 
 ### 8-C. Verify ZADT_VSP
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
-.\vsp.exe system info
+./vsp.exe system info
 ```
 
 **macOS/Linux**:
@@ -833,10 +834,10 @@ Run through this checklist in order. Each step depends on the previous.
 
 ### Checkpoint 1 — SAP Connection
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
-cd C:\git\abap
-.\vsp.exe system info
+cd ~/git/abap
+./vsp.exe system info
 ```
 
 **macOS/Linux**:
@@ -849,15 +850,8 @@ cd ~/git/abap
 
 ### Checkpoint 2 — MCP Server in Claude
 
-**Windows**:
 ```bash
-cd C:\git\abap
-claude
-```
-
-**macOS/Linux**:
-```bash
-cd ~/git/abap
+cd ~/git/abap   # Git Bash on Windows, or terminal on macOS
 claude
 ```
 
@@ -919,16 +913,16 @@ git log --oneline -3
 
 **Symptom**: `connection refused` or `401 Unauthorized`
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
 # 1. Check SAP is running
 curl http://vhcalnplci:50000/sap/bc/adt/
 
 # 2. Verify credentials
-type .env
+cat .env
 
 # 3. Check hosts file (NPL only)
-findstr vhcalnplci C:\Windows\System32\drivers\etc\hosts
+grep vhcalnplci /c/Windows/System32/drivers/etc/hosts
 
 # 4. Test with curl directly
 curl -u DEVELOPER:Down1oad http://vhcalnplci:50000/sap/bc/adt/
@@ -955,17 +949,17 @@ curl -u DEVELOPER:Down1oad http://vhcalnplci:50000/sap/bc/adt/
 
 **Symptom**: `/mcp` shows no servers or `abap` is missing
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
 # 1. Confirm .mcp.json exists and is valid JSON
-type .mcp.json
+cat .mcp.json
 
-# 2. Confirm you are in the project directory
-cd C:\git\abap
-claude
+# 2. Confirm you are in the project directory and vsp.exe runs
+cd ~/git/abap
+./vsp.exe --version
 
-# 3. Confirm vsp.exe is executable
-.\vsp.exe --version
+# 3. Verify the username in .mcp.json matches your actual username
+echo $USERNAME
 ```
 
 **macOS/Linux**:
@@ -973,13 +967,12 @@ claude
 # 1. Confirm .mcp.json exists and is valid JSON
 cat .mcp.json
 
-# 2. Confirm you are in the project directory
-cd ~/git/abap
-claude
-
-# 3. Confirm vsp is executable (must have +x)
+# 2. Confirm vsp is executable (must have +x)
 ls -l vsp
 ./vsp --version
+
+# 3. Verify the username in .mcp.json matches your actual username
+whoami
 ```
 
 ```
@@ -1004,16 +997,16 @@ ls -l vsp
 
 **Symptom**: No auto-commits after editing `.md` files
 
-**Windows**:
+**Windows** (PowerShell):
 ```powershell
-# 1. Test the script manually
-powershell -ExecutionPolicy Bypass -File C:\git\abap\scripts\git-sync.ps1
+# 1. Test the script manually (replace <your-username>)
+powershell -ExecutionPolicy Bypass -File $env:USERPROFILE\git\abap\scripts\git-sync.ps1
 
 # 2. Check PowerShell execution policy
 Get-ExecutionPolicy
 
 # 3. Verify hook config
-type .claude\settings.json
+cat .claude/settings.json
 
 # 4. Confirm git remote is configured
 git remote -v
@@ -1075,15 +1068,17 @@ Use this list when onboarding a new team member.
 
 ### Environment setup (member does this)
 
-- [ ] Install Git (`git --version`)
+- [ ] Install Git (`git --version`) — Windows: installs Git Bash
 - [ ] Install Node.js 18+ (`node --version`)
 - [ ] Install Claude Code (`claude --version`)
-- [ ] Clone the repository
-- [ ] Download `vsp` binary from releases page, place in repo root (add execute permission on macOS/Linux: `chmod +x vsp`)
+- [ ] Clone the repository into `~/git/abap`
+- [ ] Download `vsp` binary from releases page, place in repo root
+  - Windows: `~/git/abap/vsp.exe`
+  - macOS/Linux: `~/git/abap/vsp` + `chmod +x ~/git/abap/vsp`
 - [ ] Create `.env` with SAP credentials
-- [ ] Create `.mcp.json` (copy template from this guide §5-D for your OS)
-- [ ] Create `.claude/settings.local.json` (copy template from this guide §6-B for your OS)
-- [ ] Run `./vsp system info` (macOS: `./vsp`, Windows: `.\vsp.exe`) — confirm green output
+- [ ] Create `.mcp.json` using template from §5-D — **replace `<your-username>` with actual username**
+- [ ] Create `.claude/settings.local.json` using template from §6-B for your OS
+- [ ] Run `./vsp system info` (Windows: `./vsp.exe system info`) — confirm green output
 - [ ] Start `claude` in repo directory, run `/mcp` — confirm `abap` listed
 - [ ] Run Checkpoint 3–6 from Section 9
 
@@ -1134,26 +1129,26 @@ Change mode in `.mcp.json` `env.VSP_MODE` and `.env` `VSP_MODE`.
 
 ## Appendix C — Quick Command Reference
 
-**Windows**:
+**Windows** (Git Bash):
 ```bash
 # Start Claude Code in project
-cd C:\git\abap && claude
+cd ~/git/abap && claude
 
 # Check MCP server status (inside Claude session)
 /mcp
 
 # Check SAP connection
-.\vsp.exe system info
+./vsp.exe system info
 
-# Manual git sync
-powershell -File scripts\git-sync.ps1
+# Manual git sync (PowerShell)
+powershell -File scripts/git-sync.ps1
 
 # Run a quick SAP query (outside Claude)
-.\vsp.exe query "SELECT * FROM t000"
+./vsp.exe query "SELECT * FROM t000"
 
 # Show vsp help
-.\vsp.exe --help
-.\vsp.exe mcp --help
+./vsp.exe --help
+./vsp.exe mcp --help
 ```
 
 **macOS/Linux**:
@@ -1179,5 +1174,5 @@ bash scripts/git-sync.sh
 ```
 
 ---
-*Document version: 1.1 — 2026-05-01*
+*Document version: 1.2 — 2026-05-01*
 *Maintained by: VSP Harness Engineering Team*
