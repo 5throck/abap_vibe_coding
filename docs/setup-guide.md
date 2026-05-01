@@ -424,13 +424,14 @@ If you get an error, check:
 
 **Windows** — create `%USERPROFILE%\abap\.mcp.json`:
 
-> JSON files do not expand `%USERPROFILE%`. Use the full path with your actual username (run `echo $USERNAME` in Git Bash to confirm).
+> JSON files do not expand `%USERPROFILE%`. Use the full absolute path.
+> Run `echo $USERPROFILE` in Git Bash (or `$env:USERPROFILE` in PowerShell) to get your home directory path.
 
 ```json
 {
   "mcpServers": {
     "abap": {
-      "command": "C:\\Users\\<your-username>\\git\\abap\\vsp.exe",
+      "command": "C:\\Users\\<your-username>\\abap\\vsp.exe",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -443,6 +444,7 @@ If you get an error, check:
 ```
 
 Replace `<your-username>` with your Windows username (e.g. `john`).
+Full path example: `C:\\Users\\john\\abap\\vsp.exe`
 
 **macOS/Linux** — create `~/abap/.mcp.json`:
 ```json
@@ -472,12 +474,58 @@ Replace `<your-username>` with your macOS username (output of `whoami`).
 
 ### 6-A. Verify .claude/settings.json (already in repo)
 
-This file is committed and shared. It sets up:
-- **Read-only MCP tools auto-approved** (no prompt for GetSource, RunQuery, etc.)
-- **Write tools require approval** (EditSource, WriteSource prompt for confirmation)
-- **PostToolUse hooks** for automated git sync
+This file is committed and shared. Current content:
 
-The file is at `.claude/settings.json` in the repo — no action needed.
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_console_logs",
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_snapshot",
+      "mcp__Claude_Preview__preview_logs",
+      "mcp__Claude_Preview__preview_list",
+      "mcp__abap__GetSource",
+      "mcp__abap__SearchObject",
+      "mcp__abap__GrepObjects",
+      "mcp__abap__GrepPackages",
+      "mcp__abap__FindDefinition",
+      "mcp__abap__FindReferences",
+      "mcp__abap__GetTableContents",
+      "mcp__abap__RunQuery",
+      "mcp__abap__GetCDSDependencies",
+      "mcp__abap__SyntaxCheck",
+      "mcp__abap__RunUnitTests"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File <repo-root>\\scripts\\sync-md.ps1"
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File <repo-root>\\scripts\\git-sync.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+This sets up:
+- **Read-only MCP tools auto-approved** (GetSource, RunQuery, GrepPackages, etc.)
+- **Claude Preview tools auto-approved** (screenshot, snapshot, logs)
+- **PostToolUse hooks**: runs `sync-md.ps1` then `git-sync.ps1` after every Write/Edit
+
+> **`<repo-root>`** in the hook commands is replaced with your actual repo path when you commit this file to your machine. See §6-B for the per-developer path binding.
+
+No changes needed to this file — it is already in the repo.
 
 ### 6-B. Create .claude/settings.local.json (per-developer)
 
@@ -556,7 +604,7 @@ This file grants additional permissions for your local machine. It is **not comm
 }
 ```
 
-> **Note (macOS)**: The `"Bash(powershell -Command *)"` entry is omitted. The git-sync hook uses a bash script instead (see `scripts/git-sync.sh`).
+> **Note (macOS)**: `"Bash(powershell -Command *)"` is omitted — the git-sync hook uses `scripts/git-sync.sh` instead.
 
 > **Minimal setup (read-only first)**: Start with only the `mcp__abap__*` entries.
 > Add `WriteSource` and `EditSource` only after verifying the connection works.
@@ -610,13 +658,13 @@ Expected: a table showing your SAP client(s).
 
 **Windows** — create `%USERPROFILE%\abap\.gemini\settings.json`:
 
-> Replace `<your-username>` with your actual Windows username in the `command` and hook `command` fields.
+> Replace `<your-username>` with your actual Windows username (run `echo $USERNAME` in Git Bash).
 
 ```json
 {
   "mcpServers": {
     "abap": {
-      "command": "C:\\Users\\<your-username>\\git\\abap\\vsp.exe",
+      "command": "C:\\Users\\<your-username>\\abap\\vsp.exe",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -635,6 +683,11 @@ Expected: a table showing your SAP client(s).
   },
   "permissions": {
     "allow": [
+      "mcp__Claude_Preview__preview_console_logs",
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_snapshot",
+      "mcp__Claude_Preview__preview_logs",
+      "mcp__Claude_Preview__preview_list",
       "mcp__abap__GetSource",
       "mcp__abap__SearchObject",
       "mcp__abap__GrepObjects",
@@ -651,11 +704,23 @@ Expected: a table showing your SAP client(s).
       "mcp__abap__EditSource",
       "mcp__abap__GetConnectionInfo",
       "mcp__abap__GetSystemInfo",
+      "mcp__abap__RunReport",
+      "mcp__abap__InstallZADTVSP",
+      "mcp__abap__InstallAbapGit",
+      "mcp__abap__GetInactiveObjects",
+      "mcp__abap__GetPackage",
+      "Bash(git init *)",
+      "Bash(git branch *)",
       "Bash(git add *)",
       "Bash(git commit -m '*)",
+      "Bash(git remote *)",
       "Bash(git push *)",
+      "Bash(git credential *)",
+      "Bash(git check-ignore *)",
+      "Bash(powershell -Command *)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "hooks": {
@@ -665,7 +730,11 @@ Expected: a table showing your SAP client(s).
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File C:\\Users\\<your-username>\\git\\abap\\scripts\\git-sync.ps1"
+            "command": "powershell -ExecutionPolicy Bypass -File C:\\Users\\<your-username>\\abap\\scripts\\sync-md.ps1"
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:\\Users\\<your-username>\\abap\\scripts\\git-sync.ps1"
           }
         ]
       }
@@ -703,6 +772,11 @@ Expected: a table showing your SAP client(s).
   },
   "permissions": {
     "allow": [
+      "mcp__Claude_Preview__preview_console_logs",
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_snapshot",
+      "mcp__Claude_Preview__preview_logs",
+      "mcp__Claude_Preview__preview_list",
       "mcp__abap__GetSource",
       "mcp__abap__SearchObject",
       "mcp__abap__GrepObjects",
@@ -719,11 +793,22 @@ Expected: a table showing your SAP client(s).
       "mcp__abap__EditSource",
       "mcp__abap__GetConnectionInfo",
       "mcp__abap__GetSystemInfo",
+      "mcp__abap__RunReport",
+      "mcp__abap__InstallZADTVSP",
+      "mcp__abap__InstallAbapGit",
+      "mcp__abap__GetInactiveObjects",
+      "mcp__abap__GetPackage",
+      "Bash(git init *)",
+      "Bash(git branch *)",
       "Bash(git add *)",
       "Bash(git commit -m '*)",
+      "Bash(git remote *)",
       "Bash(git push *)",
+      "Bash(git credential *)",
+      "Bash(git check-ignore *)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "hooks": {
@@ -731,6 +816,10 @@ Expected: a table showing your SAP client(s).
       {
         "matcher": "Write|Edit",
         "hooks": [
+          {
+            "type": "command",
+            "command": "bash /Users/<your-username>/abap/scripts/sync-md.sh"
+          },
           {
             "type": "command",
             "command": "bash /Users/<your-username>/abap/scripts/git-sync.sh"
