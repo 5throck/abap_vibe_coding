@@ -1072,8 +1072,8 @@ whoami
 
 **Windows** (PowerShell):
 ```powershell
-# 1. Test the script manually (replace <your-username>)
-powershell -ExecutionPolicy Bypass -File $env:USERPROFILE\abap\scripts\git-sync.ps1
+# 1. Test the script manually (run from repo root)
+powershell -ExecutionPolicy Bypass -File scripts\git-sync.ps1
 
 # 2. Check PowerShell execution policy
 Get-ExecutionPolicy
