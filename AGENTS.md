@@ -23,109 +23,109 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 
 #### 2. 📦 SD Analyst (Sales & Distribution)
 
-- **Trigger keywords**: 판매오더, 납품, 청구, 출하, 가격조건, 견적, Sales Order, Delivery, Billing, Pricing, SD, VA*, VL*, VF*, VK*, VBAK, VBAP, LIKP, VBRK
+- **Trigger keywords**: Sales Order, Delivery, Billing, Shipping, Pricing, Quote, SD, VA*, VL*, VF*, VK*, VBAK, VBAP, LIKP, VBRK
 - **Context file**: [`contexts/sd-analyst.md`](contexts/sd-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`, `GrepPackages`
 - **Output Format**:
   ```
   ## SD Analysis
-  ### AS-IS (RunQuery 결과 포함)
+  ### AS-IS (Including RunQuery results)
   ### GAP
   ### TO-BE Requirements
   ### Acceptance Criteria
   - [ ] AC-01: ...
   ```
-- **Handoff**: AC 목록 → Architect, 핵심 테이블 목록 → DBA
+- **Handoff**: AC List → Architect, Key Table List → DBA
 
 ---
 
 #### 3. 🚛 LE Analyst (Logistics Execution)
 
-- **Trigger keywords**: 출하처리, 운송, 경로결정, 창고, WM, EWM, 핸들링유닛, Shipment, Route, Warehouse, LE, LT*, HU, VEKP, VEPO, VTTP, LIKP
+- **Trigger keywords**: Shipment Processing, Transport, Route Determination, Warehouse, WM, EWM, Handling Unit, Shipment, Route, Warehouse, LE, LT*, HU, VEKP, VEPO, VTTP, LIKP
 - **Context file**: [`contexts/le-analyst.md`](contexts/le-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
   ## LE Analysis
-  ### AS-IS (물류 흐름 + 테이블 조회 결과)
+  ### AS-IS (Logistics Flow + Table Query Results)
   ### GAP
   ### TO-BE Requirements
   ### Acceptance Criteria
   - [ ] AC-01: ...
   ```
-- **Handoff**: 물류 흐름 다이어그램 → Architect, 인터페이스 요건 → Interface Expert
+- **Handoff**: Logistics Flow Diagram → Architect, Interface Requirements → Interface Expert
 
 ---
 
 #### 4. 🏭 PP Analyst (Production Planning)
 
-- **Trigger keywords**: 생산오더, BOM, 공정, MRP, 용량계획, 자재소요량, Production Order, Routing, Work Center, PP, CO*, MAST, STKO, AFKO, PLKO
+- **Trigger keywords**: Production Order, BOM, Routing, MRP, Capacity Planning, Material Requirements, Production Order, Routing, Work Center, PP, CO*, MAST, STKO, AFKO, PLKO
 - **Context file**: [`contexts/pp-analyst.md`](contexts/pp-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
   ## PP Analysis
-  ### AS-IS (BOM/공정 구조 + 조회 결과)
+  ### AS-IS (BOM/Routing Structure + Query Results)
   ### GAP
   ### TO-BE Requirements
   ### Acceptance Criteria
   - [ ] AC-01: ...
   ```
-- **Handoff**: BOM/공정 구조 → Architect, MRP 로직 → DBA
+- **Handoff**: BOM/Routing Structure → Architect, MRP Logic → DBA
 
 ---
 
 #### 5. 🛒 MM Analyst (Materials Management)
 
-- **Trigger keywords**: 구매, 발주, 입고, 자재마스터, 재고, 검수, Purchase Order, Goods Receipt, Material Master, Inventory, MM, ME*, MARA, MARC, EKKO, EKPO, MKPF, MSEG
+- **Trigger keywords**: Purchasing, Order, Goods Receipt, Material Master, Inventory, Inspection, Purchase Order, Goods Receipt, Material Master, Inventory, MM, ME*, MARA, MARC, EKKO, EKPO, MKPF, MSEG
 - **Context file**: [`contexts/mm-analyst.md`](contexts/mm-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
   ## MM Analysis
-  ### AS-IS (구매/재고 프로세스 + 테이블 조회 결과)
+  ### AS-IS (Purchasing/Inventory Process + Table Query Results)
   ### GAP
   ### TO-BE Requirements
   ### Acceptance Criteria
   - [ ] AC-01: ...
   ```
-- **Handoff**: 자재 관련 테이블 구조 → DBA, 검증 시나리오 → QA Engineer
+- **Handoff**: Material-related Table Structure → DBA, Validation Scenario → QA Engineer
 
 ---
 
 #### 6. 💰 FI Analyst (Financial Accounting)
 
-- **Trigger keywords**: 전표, 계정, GL, AR, AP, 고정자산, 결산, 컴플라이언스, Journal Entry, Account, Fiscal Year, FI, FB*, F-*, BKPF, BSEG, ACDOCA, SKA1
+- **Trigger keywords**: Journal Entry, Account, GL, AR, AP, Fixed Asset, Settlement, Compliance, Journal Entry, Account, Fiscal Year, FI, FB*, F-*, BKPF, BSEG, ACDOCA, SKA1
 - **Context file**: [`contexts/fi-analyst.md`](contexts/fi-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
   ## FI Analysis
-  ### AS-IS (전기 흐름 + 계정 조회 결과)
+  ### AS-IS (Posting Flow + Account Query Results)
   ### GAP
   ### TO-BE Requirements
   ### Acceptance Criteria
   - [ ] AC-01: ...
   ```
-- **Handoff**: 계정 결정 로직 → Architect, 잔액 검증 쿼리 → DBA
+- **Handoff**: Account Determination Logic → Architect, Balance Verification Query → DBA
 
 ---
 
 #### 7. 📊 CO Analyst (Controlling)
 
-- **Trigger keywords**: 원가, 코스트센터, 내부오더, 수익성분석, CO-PA, 배부, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKP, COEP, COSP, CE1*
+- **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKP, COEP, COSP, CE1*
 - **Context file**: [`contexts/co-analyst.md`](contexts/co-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
   ## CO Analysis
-  ### AS-IS (원가 흐름 + CO-PA 특성값 조회 결과)
+  ### AS-IS (Cost Flow + CO-PA Characteristic Value Query Results)
   ### GAP
   ### TO-BE Requirements
   ### Acceptance Criteria
   - [ ] AC-01: ...
   ```
-- **Handoff**: 배부 로직 → Architect, CO-PA 매핑 테이블 → DBA
+- **Handoff**: Allocation Logic → Architect, CO-PA Mapping Table → DBA
 
 ---
 
