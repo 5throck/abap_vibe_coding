@@ -424,14 +424,11 @@ If you get an error, check:
 
 **Windows** — create `%USERPROFILE%\abap\.mcp.json`:
 
-> JSON files do not expand `%USERPROFILE%`. Use the full absolute path.
-> Run `echo $USERPROFILE` in Git Bash (or `$env:USERPROFILE` in PowerShell) to get your home directory path.
-
 ```json
 {
   "mcpServers": {
     "abap": {
-      "command": "C:\\Users\\<your-username>\\abap\\vsp.exe",
+      "command": "./vsp.exe",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -443,15 +440,12 @@ If you get an error, check:
 }
 ```
 
-Replace `<your-username>` with your Windows username (e.g. `john`).
-Full path example: `C:\\Users\\john\\abap\\vsp.exe`
-
 **macOS/Linux** — create `~/abap/.mcp.json`:
 ```json
 {
   "mcpServers": {
     "abap": {
-      "command": "/Users/<your-username>/abap/vsp",
+      "command": "./vsp",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -753,7 +747,7 @@ Expected: a table showing your SAP client(s).
 {
   "mcpServers": {
     "abap": {
-      "command": "/Users/<your-username>/abap/vsp",
+      "command": "./vsp",
       "args": [],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -818,11 +812,11 @@ Expected: a table showing your SAP client(s).
         "hooks": [
           {
             "type": "command",
-            "command": "bash /Users/<your-username>/abap/scripts/sync-md.sh"
+            "command": "bash scripts/sync-md.sh"
           },
           {
             "type": "command",
-            "command": "bash /Users/<your-username>/abap/scripts/git-sync.sh"
+            "command": "bash scripts/git-sync.sh"
           }
         ]
       }

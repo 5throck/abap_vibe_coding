@@ -29,7 +29,8 @@
       "Bash(grep -n \"git.abap\\\\|git\\\\\\\\\\\\\\\\abap\" docs/setup-guide.md)",
       "Bash(grep -n \"git.abap\\\\|git\\\\\\\\\\\\\\\\abap\\\\|~/git\\\\b\" docs/setup-guide.md)",
       "Bash(grep -n \"vsp.*MCP\\\\|MCP server\\\\|vsp is\\\\|vsp bridges\\\\|\\\\`vsp\\\\`\" docs/setup-guide.md)",
-      "Bash(grep -n \"git\\\\\\\\\\\\\\\\abap\\\\|git/abap\" docs/setup-guide.md)"
+      "Bash(grep -n \"git\\\\\\\\\\\\\\\\abap\\\\|git/abap\" docs/setup-guide.md)",
+      "Bash(grep -n \"your-username\\\\|C:\\\\\\\\\\\\\\\\Users\\\\|/Users/<your\" docs/setup-guide.md)"
     ]
   },
   "enableAllProjectMcpServers": true,
