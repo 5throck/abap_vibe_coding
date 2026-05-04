@@ -850,8 +850,8 @@ If the automated installation fails or shows syntax errors, apply these manual p
 - **Optional Services**: If `abapGit` or `AMDP` services are missing, comment out their instantiation in the `class_constructor` of `ZCL_VSP_APC_HANDLER`.
 
 ### 8-C. Finalize in SAP GUI
-1. **SAPC (APC 관리)**: Create application `ZADT_VSP` with handler class `ZCL_VSP_APC_HANDLER` (Stateful).
-2. **SICF (ICF 관리)**: Activate service node `/sap/bc/apc/sap/zadt_vsp`.
+1. **SAPC (APC Management)**: Create application `ZADT_VSP` with handler class `ZCL_VSP_APC_HANDLER` (Stateful).
+2. **SICF (ICF Management)**: Activate service node `/sap/bc/apc/sap/zadt_vsp`.
 
 ### 8-D. Verify ZADT_VSP
 **Windows** (Git Bash):
