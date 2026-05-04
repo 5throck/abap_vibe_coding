@@ -1,18 +1,24 @@
-# VSP Harness Engineering for ABAP
+# Harness Engineering for SAP ABAP
 
 ## Project Mission
-This project aims to revolutionize SAP ABAP development by establishing a **Harness Engineering** framework. It leverages AI agents and the **vsp** MCP server to automate and optimize the entire development lifecycle—from business requirements analysis to system deployment.
+This project aims to revolutionize SAP ABAP development by establishing a robust **Harness Engineering** framework. It leverages AI agents to automate, standardize, and optimize the entire development lifecycle—from business requirements analysis to system deployment.
+
+## Harness Engineering Concept
+
+**Harness Engineering** is a methodology where specialized AI agents collaborate within a strictly structured "harness" (environment). This approach ensures that AI-driven development is predictable, professional, and highly efficient. 
+
+Key principles of Harness Engineering include:
+- **Document-First Approach**: All architectural decisions, workflows, and business rules are documented before any code is written. 
+- **Role-Based Collaboration**: Tasks are delegated to specialized agents (PM, Analysts, Developers, Architects) operating under a unified governance model, much like a human software engineering team.
+- **Repository as a Brain**: While ABAP source code resides directly within the SAP system, this repository tracks the **intelligence, logic, and architectural framework** (the Harness) used by AI agents to manage the SAP environment.
 
 ## System Architecture & Operating Principles
 
-The system operates as a bridge between Modern AI interfaces and legacy SAP environments:
+The system operates as a bridge between modern AI interfaces and SAP environments:
 
-1.  **Agent Tier**: AI agents (Claude Code CLI, Antigravity, Gemini CLI) act as the "brain," orchestrating tasks based on predefined roles.
-2.  **MCP Tier (vsp)**: The **[vsp](https://github.com/oisee/vibing-steampunk)** server provides a standard protocol (Model Context Protocol) to expose SAP ADT (ABAP Development Tools) capabilities to AI.
-3.  **SAP Tier**: Interaction with SAP systems via REST APIs and WebSocket (ZADT_VSP) for stateful operations like debugging and RFC execution.
-
-### Harness Engineering Concept
-Harness Engineering is a methodology where specialized AI agents collaborate within a structured "harness" (environment). This project follows a **Document-First** approach. ABAP source code resides directly within the SAP system, while this repository tracks the **intelligence, logic, and architectural framework** (Harness) used by AI agents to manage the SAP environment.
+1.  **Agent Tier**: AI agents (Claude Code CLI, Antigravity, Gemini CLI) act as the "brain," orchestrating tasks based on predefined Harness roles.
+2.  **Protocol Tier**: Standardized protocols (such as Model Context Protocol) are used to safely expose SAP ADT (ABAP Development Tools) capabilities to the agents.
+3.  **SAP Tier**: Direct interaction with SAP systems via REST APIs and WebSockets for stateful operations like debugging, query execution, and object management.
 
 ## Agent Framework (AGENTS.md)
 
@@ -24,7 +30,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 
 ### 🛠️ Technical Group
 - **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
-- **💻 ABAP Developer**: Executes precision coding and refactoring via `vsp`.
+- **💻 ABAP Developer**: Executes precision coding and refactoring through the protocol layer.
 - **🔌 Interface Expert**: Manages OData, RFC, and external API integrations.
 - **🧪 QA Engineer**: Ensures stability through Unit Testing and debugging.
 - **🚀 DevOps/Admin**: Handles infrastructure and deployment.
@@ -47,7 +53,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
 | **`SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
 | **`MCP_USAGE.md`** | Technical reference for MCP tool usage, tool boundaries, and error handling. |
-| **`vsp.exe`** | [vsp](https://github.com/oisee/vibing-steampunk) — Go-native MCP server for SAP ADT integration. |
+| **`vsp.exe`** | The MCP server executable used for SAP ADT integration. |
 
 ## Operational Workflow (Harness Advanced Governance)
 
@@ -59,7 +65,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 
 ---
 > [!TIP]
-> **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (includes vsp, abapGit, and AI agent configuration).
+> **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (includes MCP connectivity, abapGit, and AI agent configuration).
 
 ---
 *Maintained by the Harness Engineering Team | Last Updated: 2026-05-04*

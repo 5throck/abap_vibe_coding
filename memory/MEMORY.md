@@ -29,6 +29,7 @@ Required fields per entry:
 
 | Date | Summary |
 |------|---------|
+| [2026-05-05](2026-05-05.md) | README.md update to enhance Harness Engineering concept and reduce VSP emphasis |
 | [2026-05-04](2026-05-04.md) | VSP WebSocket infrastructure & abapGit installation; NW 7.52 compatibility patches; Documentation standardization |
 | [2026-05-01](2026-05-01.md) | ZPROG_SBOOK_QUERY OO refactor; ZPROG_EPM_DEMO creation; ZADT_VSP 7.52 patches; hyperfocused mode config |
 | [2026-04-29](2026-04-29.md) | ZPROG_SBOOK_QUERY initial creation; MCP config bootstrap (env vars, global config) |
