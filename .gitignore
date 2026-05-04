@@ -10,6 +10,7 @@ cookies.txt
 
 # Local scratch
 .local/
+scratch/
 
 # Build output
 vsp
