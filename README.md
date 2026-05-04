@@ -39,8 +39,9 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`docs/task-template.md`** | Handoff template — copy to `scratch/` at task start; each agent fills their section. |
 | **`docs/testing-guidelines.md`**| QA standards for ABAP Unit and TEST-SEAMS. |
 | **`docs/subagents/`** | Subagent prompt templates: `sap-investigator`, `read-only-analyst`, `schema-inspector`. |
+| **`scripts/`** | Cross-platform automation: `vsp-task.*`, `vsp-sync.*`, `git-sync.*`. |
 | **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, output format, and handoff rules. |
-| **`CONTEXT.md`** | **Shared** project context for all AI tools: build, codebase map, ABAP rules, Harness workflow. |
+| **`CONTEXT.md`** | **Shared** project context for all AI tools: scripts, codebase map, ABAP rules, workflow. |
 | **`CLAUDE.md`** | Claude Code CLI-specific config: session start rules, MCP config note, hooks behavior. |
 | **`GEMINI.md`** | Gemini CLI-specific overrides (hyperfocused mode config, skill additions). |
 | **`SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
@@ -51,10 +52,10 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 ## Operational Workflow (Harness Advanced Governance)
 
 1.  **Triage (PM)** — Classify request type; identify package and affected objects.
-2.  **Agenda** — Gather context via `SearchObject`/`GrepPackages`; select agents; produce Implementation Plan before any write.
-3.  **Execution Design** — Define tool order and parallelism (read tasks parallel, write tasks serial).
-4.  **Parallel Execution** — Independent read/search tasks run as subagents; write operations remain serial to avoid lock conflicts.
-5.  **Sync & Report** — Append to `memory/YYYY-MM-DD.md`, manually commit to Git (auto-commits disabled), and report outcome with object URL and test results.
+2.  **Agenda** — Gather context; select agents; run `./scripts/vsp-task.sh` to initialize.
+3.  **Execution Design** — Define tool order (read tasks parallel, write tasks serial).
+4.  **Parallel Execution** — Independent read tasks run as subagents; write operations remain serial.
+5.  **Sync & Report** — Append to `memory/YYYY-MM-DD.md`, then run `./scripts/vsp-sync.sh` to commit.
 
 ---
 > [!TIP]

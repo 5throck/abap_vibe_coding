@@ -196,29 +196,15 @@ gemini auth login
 gemini --version
 ```
 
-### 3-D. PowerShell 7+ (for automation hooks)
+### 3-D. Automation Scripts (Bash & PowerShell)
 
-PowerShell 7+ is used by the git-sync hook in `.claude/settings.json`.
+This project uses automation scripts for task initialization and repository synchronization.
 
-**Windows**:
-```
-https://github.com/PowerShell/PowerShell/releases/latest
-```
-Download and install the `.msi` installer.
+- **Windows**: Requires **PowerShell 7+** (pwsh).
+  - Download: [PowerShell Releases](https://github.com/PowerShell/PowerShell/releases/latest)
+- **macOS/Linux**: Requires **Bash** (v4+) and standard utilities (`awk`, `sed`).
 
-**macOS**:
-```bash
-# Option 1: Homebrew
-brew install --cask powershell
-
-# Option 2: Direct download
-# https://github.com/PowerShell/PowerShell/releases/latest
-# Download the .pkg file for macOS
-```
-
-**Alternative for macOS (bash-only)**: If you prefer not to install PowerShell on macOS, you can replace the git-sync hook command in `.claude/settings.local.json` with a bash script (see §6-B).
-
-Verify (both platforms):
+Verify on Windows:
 ```bash
 pwsh --version
 # Expected: PowerShell 7.x.x
@@ -265,6 +251,10 @@ cd ~/abap
 ├── memory\                    ← Date-stamped development logs
 ├── scratch\                   ← Temporary ABAP files
 ├── scripts\
+│   ├── vsp-task.ps1           ← Initialize new tasks (Windows)
+│   ├── vsp-task.sh            ← Initialize new tasks (Bash)
+│   ├── vsp-sync.ps1           ← Sync memory & Git (Windows)
+│   ├── vsp-sync.sh            ← Sync memory & Git (Bash)
 │   ├── git-sync.ps1
 │   └── sync-md.ps1
 ├── .env                       ← SAP credentials (create manually — gitignored)
@@ -299,8 +289,11 @@ cd ~/abap
 ├── memory/                    ← Date-stamped development logs
 ├── scratch/                   ← Temporary ABAP files
 ├── scripts/
+│   ├── vsp-task.sh            ← Initialize new tasks
+│   ├── vsp-sync.sh            ← Sync memory & Git
+│   ├── git-sync.sh            ← bash alternative for macOS
 │   ├── git-sync.ps1
-│   └── git-sync.sh            ← bash alternative for macOS
+│   └── sync-md.ps1
 ├── .env                       ← SAP credentials (create manually — gitignored)
 ├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
