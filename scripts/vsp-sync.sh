@@ -29,8 +29,10 @@ if ! grep -q "\[$DATE\]($DATE.md)" "$INDEX_FILE"; then
     fi
     NEW_ENTRY="| [$DATE]($DATE.md) | $SUMMARY |"
     
-    # Insert after the header table (line 31 standard)
-    sed -i "/^|------|---------|$/a $NEW_ENTRY" "$INDEX_FILE"
+    # Insert after the header table
+    # Using a temporary file for maximum portability across MacOS/Linux sed
+    sed "/^|------|---------|$/a \\
+$NEW_ENTRY" "$INDEX_FILE" > "$INDEX_FILE.tmp" && mv "$INDEX_FILE.tmp" "$INDEX_FILE"
 fi
 
 # 3. Git Commit

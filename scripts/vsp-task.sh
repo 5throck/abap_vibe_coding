@@ -19,7 +19,8 @@ fi
 NEXT_SEQ=1
 EXISTING_FILES=$(ls "$SCRATCH_DIR"/task-"$DATE"-*.md 2>/dev/null)
 if [ -n "$EXISTING_FILES" ]; then
-    MAX_SEQ=$(echo "$EXISTING_FILES" | grep -oP "task-$DATE-\K\d+" | sort -n | tail -1)
+    # Portable extraction of the number part: task-YYYY-MM-DD-NNN.md -> NNN
+    MAX_SEQ=$(echo "$EXISTING_FILES" | awk -F"-" '{print $NF}' | sed 's/\.md//' | sort -n | tail -1)
     if [ -n "$MAX_SEQ" ]; then
         NEXT_SEQ=$((10#$MAX_SEQ + 1))
     fi
@@ -29,7 +30,7 @@ SEQ_STR=$(printf "%03d" $NEXT_SEQ)
 TARGET_FILE_NAME="task-$DATE-$SEQ_STR.md"
 TARGET_FILE_PATH="$SCRATCH_DIR/$TARGET_FILE_NAME"
 
-# Copy and update basic info
+# Copy and update basic info (using sed in a portable way)
 sed -e "s/<!-- date and time -->/$TIME/g" \
     -e "s/<!-- paste original user request verbatim -->/Request for: $NAME/g" \
     "$TEMPLATE_FILE" > "$TARGET_FILE_PATH"
