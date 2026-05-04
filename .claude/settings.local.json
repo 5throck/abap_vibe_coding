@@ -31,7 +31,20 @@
       "Bash(grep -n \"vsp.*MCP\\\\|MCP server\\\\|vsp is\\\\|vsp bridges\\\\|\\\\`vsp\\\\`\" docs/setup-guide.md)",
       "Bash(grep -n \"git\\\\\\\\\\\\\\\\abap\\\\|git/abap\" docs/setup-guide.md)",
       "Bash(grep -n \"your-username\\\\|C:\\\\\\\\\\\\\\\\Users\\\\|/Users/<your\" docs/setup-guide.md)",
-      "Bash(grep -n \"C:\\\\\\\\\\\\\\\\Users\\\\|your-username\\\\|C:\\\\\\\\\\\\\\\\git\\\\|C:/git\" docs/setup-guide.md)"
+      "Bash(grep -n \"C:\\\\\\\\\\\\\\\\Users\\\\|your-username\\\\|C:\\\\\\\\\\\\\\\\git\\\\|C:/git\" docs/setup-guide.md)",
+      "mcp__abap__CreateTable",
+      "Bash(gh api *)",
+      "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/src/abap\")",
+      "Bash(python -c \"import sys,json; [print\\(x['name']\\) for x in json.load\\(sys.stdin\\)]\")",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(x['name']\\) for x in data] if isinstance\\(data, list\\) else print\\(data\\)\")",
+      "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents\")",
+      "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/abap\")",
+      "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/abap/src\")",
+      "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/abap/src/zadt_vsp\")",
+      "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/embedded\")",
+      "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/embedded/abap\")",
+      "mcp__abap__Activate",
+      "mcp__abap__ActivatePackage"
     ]
   },
   "enableAllProjectMcpServers": true,

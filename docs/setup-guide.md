@@ -14,8 +14,8 @@
 5. [Configure vsp (MCP Server)](#5-configure-vsp-mcp-server)
 6. [Configure Claude Code](#6-configure-claude-code)
 7. [Configure Gemini CLI (Optional)](#7-configure-gemini-cli-optional)
-8. [Install ZADT_VSP on SAP (Optional)](#8-install-zadt_vsp-on-sap-optional)
-9. [Install abapGit on SAP (Optional)](#9-install-abapgit-on-sap-optional)
+8. [Install VSP WebSocket Infrastructure on SAP](#8-install-vsp-websocket-infrastructure-on-sap)
+9. [Install abapGit on SAP](#9-install-abapgit-on-sap)
 10. [Verify the Setup](#10-verify-the-setup)
 11. [Troubleshooting](#11-troubleshooting)
 12. [Team Onboarding Checklist](#12-team-onboarding-checklist)
@@ -833,46 +833,27 @@ Expected: `sap_execute` and abap-docs / sap-docs tools listed.
 
 ---
 
-## 8. Install ZADT_VSP on SAP (Optional)
+## 8. Install VSP WebSocket Infrastructure on SAP
 
-ZADT_VSP is a SAP-side ABAP program that enables WebSocket-based debugging, RFC execution, and RunReport. Without it, these features return a 403 error.
+The VSP WebSocket infrastructure enables advanced features like interactive debugging (TPDAPI), dynamic RFC execution, and background report monitoring.
 
-**Required for**:
-- `vsp debug` (WebSocket debugger)
-- `RunReport` (background program execution)
-- RFC calls via MCP
-
-**Not required for**:
-- `GetSource`, `EditSource`, `WriteSource`, `RunQuery` (standard ADT API)
-
-### 8-A. Install via Claude Code (Recommended)
-
+### 8-A. Automated Installation
+Inside a Claude or Gemini session:
 ```bash
-cd ~/abap   # Git Bash on Windows, or terminal on macOS
-claude
+Install VSP infrastructure to package $TMP
 ```
 
-Inside the Claude session:
-```
-Install ZADT_VSP on the SAP system
-```
+### 8-B. Compatibility Notes for NW 7.52 (NPL)
+If the automated installation fails or shows syntax errors, apply these manual patches:
+- **REGEX Compatibility**: NW 7.52 does not support `FIND PCRE`. All instances must be replaced with `FIND REGEX`.
+- **Dynamic Table Handling**: In `ZCL_VSP_RFC_SERVICE`, ensure field symbols for tables are typed as `ANY TABLE` to prevent "not an internal table" errors.
+- **Optional Services**: If `abapGit` or `AMDP` services are missing, comment out their instantiation in the `class_constructor` of `ZCL_VSP_APC_HANDLER`.
 
-Claude will call `mcp__abap__InstallZADTVSP` automatically.
+### 8-C. Finalize in SAP GUI
+1. **SAPC (APC 관리)**: Create application `ZADT_VSP` with handler class `ZCL_VSP_APC_HANDLER` (Stateful).
+2. **SICF (ICF 관리)**: Activate service node `/sap/bc/apc/sap/zadt_vsp`.
 
-### 8-B. Manual Installation
-
-If automatic install fails (e.g., permissions issue):
-
-1. Open SAP transaction `SE38`
-2. Create program `ZADT_VSP` in package `$TMP`
-3. Source code is available at:
-   ```
-   https://raw.githubusercontent.com/5throck/vsp/main/zadt_vsp/ZADT_VSP.abap
-   ```
-4. Activate and run once to verify
-
-### 8-C. Verify ZADT_VSP
-
+### 8-D. Verify ZADT_VSP
 **Windows** (Git Bash):
 ```bash
 ./vsp.exe system info
@@ -890,37 +871,20 @@ ZADT_VSP: installed (version x.x)
 
 ---
 
-## 9. Install abapGit on SAP (Optional)
+## 9. Install abapGit on SAP
 
-abapGit exists in 2 flavours: standalone version or developer version.
-- **Standalone version**: Targeted at users. You run it in transaction `SE38`.
-- **Developer version**: Targeted at developers contributing to the abapGit codebase. You run it with transaction `ZABAPGIT`. It supports parallel processing.
+abapGit is required for persistent version control and repository synchronization.
 
-> **Note**: There's also an SAP version of abapGit available that is part of SAP Business Technology Platform and SAP S/4HANA Cloud.
+### 9-A. Deployment Steps
+1. **Download**: Get the latest `zabapgit_standalone.prog.abap` from [abapGit.org](https://docs.abapgit.org/guide-install.html).
+2. **Rename**: Rename the report to `ZABAPGIT_STANDALONE` to avoid collisions.
+3. **Fix 7.52 Compatibility**: Remove all occurrences of `##REGEX_POSIX` pragmas (unsupported in 7.52).
+4. **Deploy**: Use `vsp deploy` or copy-paste into SE38.
 
-### 9-A. Install via Claude Code (Recommended)
-
-```bash
-cd ~/abap   # Git Bash on Windows, or terminal on macOS
-claude
-```
-
-Inside the Claude session:
-```
-Install abapGit on the SAP system
-```
-
-Claude will call `mcp__abap__InstallAbapGit` automatically.
-
-### 9-B. Manual Installation - Standalone Version
-
-1. Download the [ABAP code](https://raw.githubusercontent.com/abapGit/build/main/zabapgit_standalone.prog.abap) (right click -> save-as) to a file.
-2. Via `SE38`, `SE80`, or ADT, create a new report named `ZABAPGIT_STANDALONE`. (Note: Do not use the name `ZABAPGIT` if you plan to install the developer version).
-3. In source code change mode, upload the code from the file using Utilities -> More Utilities -> Upload/Download -> Upload.
-4. Activate the report.
-
-Typically, abapGit will only be used in the development system, so it can be installed in a local package (e.g. `$ABAPGIT`).
-Now you can use abapGit by executing the report `ZABAPGIT_STANDALONE` in transaction `SE38`.
+### 9-B. Developer License Block
+If you encounter "No development license for user DEVELOPER":
+1. Open SAP GUI -> Transaction **SOBJ**.
+2. Register the developer key (standard trial key is usually `29671483213171311350`).
 
 ### 9-C. Manual Installation - Developer Version
 
@@ -1030,83 +994,34 @@ git log --oneline -3
 
 **Symptom**: `connection refused` or `401 Unauthorized`
 
-**Windows** (Git Bash):
-```bash
-# 1. Check SAP is running
-curl http://vhcalnplci:50000/sap/bc/adt/
-
-# 2. Verify credentials
-cat .env
-
-# 3. Check hosts file (NPL only)
-grep vhcalnplci /c/Windows/System32/drivers/etc/hosts
-
-# 4. Test with curl directly
-curl -u DEVELOPER:<YOUR_PASSWORD> http://vhcalnplci:50000/sap/bc/adt/
-```
-
-**macOS/Linux**:
-```bash
-# 1. Check SAP is running
-curl http://vhcalnplci:50000/sap/bc/adt/
-
-# 2. Verify credentials
-cat .env
-
-# 3. Check hosts file (NPL only)
-grep vhcalnplci /etc/hosts
-
-# 4. Test with curl directly
-curl -u DEVELOPER:<YOUR_PASSWORD> http://vhcalnplci:50000/sap/bc/adt/
-```
+**Solutions**:
+- Verify SAP is running (`http://vhcalnplci:50000/sap/bc/adt/` in browser).
+- Verify credentials in `.env`.
+- For `wscat` 401 error: ensure the Base64 encoding of `USER:PASS` is correct.
+  ```powershell
+  [Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("USER:PASS"))
+  ```
 
 ---
 
-### Problem: MCP server not visible in Claude
+### Problem: ADT Lock conflict
 
-**Symptom**: `/mcp` shows no servers or `abap` is missing
+**Symptom**: `ExceptionResourceInvalidLockHandle`
 
-**Windows** (Git Bash):
-```bash
-# 1. Confirm .mcp.json exists and is valid JSON
-cat .mcp.json
-
-# 2. Confirm you are in the project directory and vsp.exe runs
-cd ~/abap
-./vsp.exe --version
-
-# 3. Verify the username in .mcp.json matches your actual username
-echo $USERNAME
-```
-
-**macOS/Linux**:
-```bash
-# 1. Confirm .mcp.json exists and is valid JSON
-cat .mcp.json
-
-# 2. Confirm vsp is executable (must have +x)
-ls -l vsp
-./vsp --version
-
-# 3. Verify the username in .mcp.json matches your actual username
-whoami
-```
-
-```
-# 4. Check Claude Code MCP logs (both platforms)
-# In Claude: type /mcp and look for error details
-```
+**Solution**:
+- Wait 60 seconds for the session to timeout.
+- Manually unlock the object in transaction **SM12**.
 
 ---
 
-### Problem: SyntaxCheck or WriteSource returns 403
+### Problem: Syntax Errors in NW 7.52 (NPL)
 
-**Symptom**: CSRF token errors or 403 Forbidden
+**Symptom**: `Field PCRE is unknown` or `Type ZADT_VSP... unknown`
 
 **Solutions**:
-- This is usually a session issue. Restart the Claude session.
-- If persistent: verify SAP user has `S_DEVELOP` authorization.
-- For ZADT_VSP features: verify ZADT_VSP is installed (Section 8).
+- **PCRE**: Replace all `FIND PCRE` with `FIND REGEX` in the source code.
+- **Pragmas**: Remove `##REGEX_POSIX` pragmas.
+- **Dynamic Tables**: Ensure field symbols for dynamic tables are typed as `ANY TABLE` before `LOOP AT`.
 
 ---
 
