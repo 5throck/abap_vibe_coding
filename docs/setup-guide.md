@@ -13,12 +13,13 @@
 4. [Clone the Repository](#4-clone-the-repository)
 5. [Configure vsp (MCP Server)](#5-configure-vsp-mcp-server)
 6. [Configure Claude Code](#6-configure-claude-code)
-7. [Configure Gemini CLI (Optional)](#7-configure-gemini-cli-optional)
-8. [Install VSP WebSocket Infrastructure on SAP](#8-install-vsp-websocket-infrastructure-on-sap)
-9. [Install abapGit on SAP](#9-install-abapgit-on-sap)
-10. [Verify the Setup](#10-verify-the-setup)
-11. [Troubleshooting](#11-troubleshooting)
-12. [Team Onboarding Checklist](#12-team-onboarding-checklist)
+7. [Configure Antigravity (Optional)](#7-configure-antigravity-optional)
+8. [Configure Gemini CLI (Optional)](#8-configure-gemini-cli-optional)
+9. [Install VSP WebSocket Infrastructure on SAP](#9-install-vsp-websocket-infrastructure-on-sap)
+10. [Install abapGit on SAP](#10-install-abapgit-on-sap)
+11. [Verify the Setup](#11-verify-the-setup)
+12. [Troubleshooting](#12-troubleshooting)
+13. [Team Onboarding Checklist](#13-team-onboarding-checklist)
 
 ---
 
@@ -45,7 +46,7 @@
 | Account | Purpose | Where to get |
 |---------|---------|--------------|
 | GitHub account | Clone/push repository | https://github.com |
-| Anthropic account | Claude Code CLI | https://claude.ai |
+| Anthropic account | Claude Code CLI + Antigravity extension | https://claude.ai |
 | Google account | Gemini CLI (optional) | https://gemini.google.com |
 | SAP user on target system | ADT connection | SAP Basis team or SAP trial |
 
@@ -186,7 +187,7 @@ claude --version
 
 ### 3-C. Gemini CLI (Optional)
 
-Only needed if you want to use Gemini as an AI agent alongside Claude.
+Only needed if you want to use Gemini as an AI agent alongside Claude Code and Antigravity.
 
 **Both platforms**:
 ```bash
@@ -267,17 +268,21 @@ cd ~/abap
 │   ├── git-sync.ps1
 │   └── sync-md.ps1
 ├── .env                       ← SAP credentials (create manually — gitignored)
-├── .mcp.json                  ← MCP server config (create manually — gitignored)
+├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
 ├── AGENTS.md
-├── CLAUDE.md
-├── GEMINI.md
+├── CLAUDE.md                  ← Claude Code CLI-specific config
+├── CONTEXT.md                 ← Shared project context (all AI tools)
+├── GEMINI.md                  ← Gemini CLI-specific overrides
 ├── MCP_USAGE.md
 ├── README.md
 ├── SECURITY.md
 ├── SKILL.md
 └── vsp.exe                    ← Download separately (gitignored)
 ```
+
+> **Antigravity MCP config** is stored in the user-level VS Code settings — not in this repo.
+> See [Section 7](#7-configure-antigravity-optional) for details.
 
 **macOS/Linux** (`~/abap/`):
 ```
@@ -297,11 +302,12 @@ cd ~/abap
 │   ├── git-sync.ps1
 │   └── git-sync.sh            ← bash alternative for macOS
 ├── .env                       ← SAP credentials (create manually — gitignored)
-├── .mcp.json                  ← MCP server config (create manually — gitignored)
+├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
 ├── AGENTS.md
-├── CLAUDE.md
-├── GEMINI.md
+├── CLAUDE.md                  ← Claude Code CLI-specific config
+├── CONTEXT.md                 ← Shared project context (all AI tools)
+├── GEMINI.md                  ← Gemini CLI-specific overrides
 ├── MCP_USAGE.md
 ├── README.md
 ├── SECURITY.md
@@ -430,12 +436,20 @@ If you get an error, check:
   "mcpServers": {
     "abap": {
       "command": "./vsp.exe",
-      "args": [],
+      "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP",
-        "VSP_FEATURE_ABAPGIT": "off"
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "VSP_FEATURE_ABAPGIT": "on"
       }
+    },
+    "abap-docs": {
+      "type": "http",
+      "url": "https://mcp-abap.marianzeis.de/mcp"
+    },
+    "sap-docs": {
+      "type": "http",
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
     }
   }
 }
@@ -447,19 +461,27 @@ If you get an error, check:
   "mcpServers": {
     "abap": {
       "command": "./vsp",
-      "args": [],
+      "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP",
-        "VSP_FEATURE_ABAPGIT": "off"
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "VSP_FEATURE_ABAPGIT": "on"
       }
+    },
+    "abap-docs": {
+      "type": "http",
+      "url": "https://mcp-abap.marianzeis.de/mcp"
+    },
+    "sap-docs": {
+      "type": "http",
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
     }
   }
 }
 ```
 
-Replace `<your-username>` with your macOS username (output of `whoami`).
-
+> **`abap-docs`**: ABAP keyword and API reference (marianzeis.de).
+> **`sap-docs`**: SAP Help Portal documentation search.
 > **Expert mode** (more tools, use for debugging or advanced operations):
 > Change `"VSP_MODE": "focused"` — gives access to 45 tools instead of 1.
 
@@ -490,7 +512,9 @@ This file is committed and shared. Current content:
       "mcp__abap__RunQuery",
       "mcp__abap__GetCDSDependencies",
       "mcp__abap__SyntaxCheck",
-      "mcp__abap__RunUnitTests"
+      "mcp__abap__RunUnitTests",
+      "mcp__abap-docs__*",
+      "mcp__sap-docs__*"
     ]
   },
   "hooks": {
@@ -511,6 +535,7 @@ This file is committed and shared. Current content:
 
 This sets up:
 - **Read-only MCP tools auto-approved** (GetSource, RunQuery, GrepPackages, etc.)
+- **`abap-docs` / `sap-docs` tools auto-approved** (wildcard covers all tools from each server)
 - **Claude Preview tools auto-approved** (screenshot, snapshot, logs)
 - **PostToolUse hooks**: runs `sync-md.ps1` after every Write/Edit
 
@@ -554,7 +579,9 @@ This file grants additional permissions for your local machine. It is **not comm
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "abap"
+    "abap",
+    "abap-docs",
+    "sap-docs"
   ]
 }
 ```
@@ -590,7 +617,9 @@ This file grants additional permissions for your local machine. It is **not comm
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "abap"
+    "abap",
+    "abap-docs",
+    "sap-docs"
   ]
 }
 ```
@@ -622,8 +651,9 @@ In the Claude session, run:
 Expected output:
 ```
 Connected MCP servers:
-  abap — vsp (hyperfocused mode)
-    Tools: sap_execute (1 tool)
+  abap      — vsp (hyperfocused mode) · 1 tool (sap_execute)
+  abap-docs — ABAP keyword & API reference · N tools
+  sap-docs  — SAP Help Portal search · N tools
 ```
 
 If `abap` does not appear:
@@ -643,9 +673,85 @@ Expected: a table showing your SAP client(s).
 
 ---
 
-## 7. Configure Gemini CLI (Optional)
+## 7. Configure Antigravity (Optional)
 
-### 7-A. Create .gemini/settings.json
+Antigravity is a VS Code-based editor that can connect to the same abap MCP server as Claude Code CLI. Unlike Claude Code CLI which uses the project-level `.mcp.json`, Antigravity reads MCP configuration from the **user-level settings file**.
+
+> **Why separate config?** `.mcp.json` uses a relative path (`./vsp.exe`) tied to the project working directory. Antigravity requires an absolute path in the user settings file.
+
+### 7-A. Add abap MCP server to Antigravity user settings
+
+Open the Antigravity user settings file:
+
+**Windows**: `%APPDATA%\Antigravity\User\settings.json`
+
+Add the following block (merge with existing content — do not replace the file):
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "abap": {
+        "type": "stdio",
+        "command": "C:\\<path-to-repo>\\vsp.exe",
+        "args": ["--mode", "hyperfocused"],
+        "env": {
+          "VSP_MODE": "hyperfocused",
+          "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+          "VSP_FEATURE_ABAPGIT": "on"
+        }
+      },
+      "abap-docs": {
+        "type": "http",
+        "url": "https://mcp-abap.marianzeis.de/mcp"
+      },
+      "sap-docs": {
+        "type": "http",
+        "url": "https://mcp-sap-docs.marianzeis.de/mcp"
+      }
+    }
+  }
+}
+```
+
+Replace `C:\\<path-to-repo>\\vsp.exe` with the absolute path to your local `vsp.exe`.
+
+**Example** (if repo is at `C:\git\abap`):
+```json
+"command": "C:\\git\\abap\\vsp.exe"
+```
+
+> **`abap-docs` / `sap-docs`** use HTTP transport — no path configuration needed.
+> **Sync warning**: If you move or rebuild `vsp.exe`, update **both** `.mcp.json` (for Claude Code CLI) and the Antigravity user settings independently.
+
+### 7-B. Verify Antigravity sees the MCP server
+
+1. Restart Antigravity after saving the settings file.
+2. Open the Chat panel (`Ctrl+Alt+I` or View → Chat).
+3. Look for the MCP server indicator — `abap` should appear as connected.
+4. Test with a prompt:
+   ```
+   Show me the SAP system info
+   ```
+
+Expected: SAP system details returned via the abap MCP server.
+
+### 7-C. Recommended usage split
+
+| Task | Use Claude Code CLI | Use Antigravity |
+|------|:-----------------:|:--------------:|
+| Multi-agent orchestration (PM workflow) | ✅ | ❌ |
+| ABAP object browse / edit | ⚠️ | ✅ |
+| MCP read / query only | ✅ | ✅ |
+| Git commit / PR | ✅ | ⚠️ |
+
+See `AGENTS.md § Tool Selection Rule` for the full decision guide.
+
+---
+
+## 8. Configure Gemini CLI (Optional)
+
+### 8-A. Create .gemini/settings.json
 
 **Windows** — create `%USERPROFILE%\abap\.gemini\settings.json`:
 
@@ -672,11 +778,6 @@ Expected: a table showing your SAP client(s).
   },
   "permissions": {
     "allow": [
-      "mcp__Claude_Preview__preview_console_logs",
-      "mcp__Claude_Preview__preview_screenshot",
-      "mcp__Claude_Preview__preview_snapshot",
-      "mcp__Claude_Preview__preview_logs",
-      "mcp__Claude_Preview__preview_list",
       "mcp__abap__GetSource",
       "mcp__abap__SearchObject",
       "mcp__abap__GrepObjects",
@@ -732,8 +833,6 @@ Expected: a table showing your SAP client(s).
 
 **macOS/Linux** — create `~/abap/.gemini/settings.json`:
 
-> Replace `<your-username>` with your macOS username (output of `whoami`).
-
 ```json
 {
   "mcpServers": {
@@ -757,11 +856,6 @@ Expected: a table showing your SAP client(s).
   },
   "permissions": {
     "allow": [
-      "mcp__Claude_Preview__preview_console_logs",
-      "mcp__Claude_Preview__preview_screenshot",
-      "mcp__Claude_Preview__preview_snapshot",
-      "mcp__Claude_Preview__preview_logs",
-      "mcp__Claude_Preview__preview_list",
       "mcp__abap__GetSource",
       "mcp__abap__SearchObject",
       "mcp__abap__GrepObjects",
@@ -814,9 +908,7 @@ Expected: a table showing your SAP client(s).
 }
 ```
 
-If you have PowerShell installed on macOS, you may also use `pwsh -File ~/abap/scripts/sync-md.ps1` as the hook command.
-
-### 7-B. Verify Gemini sees the MCP server
+### 8-B. Verify Gemini sees the MCP server
 
 **Both platforms** (from Git Bash / terminal):
 ```bash
@@ -831,29 +923,38 @@ What MCP tools are available?
 
 Expected: `sap_execute` and abap-docs / sap-docs tools listed.
 
+### 8-C. Recommended use cases for Gemini CLI
+
+Gemini CLI is preferred when:
+- **Web research** is required during development (`browser_subagent` native capability)
+- **Long-running background research** needs to be delegated without blocking the main session
+- Comparing with `abap-docs` / `sap-docs` MCP servers for SAP documentation lookups
+
+See `AGENTS.md § Tool Selection Rule` for the full decision guide.
+
 ---
 
-## 8. Install VSP WebSocket Infrastructure on SAP
+## 9. Install VSP WebSocket Infrastructure on SAP
 
 The VSP WebSocket infrastructure enables advanced features like interactive debugging (TPDAPI), dynamic RFC execution, and background report monitoring.
 
-### 8-A. Automated Installation
+### 9-A. Automated Installation
 Inside a Claude or Gemini session:
 ```bash
 Install VSP infrastructure to package $TMP
 ```
 
-### 8-B. Compatibility Notes for NW 7.52 (NPL)
+### 9-B. Compatibility Notes for NW 7.52 (NPL)
 If the automated installation fails or shows syntax errors, apply these manual patches:
 - **REGEX Compatibility**: NW 7.52 does not support `FIND PCRE`. All instances must be replaced with `FIND REGEX`.
 - **Dynamic Table Handling**: In `ZCL_VSP_RFC_SERVICE`, ensure field symbols for tables are typed as `ANY TABLE` to prevent "not an internal table" errors.
 - **Optional Services**: If `abapGit` or `AMDP` services are missing, comment out their instantiation in the `class_constructor` of `ZCL_VSP_APC_HANDLER`.
 
-### 8-C. Finalize in SAP GUI
+### 9-C. Finalize in SAP GUI
 1. **SAPC (APC Management)**: Create application `ZADT_VSP` with handler class `ZCL_VSP_APC_HANDLER` (Stateful).
 2. **SICF (ICF Management)**: Activate service node `/sap/bc/apc/sap/zadt_vsp`.
 
-### 8-D. Verify ZADT_VSP
+### 9-D. Verify ZADT_VSP
 **Windows** (Git Bash):
 ```bash
 ./vsp.exe system info
@@ -871,22 +972,22 @@ ZADT_VSP: installed (version x.x)
 
 ---
 
-## 9. Install abapGit on SAP
+## 10. Install abapGit on SAP
 
 abapGit is required for persistent version control and repository synchronization.
 
-### 9-A. Deployment Steps
+### 10-A. Deployment Steps
 1. **Download**: Get the latest `zabapgit_standalone.prog.abap` from [abapGit.org](https://docs.abapgit.org/guide-install.html).
 2. **Rename**: Rename the report to `ZABAPGIT_STANDALONE` to avoid collisions.
 3. **Fix 7.52 Compatibility**: Remove all occurrences of `##REGEX_POSIX` pragmas (unsupported in 7.52).
 4. **Deploy**: Use `vsp deploy` or copy-paste into SE38.
 
-### 9-B. Developer License Block
+### 10-B. Developer License Block
 If you encounter "No development license for user DEVELOPER":
 1. Open SAP GUI -> Transaction **SOBJ**.
 2. Register the developer key (standard trial key is usually `29671483213171311350`).
 
-### 9-C. Manual Installation - Developer Version
+### 10-C. Manual Installation - Developer Version
 
 In order to contribute to the abapGit project, you install the developer version. First, install the standalone version (see above).
 
@@ -909,7 +1010,7 @@ Transaction `ZABAPGIT` is now available to run the developer version.
 
 ---
 
-## 10. Verify the Setup
+## 11. Verify the Setup
 
 Run through this checklist in order. Each step depends on the previous.
 
@@ -988,7 +1089,7 @@ git log --oneline -3
 
 ---
 
-## 11. Troubleshooting
+## 12. Troubleshooting
 
 ### Problem: vsp cannot connect to SAP
 
@@ -1087,7 +1188,7 @@ ORDER BY field DESCENDING
 
 ---
 
-## 12. Team Onboarding Checklist
+## 13. Team Onboarding Checklist
 
 Use this list when onboarding a new team member.
 
@@ -1117,6 +1218,7 @@ Use this list when onboarding a new team member.
 ### First session orientation (30 min)
 
 - [ ] Read `README.md` — understand the Harness Engineering concept
+- [ ] Read `CONTEXT.md` — shared project context (build commands, codebase map, ABAP dev rules)
 - [ ] Read `AGENTS.md` — understand your role and available agents
 - [ ] Read `SKILL.md` — review tool boundaries and best practices
 - [ ] Read `MCP_USAGE.md` §Critical Limitations — especially ABAP SQL syntax
@@ -1126,8 +1228,9 @@ Use this list when onboarding a new team member.
 
 ### Optional (advanced)
 
-- [ ] Install Gemini CLI and configure `.gemini/settings.json` (§7)
-- [ ] Install ZADT_VSP for debugging capability (§8)
+- [ ] Install and configure Antigravity with abap MCP (§7)
+- [ ] Install Gemini CLI and configure `.gemini/settings.json` (§8)
+- [ ] Install ZADT_VSP for debugging capability (§9)
 - [ ] Review `docs/subagents/` — understand parallel dispatch patterns
 
 ---
@@ -1137,12 +1240,15 @@ Use this list when onboarding a new team member.
 | File | Committed | Purpose | Who creates |
 |------|:---------:|---------|-------------|
 | `.env` | ❌ | SAP credentials | Each developer |
-| `.mcp.json` | ❌ | MCP server path/config | Each developer |
+| `.mcp.json` | ❌ | MCP server config for Claude Code CLI (abap + abap-docs + sap-docs) | Each developer |
 | `.claude/settings.json` | ✅ | Shared permissions + hooks | Repo (already exists) |
 | `.claude/settings.local.json` | ❌ | Local extended permissions | Each developer |
-| `.gemini/settings.json` | ❌ | Gemini config | Each developer (optional) |
+| `.gemini/settings.json` | ❌ | Gemini CLI config (abap + abap-docs + sap-docs) | Each developer (optional) |
+| `%APPDATA%\Antigravity\User\settings.json` | ❌ (outside repo) | Antigravity MCP config (abap + abap-docs + sap-docs) | Each developer (optional) |
 | `vsp` / `vsp.exe` | ❌ | MCP server binary | Download from releases |
-| `CLAUDE.md` | ✅ | AI dev context | Repo (already exists) |
+| `CONTEXT.md` | ✅ | Shared project context for all AI tools | Repo (already exists) |
+| `CLAUDE.md` | ✅ | Claude Code CLI-specific config | Repo (already exists) |
+| `GEMINI.md` | ✅ | Gemini CLI-specific overrides | Repo (already exists) |
 | `AGENTS.md` | ✅ | Agent roles + dispatch protocol | Repo (already exists) |
 
 ---
@@ -1206,5 +1312,5 @@ bash scripts/git-sync.sh
 ```
 
 ---
-*Document version: 1.2 — 2026-05-01*
+*Document version: 1.5 — 2026-05-04*
 *Maintained by: VSP Harness Engineering Team*

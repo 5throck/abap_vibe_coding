@@ -9,7 +9,7 @@ This file defines the roles and responsibilities of each agent operating within 
 - **Responsibilities**:
     - **Initial Triage**: Receive and analyze all user requests first.
     - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
-    - **Consistency Check**: Ensure all changes are reflected across `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
+    - **Consistency Check**: Ensure all changes are reflected across `CONTEXT.md`, `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
     - **Deployment Oversight**: Verify that all work is committed to the Git repository.
 - **Key Tools**: `browser_subagent`, `memory/`, Project Dashboards.
 
@@ -257,8 +257,24 @@ Request received
 
 ---
 
+### 🖥️ Tool Selection Rule (Claude Code CLI vs Antigravity)
+
+Agents must choose the appropriate tool for each task type. Both tools share the same abap MCP server but differ in capability.
+
+| Task type | Claude Code CLI | Antigravity | Gemini CLI |
+|-----------|:--------------:|:-----------:|:----------:|
+| PM multi-agent dispatch | ✅ Plan mode + subagents | ❌ Worktree tools unavailable | ✅ browser_subagent |
+| Serial write chain (SyntaxCheck → EditSource → RunUnitTests) | ✅ Hook automation fires | ⚠️ Hook unverified | ✅ Supported |
+| ABAP object browse / edit | ⚠️ Terminal only | ✅ File explorer + diff view | ⚠️ Terminal only |
+| MCP read/query (GetSource, RunQuery, GrepObjects) | ✅ | ✅ Identical result | ✅ Identical result |
+| Git commit / PR | ✅ `commit-commands` skills | ⚠️ Extension terminal only | ✅ Bash tools |
+| Web research / browser subagent | ❌ | ❌ | ✅ Native capability |
+| Quick lookup / search | ✅ | ✅ Native search preferred | ✅ |
+
+**Rule**: Default to Claude Code CLI for orchestration. Use Antigravity for file-centric editing. Use Gemini CLI when web research or `browser_subagent` delegation is needed.
+
 ### 📜 Documentation Synchronization Rule
-- **Single Source of Truth**: `CLAUDE.md` holds all shared dev context. `GEMINI.md` contains Gemini-specific overrides only — do not mirror shared sections into it.
+- **Single Source of Truth**: `CONTEXT.md` holds all shared dev context (build, codebase, ABAP rules, Harness workflow). `CLAUDE.md` contains Claude Code-specific config. `GEMINI.md` contains Gemini CLI overrides.
 - **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.
 
 ### 📦 Git Reflection Rule
@@ -266,4 +282,4 @@ Request received
 - **Verification**: The PM agent verifies the repository status and memory file existence at the end of each major task.
 
 ---
-*Last Updated: 2026-05-01*
+*Last Updated: 2026-05-04*

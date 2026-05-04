@@ -4,8 +4,8 @@
 
 > This file contains **Gemini-specific overrides only**.
 > All shared dev context (build commands, codebase map, current priorities, common issues,
-> ABAP rules, security) lives in [CLAUDE.md](CLAUDE.md) and applies to Gemini sessions equally.
-> Read `CLAUDE.md` first, then apply the overrides below.
+> ABAP rules, security) lives in [CONTEXT.md](CONTEXT.md) and applies to all AI tool sessions equally.
+> Read `CONTEXT.md` first, then apply the overrides below.
 
 ---
 
@@ -22,7 +22,7 @@ vsp mcp --mode hyperfocused
 
 ### Settings File
 
-Gemini reads `.gemini/settings.json` in the project root. Confirm `mcpServers.vsp.args`
+Gemini reads `.gemini/settings.json` in the project root. Confirm `mcpServers.abap.args`
 contains `["--mode", "hyperfocused"]` before starting a session.
 
 ### Tool Usage in Hyperfocused Mode
@@ -50,19 +50,23 @@ The following capabilities extend those in [SKILL.md](SKILL.md):
 - **Advanced Diagnostics**: Use `vsp health` to validate architecture and
   `vsp slim` for context optimization before large read sessions.
 
+## Git Commit Policy
+
+**Auto-commits are disabled** per `CONTEXT.md § Harness Advanced Workflow`. The PM agent must run `git add -A && git commit` manually at the end of each task. The `PostToolUse` hook runs `sync-md.ps1` (currently a no-op placeholder) but does **not** auto-commit. Use Bash git commands directly for commits.
+
 ---
 
 ## Documentation Synchronization Rule
 
-`CLAUDE.md` is the **single source of truth** for shared content.
+`CONTEXT.md` is the **single source of truth** for shared content.
 
 | Change type | Action |
 |-------------|--------|
-| Shared content (build, codebase, priorities, issues) | Update `CLAUDE.md` only — no edit needed here |
+| Shared content (build, codebase, priorities, issues) | Update `CONTEXT.md` only — no edit needed here |
 | Gemini-specific config or skill | Update this file only |
-| Agent roles or workflow | Update `AGENTS.md`; reflect summary in `CLAUDE.md` |
+| Agent roles or workflow | Update `AGENTS.md`; reflect summary in `CONTEXT.md` |
 
-Do **not** copy shared sections from `CLAUDE.md` into this file.
+Do **not** copy shared sections from `CONTEXT.md` into this file.
 
 ---
-*Last Updated: 2026-05-01*
+*Last Updated: 2026-05-04*

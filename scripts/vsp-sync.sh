@@ -1,0 +1,51 @@
+#!/bin/bash
+# vsp-sync.sh
+# Usage: ./scripts/vsp-sync.sh "type: summary"
+# Syncs memory logs, updates index, and commits to Git.
+
+MESSAGE=$1
+DATE=$(date +%Y-%m-%d)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MEMORY_DIR="$SCRIPT_DIR/../memory"
+MEMORY_FILE="$MEMORY_DIR/$DATE.md"
+INDEX_FILE="$MEMORY_DIR/MEMORY.md"
+
+echo "--- VSP Sync & Report ---"
+
+# 1. Check for today's memory log
+if [ ! -f "$MEMORY_FILE" ]; then
+    echo "Warning: Memory log for today ($DATE.md) not found."
+    echo "Please create it before syncing to ensure development history is preserved."
+    exit 1
+fi
+
+# 2. Update MEMORY.md index if needed
+if ! grep -q "\[$DATE\]($DATE.md)" "$INDEX_FILE"; then
+    echo "Updating memory index..."
+    
+    SUMMARY="Development update"
+    if [[ $MESSAGE =~ :[[:space:]]*(.*) ]]; then
+        SUMMARY=${BASH_REMATCH[1]}
+    fi
+    NEW_ENTRY="| [$DATE]($DATE.md) | $SUMMARY |"
+    
+    # Insert after the header table (line 31 standard)
+    sed -i "/^|------|---------|$/a $NEW_ENTRY" "$INDEX_FILE"
+fi
+
+# 3. Git Commit
+if [ -z "$MESSAGE" ]; then
+    echo -n "Enter commit message (e.g., feat: add new report): "
+    read MESSAGE
+fi
+
+if [ -z "$MESSAGE" ]; then
+    echo "Error: Commit message is required."
+    exit 1
+fi
+
+echo "Committing to Git..."
+git add -A
+git commit -m "$MESSAGE"
+
+echo "Sync complete!"

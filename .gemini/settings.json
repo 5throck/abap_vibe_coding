@@ -49,6 +49,8 @@
       "mcp__abap__InstallAbapGit",
       "mcp__abap__GetInactiveObjects",
       "mcp__abap__GetPackage",
+      "mcp__abap-docs__*",
+      "mcp__sap-docs__*",
       "Bash(git init *)",
       "Bash(git branch *)",
       "Bash(git add *)",
@@ -71,10 +73,6 @@
           {
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File scripts/sync-md.ps1"
-          },
-          {
-            "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File scripts/git-sync.ps1"
           }
         ]
       }
@@ -82,6 +80,8 @@
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "abap"
+    "abap",
+    "abap-docs",
+    "sap-docs"
   ]
 }

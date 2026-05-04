@@ -44,7 +44,12 @@
       "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/embedded\")",
       "Bash(curl -s \"https://api.github.com/repos/oisee/vibing-steampunk/contents/embedded/abap\")",
       "mcp__abap__Activate",
-      "mcp__abap__ActivatePackage"
+      "mcp__abap__ActivatePackage",
+      "Bash(git -C /c/git/abap check-ignore -v .claude/settings.local.json .claude/settings.json .gemini/settings.json)",
+      "Bash(git -C /c/git/abap ls-files)",
+      "Bash(sed -n '89,93p' memory/2026-05-01.md)",
+      "Bash(python -c \"import json; d=json.load\\(open\\('.gemini/settings.json'\\)\\); perms=[p for p in d['permissions']['allow'] if 'abap-docs' in p or 'sap-docs' in p]; print\\(perms\\)\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('.gemini/settings.json'\\)\\); [print\\(h['command']\\) for hook in d['hooks']['PostToolUse'] for h in hook['hooks']]\")"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -115,6 +115,25 @@ SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
 | T004 | Chart of Accounts |
 | T043T | Payment Terms Text |
 | TZUN | Tax Code |
+| T001G | Company Code Groups |
+
+---
+
+## Strategic BAPIs & APIs
+
+### 1. Accounting Document Posting
+**BAPI**: `BAPI_ACC_DOCUMENT_POST`
+- `DOCUMENTHEADER`: `OBJ_TYPE`, `OBJ_KEY`, `BUS_ACT`, `USERNAME`, `HEADER_TXT`
+- `ACCOUNTGL`: `GL_ACCOUNT`, `ITEM_TEXT`, `AMT_DOCCUR`
+- `ACCOUNTRECEIVABLE`: `CUSTOMER`, `ITEM_TEXT`
+- `ACCOUNTPAYABLE`: `VENDOR`, `ITEM_TEXT`
+- `CURRENCYAMOUNT`: `CURRENCY`, `AMT_DOCCUR`
+
+### 2. Document Simulation
+**BAPI**: `BAPI_ACC_DOCUMENT_CHECK`
+- Identical interface to `POST`, used for validation before commit.
+
+---
 
 ---
 *Last Updated: 2026-05-01*

@@ -16,7 +16,9 @@
       "mcp__abap__RunQuery",
       "mcp__abap__GetCDSDependencies",
       "mcp__abap__SyntaxCheck",
-      "mcp__abap__RunUnitTests"
+      "mcp__abap__RunUnitTests",
+      "mcp__abap-docs__*",
+      "mcp__sap-docs__*"
     ]
   },
   "hooks": {

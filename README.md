@@ -7,7 +7,7 @@ This project aims to revolutionize SAP ABAP development by establishing a **Harn
 
 The system operates as a bridge between Modern AI interfaces and legacy SAP environments:
 
-1.  **Agent Tier**: AI agents (Claude Code, Gemini CLI) act as the "brain," orchestrating tasks based on predefined roles.
+1.  **Agent Tier**: AI agents (Claude Code CLI, Antigravity, Gemini CLI) act as the "brain," orchestrating tasks based on predefined roles.
 2.  **MCP Tier (vsp)**: The **[vsp](https://github.com/oisee/vibing-steampunk)** server provides a standard protocol (Model Context Protocol) to expose SAP ADT (ABAP Development Tools) capabilities to AI.
 3.  **SAP Tier**: Interaction with SAP systems via REST APIs and WebSocket (ZADT_VSP) for stateful operations like debugging and RFC execution.
 
@@ -40,8 +40,9 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`docs/testing-guidelines.md`**| QA standards for ABAP Unit and TEST-SEAMS. |
 | **`docs/subagents/`** | Subagent prompt templates: `sap-investigator`, `read-only-analyst`, `schema-inspector`. |
 | **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, output format, and handoff rules. |
-| **`CLAUDE.md`** | Primary AI dev context: build, codebase map, priorities, common issues, ABAP rules. |
-| **`GEMINI.md`** | Gemini-specific overrides only (hyperfocused mode config, skill additions). |
+| **`CONTEXT.md`** | **Shared** project context for all AI tools: build, codebase map, ABAP rules, Harness workflow. |
+| **`CLAUDE.md`** | Claude Code CLI-specific config: session start rules, MCP config note, hooks behavior. |
+| **`GEMINI.md`** | Gemini CLI-specific overrides (hyperfocused mode config, skill additions). |
 | **`SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
 | **`SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
 | **`MCP_USAGE.md`** | Technical reference for MCP tool usage, tool boundaries, and error handling. |
@@ -60,4 +61,4 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 > **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (includes vsp, abapGit, and AI agent configuration).
 
 ---
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-01*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-04*

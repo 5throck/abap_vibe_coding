@@ -104,6 +104,24 @@ SELECT kunnr, COUNT(*) AS order_cnt, SUM( netwr ) AS total_net
 | VKOA | Account Determination (FI Link) |
 | T685 | Pricing Condition Type Definition |
 | TVZA | Payment Terms |
+| VBUK | Sales Document Header Status (Legacy) |
+| VBUP | Sales Document Item Status (Legacy) |
+
+---
+
+## Strategic BAPIs & APIs
+
+### 1. Sales Order Creation
+**BAPI**: `BAPI_SALESORDER_CREATEFROMDAT2`
+- `ORDER_HEADER_IN`: `AUART` (Type), `VKORG` (Sales Org), `VTWEG` (Dist. Channel)
+- `ORDER_ITEMS_IN`: `MATERIAL`, `PLANT`, `TARGET_QUY`
+- `ORDER_PARTNERS`: `PARTN_ROLE` (`SP`=Sold-to, `SH`=Ship-to), `PARTN_NUMB`
+
+### 2. Delivery Management
+**BAPI**: `BAPI_OUTB_DELIVERY_CREATE_SLS`
+- Used to create delivery from sales order.
+
+---
 
 ---
 *Last Updated: 2026-05-01*

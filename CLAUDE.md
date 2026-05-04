@@ -1,16 +1,23 @@
 # CLAUDE.md
 
-**vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
+**Claude Code CLI** configuration for the vsp/SAP ABAP Harness Engineering project.
 
-> **Doc intent:** CLAUDE.md = dev context. README.md = user onboarding. reports/ = research/history. **contexts/ = module analyst deep-knowledge files.** **memory/ = ABAP development history (archived by date).** **SKILL.md = Agent technical guidelines & custom skills.**
+> **Doc intent:** This file is Claude Code-specific. Shared project context (build, codebase map, ABAP rules, Harness workflow) lives in [CONTEXT.md](CONTEXT.md). Agent roles live in [AGENTS.md](AGENTS.md). Per-session skills live in [SKILL.md](SKILL.md).
 
-## SKILL.md Rules
+---
 
-### When to read
-**You MUST read `SKILL.md` at the start of every session or before using any ABAP-related tools.** This file contains the primary technical guidelines, optimization settings, and custom skill definitions that take precedence over general knowledge.
+## Session Start
+
+**You MUST read `SKILL.md` at the start of every session or before using any ABAP-related tools.** It contains technical guidelines, optimization settings, and custom skill definitions that take precedence over general knowledge.
+
+Then read `CONTEXT.md` for shared project context (build commands, codebase map, ABAP dev rules).
+
+---
+
+## Memory Logging Rules
 
 ### When to write
-Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to the **current date's memory file in the `memory/` directory** (e.g., `memory/YYYY-MM-DD.md`).
+Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to the **current date's memory file** (`memory/YYYY-MM-DD.md`).
 
 Required entries:
 - **Object name, type, package, and ADT URL**
@@ -20,153 +27,63 @@ Required entries:
 - **MCP / config changes** (`.mcp.json`, `.vsp.json`, etc.)
 
 ### When to read
-**Do NOT read the memory files on every task or session start.**
-Only consult the relevant date's memory file in the `memory/` directory when a problem occurs — for example:
-- A recurring or hard-to-diagnose error
-- Uncertainty about a past design decision
+**Do NOT read memory files on every session start.** Only consult the relevant date's file when:
+- A recurring or hard-to-diagnose error occurs
+- Uncertain about a past design decision
 - Investigating why something was implemented a certain way
 
 ### Format
-All entries in the memory files must be written in English.
+All memory entries must be written in **English**.
 
-### Documentation Language Rule
+---
+
+## Documentation Language Rule
+
 **All `.md` files (including `SKILL.md`, `AGENTS.md`, `MEMORY.md`, etc.) must be written in English at all times.** This ensures global accessibility and consistency for all AI agents and human developers.
 
 ---
 
+## MCP Configuration (Claude Code CLI)
 
-## Build & Test
+Config file: `.mcp.json` (project root) — auto-loaded by Claude Code CLI.
 
-```bash
-go build -o vsp ./cmd/vsp              # Build
-go test ./...                           # Unit tests
-go test -tags=integration -v ./pkg/adt/ # Integration (needs SAP)
-make build-all                          # 9 platforms
-```
-
-Key flags: `--mode hyperfocused|focused|expert` (Note: `hyperfocused` is the standard mode for all AI agents), `--read-only`, `--allowed-packages "Z*"`, `--disabled-groups 5THD`
-
----
-
-## Codebase
-
-```
-cmd/vsp/              CLI entry + 28 commands
-internal/mcp/
-  handlers_*.go       Domain handlers (read, edit, debug, graph, ...)
-  tools_register.go   Registration + mode logic
-  tools_focused.go    Focused mode whitelist
-  handlers_universal.go  Hyperfocused single-tool (SAP)
-pkg/
-  adt/                ADT client (HTTP, CSRF, sessions, all SAP ops)
-  graph/              Dependency graph engine (in progress)
-  ctxcomp/            Context compression (dep resolution for read)
-  abaplint/           ABAP lexer + parser (91 statements, 8 lint rules)
-  dsl/                Fluent API, YAML workflows, batch ops
-  cache/              In-memory + SQLite
-  scripting/          Lua engine
-  llvm2abap/          LLVM→ABAP (research)
-  wasmcomp/           WASM→ABAP (research)
-```
-
-| Task | Files |
-|------|-------|
-| Add MCP tool | `tools_register.go` + `handlers_*.go` + `tools_focused.go` |
-| Add ADT operation | `pkg/adt/client.go`, `crud.go`, `devtools.go`, `codeintel.go` |
-| Add graph feature | `pkg/graph/` |
-| Add lint rule | `pkg/abaplint/rules.go` |
-| Add integration test | `pkg/adt/integration_test.go` |
-| Fix MCP/docs/config | `README.md`, `docs/cli-agents/*`, `handlers_universal.go` |
-| Add/update analyst context | `contexts/<module>-analyst.md` |
-| New task handoff | copy `docs/task-template.md` → `scratch/task-YYYY-MM-DD-NNN.md` |
-| Add/update subagent prompt | `docs/subagents/<role>.md` |
-
----
-
-## Adding a New MCP Tool
-
-1. Handler in `handlers_*.go`:
-```go
-func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-    name, _ := req.GetArguments()["name"].(string)
-    result, err := s.adtClient.Method(ctx, name)
-    if err != nil { return newToolResultError(err.Error()), nil }
-    return mcp.NewToolResultText(format(result)), nil
+```json
+{
+  "mcpServers": {
+    "abap": {
+      "command": "./vsp.exe",
+      "args": ["--mode", "hyperfocused"],
+      "env": {
+        "VSP_MODE": "hyperfocused",
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "VSP_FEATURE_ABAPGIT": "on"
+      }
+    }
+  }
 }
 ```
-2. Register in `tools_register.go` with `shouldRegister("X")`
-3. Route in `handlers_analysis.go` (or appropriate router)
-4. Add to `tools_focused.go` if needed in focused mode
+
+The relative path `./vsp.exe` works because Claude Code CLI resolves it against the project root.
 
 ---
 
-## Common Issues
+## Claude Code Settings
 
-1. **CSRF errors** — auto-refreshed in `http.go`
-2. **Lock conflicts** — edit handler does auto lock/unlock
-3. **Session issues** — some CRUD/debugger flows are session-sensitive; verify stateful/stateless before changing transport or auth logic
-4. **Auth** — use basic OR cookies, not both
-5. **ZADT_VSP** — WebSocket debug/RFC/RunReport require it installed on SAP
+- `.claude/settings.json` — shared team permissions (committed to repo)
+- `.claude/settings.local.json` — personal write permissions + git operations (gitignored)
 
-> Security and sanitization rules are in [SECURITY.md](SECURITY.md).
-
-## ABAP Development
-
-### System Info
-- System: NPL, Client: 001
-- Host: vhcalnplci:50000
-- ABAP Version: 7.52 (Verified via `vsp system info`)
-
-### Rules
-- Package: `$TMP` (no transport required)
-- Naming: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program)
-- Always run SyntaxCheck before WriteSource
-- Run RunUnitTests after logic changes (refer to `docs/testing-guidelines.md`)
-- Use EditSource for small changes
-
-### Workflow (Harness Advanced)
-
-**Trigger**: Any request that creates/modifies an ABAP object or requires multi-package analysis.
-
-1. **Triage (PM)** — Classify the request: ABAP dev / graph / debug / infra.
-   Identify the package (`$TMP` or named) and affected object types.
-
-2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (sap-investigator +
-   read-only-analyst + schema-inspector) in a **single message**. Load `contexts/<module>-analyst.md`
-   in the analyst subagent prompt. See `AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
-   Produce an Implementation Plan before any write operation.
-
-3. **Execution Design** — Define tool execution order and parallelism:
-   ```
-   [parallel] GrepPackages($TMP, "ZPROG_") + GetSource(CLAS, ZCL_TARGET)
-   [serial]   SyntaxCheck → EditSource → RunUnitTests
-   [serial]   memory log → git add → git commit
-   ```
-
-4. **Parallel Execution** — Independent read/search tasks run as subagents.
-   Write operations (EditSource, WriteSource) remain serial per object to avoid lock conflicts.
-
-5. **Sync & Report** — Finalize the task and commit:
-   a. Append to `memory/YYYY-MM-DD.md` (object name, type, package, ADT URL, decisions, issues).
-   b. **Crucial Step**: Run `git add -A && git commit -m "<type>: <summary>"`. (Auto-commits are disabled to reduce noise, so PM MUST do this manually at the end of the task).
-   c. Report outcome to user with object URL and test results.
+Both files are loaded automatically. `enableAllProjectMcpServers: true` is set in the local file to activate the abap MCP server.
 
 ---
 
-## Conventions
+---
 
-Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZCL_ADT_<name>`, packages `$ZADT*`.
+*Last Updated: 2026-05-04*
 
 ---
 
-## Areas Requiring Care
+## Hooks (Claude Code CLI only)
 
-| Area | Risk | Notes |
-|------|------|-------|
-| `pkg/graph/` | New, incomplete | Only parser adapter; SQL/ADT adapters pending |
-| `handlers_debugger.go` | WebSocket-only | REST breakpoints 403 on newer SAP; use ZADT_VSP |
-| `handlers_amdp.go` | Experimental | Session works, breakpoints unreliable |
-| `pkg/adt/ui5.go` | Read-only | Write needs `/UI5/CL_REPOSITORY_LOAD` |
-| `pkg/llvm2abap/`, `pkg/wasmcomp/` | Research | Not production; don't treat as stable |
-| `pkg/adt/debugger.go` (REST) | Deprecated | Prefer `websocket_debug.go` |
-| `docs/cli-agents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
+A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scripts/sync-md.ps1`. This hook is defined in `.claude/settings.json` and is **not active** in Gemini CLI or Antigravity sessions.
+
+> **Note**: `sync-md.ps1` is currently a no-op placeholder. It previously synced CLAUDE.md ↔ GEMINI.md when they shared content, but that pattern is obsolete since `CONTEXT.md` was introduced as the shared source of truth. The hook is retained for future doc-validation automation.

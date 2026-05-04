@@ -2,7 +2,7 @@
 
 Security policy and sanitization rules for the **vsp** repository.
 
-> For dev context, build instructions, and architecture see [CLAUDE.md](CLAUDE.md).
+> For dev context, build instructions, and architecture see [CONTEXT.md](CONTEXT.md).
 
 ---
 

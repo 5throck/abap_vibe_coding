@@ -111,6 +111,25 @@ SELECT matnr, bwkey, vprsv, verpr, stprs, peinh, laepr
 | T161 | Purchase Order Types |
 | T156 | Movement Types |
 | T157H | Movement Type Help Text |
+| T001L | Storage Locations |
+
+---
+
+## Strategic BAPIs & APIs
+
+### 1. Purchase Order Creation
+**BAPI**: `BAPI_PO_CREATE1`
+- `POHEADER`: `COMP_CODE`, `DOC_TYPE`, `VENDOR`, `PURCH_ORG`, `PUR_GROUP`
+- `POITEM`: `MATERIAL`, `PLANT`, `QUANTITY`, `NET_PRICE`
+- `POACCOUNT`: Used for account assignment (K, P, etc.)
+
+### 2. Goods Movement
+**BAPI**: `BAPI_GOODSMVT_CREATE`
+- `GOODSMVT_CODE`: `01` (PO), `02` (PR), `03` (Delivery)
+- `GOODSMVT_HEADER`: `PSTNG_DATE`, `DOC_DATE`
+- `GOODSMVT_ITEM`: `MATERIAL`, `PLANT`, `STGE_LOC`, `MOVE_TYPE`, `ENTRY_QNT`
+
+---
 
 ---
 *Last Updated: 2026-05-01*
