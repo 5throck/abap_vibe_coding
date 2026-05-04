@@ -2,11 +2,14 @@
   "mcpServers": {
     "abap": {
       "command": "./vsp.exe",
-      "args": [],
+      "args": [
+        "--mode",
+        "hyperfocused"
+      ],
       "env": {
         "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP",
-        "VSP_FEATURE_ABAPGIT": "off"
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "VSP_FEATURE_ABAPGIT": "on"
       }
     },
     "abap-docs": {

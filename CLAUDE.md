@@ -46,9 +46,14 @@ Sequence: unify existing dep logic → SQL/ADT adapters → impact/path queries.
 Plan: MCP debug sessions → DAP → Web UI. ADT REST API mapped from `CL_TPDA_ADT_RES_APP`. Design: [001](reports/2026-04-05-001-gui-debugger-design.md)
 
 ### 3. Open Issues
-- **#88** Lock handle bug (EditSource/WriteSource) — real user report
+- **#88** Lock handle bug (EditSource/WriteSource) — *Mitigated* (Workaround: Use direct `INSERT REPORT` via `vsp execute` confirmed working for NW 7.52).
 - **#55** RunReport in APC — architectural limit
 - **#46, #45** Sync script — low effort
+
+### 4. SFLIGHT Demo Application
+- **Status**: Completed.
+- **Objects**: `ZPROG_SFLIGHT_QUERY`.
+- **Features**: OO-ALV, Joins, Selection Screen with Data Dictionary integration.
 
 ---
 
@@ -132,7 +137,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 ### System Info
 - System: NPL, Client: 001
 - Host: vhcalnplci:50000
-- ABAP Version: 7.57
+- ABAP Version: 7.52 (Verified via `vsp system info`)
 
 ### Rules
 - Package: `$TMP` (no transport required)
