@@ -49,12 +49,6 @@ Plan: MCP debug sessions → DAP → Web UI. ADT REST API mapped from `CL_TPDA_A
 - **#88** Lock handle bug (EditSource/WriteSource) — *Mitigated* (Workaround: Use direct `INSERT REPORT` via `vsp execute` confirmed working for NW 7.52).
 - **#55** RunReport in APC — architectural limit
 - **#46, #45** Sync script — low effort
-
-### 4. SFLIGHT Demo Application
-- **Status**: Completed.
-- **Objects**: `ZPROG_SFLIGHT_QUERY`.
-- **Features**: OO-ALV, Joins, Selection Screen with Data Dictionary integration.
-
 ---
 
 ## Build & Test
