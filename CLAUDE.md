@@ -34,22 +34,6 @@ All entries in the memory files must be written in English.
 
 ---
 
-## Current Priorities
-
-### 1. Graph Engine (`pkg/graph/`) — In Progress
-Sequence: unify existing dep logic → SQL/ADT adapters → impact/path queries.
-- Done: core types, parser dep extraction, boundary analyzer (11 tests)
-- Pending: SQL adapters (CROSS/WBCROSSGT/D010INC), ADT adapters, unify `cli_deps.go` + `cli_extra.go` + `ctxcomp/analyzer.go`
-- Design: [002](reports/2026-04-05-002-graph-engine-design.md), [003](reports/2026-04-05-003-graph-engine-alignment-for-claude.md)
-
-### 2. GUI Debugger (Issue #2) — Strategic
-Plan: MCP debug sessions → DAP → Web UI. ADT REST API mapped from `CL_TPDA_ADT_RES_APP`. Design: [001](reports/2026-04-05-001-gui-debugger-design.md)
-
-### 3. Open Issues
-- **#88** Lock handle bug (EditSource/WriteSource) — *Mitigated* (Workaround: Use direct `INSERT REPORT` via `vsp execute` confirmed working for NW 7.52).
-- **#55** RunReport in APC — architectural limit
-- **#46, #45** Sync script — low effort
----
 
 ## Build & Test
 
