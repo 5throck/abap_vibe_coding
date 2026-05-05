@@ -35,7 +35,7 @@ Agent 1 — sap-investigator  (prompt: docs/subagents/sap-investigator.md)
 
 Agent 2 — read-only-analyst  (prompt: docs/subagents/read-only-analyst.md)
   Task: Query SAP tables for AS-IS data
-  Input: module=<SD|MM|FI|...>, context_file=contexts/<module>-analyst.md
+  Input: module=<SD|MM|FI|...>, context_file=docs/SAP ERP Module/<module>-analyst.md
   Queries to run:
     - <!-- AS-IS query 1 -->
     - <!-- AS-IS query 2 -->
@@ -55,7 +55,7 @@ Agent 3 — schema-inspector  (prompt: docs/subagents/schema-inspector.md)
 ## 1. Business Analysis
 
 **Agent**: <!-- e.g., SD Analyst -->
-**Context file loaded**: `contexts/<module>-analyst.md`
+**Context file loaded**: `docs/SAP ERP Module/<module>-analyst.md`
 
 ### AS-IS
 

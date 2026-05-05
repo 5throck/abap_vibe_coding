@@ -282,7 +282,7 @@ cd ~/abap
 │   └── settings.local.json    ← Local extended permissions (create manually)
 ├── .gemini/
 │   └── settings.json          ← Gemini CLI config (create manually)
-├── contexts/                  ← SAP module analyst deep-knowledge files
+├── docs/SAP ERP Module/      ← SAP module analyst deep-knowledge files
 ├── docs/
 │   ├── subagents/             ← Subagent prompt templates
 │   └── task-template.md
@@ -1312,7 +1312,7 @@ Use this list when onboarding a new team member.
 - [ ] Read `AGENTS.md` — understand your role and available agents
 - [ ] Read `SKILL.md` — review tool boundaries and best practices
 - [ ] Read `MCP_USAGE.md` §Critical Limitations — especially ABAP SQL syntax
-- [ ] Review `contexts/<your-module>-analyst.md` if you are a Business Analyst
+- [ ] Review `docs/SAP ERP Module/<your-module>-analyst.md` if you are a Business Analyst
 - [ ] Review `docs/task-template.md` — understand the handoff workflow
 - [ ] Do a test task: ask Claude to query `SFLIGHT` and explain the result
 

@@ -17,14 +17,14 @@ This file defines the roles and responsibilities of each agent operating within 
 
 Each analyst activates on matching trigger keywords, queries the SAP system directly via
 read-only MCP tools, produces a structured PRD/AC output, and hands off to the Technical Group.
-Load the matching `contexts/<module>-analyst.md` file at activation for deep domain knowledge.
+Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation for deep domain knowledge.
 
 ---
 
 #### 2. 📦 SD Analyst (Sales & Distribution)
 
 - **Trigger keywords**: Sales Order, Delivery, Billing, Shipping, Pricing, Quote, SD, VA*, VL*, VF*, VK*, VBAK, VBAP, LIKP, VBRK
-- **Context file**: [`contexts/sd-analyst.md`](contexts/sd-analyst.md)
+- **Context file**: [`docs/SAP ERP Module/sd-analyst.md`](docs/SAP%20ERP%20Module/sd-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`, `GrepPackages`
 - **Output Format**:
   ```
@@ -42,7 +42,7 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 #### 3. 🚛 LE Analyst (Logistics Execution)
 
 - **Trigger keywords**: Shipment Processing, Transport, Route Determination, Warehouse, WM, EWM, Handling Unit, Shipment, Route, Warehouse, LE, LT*, HU, VEKP, VEPO, VTTP, LIKP
-- **Context file**: [`contexts/le-analyst.md`](contexts/le-analyst.md)
+- **Context file**: [`docs/SAP ERP Module/le-analyst.md`](docs/SAP%20ERP%20Module/le-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -60,7 +60,7 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 #### 4. 🏭 PP Analyst (Production Planning)
 
 - **Trigger keywords**: Production Order, BOM, Routing, MRP, Capacity Planning, Material Requirements, Production Order, Routing, Work Center, PP, CO*, MAST, STKO, AFKO, PLKO
-- **Context file**: [`contexts/pp-analyst.md`](contexts/pp-analyst.md)
+- **Context file**: [`docs/SAP ERP Module/pp-analyst.md`](docs/SAP%20ERP%20Module/pp-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -78,7 +78,7 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 #### 5. 🛒 MM Analyst (Materials Management)
 
 - **Trigger keywords**: Purchasing, Order, Goods Receipt, Material Master, Inventory, Inspection, Purchase Order, Goods Receipt, Material Master, Inventory, MM, ME*, MARA, MARC, EKKO, EKPO, MKPF, MSEG
-- **Context file**: [`contexts/mm-analyst.md`](contexts/mm-analyst.md)
+- **Context file**: [`docs/SAP ERP Module/mm-analyst.md`](docs/SAP%20ERP%20Module/mm-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -96,7 +96,7 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 #### 6. 💰 FI Analyst (Financial Accounting)
 
 - **Trigger keywords**: Journal Entry, Account, GL, AR, AP, Fixed Asset, Settlement, Compliance, Journal Entry, Account, Fiscal Year, FI, FB*, F-*, BKPF, BSEG, ACDOCA, SKA1
-- **Context file**: [`contexts/fi-analyst.md`](contexts/fi-analyst.md)
+- **Context file**: [`docs/SAP ERP Module/fi-analyst.md`](docs/SAP%20ERP%20Module/fi-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -114,7 +114,7 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 #### 7. 📊 CO Analyst (Controlling)
 
 - **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKP, COEP, COSP, CE1*
-- **Context file**: [`contexts/co-analyst.md`](contexts/co-analyst.md)
+- **Context file**: [`docs/SAP ERP Module/co-analyst.md`](docs/SAP%20ERP%20Module/co-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -245,7 +245,7 @@ Request received
 2. **No write delegation** — `EditSource`, `WriteSource`, `SyntaxCheck` are always executed by PM directly.
 3. **Merge before proceeding** — PM waits for ALL parallel subagents to return before moving to the next serial step.
 4. **Error handling** — if any parallel subagent fails, PM resolves the failure before proceeding. Do not skip.
-5. **Context passing** — PM includes the relevant `contexts/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
+5. **Context passing** — PM includes the relevant `docs/SAP ERP Module/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
 
 #### Typical Dispatch Sequences by Task Type
 

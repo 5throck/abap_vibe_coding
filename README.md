@@ -26,7 +26,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 
 ### 🏢 Business Group
 - **👑 Global PM**: The **single point of entry** for all requests. Orchestrates agents and ensures doc/git consistency.
-- **📦 Functional Analysts (SD, LE, PP, MM, FI, CO)**: Activate on trigger keywords, query SAP directly via read-only MCP tools, produce structured PRDs with Acceptance Criteria, and hand off to the Technical Group. Each analyst loads a dedicated `contexts/<module>-analyst.md` for deep domain knowledge.
+- **📦 Functional Analysts (SD, LE, PP, MM, FI, CO)**: Activate on trigger keywords, query SAP directly via read-only MCP tools, produce structured PRDs with Acceptance Criteria, and hand off to the Technical Group. Each analyst loads a dedicated `docs/SAP ERP Module/<module>-analyst.md` for deep domain knowledge.
 
 ### 🛠️ Technical Group
 - **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
@@ -41,7 +41,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | Directory/File | Purpose |
 | :--- | :--- |
 | **`memory/`** | Date-based development history. See `memory/MEMORY.md` for the index. |
-| **`contexts/`** | Module analyst deep-knowledge files (sd, le, pp, mm, fi, co). Loaded at agent activation. |
+| **`docs/SAP ERP Module/`** | Module analyst deep-knowledge files (sd, le, pp, mm, fi, co). Loaded at agent activation. |
 | **`docs/task-template.md`** | Handoff template — copy to `scratch/` at task start; each agent fills their section. |
 | **`docs/testing-guidelines.md`**| QA standards for ABAP Unit and TEST-SEAMS. |
 | **`docs/subagents/`** | Subagent prompt templates: `sap-investigator`, `read-only-analyst`, `schema-inspector`. |

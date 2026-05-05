@@ -8,7 +8,7 @@
 > Agent roles and orchestration rules live in `AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `SKILL.md`.
 > ABAP development history (date-archived) lives in `memory/`.
-> Module analyst deep-knowledge files live in `contexts/`.
+> Module analyst deep-knowledge files live in `docs/SAP ERP Module/`.
 
 ---
 
@@ -54,7 +54,7 @@ pkg/
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
 | Fix MCP/docs/config | `README.md`, `docs/cli-agents/*`, `handlers_universal.go` |
-| Add/update analyst context | `contexts/<module>-analyst.md` |
+| Add/update analyst context | `docs/SAP ERP Module/<module>-analyst.md` |
 | New task handoff | copy `docs/task-template.md` → `scratch/task-YYYY-MM-DD-NNN.md` |
 | Add/update subagent prompt | `docs/subagents/<role>.md` |
 
@@ -113,7 +113,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
    Identify the package (`$TMP` or named) and affected object types.
 
 2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (sap-investigator +
-   read-only-analyst + schema-inspector) in a **single message**. Load `contexts/<module>-analyst.md`
+   read-only-analyst + schema-inspector) in a **single message**. Load `docs/SAP ERP Module/<module>-analyst.md`
    in the analyst subagent prompt. Use `sap:bapi-explorer` to identify necessary standard APIs.
    See `AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
    Produce an Implementation Plan before any write operation.

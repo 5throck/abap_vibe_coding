@@ -25,7 +25,7 @@ You will receive a JSON block at the start of your task:
 {
   "task": "<business question to answer>",
   "module": "SD|LE|PP|MM|FI|CO",
-  "context_file": "contexts/<module>-analyst.md",   // load this for domain knowledge
+  "context_file": "docs/SAP ERP Module/<module>-analyst.md",   // load this for domain knowledge
   "queries": [
     {
       "purpose": "<what this query answers>",
@@ -43,7 +43,7 @@ Return a structured report in this exact format:
 
 **Module**: <SD|LE|PP|MM|FI|CO>
 **Task**: <restate the task>
-**Context loaded**: contexts/<module>-analyst.md
+**Context loaded**: docs/SAP ERP Module/<module>-analyst.md
 
 #### Query Results
 
@@ -99,7 +99,7 @@ Input:
 {
   "task": "Analyze undelivered sales orders in the current month to identify bottlenecks",
   "module": "SD",
-  "context_file": "contexts/sd-analyst.md",
+  "context_file": "docs/SAP ERP Module/sd-analyst.md",
   "queries": [
     {
       "purpose": "Count undelivered orders by customer",
