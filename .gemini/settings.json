@@ -31,6 +31,7 @@
       "mcp__Claude_Preview__preview_snapshot",
       "mcp__Claude_Preview__preview_logs",
       "mcp__Claude_Preview__preview_list",
+      "mcp__abap__sap_execute",
       "mcp__abap__GetSource",
       "mcp__abap__SearchObject",
       "mcp__abap__GrepObjects",
@@ -80,7 +81,7 @@
     ]
   },
   "hooks": {
-    "PostToolUse": [
+    "AfterTool": [
       {
         "matcher": "Write|Edit",
         "hooks": [

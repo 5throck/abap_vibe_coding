@@ -908,7 +908,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
     ]
   },
   "hooks": {
-    "PostToolUse": [
+    "AfterTool": [
       {
         "matcher": "Write|Edit",
         "hooks": [
@@ -986,7 +986,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
     ]
   },
   "hooks": {
-    "PostToolUse": [
+    "AfterTool": [
       {
         "matcher": "Write|Edit",
         "hooks": [

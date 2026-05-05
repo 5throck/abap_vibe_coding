@@ -117,7 +117,7 @@ A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scr
 |-------------|:-----------:|-------|
 | Claude Code CLI | ✅ | Automatic on every WriteSource/EditSource |
 | Claude Code Desktop App | ❌ | Known issue — run Post-Write chain manually |
-| Gemini CLI | ✅ | Same hook defined in `.gemini/settings.json` |
+| Gemini CLI | ✅ | Same hook (AfterTool) defined in `.gemini/settings.json` |
 | Antigravity | ❌ | No hook support in VS Code extension |
 
 `sync-md.sh` detects the platform (Windows vs Unix) and delegates to `vsp-audit.ps1` or `vsp-audit.sh` to perform an immediate documentation and path audit after every edit. This ensures cross-platform integrity is maintained in real-time.

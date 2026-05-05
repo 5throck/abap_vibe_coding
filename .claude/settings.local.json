@@ -24,7 +24,8 @@
       "Bash(cat)",
       "Bash(bash /tmp/validation.sh)",
       "Bash(bash /tmp/tool_diff.sh)",
-      "Bash(bash /tmp/final_audit.sh)"
+      "Bash(bash /tmp/final_audit.sh)",
+      "mcp__abap__SAP"
     ]
   },
   "enableAllProjectMcpServers": true,
