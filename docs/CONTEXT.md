@@ -3,12 +3,12 @@
 **vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
 > **Shared reference for all AI tools**: Claude Code CLI, Claude Code Desktop App, Gemini CLI, and Antigravity.
-> Tool-specific overrides live in `CLAUDE.md` (Claude Code CLI + Desktop App), `GEMINI.md` (Gemini CLI).
+> Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../GEMINI.md` (Gemini CLI).
 > Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire — run Post-Write chain manually.
-> Agent roles and orchestration rules live in `AGENTS.md`.
+> Agent roles and orchestration rules live in `../AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `SKILL.md`.
-> ABAP development history (date-archived) lives in `memory/`.
-> Module analyst deep-knowledge files live in `docs/SAP ERP Module/`.
+> ABAP development history (date-archived) lives in `../memory/`.
+> Module analyst deep-knowledge files live in `SAP ERP Module/`.
 
 ---
 
@@ -53,10 +53,10 @@ pkg/
 | Add graph feature | `pkg/graph/` |
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
-| Fix MCP/docs/config | `README.md`, `docs/cli-agents/*`, `handlers_universal.go` |
-| Add/update analyst context | `docs/SAP ERP Module/<module>-analyst.md` |
-| New task handoff | copy `docs/task-template.md` → `scratch/task-YYYY-MM-DD-NNN.md` |
-| Add/update subagent prompt | `docs/subagents/<role>.md` |
+| Fix MCP/docs/config | `../README.md`, `cli-agents/*`, `handlers_universal.go` |
+| Add/update analyst context | `SAP ERP Module/<module>-analyst.md` |
+| New task handoff | copy `task-template.md` → `../scratch/task-YYYY-MM-DD-NNN.md` |
+| Add/update subagent prompt | `subagents/<role>.md` |
 
 ---
 
@@ -114,31 +114,31 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
    Identify the package (`$TMP` or named) and affected object types.
 
 2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (sap-investigator +
-   read-only-analyst + schema-inspector) in a **single message**. Load `docs/SAP ERP Module/<module>-analyst.md`
+   read-only-analyst + schema-inspector) in a **single message**. Load `SAP ERP Module/<module>-analyst.md`
    in the analyst subagent prompt. Use `sap:bapi-explorer` to identify necessary standard APIs.
-   See `AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
+   See `../AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
    Produce an Implementation Plan before any write operation.
 
 3. **Execution Design** — Define tool execution order and parallelism:
    Use `sap:unit-architect` to design tests alongside implementation.
    ```powershell
-   # 1. Initialize task (creates scratch/task-YYYY-MM-DD-NNN.md)
-   ./scripts/vsp-task.sh "Task Name"  # MacOS/Linux/Git Bash
-   .\scripts\vsp-task.ps1 -Name "Task Name" # Windows PS
+   # 1. Initialize task (creates ../scratch/task-YYYY-MM-DD-NNN.md)
+   ../scripts/vsp-task.sh "Task Name"  # MacOS/Linux/Git Bash
+   ..\scripts\vsp-task.ps1 -Name "Task Name" # Windows PS
    
    # 2. Parallel read (investigator + analyst + schema)
    # 3. Serial write (SyntaxCheck → EditSource → RunUnitTests → RunATCCheck)
    
-   # 4. Sync & Report (updates memory/, index, and git commit)
-   ./scripts/vsp-sync.sh "feat: task summary"
-   .\scripts\vsp-sync.ps1 -Message "feat: task summary"
+   # 4. Sync & Report (updates ../memory/, index, and git commit)
+   ../scripts/vsp-sync.sh "feat: task summary"
+   ..\scripts\vsp-sync.ps1 -Message "feat: task summary"
    ```
 
 4. **Parallel Execution** — Independent read/search tasks run as subagents.
    Write operations (EditSource, WriteSource) remain serial per object to avoid lock conflicts.
 
 5. **Sync & Report** — Finalize the task and commit:
-   a. Append to `memory/YYYY-MM-DD.md` (object name, type, package, ADT URL, decisions, issues).
+   a. Append to `../memory/YYYY-MM-DD.md` (object name, type, package, ADT URL, decisions, issues).
    b. **Crucial Step**: Use `vsp-sync` scripts to automate index update and git commit. (Auto-commits are disabled, so PM MUST do this at the end of the task).
    c. Report outcome to user with object URL and test results.
 

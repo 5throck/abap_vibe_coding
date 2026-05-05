@@ -17,7 +17,7 @@ Never commit `.env`, `cookies.txt`, `.mcp.json`, or local agent/MCP config files
 
 The public repo must not contain concrete identifiers that tie code or docs to a
 live SAP system, a real user, or a customer's ABAP namespace. Anything that does
-belongs under `.local/` (gitignored) and never in `docs/SAP ERP Module/`, `reports/`,
+belongs under `.local/` (gitignored) and never in `SAP ERP Module/`, `reports/`,
 `docs/`, or any tracked test fixture.
 
 **Never in tracked files:**
@@ -44,7 +44,7 @@ gitignored. If you need to reference it from a tracked doc, redact first.
 
 ## Pre-Commit Scan
 
-Before every commit that touches `reports/`, `docs/SAP ERP Module/`, `docs/`, or test
+Before every commit that touches `reports/`, `SAP ERP Module/`, `docs/`, or test
 fixtures, scan the staged diff:
 
 ```bash

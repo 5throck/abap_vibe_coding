@@ -70,7 +70,7 @@ Agent(
   subagent_type="general-purpose",
   prompt="""
 You are the SAP Intelligence Investigator subagent.
-Prompt template: docs/subagents/sap-investigator.md
+Prompt template: sap-investigator.md
 
 Input:
 {

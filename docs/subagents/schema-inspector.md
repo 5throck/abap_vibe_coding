@@ -97,7 +97,7 @@ Agent(
   subagent_type="general-purpose",
   prompt="""
 You are the Schema Inspector subagent.
-Prompt template: docs/subagents/schema-inspector.md
+Prompt template: schema-inspector.md
 
 Input:
 {

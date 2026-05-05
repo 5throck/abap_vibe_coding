@@ -12,7 +12,7 @@ This file defines the ABAP development capabilities and optimized workflow patte
 
 | Command | Claude Code CLI | Claude Code App | Antigravity | Notes |
 |---------|:--------------:|:--------------:|:-----------:|-------|
-| `/celebrate` | ✅ | ✅ | ✅ | Loaded from `.claude/commands/celebrate.md` |
+| `/celebrate` | ✅ | ✅ | ✅ | Loaded from `../.claude/commands/celebrate.md` |
 | `/debug` | ✅ | ✅ | ⚠️ Unverified | WebSocket-based; requires ZADT_VSP on SAP |
 
 
@@ -65,7 +65,7 @@ This file defines the ABAP development capabilities and optimized workflow patte
 - Always execute `SyntaxCheck` after any modification to verify quality.
 - Focus operations primarily within `Z*` and `$TMP` packages.
 - **File Isolation**: Always create `.abap` files within the `scratch/` directory to maintain a clean root.
-- Parameter references and tool boundaries: see [docs/MCP_USAGE.md](docs/MCP_USAGE.md).
+- Parameter references and tool boundaries: see [MCP_USAGE.md](MCP_USAGE.md).
 
 ---
 
