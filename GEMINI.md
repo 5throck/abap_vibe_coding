@@ -61,7 +61,7 @@ The following capabilities extend those in [docs/SKILL.md](docs/SKILL.md):
 
 ## Git Commit Policy
 
-**Auto-commits are disabled** per `docs/CONTEXT.md § Harness Advanced Workflow`. The PM agent must run `git add -A && git commit` manually at the end of each task. The `PostToolUse` hook runs `sync-md.ps1` (currently a no-op placeholder) but does **not** auto-commit. Use Bash git commands directly for commits.
+**Auto-commits are disabled** per `docs/CONTEXT.md § Harness Advanced Workflow`. The PM agent must run `git add -A && git commit` manually at the end of each task. The `PostToolUse` hook runs `scripts/sync-md.sh` (triggers a documentation audit) but does **not** auto-commit. Use Bash git commands directly for commits.
 - **File Isolation**: Always create `.abap` files in the `scratch/` directory.
 
 ---

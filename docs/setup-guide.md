@@ -244,8 +244,8 @@ cd ~/abap
 │   └── settings.local.json    ← Local extended permissions (create manually)
 ├── .gemini\
 │   └── settings.json          ← Gemini CLI config (create manually)
-├── contexts\                  ← SAP module analyst deep-knowledge files
 ├── docs\
+│   ├── SAP ERP Module\        ← SAP module analyst deep-knowledge files
 │   ├── subagents\             ← Subagent prompt templates
 │   └── task-template.md
 ├── memory\                    ← Date-stamped development logs
@@ -255,8 +255,8 @@ cd ~/abap
 │   ├── vsp-task.sh            ← Initialize new tasks (Bash)
 │   ├── vsp-sync.ps1           ← Sync memory & Git (Windows)
 │   ├── vsp-sync.sh            ← Sync memory & Git (Bash)
-│   ├── git-sync.ps1
-│   └── sync-md.ps1
+│   ├── git-sync.ps1           ← Standard git sync
+│   └── git-sync.sh            ← Standard git sync (Bash)
 ├── .env                       ← SAP credentials (create manually — gitignored)
 ├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
@@ -294,8 +294,7 @@ cd ~/abap
 │   ├── vsp-task.sh            ← Initialize new tasks
 │   ├── vsp-sync.sh            ← Sync memory & Git
 │   ├── git-sync.sh            ← bash alternative for macOS
-│   ├── git-sync.ps1
-│   └── sync-md.ps1
+│   └── git-sync.ps1
 ├── .env                       ← SAP credentials (create manually — gitignored)
 ├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore

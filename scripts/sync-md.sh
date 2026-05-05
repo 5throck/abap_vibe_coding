@@ -1,21 +1,22 @@
 #!/bin/bash
-# sync-md.sh — Cross-platform PostToolUse hook wrapper
+# scripts/sync-md.sh
+# Cross-platform PostToolUse hook wrapper for documentation audit.
 #
 # Runs on Windows (Git Bash), macOS, and Linux.
-# Invokes sync-md.ps1 via pwsh or powershell if available.
-# Exits silently with code 0 if neither is installed — safe because
-# sync-md.ps1 is currently a no-op placeholder retained for future
-# doc-validation logic.
-#
-# Usage (configured in .claude/settings.json and .gemini/settings.json):
-#   "command": "bash scripts/sync-md.sh"
+# Automatically selects the platform-specific audit script.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if command -v pwsh &>/dev/null; then
-    pwsh -File "$SCRIPT_DIR/sync-md.ps1"
-elif command -v powershell &>/dev/null; then
-    powershell -ExecutionPolicy Bypass -File "$SCRIPT_DIR/sync-md.ps1"
+echo "--- Post-Edit Audit Hook ---"
+
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    # Windows (Git Bash)
+    powershell.exe -ExecutionPolicy Bypass -File "$SCRIPT_DIR/vsp-audit.ps1"
+else
+    # macOS / Linux
+    bash "$SCRIPT_DIR/vsp-audit.sh"
 fi
 
-exit 0
+# We exit with the audit's exit code. 
+# In Claude Code, if a hook fails, it will notify the user.
+exit $?

@@ -53,7 +53,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`docs/SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
 | **`docs/SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
 | **`docs/MCP_USAGE.md`** | Technical reference for MCP tool usage, tool boundaries, and error handling. |
-| **`vsp.exe`** | The MCP server executable used for SAP ADT integration. |
+| **`vsp` / `vsp.exe`** | The MCP server binary used for SAP ADT integration. |
 
 ## Operational Workflow (Harness Advanced Governance)
 
@@ -68,4 +68,4 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 > **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (includes MCP connectivity, abapGit, and AI agent configuration).
 
 ---
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-04*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-05*

@@ -120,4 +120,4 @@ A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scr
 | Gemini CLI | ✅ | Same hook defined in `.gemini/settings.json` |
 | Antigravity | ❌ | No hook support in VS Code extension |
 
-`sync-md.sh` detects `pwsh` or `powershell` and delegates to `sync-md.ps1`, which is currently a no-op placeholder retained for future doc-validation automation. If neither PowerShell variant is installed (macOS/Linux without PowerShell), the script exits silently with code 0.
+`sync-md.sh` detects the platform (Windows vs Unix) and delegates to `vsp-audit.ps1` or `vsp-audit.sh` to perform an immediate documentation and path audit after every edit. This ensures cross-platform integrity is maintained in real-time.
