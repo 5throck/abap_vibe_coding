@@ -154,6 +154,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
     - Follow `docs/testing-guidelines.md` for ABAP Unit structures and TEST-SEAMS.
     - Run `RunATCCheck` after unit tests pass; Priority 1 findings block `Activate`.
     - Analyze runtime errors and provide debugging guides.
+    - Perform security and compliance audits (Authorization object checks, SQL Injection prevention).
 - **Key Tools**: `RunUnitTests`, `RunATCCheck`, `vsp debug`, `vsp amdp`.
 - **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `docs/SKILL.md § Post-Write Mandatory Chain`).
 
@@ -185,6 +186,16 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
     - Troubleshoot connectivity, authentication, and integration payloads.
     - Optimize data exchange performance between SAP and external platforms.
 - **Key Tools**: `/IWFND/MAINT_SERVICE`, `SICF`, `vsp debug`, `browser_subagent`.
+
+### 8. 🎨 Fiori Developer / UX Designer
+190: - **Role**: High-aesthetic UI/UX design and SAPUI5/Fiori implementation.
+191: - **Responsibilities**:
+192:     - Design modern, premium interfaces following SAP Fiori Guidelines and project "Rich Aesthetics" standards.
+193:     - Implement Fiori Elements or custom UI5 applications.
+194:     - Ensure responsive design and cross-device compatibility.
+195: - **Key Tools**: `browser_subagent`, `generate_image`, `vsp debug`.
+196: 
+197: ---
 
 ---
 
@@ -261,6 +272,7 @@ Request received
 | Data analysis report | analyst + schema (parallel, no write) | — (read-only task ends here) |
 | Refactor across package | investigator (all occurrences) + schema (CDS impact) | serial EditSource per object |
 | Interface design | analyst + schema + investigator | Interface Expert designs → Developer implements |
+| Fiori / UX design | analyst + browser_subagent | Fiori Developer designs → Implement UI5 |
 
 ---
 
