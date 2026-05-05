@@ -83,7 +83,7 @@
   "hooks": {
     "AfterTool": [
       {
-        "matcher": "Write|Edit",
+        "matcher": "sap_execute",
         "hooks": [
           {
             "type": "command",

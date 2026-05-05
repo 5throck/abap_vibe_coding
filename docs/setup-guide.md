@@ -910,7 +910,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
   "hooks": {
     "AfterTool": [
       {
-        "matcher": "Write|Edit",
+        "matcher": "sap_execute",
         "hooks": [
           {
             "type": "command",
@@ -988,7 +988,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
   "hooks": {
     "AfterTool": [
       {
-        "matcher": "Write|Edit",
+        "matcher": "sap_execute",
         "hooks": [
           {
             "type": "command",
