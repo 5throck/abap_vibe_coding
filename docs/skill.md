@@ -160,14 +160,33 @@ ENDCLASS.
 5. **Document in task-template.md § 1-A**: Fill in the Impact Summary table and Risk Assessment.
 6. **Gate**: Present findings to PM. Do not proceed to Technical Design until PM approves.
 
-**Output format** (paste into task-template.md § 1-A):
+**Output format** — produce BOTH sections below and paste into task-template.md §1-A:
+
+**Section A — Impact Summary table (paste into §1-A Impact Summary):**
+```markdown
+| <ObjectName>          | <PROG/CLAS/DDLS> | <N callers> | Low / Medium / High |
+| <related object 2>    | <type>           | <N>         | Low / Medium / High |
 ```
-Impact of changing <ObjectName>:
-  Direct callers (AnalyzeCallGraph): N objects
-  CDS dependents (GetCDSImpactAnalysis): M views, K OData services
-  Cross-package references (GrepPackages): P occurrences
-  Overall risk: Low / Medium / High
-  Reason: <explain dominant risk factor>
+One row per directly affected object. Risk classification rules:
+- **Low**: test-only or utility caller, no external consumers
+- **Medium**: core business logic — regression test required
+- **High**: real-time interface, batch job, or external API consumer — stakeholder sign-off required
+
+**Section B — Risk Assessment (paste into §1-A Risk Assessment):**
+```markdown
+- **Scope**: <N objects affected>
+- **Downtime required**: Yes / No
+- **Transport needed**: Yes / No → Transport #: <!-- fill after CreateTransport -->
+- **Rollback plan**: <describe or "N/A">
+```
+
+**Section C — Narrative (keep in your response for PM context):**
+```
+Direct callers (AnalyzeCallGraph): N objects
+CDS dependents (GetCDSImpactAnalysis): M views, K OData services
+Cross-package references (GrepPackages): P occurrences
+Overall risk: Low / Medium / High
+Reason: <explain dominant risk factor>
 ```
 
 ### Code Quality

@@ -78,6 +78,31 @@ Return a structured report in this exact format:
 - TABLE_X has no secondary index on ERDAT — range queries will be full scans at scale.
 - ...
 
+---
+
+#### PRD Handoff Block (paste into docs/prd-template.md §2 and §8)
+
+> Pre-formatted for prd-template.md. PM copies this without reformatting.
+
+**§2 AS-IS State — Table Structure Evidence**
+| Table | Key Fields | Volume Estimate | Index Notes |
+|-------|-----------|:---------------:|-------------|
+<one row per table inspected — derive from GetTable output>
+
+**§7 Dependencies & Risks**
+| Dependency | Owner | Impact if Missing |
+|------------|-------|-------------------|
+<one row per notable table relationship or missing index identified above>
+
+**§8 Handoff to Architect**
+- Objects likely affected: <list programs/classes that SELECT from the inspected tables>
+- Key tables: <list from Table Structures section>
+- CDS layer: <YES/NO — CDS views found in dependency tree>
+
+**§8 Handoff to DBA**
+- Tables requiring structure review: <list from DBA Notes>
+- New custom fields needed: <YES — describe / NO>
+
 ## Behavior rules
 1. Run all GetTable calls in a single turn where possible to minimize round trips.
 2. For CDS views, always run GetCDSDependencies and include the full tree.

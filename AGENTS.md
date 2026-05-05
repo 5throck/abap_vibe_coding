@@ -11,7 +11,12 @@ This file defines the roles and responsibilities of each agent operating within 
     - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
     - **Consistency Check**: Ensure all changes are reflected across `docs/context.md`, `CLAUDE.md`, `.codex/config.toml`, `.codex/hooks.json`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
     - **Deployment Oversight**: Verify that all work is committed to the Git repository.
-- **Key Tools**: `browser_subagent`, `memory/`, Project Dashboards.
+- **Key Tools**: `ListTransports`, `GrepPackages`, `SearchObject`, `memory/`, Project Dashboards.
+- **Triage**: Use `/triage <request>` to auto-classify, create the task file, and generate the §0-A dispatch block.
+- **Finalization (§5 — always run after QA gate)**: After all ACs pass and RunATCCheck reports 0 Priority-1 findings:
+  1. Copy the §5 Finalization block from the Architect Report into `memory/YYYY-MM-DD.md`
+  2. Run `/sync` to execute vsp-audit + memory index update + git commit
+  3. Report to user: objects changed, AC status, primary ADT URL
 
 ### Business Analysts
 
@@ -135,10 +140,13 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 - **Role**: System architecture design and complex dependency management.
 - **Responsibilities**:
     - Design technical architecture based on Analyst-authored PRDs.
-    - Perform impact analysis using Graph Engine (`AnalyzeCallGraph`) and provide expert architect-level assessment for BAPI/CDS changes (`sap:impact-architecture`).
+    - Perform impact analysis using `AnalyzeCallGraph` and provide expert architect-level assessment for BAPI/CDS changes (`sap:impact-architecture`).
+    - **Select implementation pattern** (A/B/C) using the deterministic rules in [`docs/subagents/architect.md`](docs/subagents/architect.md).
+    - Generate the §5 Finalization block in every Architect Report so PM can run it without manual composition.
     - Define structural separation between **Function** (Interface/Entry) and **Logic** (Core/Business) components from an OOP perspective.
     - **Rule**: Utilize ABAP Objects (Classes/Interfaces) only when explicitly necessary to balance complexity and performance.
-- **Key Tools**: `vsp graph`, `vsp health`, `GetCDSDependencies`.
+- **Key Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`, `GrepPackages`, `GetSource`.
+- **Subagent prompt**: [`docs/subagents/architect.md`](docs/subagents/architect.md)
 
 ### 2. 💻 ABAP Developer
 - **Role**: Feature implementation and source code optimization.
@@ -155,7 +163,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
     - Run `RunATCCheck` after unit tests pass; Priority 1 findings block `Activate`.
     - Analyze runtime errors and provide debugging guides.
     - Perform security and compliance audits (Authorization object checks, SQL Injection prevention).
-- **Key Tools**: `RunUnitTests`, `RunATCCheck`, `vsp debug`, `vsp amdp`.
+- **Key Tools**: `RunUnitTests`, `RunATCCheck`, `SyntaxCheck`, `GetSource`.
 - **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `docs/skill.md § Post-Write Mandatory Chain`).
 
 ### 4. 🗄️ DBA (Database Agent)
@@ -164,13 +172,13 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
     - Design Tables/Views/CDS and tune complex SQL queries.
     - Conduct professional data modeling including **ERD (Entity Relationship Diagram)** design and **Normalization** (1NF to 3NF).
     - Perform **Indexing** strategies and performance review for large-scale data processing.
-- **Key Tools**: `RunQuery`, `GetTable`, `vsp amdp`.
+- **Key Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`.
 
 ### 5. 🚀 DevOps / Admin
 - **Role**: Environment setup and deployment management.
 - **Responsibilities**:
     - Install infrastructure (`vsp install`) and manage Transport Requests.
-- **Key Tools**: `vsp install`, `vsp system info`, `CreateTransport`, `ReleaseTransport`, `ListTransports`.
+- **Key Tools**: `InstallZADTVSP`, `InstallAbapGit`, `GetSystemInfo`, `GetConnectionInfo`, `CreateTransport`, `AddToTransport`, `ReleaseTransport`, `ListTransports`, `GetTransport`.
 
 ### 6. 🔍 Intelligence Investigator
 - **Role**: Codebase exploration and knowledge extraction.
@@ -185,7 +193,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
     - Design and implement OData, RFC, IDoc, and RESTful APIs.
     - Troubleshoot connectivity, authentication, and integration payloads.
     - Optimize data exchange performance between SAP and external platforms.
-- **Key Tools**: `GetODataMetadata`, `TestODataService`, `GetCDSExposure`, `browser_subagent`.
+- **Key Tools**: `GetODataMetadata`, `TestODataService`, `GetCDSExposure`, `GetCDSDependencies`, `SearchObject`.
 
 ### 8. 🎨 Fiori Developer / UX Designer
 - **Role**: High-aesthetic UI/UX design and SAPUI5/Fiori implementation.
@@ -193,7 +201,8 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
     - Design modern, premium interfaces following SAP Fiori Guidelines and project "Rich Aesthetics" standards.
     - Implement Fiori Elements or custom UI5 applications.
     - Ensure responsive design and cross-device compatibility.
-- **Key Tools**: `ListUI5Projects`, `GetUI5Project`, `ReadUI5File`, `browser_subagent`, `generate_image`.
+- **Key Tools**: `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `EditSource`, `SyntaxCheck`.
+- **Note**: Visual mockups are produced as HTML/SVG code artifacts — `generate_image` is not available in this environment.
 
 ---
 

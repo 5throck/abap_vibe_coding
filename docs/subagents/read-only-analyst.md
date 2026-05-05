@@ -74,6 +74,41 @@ Return a structured report in this exact format:
 - **To Architect**: <objects likely affected based on findings>
 - **To DBA**: <tables needing structure review or CDS coverage>
 
+---
+
+#### PRD Draft (paste directly into docs/prd-template.md)
+
+> The following block is pre-formatted for docs/prd-template.md.
+> PM copies this into the PRD file — no reformatting needed.
+
+**Task ID**: `task-YYYY-MM-DD-NNN`
+**Module**: <module>
+
+**§1 Problem Statement**
+<!-- Derived from task description + AS-IS findings -->
+<one-paragraph summary of business problem>
+
+**§2 AS-IS State — Data Evidence**
+```sql
+<primary query used above>
+```
+| Metric | Current Value | Source Table |
+|--------|:------------:|-------------|
+<rows from Query Results — one per key finding>
+
+**§3 GAP Analysis**
+| # | Gap Description | Business Impact | Priority |
+|---|----------------|:---------------:|:--------:|
+<one row per gap bullet from GAP section above>
+
+**§4 TO-BE Requirements**
+| # | Requirement | Must / Should / Could |
+|---|-------------|:--------------------:|
+<one row per AC above, restated as a positive requirement>
+
+**§5 Acceptance Criteria**
+<copy Draft Acceptance Criteria checklist above verbatim>
+
 ## Behavior rules
 1. Always load the context file specified in context_file before running queries.
 2. Use ABAP SQL syntax — DESCENDING (not DESC), ASCENDING (not ASC), max_rows parameter (not LIMIT).
