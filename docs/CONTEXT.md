@@ -104,6 +104,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - Run RunATCCheck after RunUnitTests — Priority 1 findings block deployment
 - Full sequence: see `SKILL.md § Post-Write Mandatory Chain`
 - Use EditSource for small changes
+- **Local Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 
 ### Workflow (Harness Advanced)
 

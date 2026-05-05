@@ -64,7 +64,8 @@ This file defines the ABAP development capabilities and optimized workflow patte
 ## Best Practices
 - Always execute `SyntaxCheck` after any modification to verify quality.
 - Focus operations primarily within `Z*` and `$TMP` packages.
-- Parameter references and tool boundaries: see [MCP_USAGE.md](MCP_USAGE.md).
+- **File Isolation**: Always create `.abap` files within the `scratch/` directory to maintain a clean root.
+- Parameter references and tool boundaries: see [docs/MCP_USAGE.md](docs/MCP_USAGE.md).
 
 ---
 

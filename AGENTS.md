@@ -285,6 +285,7 @@ Agents must choose the appropriate tool for each task type. All tools share the 
 
 ### 📦 Git Reflection Rule
 - **Continuous Commitment**: All development artifacts (ABAP sources, docs, research reports) and **memory logs** must be committed to the local Git repository.
+- **File Isolation**: Agents MUST only create local `.abap` files in the `scratch/` directory.
 - **Verification**: The PM agent verifies the repository status and memory file existence at the end of each major task.
 
 ---
