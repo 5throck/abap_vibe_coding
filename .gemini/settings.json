@@ -80,19 +80,6 @@
       "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
-  "hooks": {
-    "AfterTool": [
-      {
-        "matcher": "sap_execute",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash scripts/sync-md.sh"
-          }
-        ]
-      }
-    ]
-  },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "abap",

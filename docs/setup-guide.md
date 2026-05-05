@@ -689,7 +689,7 @@ The Desktop App shares all configuration with the CLI — `.mcp.json` and `.clau
 | PR monitoring + CI status | ❌ | ✅ |
 | Computer use (GUI automation) | ❌ | ✅ |
 
-**Hook limitation**: The Post-Write Mandatory Chain (`SyntaxCheck → RunUnitTests → RunATCCheck`) is NOT triggered automatically in the Desktop App. You must run all three steps manually after every `WriteSource` or `EditSource` call.
+**Hook limitation**: All tools and IDEs (except Claude Code CLI) do **not** support automated hooks. You must run all three steps (`SyntaxCheck` → `RunUnitTests` → `RunATCCheck`) manually after every `WriteSource` or `EditSource` call.
 
 **Linux developers**: The Desktop App is not available on Linux. Use Claude Code CLI instead.
 
@@ -907,19 +907,6 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
       "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
-  "hooks": {
-    "AfterTool": [
-      {
-        "matcher": "sap_execute",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash scripts/sync-md.sh"
-          }
-        ]
-      }
-    ]
-  },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": ["abap", "abap-docs", "sap-docs"]
 }
@@ -983,19 +970,6 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
       "WebSearch",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)"
-    ]
-  },
-  "hooks": {
-    "AfterTool": [
-      {
-        "matcher": "sap_execute",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash scripts/sync-md.sh"
-          }
-        ]
-      }
     ]
   },
   "enableAllProjectMcpServers": true,
@@ -1328,6 +1302,8 @@ Use this list when onboarding a new team member.
 - [ ] Install Gemini CLI and configure `.gemini/settings.json` (§8)
 - [ ] Install ZADT_VSP for debugging capability (§9)
 - [ ] Review `subagents/` — understand parallel dispatch patterns
+- [ ] Gemini CLI | ❌ | Automated hooks disabled — run Post-Write chain manually |
+- [ ] Antigravity | ❌ | No hook support in VS Code extension |
 
 ---
 
