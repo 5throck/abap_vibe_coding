@@ -22,62 +22,29 @@ The system operates as a bridge between modern AI interfaces and SAP environment
 
 ## Agent Framework (AGENTS.md)
 
-Agents are categorized into two strategic groups, operating under a **PM-led Governance** model:
+AI agents operate under a **PM-led Governance** model, categorized into two strategic groups:
 
-### 🏢 Business Group
-- **👑 Global PM**: The **single point of entry** for all requests. Orchestrates agents and ensures doc/git consistency.
-- **📦 Functional Analysts (SD, LE, PP, MM, FI, CO)**: Activate on trigger keywords, query SAP directly via read-only MCP tools, produce structured PRDs with Acceptance Criteria, and hand off to the Technical Group. Each analyst loads a dedicated `docs/sap-erp-module/<module>-analyst.md` for deep domain knowledge.
+- **🏢 Business Group**: PM and Module Analysts (SD, MM, FI, etc.) who translate business needs into technical requirements.
+- **🛠️ Technical Group**: Architects, Developers, DBA, QA, and specialized experts (Fiori, Forms, GUI, Interfaces) who implement and verify the solution.
 
-### 🛠️ Technical Group
-- **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
-- **💻 ABAP Developer**: Executes precision coding and refactoring through the protocol layer.
-- **🧪 QA Engineer**: Ensures stability through Unit Testing and debugging.
-- **🔌 Interface Expert**: Manages OData, RFC, and external API integrations.
-- **🎨 Fiori Developer / UX Designer**: Designs modern, premium interfaces following SAP Fiori Guidelines.
-- **📑 Form Expert**: Specializes in document output design (Smart Forms, Adobe Forms).
-- **🤖 SAP GUI Scripting Expert**: Automates legacy workflows and manual transactions.
-- **🚀 DevOps/Admin**: Handles infrastructure and deployment.
-- **🔍 Intelligence Investigator**: Explores codebase patterns and extracts knowledge.
+For detailed roles, trigger keywords, and handoff protocols, see [AGENTS.md](AGENTS.md).
 
-## File Structure
+## Core Documentation
 
-### ⚖️ Governance & Rules
 | File | Purpose |
 | :--- | :--- |
-| **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, and handoff rules. |
-| **`docs/context.md`** | **Shared** project context for all AI tools (scripts, codebase map, ABAP rules). |
-| **`docs/skill.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
-| **`docs/security.md`** | Sanitization policy and pre-commit scan rules. |
+| **[AGENTS.md](AGENTS.md)** | Roles, collaborative workflow, and subagent dispatch protocols. |
+| **[docs/context.md](docs/context.md)** | **Shared** project context: build commands, codebase map, and development rules. |
+| **[docs/skill.md](docs/skill.md)** | Specialized AI skills (BAPI explorer, memory intelligence) and QA chains. |
+| **[docs/setup-guide.md](docs/setup-guide.md)** | Step-by-step environment setup (MCP, SAP, abapGit). |
+| **[memory/MEMORY.md](memory/MEMORY.md)** | Index of development history and architectural decisions. |
 
-### 🧠 Intelligence & Memory
-| Directory/File | Purpose |
-| :--- | :--- |
-| **`memory/`** | Date-based development history. See `memory/MEMORY.md` for index. |
-| **`docs/sap-erp-module/`** | Module analyst deep-knowledge files (SD, MM, FI, etc.). |
-| **`docs/subagents/`** | Specialized subagent prompt templates (investigator, analyst, etc.). |
+## Operational Workflow
 
-### 🛠️ Development & Ops
-| Directory/File | Purpose |
-| :--- | :--- |
-| **`scripts/`** | Cross-platform automation: `vsp-task.*`, `vsp-sync.*`, `git-sync.*`, `vsp-audit.*`. |
-| **`docs/task-template.md`** | Handoff template for cross-agent collaboration. |
-| **`docs/testing-guidelines.md`**| QA standards for ABAP Unit and TEST-SEAMS. |
-| **`docs/mcp_usage.md`** | Technical reference for MCP tool usage and error handling. |
+The project follows a standardized **6-step Harness Engineering workflow**:
+1. **Triage & Research** -> 2. **Biz Analysis** -> 3. **Governance Approval** -> 4. **Tech Design** -> 5. **Implementation & Verification** -> 6. **Finalization**.
 
-### ⚙️ Configuration
-| File | Purpose |
-| :--- | :--- |
-| **`CLAUDE.md`** | Claude Code CLI-specific config and hooks behavior. |
-| **`GEMINI.md`** | Gemini CLI-specific overrides. |
-| **`vsp` / `vsp.exe`** | The MCP server binary for SAP ADT integration. |
-
-## Operational Workflow (Harness Advanced Governance)
-
-1.  **Triage (PM)** — Classify request type; identify package and affected objects.
-2.  **Agenda** — Gather context; select agents; run `vsp-task` to initialize.
-3.  **Execution Design** — Define tool order (read tasks parallel, write tasks serial).
-4.  **Parallel Execution** — Independent read tasks run as subagents; write operations remain serial.
-5.  **Sync & Report** — Append to memory, then run `vsp-sync` to commit.
+For the detailed execution sequence, see [AGENTS.md § Collaborative Workflow](AGENTS.md#agent-coordination-workflow-harness-advanced).
 
 ---
 > [!TIP]

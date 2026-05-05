@@ -106,33 +106,25 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - Use EditSource for small changes
 - **Local Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 
-### Workflow (Harness Advanced)
+### ABAP Development Rules
+- **Naming**: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program).
+- **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
+- **QA Chain**: After any edit, the `Post-Write Mandatory Chain` MUST be executed. 
+- See [docs/skill.md § Post-Write Mandatory Chain](skill.md#post-write-mandatory-chain) for details.
 
-**Trigger**: Any request that creates/modifies an ABAP object or requires multi-package analysis.
+### Developer Quick Start (Task Lifecycle)
 
-1. **Triage & Initial Research (PM)** — Classify the request and dispatch Phase 1 parallel research subagents (`sap-investigator` + `schema-inspector`). Gather context before group discussion.
-   
-2. **Business Analysis & AC (Biz Group)** — Module analysts discuss findings and derive improvements. 
-   **Output**: PRD and Acceptance Criteria (AC).
-
-3. **Governance & Approval (PM/User)** — Confirm scope and implementation path. 
-   **User Approval Required**: For high-risk changes (Standard BAPI edits, Schema changes, Core CDS modification).
-
-4. **Technical Design (Tech Group)** — Discuss technical approach and perform impact analysis (`sap:impact-architecture`). Architect defines OOP logic; DBA reviews SQL/Indexing.
-
-5. **Implementation & Verification (Assigned Agents)** — Dispatch `code-writer` and `test-runner`. 
-   **Mandatory Chain**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (Zero P1 findings).
-
-6. **Finalization & Reporting (PM)** — Finalize the task and commit:
-   a. Append to `memory/YYYY-MM-DD.md`.
-   b. **Crucial**: Execute `vsp-sync` to commit artifacts and update the memory index.
-   c. Report outcome to user with object URL and test results.
+For full project governance and role-based orchestration, refer to [AGENTS.md § Collaborative Workflow](../AGENTS.md#agent-coordination-workflow-harness-advanced).
 
 ```powershell
-# Task Lifecycle
-..\scripts\vsp-task.ps1 -Name "Feature Name"
-# ... execution ...
-..\scripts\vsp-sync.ps1 -Message "feat: feature summary"
+# 1. Initialize Task
+..\scripts\vsp-task.ps1 -Name "Task Description"
+
+# 2. Execution (Research -> Implementation -> Verification)
+# Use specialized skills from docs/skill.md
+
+# 3. Synchronize & Commit
+..\scripts\vsp-sync.ps1 -Message "feat: implementation summary"
 ```
 
 ---
