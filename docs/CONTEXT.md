@@ -113,9 +113,8 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 1. **Triage (PM)** — Classify the request: ABAP dev / graph / debug / infra.
    Identify the package (`$TMP` or named) and affected object types.
 
-2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (sap-investigator +
-    read-only-analyst + schema-inspector) in a **single message**. Load `SAP ERP Module/<module>-analyst.md`
-    in the analyst subagent prompt. Use `sap:bapi-explorer` to identify necessary standard APIs and `harness:memory-intelligence` to leverage historical design patterns.
+2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (investigator + analyst + schema + fiori/form) in a **single message**. Load `SAP ERP Module/<module>-analyst.md` in the analyst subagent prompt.
+ Use `sap:bapi-explorer` to identify necessary standard APIs and `harness:memory-intelligence` to leverage historical design patterns.
     See `../AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
     Produce an Implementation Plan before any write operation, including `sap:impact-architecture` assessment for core changes.
 

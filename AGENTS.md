@@ -272,6 +272,9 @@ Request received
 | `schema-inspector` | `docs/subagents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
 | `code-writer` | `docs/subagents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
 | `test-runner` | `docs/subagents/test-runner.md` | ❌ After write | `RunUnitTests` |
+| `fiori-dev` | `docs/subagents/fiori-developer.md` | ✅ Always | `generate_image`, `browser_subagent` |
+| `form-expert` | `docs/subagents/form-expert.md` | ✅ Design only | `GrepObjects`, `EditSource` |
+| `gui-scripter` | `docs/subagents/gui-scripter.md` | ❌ Never | `browser_subagent`, `vsp debug` |
 
 #### Parallel Dispatch Rules
 
