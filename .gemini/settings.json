@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "abap": {
-      "command": "./vsp.exe",
+      "command": "./vsp",
       "args": [
         "--mode",
         "hyperfocused"

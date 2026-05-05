@@ -35,6 +35,14 @@ This file defines the ABAP development capabilities and optimized workflow patte
 | `superpowers:requesting-code-review` | After completing a major task | Prepare a code review request |
 | `superpowers:receiving-code-review` | When receiving review feedback | Prioritize and incorporate feedback |
 
+### Specialized SAP Skills
+| Skill | Trigger | Description |
+|-------|---------|-------------|
+| `sap:bapi-explorer` | When searching for integration APIs | Discover and analyze standard BAPIs using SearchObject/GetTable |
+| `sap:transport-manager` | When working on dev/production systems | Create and manage Transport Requests for object deployment |
+| `sap:unit-architect` | When writing quality code | Design and implement ABAP Unit tests following docs/testing-guidelines.md |
+| `sap:performance-analyzer` | When optimizing code | Use runtime analysis and SQL execution plans to identify bottlenecks |
+
 ### Code Quality
 | Skill | Trigger | Description |
 |-------|---------|-------------|

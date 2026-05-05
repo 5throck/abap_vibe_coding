@@ -114,10 +114,12 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 
 2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (sap-investigator +
    read-only-analyst + schema-inspector) in a **single message**. Load `contexts/<module>-analyst.md`
-   in the analyst subagent prompt. See `AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
+   in the analyst subagent prompt. Use `sap:bapi-explorer` to identify necessary standard APIs.
+   See `AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
    Produce an Implementation Plan before any write operation.
 
 3. **Execution Design** — Define tool execution order and parallelism:
+   Use `sap:unit-architect` to design tests alongside implementation.
    ```powershell
    # 1. Initialize task (creates scratch/task-YYYY-MM-DD-NNN.md)
    ./scripts/vsp-task.sh "Task Name"  # MacOS/Linux/Git Bash
