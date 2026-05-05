@@ -135,7 +135,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 - **Role**: System architecture design and complex dependency management.
 - **Responsibilities**:
     - Design technical architecture based on Analyst-authored PRDs.
-    - Perform impact analysis using Graph Engine (`AnalyzeCallGraph`).
+    - Perform impact analysis using Graph Engine (`AnalyzeCallGraph`) and provide expert architect-level assessment for BAPI/CDS changes (`sap:impact-architecture`).
 - **Key Tools**: `vsp graph`, `vsp health`, `GetCDSDependencies`.
 
 ### 2. 💻 ABAP Developer
@@ -171,6 +171,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 - **Role**: Codebase exploration and knowledge extraction.
 - **Responsibilities**:
     - Perform global pattern searches and manage `memory/`.
+    - Execute historical knowledge extraction and design decision summaries via `harness:memory-intelligence`.
 - **Key Tools**: `GrepPackages`, `GrepObjects`, `SearchObject`.
 
 ### 7. 🔌 Interface Expert
