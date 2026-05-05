@@ -1,4 +1,8 @@
 {
+  "ui": {
+    "useAlternateBuffer": true,
+    "terminalBuffer": true
+  },
   "mcpServers": {
     "abap": {
       "command": "./vsp",
