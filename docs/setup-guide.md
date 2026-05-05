@@ -398,7 +398,7 @@ VSP_ALLOWED_PACKAGES=Z*,Y*,$TMP
 **Windows** (Git Bash):
 ```bash
 cd ~/abap
-./vsp.exe system info
+./vsp system info
 ```
 
 **macOS/Linux**:
@@ -428,7 +428,7 @@ If you get an error, check:
 {
   "mcpServers": {
     "abap": {
-      "command": "./vsp.exe",
+      "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -847,7 +847,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
 {
   "mcpServers": {
     "abap": {
-      "command": "./vsp.exe",
+      "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -1047,7 +1047,7 @@ If the automated installation fails or shows syntax errors, apply these manual p
 ### 9-D. Verify ZADT_VSP
 **Windows** (Git Bash):
 ```bash
-./vsp.exe system info
+./vsp system info
 ```
 
 **macOS/Linux**:
@@ -1109,7 +1109,7 @@ Run through this checklist in order. Each step depends on the previous.
 **Windows** (Git Bash):
 ```bash
 cd ~/abap
-./vsp.exe system info
+./vsp system info
 ```
 
 **macOS/Linux**:
@@ -1367,7 +1367,7 @@ cd ~/abap && claude
 /mcp
 
 # Check SAP connection
-./vsp.exe system info
+./vsp system info
 
 # Manual git sync (PowerShell)
 powershell -File scripts/git-sync.ps1
