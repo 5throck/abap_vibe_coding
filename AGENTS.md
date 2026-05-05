@@ -136,6 +136,8 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 - **Responsibilities**:
     - Design technical architecture based on Analyst-authored PRDs.
     - Perform impact analysis using Graph Engine (`AnalyzeCallGraph`) and provide expert architect-level assessment for BAPI/CDS changes (`sap:impact-architecture`).
+    - Define structural separation between **Function** (Interface/Entry) and **Logic** (Core/Business) components from an OOP perspective.
+    - **Rule**: Utilize ABAP Objects (Classes/Interfaces) only when explicitly necessary to balance complexity and performance.
 - **Key Tools**: `vsp graph`, `vsp health`, `GetCDSDependencies`.
 
 ### 2. 💻 ABAP Developer
@@ -159,6 +161,8 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 - **Role**: Data modeling and SQL performance optimization.
 - **Responsibilities**:
     - Design Tables/Views/CDS and tune complex SQL queries.
+    - Conduct professional data modeling including **ERD (Entity Relationship Diagram)** design and **Normalization** (1NF to 3NF).
+    - Perform **Indexing** strategies and performance review for large-scale data processing.
 - **Key Tools**: `RunQuery`, `GetTable`, `vsp amdp`.
 
 ### 5. 🚀 DevOps / Admin
