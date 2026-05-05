@@ -88,6 +88,37 @@ Agent 3 — schema-inspector  (prompt: docs/subagents/schema-inspector.md)
 
 ---
 
+## 1-A. Governance Approval
+
+> See [docs/skill.md § sap:impact-architecture](../docs/skill.md) for the impact analysis pattern.
+> PM must obtain explicit approval before proceeding to Technical Design.
+
+**Agent**: PM (with Architect input)
+**Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`
+
+### Impact Summary
+
+| Affected Object | Type | Callers | Risk |
+|-----------------|------|:-------:|------|
+| <!-- name --> | PROG/CLAS/DDLS | <!-- n --> | Low / Medium / High |
+
+### Risk Assessment
+
+- **Scope**: <!-- number of objects affected -->
+- **Downtime required**: Yes / No
+- **Transport needed**: Yes / No → Transport #: `<!-- NPL KXXXXXX -->`
+- **Rollback plan**: <!-- describe or "N/A" -->
+
+### Approval
+
+- [ ] **PM approved** — impact is understood and acceptable
+- [ ] **Transport request created**: `<!-- transport number -->` (if required)
+- [ ] **Stakeholder notified** (if High risk)
+
+> ⚠️ Do **not** proceed to §2 Technical Design until all boxes above are checked.
+
+---
+
 ## 2. Technical Design
 
 **Agent**: Architect

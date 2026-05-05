@@ -1,30 +1,30 @@
 # Antigravity MCP Setup Guide
 
-Antigravity는 VS Code 확장으로 실행되는 AI 코딩 도우미입니다. 프로젝트 레벨 설정 파일을 지원하지 않기 때문에 **사용자 수준(user-level)**에서 MCP 서버를 직접 등록해야 합니다.
+Antigravity is an AI coding assistant that runs as a VS Code extension. Because it does not support project-level configuration files, MCP servers must be registered manually at the **user level** in VS Code settings.
 
-> **주의사항**:
-> - Antigravity는 `PostToolUse` 훅을 지원하지 않습니다. Post-Write 체인(`/post-write`)을 매번 수동으로 실행해야 합니다.
-> - 이 가이드의 설정은 각 개발자가 개인 VS Code 환경에서 수행해야 합니다 (팀 공유 불가).
-
----
-
-## 1. 사전 요건
-
-- VS Code 설치
-- Antigravity 확장 설치 및 활성화
-- `vsp` 바이너리가 `C:\git\abap\vsp.exe` (Windows) 또는 `/path/to/vsp` (macOS/Linux)에 존재
-- `.env` 파일이 `C:\git\abap\.env`에 설정 완료
+> **Important**:
+> - Antigravity does **not** support `PostToolUse` hooks. You must run the Post-Write chain (`/post-write`) manually after every ABAP code change.
+> - This setup must be performed by each developer individually in their own VS Code environment (not shareable via the repository).
 
 ---
 
-## 2. MCP 서버 등록
+## 1. Prerequisites
 
-Antigravity의 MCP 서버 설정은 VS Code의 `settings.json` (사용자 설정)에 등록합니다.
+- VS Code installed and running
+- Antigravity extension installed and activated
+- `vsp` binary present at `C:\git\abap\vsp.exe` (Windows) or `/path/to/repo/vsp` (macOS/Linux)
+- `.env` file configured at the repository root (`C:\git\abap\.env`)
 
-**VS Code 사용자 settings.json 열기:**
-- 명령 팔레트 (`Ctrl+Shift+P` / `Cmd+Shift+P`) → `Preferences: Open User Settings (JSON)`
+---
 
-**아래 내용을 추가:**
+## 2. Registering the MCP Servers
+
+MCP servers for Antigravity are registered in VS Code's **user** `settings.json`.
+
+**Open VS Code user settings (JSON):**
+- Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) → `Preferences: Open User Settings (JSON)`
+
+**Add the following block:**
 
 ```json
 {
@@ -53,23 +53,23 @@ Antigravity의 MCP 서버 설정은 VS Code의 `settings.json` (사용자 설정
 }
 ```
 
-> **macOS/Linux**: `command` 경로를 `/path/to/your/repo/vsp`로 변경하세요.
+> **macOS / Linux**: Replace the `command` path with the absolute path to the `vsp` binary in your local clone, e.g. `/home/user/git/abap/vsp`.
 
 ---
 
-## 3. 환경 변수 설정
+## 3. Environment Variables
 
-`vsp`는 SAP 연결 정보를 환경 변수에서 읽습니다. Antigravity가 `.env` 파일을 자동으로 로드하지 않는 경우, `env` 항목에 직접 추가하거나 시스템 환경 변수로 설정합니다.
+`vsp` reads SAP connection details from environment variables. If Antigravity does not automatically load the `.env` file, set these as system-level variables or add them directly inside the `env` block above.
 
-**Windows (시스템 환경 변수):**
+**Windows (PowerShell — user scope):**
 ```powershell
 [System.Environment]::SetEnvironmentVariable("VSP_BASE_URL", "http://vhcalnplci:50000", "User")
-[System.Environment]::SetEnvironmentVariable("VSP_USER", "your-sap-user", "User")
-[System.Environment]::SetEnvironmentVariable("VSP_PASSWORD", "your-sap-password", "User")
-[System.Environment]::SetEnvironmentVariable("VSP_CLIENT", "001", "User")
+[System.Environment]::SetEnvironmentVariable("VSP_USER",     "your-sap-user",           "User")
+[System.Environment]::SetEnvironmentVariable("VSP_PASSWORD", "your-sap-password",       "User")
+[System.Environment]::SetEnvironmentVariable("VSP_CLIENT",   "001",                     "User")
 ```
 
-**macOS/Linux (~/.bashrc 또는 ~/.zshrc):**
+**macOS / Linux (`~/.bashrc` or `~/.zshrc`):**
 ```bash
 export VSP_BASE_URL="http://vhcalnplci:50000"
 export VSP_USER="your-sap-user"
@@ -77,49 +77,55 @@ export VSP_PASSWORD="your-sap-password"
 export VSP_CLIENT="001"
 ```
 
+Restart VS Code after setting environment variables.
+
 ---
 
-## 4. 검증
+## 4. Verification
 
-VS Code를 재시작한 후 Antigravity 채팅창에서 확인:
+After restarting VS Code, open the Antigravity chat panel and run:
 
 ```
 Show SAP system info
 ```
 
-응답에 시스템 ID, 클라이언트, 사용자 정보가 표시되면 연결 성공입니다.
+A successful response displays the system ID, client number, and logged-in user. If you see an error, confirm the `vsp` binary path and that the environment variables are visible to VS Code's process.
 
 ---
 
-## 5. 훅 미지원 대응: 수동 Post-Write 체인
+## 5. No-Hook Workaround: Manual Post-Write Chain
 
-Antigravity에서는 파일 편집 후 훅이 자동으로 실행되지 않습니다.  
-ABAP 코드를 수정한 뒤 **반드시 아래 체인을 수동으로 실행**해야 합니다:
+Antigravity does not fire `PostToolUse` hooks. After any ABAP code change, **always run the following three steps manually** before considering the task complete:
 
-1. **SyntaxCheck** — 수정한 ABAP 오브젝트의 문법 오류 확인
-2. **RunUnitTests** — 패키지의 단위 테스트 실행
-3. **RunATCCheck** — ATC 정적 분석 실행
+| Step | Tool | Pass Condition |
+|------|------|---------------|
+| 1 | `SyntaxCheck` | 0 errors |
+| 2 | `RunUnitTests` | 0 failures |
+| 3 | `RunATCCheck` | 0 Priority-1 findings |
 
-Antigravity 채팅에서 직접 요청하거나, Claude Code CLI에서 `/post-write <오브젝트명>`을 실행하세요.
+You can trigger these by asking Antigravity directly, or by switching to Claude Code CLI and running `/post-write <ObjectName>`.
 
-또한 Git 커밋/동기화는 터미널에서 수동으로 수행해야 합니다:
+For Git commit and memory sync, use the terminal manually:
 
 ```bash
-bash scripts/vsp-sync.sh "feat: 변경 내용 요약"
-# 또는 Windows PowerShell:
-.\scripts\vsp-sync.ps1 -Message "feat: 변경 내용 요약"
+# Unix / Git Bash
+bash scripts/vsp-sync.sh "feat: summary of change"
+
+# Windows PowerShell
+.\scripts\vsp-sync.ps1 -Message "feat: summary of change"
 ```
 
 ---
 
-## 6. 작업 흐름 요약
+## 6. Platform Comparison
 
-| 단계 | Claude Code CLI | Claude Code App | Gemini CLI | Antigravity |
-|------|:-:|:-:|:-:|:-:|
-| MCP 자동 연결 | ✅ | ✅ | ✅ | ✅ (수동 등록) |
-| PostToolUse 훅 | ✅ | ❌ | ✅ | ❌ |
-| Post-Write 체인 | 자동 | 수동(`/post-write`) | 자동 | 수동 |
-| Git 커밋 | `/sync` | `/sync` | 수동 | 수동 |
+| Capability | Claude Code CLI | Claude Code App | Gemini CLI | Antigravity |
+|------------|:---------------:|:---------------:|:----------:|:-----------:|
+| MCP auto-connect | ✅ | ✅ | ✅ | ✅ (manual reg.) |
+| PostToolUse hook | ✅ | ❌ | ✅ | ❌ |
+| Post-Write chain | Automatic | Manual (`/post-write`) | Automatic | Manual |
+| Git commit | `/sync` | `/sync` | Manual | Manual |
+| Project-level config | ✅ `.mcp.json` | ✅ `.mcp.json` | ✅ `.gemini/settings.json` | ❌ user-level only |
 
 ---
 

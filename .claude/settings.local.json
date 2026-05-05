@@ -20,7 +20,11 @@
       "Bash(chmod +x *)",
       "mcp__abap__CreateTable",
       "mcp__web-search-prime__web_search_prime",
-      "mcp__web-reader__webReader"
+      "mcp__web-reader__webReader",
+      "Bash(cat)",
+      "Bash(bash /tmp/validation.sh)",
+      "Bash(bash /tmp/tool_diff.sh)",
+      "Bash(bash /tmp/final_audit.sh)"
     ]
   },
   "enableAllProjectMcpServers": true,

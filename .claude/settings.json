@@ -18,6 +18,7 @@
       "mcp__abap__GetCDSDependencies",
       "mcp__abap__GetCDSElementInfo",
       "mcp__abap__GetCDSImpactAnalysis",
+      "mcp__abap__GetCDSExposure",
       "mcp__abap__GetClassInfo",
       "mcp__abap__GetFunctionGroup",
 
@@ -39,6 +40,12 @@
 
       "mcp__abap__ListTransports",
       "mcp__abap__GetTransport",
+      "mcp__abap__CreateTransport",
+      "mcp__abap__AddToTransport",
+      "mcp__abap__ReleaseTransport",
+
+      "mcp__abap__GetODataMetadata",
+      "mcp__abap__TestODataService",
 
       "mcp__abap__UI5ListApps",
       "mcp__abap__UI5GetApp",
