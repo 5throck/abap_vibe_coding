@@ -9,7 +9,7 @@ This file defines the roles and responsibilities of each agent operating within 
 - **Responsibilities**:
     - **Initial Triage**: Receive and analyze all user requests first.
     - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
-    - **Consistency Check**: Ensure all changes are reflected across `docs/CONTEXT.md`, `CLAUDE.md`, `.codex/config.toml`, `.codex/hooks.json`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
+    - **Consistency Check**: Ensure all changes are reflected across `docs/context.md`, `CLAUDE.md`, `.codex/config.toml`, `.codex/hooks.json`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
     - **Deployment Oversight**: Verify that all work is committed to the Git repository.
 - **Key Tools**: `browser_subagent`, `memory/`, Project Dashboards.
 
@@ -17,14 +17,14 @@ This file defines the roles and responsibilities of each agent operating within 
 
 Each analyst activates on matching trigger keywords, queries the SAP system directly via
 read-only MCP tools, produces a structured PRD/AC output, and hands off to the Technical Group.
-Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation for deep domain knowledge.
+Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation for deep domain knowledge.
 
 ---
 
 #### 2. 📦 SD Analyst (Sales & Distribution)
 
 - **Trigger keywords**: Sales Order, Delivery, Billing, Shipping, Pricing, Quote, SD, VA*, VL*, VF*, VK*, VBAK, VBAP, LIKP, VBRK
-- **Context file**: [`docs/SAP ERP Module/sd-analyst.md`](docs/SAP%20ERP%20Module/sd-analyst.md)
+- **Context file**: [`docs/sap-erp-module/sd-analyst.md`](docs/sap-erp-module/sd-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`, `GrepPackages`
 - **Output Format**:
   ```
@@ -42,7 +42,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 #### 3. 🚛 LE Analyst (Logistics Execution)
 
 - **Trigger keywords**: Shipment Processing, Transport, Route Determination, Warehouse, WM, EWM, Handling Unit, Shipment, Route, Warehouse, LE, LT*, HU, VEKP, VEPO, VTTP, LIKP
-- **Context file**: [`docs/SAP ERP Module/le-analyst.md`](docs/SAP%20ERP%20Module/le-analyst.md)
+- **Context file**: [`docs/sap-erp-module/le-analyst.md`](docs/sap-erp-module/le-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -60,7 +60,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 #### 4. 🏭 PP Analyst (Production Planning)
 
 - **Trigger keywords**: Production Order, BOM, Routing, MRP, Capacity Planning, Material Requirements, Production Order, Routing, Work Center, PP, CO*, MAST, STKO, AFKO, PLKO
-- **Context file**: [`docs/SAP ERP Module/pp-analyst.md`](docs/SAP%20ERP%20Module/pp-analyst.md)
+- **Context file**: [`docs/sap-erp-module/pp-analyst.md`](docs/sap-erp-module/pp-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -78,7 +78,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 #### 5. 🛒 MM Analyst (Materials Management)
 
 - **Trigger keywords**: Purchasing, Order, Goods Receipt, Material Master, Inventory, Inspection, Purchase Order, Goods Receipt, Material Master, Inventory, MM, ME*, MARA, MARC, EKKO, EKPO, MKPF, MSEG
-- **Context file**: [`docs/SAP ERP Module/mm-analyst.md`](docs/SAP%20ERP%20Module/mm-analyst.md)
+- **Context file**: [`docs/sap-erp-module/mm-analyst.md`](docs/sap-erp-module/mm-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -96,7 +96,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 #### 6. 💰 FI Analyst (Financial Accounting)
 
 - **Trigger keywords**: Journal Entry, Account, GL, AR, AP, Fixed Asset, Settlement, Compliance, Journal Entry, Account, Fiscal Year, FI, FB*, F-*, BKPF, BSEG, ACDOCA, SKA1
-- **Context file**: [`docs/SAP ERP Module/fi-analyst.md`](docs/SAP%20ERP%20Module/fi-analyst.md)
+- **Context file**: [`docs/sap-erp-module/fi-analyst.md`](docs/sap-erp-module/fi-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -114,7 +114,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 #### 7. 📊 CO Analyst (Controlling)
 
 - **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKP, COEP, COSP, CE1*
-- **Context file**: [`docs/SAP ERP Module/co-analyst.md`](docs/SAP%20ERP%20Module/co-analyst.md)
+- **Context file**: [`docs/sap-erp-module/co-analyst.md`](docs/sap-erp-module/co-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -156,7 +156,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
     - Analyze runtime errors and provide debugging guides.
     - Perform security and compliance audits (Authorization object checks, SQL Injection prevention).
 - **Key Tools**: `RunUnitTests`, `RunATCCheck`, `vsp debug`, `vsp amdp`.
-- **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `docs/SKILL.md § Post-Write Mandatory Chain`).
+- **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `docs/skill.md § Post-Write Mandatory Chain`).
 
 ### 4. 🗄️ DBA (Database Agent)
 - **Role**: Data modeling and SQL performance optimization.
@@ -282,7 +282,7 @@ Request received
 2. **Serial write execution** — `EditSource`, `WriteSource`, `SyntaxCheck` are executed by the ABAP Developer in serial to prevent lock conflicts.
 3. **Merge before proceeding** — PM waits for ALL parallel subagents to return before moving to the next serial step.
 4. **Error handling** — if any parallel subagent fails, PM resolves the failure before proceeding. Do not skip.
-5. **Context passing** — PM includes the relevant `docs/SAP ERP Module/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
+5. **Context passing** — PM includes the relevant `docs/sap-erp-module/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
 
 #### Typical Dispatch Sequences by Task Type
 
@@ -320,7 +320,7 @@ Agents must choose the appropriate tool for each task type. All tools share the 
 **Rule**: Default to Claude Code CLI or App for orchestration. Prefer CLI on Linux or when hook automation is required. Use Desktop App for visual diff review, PR monitoring, and parallel sessions. Use Antigravity for file-centric editing. Use Gemini CLI when web research or `browser_subagent` delegation is needed.
 
 ### 📜 Documentation Synchronization Rule
-- **Single Source of Truth**: `docs/CONTEXT.md` holds all shared dev context (build, codebase, ABAP rules, Harness workflow). `CLAUDE.md` contains Claude Code-specific config. `.codex/config.toml` and `.codex/hooks.json` contain Codex-specific config. `GEMINI.md` contains Gemini CLI overrides.
+- **Single Source of Truth**: `docs/context.md` holds all shared dev context (build, codebase, ABAP rules, Harness workflow). `CLAUDE.md` contains Claude Code-specific config. `.codex/config.toml` and `.codex/hooks.json` contain Codex-specific config. `GEMINI.md` contains Gemini CLI overrides.
 - **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.
 
 ### 📦 Git Reflection Rule

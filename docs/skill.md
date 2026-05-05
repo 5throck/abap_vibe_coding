@@ -67,7 +67,7 @@ This file defines the ABAP development capabilities and optimized workflow patte
 - Always execute `SyntaxCheck` after any modification to verify quality.
 - Focus operations primarily within `Z*` and `$TMP` packages.
 - **File Isolation**: Always create `.abap` files within the `scratch/` directory to maintain a clean root.
-- Parameter references and tool boundaries: see [MCP_USAGE.md](MCP_USAGE.md).
+- Parameter references and tool boundaries: see [mcp_usage.md](mcp_usage.md).
 
 ---
 
@@ -86,7 +86,7 @@ After ANY `WriteSource` / `EditSource` / `Activate`, the executing agent MUST ru
 **ATC Priority levels**:
 - Priority 1 (Error) → **BLOCKS** deployment — fix before `Activate`
 - Priority 2 (Warning) → PM review required before proceeding
-- Priority 3 (Info) → Log to task-template § 4.2 only
+- Priority 3 (Info) → Log to task-template.md § 4.2 only
 
 **In Gemini / Antigravity sessions**: route all three steps through `sap_execute`
 with `"action": "SyntaxCheck"`, `"action": "RunUnitTests"`, `"action": "RunATCCheck"`.

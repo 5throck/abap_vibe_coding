@@ -1,4 +1,4 @@
-# CONTEXT.md
+# context.md
 
 **vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
@@ -6,9 +6,9 @@
 > Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `../GEMINI.md` (Gemini CLI).
 > Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire — run Post-Write chain manually.
 > Agent roles and orchestration rules live in `../AGENTS.md`.
-> Per-session technical guidelines and custom skills live in `SKILL.md`.
+> Per-session technical guidelines and custom skills live in `skill.md`.
 > ABAP development history (date-archived) lives in `../memory/`.
-> Module analyst deep-knowledge files live in `SAP ERP Module/`.
+> Module analyst deep-knowledge files live in `sap-erp-module/`.
 
 ---
 
@@ -54,7 +54,7 @@ pkg/
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
 | Fix MCP/docs/config | `../README.md`, `subagents/*`, `handlers_universal.go` |
-| Add/update analyst context | `SAP ERP Module/<module>-analyst.md` |
+| Add/update analyst context | `sap-erp-module/<module>-analyst.md` |
 | New task handoff | copy `task-template.md` → `../scratch/task-YYYY-MM-DD-NNN.md` |
 | Add/update subagent prompt | `subagents/<role>.md` |
 
@@ -85,7 +85,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 4. **Auth** — use basic OR cookies, not both
 5. **ZADT_VSP** — WebSocket debug/RFC/RunReport require it installed on SAP
 
-> Security and sanitization rules are in [SECURITY.md](SECURITY.md).
+> Security and sanitization rules are in [security.md](security.md).
 
 ---
 
@@ -102,7 +102,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - Always run SyntaxCheck before WriteSource
 - Run RunUnitTests after logic changes (refer to `docs/testing-guidelines.md`)
 - Run RunATCCheck after RunUnitTests — Priority 1 findings block deployment
-- Full sequence: see `SKILL.md § Post-Write Mandatory Chain`
+- Full sequence: see `skill.md § Post-Write Mandatory Chain`
 - Use EditSource for small changes
 - **Local Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 
@@ -113,7 +113,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 1. **Triage (PM)** — Classify the request: ABAP dev / graph / debug / infra.
    Identify the package (`$TMP` or named) and affected object types.
 
-2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (investigator + analyst + schema + fiori/form/gui) in a **single message**. Load `SAP ERP Module/<module>-analyst.md` in the analyst subagent prompt.
+2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (investigator + analyst + schema + fiori/form/gui) in a **single message**. Load `sap-erp-module/<module>-analyst.md` in the analyst subagent prompt.
  Use `sap:bapi-explorer` to identify necessary standard APIs and `harness:memory-intelligence` to leverage historical design patterns.
     See `../AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
     Produce an Implementation Plan before any write operation, including `sap:impact-architecture` assessment for core changes.
@@ -160,7 +160,7 @@ Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZC
 | `pkg/llvm2abap/`, `pkg/wasmcomp/` | Research | Not production; don't treat as stable |
 | `pkg/adt/debugger.go` (REST) | Deprecated | Prefer `websocket_debug.go` |
 | `docs/subagents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
-| `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `docs/SKILL.md` skill loading aligned with Claude/Gemini settings |
+| `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `docs/skill.md` skill loading aligned with Claude/Gemini settings |
 
 ---
 *Last Updated: 2026-05-05*

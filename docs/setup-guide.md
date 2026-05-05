@@ -245,7 +245,7 @@ cd ~/abap
 ├── .gemini\
 │   └── settings.json          ← Gemini CLI config (create manually)
 ├── docs\
-│   ├── SAP ERP Module\        ← SAP module analyst deep-knowledge files
+│   ├── sap-erp-module\        ← SAP module analyst deep-knowledge files
 │   ├── subagents\             ← Subagent prompt templates
 │   └── task-template.md
 ├── memory\                    ← Date-stamped development logs
@@ -267,10 +267,10 @@ cd ~/abap
 ├── GEMINI.md                  ← Gemini CLI-specific overrides
 ├── README.md
 ├── docs/
-│   ├── CONTEXT.md             ← Shared project context (all AI tools)
-│   ├── MCP_USAGE.md
-│   ├── SECURITY.md
-│   ├── SKILL.md
+│   ├── context.md             ← Shared project context (all AI tools)
+│   ├── mcp_usage.md
+│   ├── security.md
+│   ├── skill.md
 │   └── setup-guide.md
 └── vsp.exe                    ← Download separately (gitignored)
 ```
@@ -286,7 +286,7 @@ cd ~/abap
 │   └── settings.local.json    ← Local extended permissions (create manually)
 ├── .gemini/
 │   └── settings.json          ← Gemini CLI config (create manually)
-├── docs/SAP ERP Module/      ← SAP module analyst deep-knowledge files
+├── docs/sap-erp-module/      ← SAP module analyst deep-knowledge files
 ├── docs/
 │   ├── subagents/             ← Subagent prompt templates
 │   └── task-template.md
@@ -305,10 +305,10 @@ cd ~/abap
 ├── GEMINI.md                  ← Gemini CLI-specific overrides
 ├── README.md
 ├── docs/
-│   ├── CONTEXT.md             ← Shared project context (all AI tools)
-│   ├── MCP_USAGE.md
-│   ├── SECURITY.md
-│   ├── SKILL.md
+│   ├── context.md             ← Shared project context (all AI tools)
+│   ├── mcp_usage.md
+│   ├── security.md
+│   ├── skill.md
 │   └── setup-guide.md
 └── vsp                        ← Download separately (gitignored)
 ```

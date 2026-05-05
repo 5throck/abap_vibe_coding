@@ -26,7 +26,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 
 ### 🏢 Business Group
 - **👑 Global PM**: The **single point of entry** for all requests. Orchestrates agents and ensures doc/git consistency.
-- **📦 Functional Analysts (SD, LE, PP, MM, FI, CO)**: Activate on trigger keywords, query SAP directly via read-only MCP tools, produce structured PRDs with Acceptance Criteria, and hand off to the Technical Group. Each analyst loads a dedicated `docs/SAP ERP Module/<module>-analyst.md` for deep domain knowledge.
+- **📦 Functional Analysts (SD, LE, PP, MM, FI, CO)**: Activate on trigger keywords, query SAP directly via read-only MCP tools, produce structured PRDs with Acceptance Criteria, and hand off to the Technical Group. Each analyst loads a dedicated `docs/sap-erp-module/<module>-analyst.md` for deep domain knowledge.
 
 ### 🛠️ Technical Group
 - **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
@@ -45,15 +45,15 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | File | Purpose |
 | :--- | :--- |
 | **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, and handoff rules. |
-| **`docs/CONTEXT.md`** | **Shared** project context for all AI tools (scripts, codebase map, ABAP rules). |
-| **`docs/SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
-| **`docs/SECURITY.md`** | Sanitization policy and pre-commit scan rules. |
+| **`docs/context.md`** | **Shared** project context for all AI tools (scripts, codebase map, ABAP rules). |
+| **`docs/skill.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
+| **`docs/security.md`** | Sanitization policy and pre-commit scan rules. |
 
 ### 🧠 Intelligence & Memory
 | Directory/File | Purpose |
 | :--- | :--- |
 | **`memory/`** | Date-based development history. See `memory/MEMORY.md` for index. |
-| **`docs/SAP ERP Module/`** | Module analyst deep-knowledge files (SD, MM, FI, etc.). |
+| **`docs/sap-erp-module/`** | Module analyst deep-knowledge files (SD, MM, FI, etc.). |
 | **`docs/subagents/`** | Specialized subagent prompt templates (investigator, analyst, etc.). |
 
 ### 🛠️ Development & Ops
@@ -62,7 +62,7 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`scripts/`** | Cross-platform automation: `vsp-task.*`, `vsp-sync.*`, `git-sync.*`, `vsp-audit.*`. |
 | **`docs/task-template.md`** | Handoff template for cross-agent collaboration. |
 | **`docs/testing-guidelines.md`**| QA standards for ABAP Unit and TEST-SEAMS. |
-| **`docs/MCP_USAGE.md`** | Technical reference for MCP tool usage and error handling. |
+| **`docs/mcp_usage.md`** | Technical reference for MCP tool usage and error handling. |
 
 ### ⚙️ Configuration
 | File | Purpose |
