@@ -110,36 +110,30 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 
 **Trigger**: Any request that creates/modifies an ABAP object or requires multi-package analysis.
 
-1. **Triage (PM)** — Classify the request: ABAP dev / graph / debug / infra.
-   Identify the package (`$TMP` or named) and affected object types.
-
-2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (investigator + analyst + schema + fiori/form/gui) in a **single message**. Load `sap-erp-module/<module>-analyst.md` in the analyst subagent prompt.
- Use `sap:bapi-explorer` to identify necessary standard APIs and `harness:memory-intelligence` to leverage historical design patterns.
-    See `../AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
-    Produce an Implementation Plan before any write operation, including `sap:impact-architecture` assessment for core changes.
-
-3. **Execution Design** — Define tool execution order and parallelism:
-   Use `sap:unit-architect` to design tests alongside implementation.
-   ```powershell
-   # 1. Initialize task (creates ../scratch/task-YYYY-MM-DD-NNN.md)
-   ../scripts/vsp-task.sh "Task Name"  # MacOS/Linux/Git Bash
-   ..\scripts\vsp-task.ps1 -Name "Task Name" # Windows PS
+1. **Triage & Initial Research (PM)** — Classify the request and dispatch Phase 1 parallel research subagents (`sap-investigator` + `schema-inspector`). Gather context before group discussion.
    
-   # 2. Parallel read (investigator + analyst + schema)
-   # 3. Serial write (SyntaxCheck → EditSource → RunUnitTests → RunATCCheck)
-   
-   # 4. Sync & Report (updates ../memory/, index, and git commit)
-   ../scripts/vsp-sync.sh "feat: task summary"
-   ..\scripts\vsp-sync.ps1 -Message "feat: task summary"
-   ```
+2. **Business Analysis & AC (Biz Group)** — Module analysts discuss findings and derive improvements. 
+   **Output**: PRD and Acceptance Criteria (AC).
 
-4. **Parallel Execution** — Independent read/search tasks run as subagents.
-   Write operations (EditSource, WriteSource) remain serial per object to avoid lock conflicts.
+3. **Governance & Approval (PM/User)** — Confirm scope and implementation path. 
+   **User Approval Required**: For high-risk changes (Standard BAPI edits, Schema changes, Core CDS modification).
 
-5. **Sync & Report** — Finalize the task and commit:
-   a. Append to `../memory/YYYY-MM-DD.md` (object name, type, package, ADT URL, decisions, issues).
-   b. **Crucial Step**: Use `vsp-sync` scripts to automate index update and git commit. (Auto-commits are disabled, so PM MUST do this at the end of the task).
+4. **Technical Design (Tech Group)** — Discuss technical approach and perform impact analysis (`sap:impact-architecture`). Architect defines OOP logic; DBA reviews SQL/Indexing.
+
+5. **Implementation & Verification (Assigned Agents)** — Dispatch `code-writer` and `test-runner`. 
+   **Mandatory Chain**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (Zero P1 findings).
+
+6. **Finalization & Reporting (PM)** — Finalize the task and commit:
+   a. Append to `memory/YYYY-MM-DD.md`.
+   b. **Crucial**: Execute `vsp-sync` to commit artifacts and update the memory index.
    c. Report outcome to user with object URL and test results.
+
+```powershell
+# Task Lifecycle
+..\scripts\vsp-task.ps1 -Name "Feature Name"
+# ... execution ...
+..\scripts\vsp-sync.ps1 -Message "feat: feature summary"
+```
 
 ---
 

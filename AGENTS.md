@@ -221,26 +221,30 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 
 ### 🔄 Agent Coordination Workflow (Harness Advanced)
 
-1.  **Triage & Agenda (PM)**:
-    *   The **Global PM** receives the request and determines its nature.
-    *   PM selects relevant **Business Group** (SD, MM, etc.) and **Technical Group** (Architect, Developer, etc.) agents.
-    *   PM facilitates a discussion on the agenda, summarizes the solution, and presents an **Implementation Plan** for approval.
+1.  **Triage & Initial Research (PM & Subagents)**:
+    *   The **Global PM** receives and classifies the request.
+    *   Immediate research is dispatched (Parallel: `sap-investigator` + `schema-inspector`) to gather technical context before any discussion.
 
-2.  **Deep Search & Research**:
-    *   If additional context or pattern search is required, the **Intelligence Investigator** or **browser_subagent** is deployed to gather intel before finalizing the design.
+2.  **Business Analysis & AC Definition (Biz Group)**:
+    *   Module analysts (SD, MM, etc.) discuss the request based on research data.
+    *   **Output**: PRD (Product Requirements Document) and clear **Acceptance Criteria (AC)**.
 
-3.  **Execution Workflow Design**:
-    *   Once the plan is approved, PM creates a step-by-step **Execution Workflow** defining how each agent will contribute.
-    *   This workflow is documented in a temporary `task.md` or as a plan artifact.
+3.  **Governance & Implementation Approval (PM & User)**:
+    *   PM Agent reviews the PRD/AC and confirms the scope.
+    *   **User Approval Required**: For high-risk changes (Core BAPI/CDS modification, Schema changes, cross-module refactors).
 
-4.  **Parallel Execution (Subagents)**:
-    *   PM utilizes **subagents** (e.g., `browser_subagent`, `sap_execute` in parallel) to handle independent tasks simultaneously to optimize speed.
-    *   PM manages task dependencies to prevent conflicts.
+4.  **Technical Design & Impact Analysis (Tech Group)**:
+    *   Technical agents (Architect, DBA, Developer) design the implementation.
+    *   **Impact Analysis**: Use `sap:impact-architecture` to identify side effects. Architect defines OOP structure; DBA reviews indexing.
 
-5.  **Finalization & Sync**:
-    *   **Memory Logging**: Before git commitment, PM ensures all important decisions, technical changes, and issues are documented in the **current date's memory file** (`memory/YYYY-MM-DD.md`).
-    *   **Git Sync**: Once logged, PM MUST manually run `git add` and `git commit` in the terminal to save all artifacts and the updated memory file to the Git repository. (Auto-commits are disabled to reduce noise).
-    *   **Reporting**: PM reports the final results to the user.
+5.  **Implementation & Verification Chain (Assigned Agents)**:
+    *   Implementation is delegated to `code-writer` and verification to `test-runner`.
+    *   **Mandatory Chain**: Must pass `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (Zero P1 findings).
+
+6.  **Finalization, Sync & Reporting (PM)**:
+    *   **Memory Logging**: Record key decisions and issues in `memory/YYYY-MM-DD.md`.
+    *   **Git Sync**: Execute `vsp-sync` to commit artifacts and update index.
+    *   **Final Report**: PM summarizes the outcome and test results for the user.
 
 ### 🤖 PM Subagent Dispatch Protocol
 
@@ -253,14 +257,15 @@ Subagent prompt templates live in `docs/subagents/`.
 Request received
   │
   ├─ Read-only? (analyze, search, query, inspect)
-  │    └─► PARALLEL — dispatch all applicable subagents in ONE message
-  │          ├── sap-investigator   → codebase scan (GrepPackages/GrepObjects/SearchObject)
-  │          ├── read-only-analyst  → business data queries (RunQuery/GetTableContents)
-  │          └── schema-inspector   → table/CDS structure (GetTable/GetCDSDependencies)
+  │    └─► PARALLEL SKILLS — Primary Agent dispatches research subagents
+  │          ├── sap-investigator   → codebase scan (Skills: memory-intelligence, bapi-explorer)
+  │          ├── read-only-analyst  → business data queries (Module analyst contexts)
+  │          └── schema-inspector   → table/CDS structure (Skill: impact-architecture)
   │
   └─ Write? (EditSource, WriteSource, SyntaxCheck)
-       └─► SERIAL — ABAP Developer executes
-             One object at a time to prevent lock conflicts.
+       └─► SERIAL SUBAGENTS — delegate to specialized execution subagents
+             ├── code-writer  → ABAP implementation (EditSource/WriteSource/SyntaxCheck)
+             └── test-runner  → Stability verification (RunUnitTests/RunATCCheck)
 ```
 
 #### Subagent Roster
@@ -286,16 +291,16 @@ Request received
 
 #### Typical Dispatch Sequences by Task Type
 
-| Task type | Phase 1 (parallel) | Phase 2 (serial) |
-|-----------|--------------------|------------------|
-| New ABAP object | investigator + analyst + schema | WriteSource → SyntaxCheck → RunUnitTests → RunATCCheck |
-| Bug fix | investigator (find occurrences) + schema (confirm structure) | EditSource → SyntaxCheck → RunUnitTests → RunATCCheck |
-| Data analysis report | analyst + schema (parallel, no write) | — (read-only task ends here) |
-| Refactor across package | investigator (all occurrences) + schema (CDS impact) | serial EditSource per object |
-| Interface design | analyst + schema + investigator | Interface Expert designs → Developer implements |
-| Fiori / UX design | analyst + browser_subagent | Fiori Developer designs → Implement UI5 |
-| Form / Output design | analyst + schema | Form Expert designs layouts and print programs |
-| Automation Scripting | analyst + investigator | SAP GUI Scripting Expert develops scripts |
+| Task type | Phase 1 (parallel research) | Phase 2 (serial execution) |
+|-----------|-----------------------------|----------------------------|
+| New ABAP object | investigator + analyst + schema | code-writer → test-runner |
+| Bug fix | investigator + schema | code-writer → test-runner |
+| Data analysis report | analyst + schema | — (read-only task ends here) |
+| Refactor across package | investigator + schema | code-writer per object → test-runner |
+| Interface design | analyst + schema + investigator | Interface Expert designs → code-writer implements |
+| Fiori / UX design | analyst + browser_subagent | fiori-dev designs → code-writer implements |
+| Form / Output design | analyst + schema | form-expert designs → code-writer implements |
+| Automation Scripting | analyst + investigator | gui-scripter develops → code-writer integrates |
 
 ---
 
