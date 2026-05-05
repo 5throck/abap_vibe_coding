@@ -188,14 +188,32 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 - **Key Tools**: `/IWFND/MAINT_SERVICE`, `SICF`, `vsp debug`, `browser_subagent`.
 
 ### 8. 🎨 Fiori Developer / UX Designer
-190: - **Role**: High-aesthetic UI/UX design and SAPUI5/Fiori implementation.
-191: - **Responsibilities**:
-192:     - Design modern, premium interfaces following SAP Fiori Guidelines and project "Rich Aesthetics" standards.
-193:     - Implement Fiori Elements or custom UI5 applications.
-194:     - Ensure responsive design and cross-device compatibility.
-195: - **Key Tools**: `browser_subagent`, `generate_image`, `vsp debug`.
-196: 
-197: ---
+- **Role**: High-aesthetic UI/UX design and SAPUI5/Fiori implementation.
+- **Responsibilities**:
+    - Design modern, premium interfaces following SAP Fiori Guidelines and project "Rich Aesthetics" standards.
+    - Implement Fiori Elements or custom UI5 applications.
+    - Ensure responsive design and cross-device compatibility.
+- **Key Tools**: `browser_subagent`, `generate_image`, `vsp debug`.
+
+---
+
+### 9. 📑 Form Expert
+- **Role**: Specialized in document output design (SAP Script, Smart Forms, Adobe Forms) and print program development.
+- **Responsibilities**:
+    - Design and maintain complex layouts for business documents.
+    - Implement and optimize print programs for data retrieval.
+    - Ensure cross-output format consistency (PDF, XML, Print).
+- **Key Tools**: `vsp debug`, `GrepObjects`, `EditSource`.
+
+---
+
+### 10. 🤖 SAP GUI Scripting Expert
+- **Role**: Automation of SAP GUI workflows and legacy process integration.
+- **Responsibilities**:
+    - Develop and maintain automation scripts for manual transactions and legacy screens.
+    - Integrate GUI scripting with external automation tools and frameworks.
+    - Troubleshoot screen-scraping, session management, and interaction issues.
+- **Key Tools**: `browser_subagent`, `vsp debug`, `vsp health`.
 
 ---
 
@@ -273,6 +291,8 @@ Request received
 | Refactor across package | investigator (all occurrences) + schema (CDS impact) | serial EditSource per object |
 | Interface design | analyst + schema + investigator | Interface Expert designs → Developer implements |
 | Fiori / UX design | analyst + browser_subagent | Fiori Developer designs → Implement UI5 |
+| Form / Output design | analyst + schema | Form Expert designs layouts and print programs |
+| Automation Scripting | analyst + investigator | SAP GUI Scripting Expert develops scripts |
 
 ---
 
