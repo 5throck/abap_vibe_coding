@@ -47,12 +47,12 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 | **`docs/subagents/`** | Subagent prompt templates: `sap-investigator`, `read-only-analyst`, `schema-inspector`. |
 | **`scripts/`** | Cross-platform automation: `vsp-task.*`, `vsp-sync.*`, `git-sync.*`. |
 | **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, output format, and handoff rules. |
-| **`CONTEXT.md`** | **Shared** project context for all AI tools: scripts, codebase map, ABAP rules, workflow. |
+| **`docs/CONTEXT.md`** | **Shared** project context for all AI tools: scripts, codebase map, ABAP rules, workflow. |
 | **`CLAUDE.md`** | Claude Code CLI-specific config: session start rules, MCP config note, hooks behavior. |
 | **`GEMINI.md`** | Gemini CLI-specific overrides (hyperfocused mode config, skill additions). |
-| **`SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
-| **`SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
-| **`MCP_USAGE.md`** | Technical reference for MCP tool usage, tool boundaries, and error handling. |
+| **`docs/SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
+| **`docs/SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
+| **`docs/MCP_USAGE.md`** | Technical reference for MCP tool usage, tool boundaries, and error handling. |
 | **`vsp.exe`** | The MCP server executable used for SAP ADT integration. |
 
 ## Operational Workflow (Harness Advanced Governance)

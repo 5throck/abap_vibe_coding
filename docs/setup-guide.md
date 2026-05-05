@@ -262,12 +262,14 @@ cd ~/abap
 ├── .gitignore
 ├── AGENTS.md
 ├── CLAUDE.md                  ← Claude Code CLI-specific config
-├── CONTEXT.md                 ← Shared project context (all AI tools)
 ├── GEMINI.md                  ← Gemini CLI-specific overrides
-├── MCP_USAGE.md
 ├── README.md
-├── SECURITY.md
-├── SKILL.md
+├── docs/
+│   ├── CONTEXT.md             ← Shared project context (all AI tools)
+│   ├── MCP_USAGE.md
+│   ├── SECURITY.md
+│   ├── SKILL.md
+│   └── setup-guide.md
 └── vsp.exe                    ← Download separately (gitignored)
 ```
 
@@ -299,12 +301,14 @@ cd ~/abap
 ├── .gitignore
 ├── AGENTS.md
 ├── CLAUDE.md                  ← Claude Code CLI-specific config
-├── CONTEXT.md                 ← Shared project context (all AI tools)
 ├── GEMINI.md                  ← Gemini CLI-specific overrides
-├── MCP_USAGE.md
 ├── README.md
-├── SECURITY.md
-├── SKILL.md
+├── docs/
+│   ├── CONTEXT.md             ← Shared project context (all AI tools)
+│   ├── MCP_USAGE.md
+│   ├── SECURITY.md
+│   ├── SKILL.md
+│   └── setup-guide.md
 └── vsp                        ← Download separately (gitignored)
 ```
 
@@ -1267,7 +1271,7 @@ cat .claude/settings.local.json
 
 **Symptom**: `"DESC" is not allowed in ORDER BY`
 
-**Solution**: Use ABAP SQL syntax (see `MCP_USAGE.md`):
+**Solution**: Use ABAP SQL syntax (see `docs/MCP_USAGE.md`):
 ```sql
 -- Wrong
 ORDER BY field DESC
@@ -1308,10 +1312,10 @@ Use this list when onboarding a new team member.
 ### First session orientation (30 min)
 
 - [ ] Read `README.md` — understand the Harness Engineering concept
-- [ ] Read `CONTEXT.md` — shared project context (build commands, codebase map, ABAP dev rules)
+- [ ] Read `docs/CONTEXT.md` — shared project context (build commands, codebase map, ABAP dev rules)
 - [ ] Read `AGENTS.md` — understand your role and available agents
-- [ ] Read `SKILL.md` — review tool boundaries and best practices
-- [ ] Read `MCP_USAGE.md` §Critical Limitations — especially ABAP SQL syntax
+- [ ] Read `docs/SKILL.md` — review tool boundaries and best practices
+- [ ] Read `docs/MCP_USAGE.md` §Critical Limitations — especially ABAP SQL syntax
 - [ ] Review `docs/SAP ERP Module/<your-module>-analyst.md` if you are a Business Analyst
 - [ ] Review `docs/task-template.md` — understand the handoff workflow
 - [ ] Do a test task: ask Claude to query `SFLIGHT` and explain the result
@@ -1337,7 +1341,7 @@ Use this list when onboarding a new team member.
 | `.gemini/settings.json` | ❌ | Gemini CLI config (abap + abap-docs + sap-docs) | Each developer (optional) |
 | `%APPDATA%\Antigravity\User\settings.json` | ❌ (outside repo) | Antigravity MCP config (abap + abap-docs + sap-docs) | Each developer (optional) |
 | `vsp` / `vsp.exe` | ❌ | MCP server binary | Download from releases |
-| `CONTEXT.md` | ✅ | Shared project context for all AI tools | Repo (already exists) |
+| `docs/CONTEXT.md` | ✅ | Shared project context for all AI tools | Repo (already exists) |
 | `CLAUDE.md` | ✅ | Claude Code CLI-specific config | Repo (already exists) |
 | `GEMINI.md` | ✅ | Gemini CLI-specific overrides | Repo (already exists) |
 | `AGENTS.md` | ✅ | Agent roles + dispatch protocol | Repo (already exists) |
