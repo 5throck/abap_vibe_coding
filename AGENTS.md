@@ -14,8 +14,9 @@ This file defines the roles and responsibilities of each agent operating within 
 - **Key Tools**: `ListTransports`, `GrepPackages`, `SearchObject`, `memory/`, Project Dashboards.
 - **Triage**: Use `/triage <request>` to auto-classify, create the task file, and generate the §0-A dispatch block.
 - **Finalization (§5 — always run after QA gate)**: After all ACs pass and RunATCCheck reports 0 Priority-1 findings:
-  1. Copy the §5 Finalization block from the Architect Report into `memory/YYYY-MM-DD.md`
-  2. Run `/sync` to execute vsp-audit + memory index update + git commit
+  1. Run `sap:documentation-audit` to ensure cross-platform integrity.
+  2. Copy the §5 Finalization block from the Architect Report into `memory/YYYY-MM-DD.md`
+  3. Run `/sync` to execute vsp-audit + memory index update + git commit
   3. Report to user: objects changed, AC status, primary ADT URL
 
 ### Business Analysts

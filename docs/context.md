@@ -110,6 +110,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - **Naming**: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program).
 - **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 - **QA Chain**: After any edit, the `Post-Write Mandatory Chain` MUST be executed. 
+- **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
 - See [docs/skill.md § Post-Write Mandatory Chain](skill.md#post-write-mandatory-chain) for details.
 
 ### Developer Quick Start (Task Lifecycle)

@@ -82,6 +82,10 @@ flowchart TD
         N --> FD[FindDefinition]
         N --> FR[FindReferences]
 
+        I[Impact Analysis]
+        I --> AC[AnalyzeCallGraph]
+        I --> CI[GetCDSImpactAnalysis]
+
         T[Test/Check]
         T --> SC[SyntaxCheck]
         T --> UT[RunUnitTests]
@@ -209,6 +213,8 @@ flowchart LR
 | Find in package | `GrepPackages` | `packages=[PKG], pattern=regex` |
 | Find in namespace | `GrepPackages` | `packages=[Z*], include_subpackages=true` |
 | Find object by name | `SearchObject` | `query=Z*TEST*` |
+| Analyze call graph | `AnalyzeCallGraph` | `object_url=/sap/bc/adt/...` |
+| Analyze CDS impact | `GetCDSImpactAnalysis` | `ddls_name=ZDDL_VIEW` |
 
 ---
 
@@ -345,6 +351,23 @@ SELECT carrid, COUNT(*) as cnt FROM sflight GROUP BY carrid ORDER BY cnt DESCEND
   ]
 }
 ```
+
+### AnalyzeCallGraph - Call Hierarchy
+**Purpose:** Identify direct and transitive callers of a target object to assess regression risks.
+
+**Parameters:**
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `object_url` | Yes | ADT URL of the target object |
+| `direction` | No | `up` (callers) or `down` (callees). Default: `up` |
+
+### GetCDSImpactAnalysis - Reverse CDS Dependencies
+**Purpose:** Identify all CDS views and OData services that consume a specific CDS view (reverse impact).
+
+**Parameters:**
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `ddls_name` | Yes | CDS view name (DDLS) |
 
 ---
 

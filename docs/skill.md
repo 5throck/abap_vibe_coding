@@ -44,6 +44,7 @@ This file defines the ABAP development capabilities and optimized workflow patte
 | `sap:unit-architect` | When writing quality code | Design and implement ABAP Unit tests following docs/testing-guidelines.md |
 | `sap:performance-analyzer` | When optimizing code | Use runtime analysis and SQL execution plans to identify bottlenecks |
 | `sap:impact-architecture` | When modifying core BAPIs/CDS | Professional analysis of `AnalyzeCallGraph` results to identify cascading risks and side effects |
+| `sap:documentation-audit` | Before finalization/sync | Execute `vsp-audit` script to ensure cross-platform compatibility and link integrity |
 
 ---
 
@@ -188,6 +189,24 @@ Cross-package references (GrepPackages): P occurrences
 Overall risk: Low / Medium / High
 Reason: <explain dominant risk factor>
 ```
+
+---
+
+### sap:documentation-audit
+
+**Purpose**: Ensure all project documentation is cross-platform compatible, links are valid, and absolute paths are avoided.
+
+**Workflow**:
+1. **Identify OS**: Determine if running on Windows (PowerShell) or macOS/Linux (Bash).
+2. **Execute Audit**:
+   - **Windows**: `powershell -ExecutionPolicy Bypass -File scripts/vsp-audit.ps1`
+   - **Unix**: `bash scripts/vsp-audit.sh`
+3. **Analyze Results**:
+   - If audit passes: proceed to `vsp-sync`.
+   - If audit fails: identify the specific issue (Broken link, Absolute path, Missing pair) and fix it in the source `.md` or script.
+4. **Re-run**: Repeat until the audit returns 0 errors.
+
+**Gate**: A passing audit is required before running the final `/sync` or `vsp-sync` command.
 
 ### Code Quality
 | Skill | Trigger | Description |
