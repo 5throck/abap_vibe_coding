@@ -62,4 +62,4 @@ Rule of thumb: "would a stranger reading this file be able to identify the
 customer, the system, or a live account?" If yes, redact and move under `.local/`.
 
 ---
-*Last Updated: 2026-05-01*
+*Last Updated: 2026-05-05*

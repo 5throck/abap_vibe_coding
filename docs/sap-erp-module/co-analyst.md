@@ -121,4 +121,4 @@ CO-PA has two types:
 | TKE1 | CO-PA Characteristic Definition |
 
 ---
-*Last Updated: 2026-05-01*
+*Last Updated: 2026-05-05*

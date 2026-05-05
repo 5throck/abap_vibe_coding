@@ -124,4 +124,4 @@ SELECT kunnr, COUNT(*) AS order_cnt, SUM( netwr ) AS total_net
 ---
 
 ---
-*Last Updated: 2026-05-01*
+*Last Updated: 2026-05-05*

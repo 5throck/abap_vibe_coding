@@ -107,4 +107,4 @@ SELECT a~tanum, a~lgnum, a~bdatu, b~matnr, b~sollm, b~istme
 | T301 | Storage Type (WM) |
 
 ---
-*Last Updated: 2026-05-01*
+*Last Updated: 2026-05-05*

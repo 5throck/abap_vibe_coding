@@ -51,7 +51,7 @@ MARA (Material Master — General)
 ```sql
 -- Unreceived Purchase Orders Search
 SELECT a~ebeln, a~erdat, a~lifnr, b~ebelp, b~matnr, b~menge, b~wemng
-  FROM ekko AS a JOIN ekpo AS b ON a~ebeln = b~vbeln
+  FROM ekko AS a JOIN ekpo AS b ON a~ebeln = b~ebeln
   WHERE b~elikz = ' ' AND a~erdat >= '20260101' AND a~bsart = 'NB'
   ORDER BY a~erdat DESCENDING
 
@@ -132,4 +132,4 @@ SELECT matnr, bwkey, vprsv, verpr, stprs, peinh, laepr
 ---
 
 ---
-*Last Updated: 2026-05-01*
+*Last Updated: 2026-05-05*
