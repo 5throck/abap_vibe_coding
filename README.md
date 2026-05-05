@@ -31,37 +31,53 @@ Agents are categorized into two strategic groups, operating under a **PM-led Gov
 ### 🛠️ Technical Group
 - **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
 - **💻 ABAP Developer**: Executes precision coding and refactoring through the protocol layer.
-- **🔌 Interface Expert**: Manages OData, RFC, and external API integrations.
 - **🧪 QA Engineer**: Ensures stability through Unit Testing and debugging.
+- **🔌 Interface Expert**: Manages OData, RFC, and external API integrations.
+- **🎨 Fiori Developer / UX Designer**: Designs modern, premium interfaces following SAP Fiori Guidelines.
+- **📑 Form Expert**: Specializes in document output design (Smart Forms, Adobe Forms).
+- **🤖 SAP GUI Scripting Expert**: Automates legacy workflows and manual transactions.
 - **🚀 DevOps/Admin**: Handles infrastructure and deployment.
 - **🔍 Intelligence Investigator**: Explores codebase patterns and extracts knowledge.
 
 ## File Structure
 
+### ⚖️ Governance & Rules
+| File | Purpose |
+| :--- | :--- |
+| **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, and handoff rules. |
+| **`docs/CONTEXT.md`** | **Shared** project context for all AI tools (scripts, codebase map, ABAP rules). |
+| **`docs/SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
+| **`docs/SECURITY.md`** | Sanitization policy and pre-commit scan rules. |
+
+### 🧠 Intelligence & Memory
 | Directory/File | Purpose |
 | :--- | :--- |
-| **`memory/`** | Date-based development history. See `memory/MEMORY.md` for the index. |
-| **`docs/SAP ERP Module/`** | Module analyst deep-knowledge files (sd, le, pp, mm, fi, co). Loaded at agent activation. |
-| **`docs/task-template.md`** | Handoff template — copy to `scratch/` at task start; each agent fills their section. |
+| **`memory/`** | Date-based development history. See `memory/MEMORY.md` for index. |
+| **`docs/SAP ERP Module/`** | Module analyst deep-knowledge files (SD, MM, FI, etc.). |
+| **`docs/subagents/`** | Specialized subagent prompt templates (investigator, analyst, etc.). |
+
+### 🛠️ Development & Ops
+| Directory/File | Purpose |
+| :--- | :--- |
+| **`scripts/`** | Cross-platform automation: `vsp-task.*`, `vsp-sync.*`, `git-sync.*`, `vsp-audit.*`. |
+| **`docs/task-template.md`** | Handoff template for cross-agent collaboration. |
 | **`docs/testing-guidelines.md`**| QA standards for ABAP Unit and TEST-SEAMS. |
-| **`docs/subagents/`** | Subagent prompt templates: `sap-investigator`, `read-only-analyst`, `schema-inspector`. |
-| **`scripts/`** | Cross-platform automation: `vsp-task.*`, `vsp-sync.*`, `git-sync.*`. |
-| **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, output format, and handoff rules. |
-| **`docs/CONTEXT.md`** | **Shared** project context for all AI tools: scripts, codebase map, ABAP rules, workflow. |
-| **`CLAUDE.md`** | Claude Code CLI-specific config: session start rules, MCP config note, hooks behavior. |
-| **`GEMINI.md`** | Gemini CLI-specific overrides (hyperfocused mode config, skill additions). |
-| **`docs/SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
-| **`docs/SECURITY.md`** | Sanitization policy and pre-commit scan rules for tracked files. |
-| **`docs/MCP_USAGE.md`** | Technical reference for MCP tool usage, tool boundaries, and error handling. |
-| **`vsp` / `vsp.exe`** | The MCP server binary used for SAP ADT integration. |
+| **`docs/MCP_USAGE.md`** | Technical reference for MCP tool usage and error handling. |
+
+### ⚙️ Configuration
+| File | Purpose |
+| :--- | :--- |
+| **`CLAUDE.md`** | Claude Code CLI-specific config and hooks behavior. |
+| **`GEMINI.md`** | Gemini CLI-specific overrides. |
+| **`vsp` / `vsp.exe`** | The MCP server binary for SAP ADT integration. |
 
 ## Operational Workflow (Harness Advanced Governance)
 
 1.  **Triage (PM)** — Classify request type; identify package and affected objects.
-2.  **Agenda** — Gather context; select agents; run `./scripts/vsp-task.sh` to initialize.
+2.  **Agenda** — Gather context; select agents; run `vsp-task` to initialize.
 3.  **Execution Design** — Define tool order (read tasks parallel, write tasks serial).
 4.  **Parallel Execution** — Independent read tasks run as subagents; write operations remain serial.
-5.  **Sync & Report** — Append to `memory/YYYY-MM-DD.md`, then run `./scripts/vsp-sync.sh` to commit.
+5.  **Sync & Report** — Append to memory, then run `vsp-sync` to commit.
 
 ---
 > [!TIP]

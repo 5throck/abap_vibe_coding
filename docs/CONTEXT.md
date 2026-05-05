@@ -53,7 +53,7 @@ pkg/
 | Add graph feature | `pkg/graph/` |
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
-| Fix MCP/docs/config | `../README.md`, `cli-agents/*`, `handlers_universal.go` |
+| Fix MCP/docs/config | `../README.md`, `subagents/*`, `handlers_universal.go` |
 | Add/update analyst context | `SAP ERP Module/<module>-analyst.md` |
 | New task handoff | copy `task-template.md` → `../scratch/task-YYYY-MM-DD-NNN.md` |
 | Add/update subagent prompt | `subagents/<role>.md` |
@@ -113,7 +113,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 1. **Triage (PM)** — Classify the request: ABAP dev / graph / debug / infra.
    Identify the package (`$TMP` or named) and affected object types.
 
-2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (investigator + analyst + schema + fiori/form) in a **single message**. Load `SAP ERP Module/<module>-analyst.md` in the analyst subagent prompt.
+2. **Agenda (PM + Agents)** — Dispatch Phase 1 parallel subagents (investigator + analyst + schema + fiori/form/gui) in a **single message**. Load `SAP ERP Module/<module>-analyst.md` in the analyst subagent prompt.
  Use `sap:bapi-explorer` to identify necessary standard APIs and `harness:memory-intelligence` to leverage historical design patterns.
     See `../AGENTS.md § PM Subagent Dispatch Protocol` for decision tree.
     Produce an Implementation Plan before any write operation, including `sap:impact-architecture` assessment for core changes.
@@ -159,7 +159,7 @@ Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZC
 | `pkg/adt/ui5.go` | Read-only | Write needs `/UI5/CL_REPOSITORY_LOAD` |
 | `pkg/llvm2abap/`, `pkg/wasmcomp/` | Research | Not production; don't treat as stable |
 | `pkg/adt/debugger.go` (REST) | Deprecated | Prefer `websocket_debug.go` |
-| `docs/cli-agents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
+| `docs/subagents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
 
 ---
 *Last Updated: 2026-05-05*

@@ -500,7 +500,7 @@ flowchart TD
 
 ---
 
-**Last Updated:** 2026-05-01
+**Last Updated:** 2026-05-05
 **Last Verified:** 2026-05-01 (focused mode tool list; Go source not present in this repo — tool count unverified against `tools_focused.go`)
 **MCP Server Version:** v2.2.0+
 **Maintained by:** vsp project
