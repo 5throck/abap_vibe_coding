@@ -2,7 +2,7 @@
   "//": "MCP Server configuration for vsp. Copy the block for your OS, rename the key to 'abap', and save as .mcp.json in the project root.",
   "mcpServers": {
     "abap-windows": {
-      "command": "./vsp.exe",
+      "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",

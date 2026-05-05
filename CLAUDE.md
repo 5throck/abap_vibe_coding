@@ -77,7 +77,7 @@ Config file: `.mcp.json` (project root) — auto-loaded by both the CLI and the 
 {
   "mcpServers": {
     "abap": {
-      "command": "./vsp.exe",
+      "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -89,7 +89,7 @@ Config file: `.mcp.json` (project root) — auto-loaded by both the CLI and the 
 }
 ```
 
-The relative path `./vsp.exe` works because Claude Code CLI resolves it against the project root.
+The relative path `./vsp` works because Claude Code CLI resolves it against the project root.
 
 ---
 

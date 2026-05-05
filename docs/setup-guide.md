@@ -721,7 +721,7 @@ Add the following block (merge with existing content — do not replace the file
     "servers": {
       "abap": {
         "type": "stdio",
-        "command": "C:\\<path-to-repo>\\vsp.exe",
+        "command": "./vsp",
         "args": ["--mode", "hyperfocused"],
         "env": {
           "VSP_MODE": "hyperfocused",
@@ -742,11 +742,11 @@ Add the following block (merge with existing content — do not replace the file
 }
 ```
 
-Replace `C:\\<path-to-repo>\\vsp.exe` with the absolute path to your local `vsp.exe`.
+The relative path `./vsp` works if Antigravity is started from the project root. If you encounter issues, replace it with the absolute path to your local `vsp` binary.
 
-**Example** (if repo is at `C:\git\abap`):
+**Example** (Absolute path fallback):
 ```json
-"command": "C:\\git\\abap\\vsp.exe"
+"command": "C:\\git\\abap\\vsp"
 ```
 
 **macOS**:
@@ -756,7 +756,7 @@ Replace `C:\\<path-to-repo>\\vsp.exe` with the absolute path to your local `vsp.
     "servers": {
       "abap": {
         "type": "stdio",
-        "command": "/Users/<username>/abap/vsp",
+        "command": "./vsp",
         "args": ["--mode", "hyperfocused"],
         "env": {
           "VSP_MODE": "hyperfocused",
