@@ -1,34 +1,87 @@
 # Harness Engineering for SAP ABAP
 
 ## Project Mission
-This project provides a Harness Engineering framework for SAP ABAP development. It uses AI agents to help with requirements analysis, technical design, implementation, testing, and synchronization of project knowledge.
+This project aims to revolutionize SAP ABAP development by establishing a robust **Harness Engineering** framework. It leverages AI agents to automate, standardize, and optimize the entire development lifecycle—from business requirements analysis to system deployment.
 
-## What Lives Here
-- `AGENTS.md`: roles, responsibilities, and orchestration rules
-- `docs/CONTEXT.md`: shared project context for all AI tools
-- `docs/SKILL.md`: ABAP workflow rules and tool guidance
-- `docs/MCP_USAGE.md`: MCP tool reference and ABAP SQL notes
-- `memory/`: date-based development notes and decisions
-- `docs/SAP ERP Module/`: analyst context files by SAP module
-- `docs/subagents/`: subagent prompt templates
-- `scripts/`: automation scripts for task init, sync, and audit
+## Harness Engineering Concept
 
-## Operating Model
-1. Triage the request.
-2. Gather context and select the right agents.
-3. Plan the execution path.
-4. Run read tasks in parallel and write tasks serially.
-5. Log important decisions in memory and commit the result.
+**Harness Engineering** is a methodology where specialized AI agents collaborate within a strictly structured "harness" (environment). This approach ensures that AI-driven development is predictable, professional, and highly efficient. 
 
-## Start Here
-If you are new to the project, read:
-1. `docs/setup-guide.md`
-2. `docs/CONTEXT.md`
-3. `AGENTS.md`
-4. `docs/SKILL.md`
+Key principles of Harness Engineering include:
+- **Document-First Approach**: All architectural decisions, workflows, and business rules are documented before any code is written. 
+- **Role-Based Collaboration**: Tasks are delegated to specialized agents (PM, Analysts, Developers, Architects) operating under a unified governance model, much like a human software engineering team.
+- **Repository as a Brain**: While ABAP source code resides directly within the SAP system, this repository tracks the **intelligence, logic, and architectural framework** (the Harness) used by AI agents to manage the SAP environment.
 
-## Notes
-- All `.abap` scratch files belong in `scratch/`.
-- Shared project rules are documented in English.
+## System Architecture & Operating Principles
 
+The system operates as a bridge between modern AI interfaces and SAP environments:
+
+1.  **Agent Tier**: AI agents (Claude Code CLI, Antigravity, Gemini CLI) act as the "brain," orchestrating tasks based on predefined Harness roles.
+2.  **Protocol Tier**: Standardized protocols (such as Model Context Protocol) are used to safely expose SAP ADT (ABAP Development Tools) capabilities to the agents.
+3.  **SAP Tier**: Direct interaction with SAP systems via REST APIs and WebSockets for stateful operations like debugging, query execution, and object management.
+
+## Agent Framework (AGENTS.md)
+
+Agents are categorized into two strategic groups, operating under a **PM-led Governance** model:
+
+### 🏢 Business Group
+- **👑 Global PM**: The **single point of entry** for all requests. Orchestrates agents and ensures doc/git consistency.
+- **📦 Functional Analysts (SD, LE, PP, MM, FI, CO)**: Activate on trigger keywords, query SAP directly via read-only MCP tools, produce structured PRDs with Acceptance Criteria, and hand off to the Technical Group. Each analyst loads a dedicated `docs/SAP ERP Module/<module>-analyst.md` for deep domain knowledge.
+
+### 🛠️ Technical Group
+- **🏗️ Architect & 🗄️ DBA**: Design system blueprints and optimized data models (CDS Views).
+- **💻 ABAP Developer**: Executes precision coding and refactoring through the protocol layer.
+- **🧪 QA Engineer**: Ensures stability through Unit Testing and debugging.
+- **🔌 Interface Expert**: Manages OData, RFC, and external API integrations.
+- **🎨 Fiori Developer / UX Designer**: Designs modern, premium interfaces following SAP Fiori Guidelines.
+- **📑 Form Expert**: Specializes in document output design (Smart Forms, Adobe Forms).
+- **🤖 SAP GUI Scripting Expert**: Automates legacy workflows and manual transactions.
+- **🚀 DevOps/Admin**: Handles infrastructure and deployment.
+- **🔍 Intelligence Investigator**: Explores codebase patterns and extracts knowledge.
+
+## File Structure
+
+### ⚖️ Governance & Rules
+| File | Purpose |
+| :--- | :--- |
+| **`AGENTS.md`** | Agent roles, trigger keywords, allowed tools, and handoff rules. |
+| **`docs/CONTEXT.md`** | **Shared** project context for all AI tools (scripts, codebase map, ABAP rules). |
+| **`docs/SKILL.md`** | High-level AI behavioral instructions and ABAP development capabilities. |
+| **`docs/SECURITY.md`** | Sanitization policy and pre-commit scan rules. |
+
+### 🧠 Intelligence & Memory
+| Directory/File | Purpose |
+| :--- | :--- |
+| **`memory/`** | Date-based development history. See `memory/MEMORY.md` for index. |
+| **`docs/SAP ERP Module/`** | Module analyst deep-knowledge files (SD, MM, FI, etc.). |
+| **`docs/subagents/`** | Specialized subagent prompt templates (investigator, analyst, etc.). |
+
+### 🛠️ Development & Ops
+| Directory/File | Purpose |
+| :--- | :--- |
+| **`scripts/`** | Cross-platform automation: `vsp-task.*`, `vsp-sync.*`, `git-sync.*`, `vsp-audit.*`. |
+| **`docs/task-template.md`** | Handoff template for cross-agent collaboration. |
+| **`docs/testing-guidelines.md`**| QA standards for ABAP Unit and TEST-SEAMS. |
+| **`docs/MCP_USAGE.md`** | Technical reference for MCP tool usage and error handling. |
+
+### ⚙️ Configuration
+| File | Purpose |
+| :--- | :--- |
+| **`CLAUDE.md`** | Claude Code CLI-specific config and hooks behavior. |
+| **`GEMINI.md`** | Gemini CLI-specific overrides. |
+| **`vsp` / `vsp.exe`** | The MCP server binary for SAP ADT integration. |
+
+## Operational Workflow (Harness Advanced Governance)
+
+1.  **Triage (PM)** — Classify request type; identify package and affected objects.
+2.  **Agenda** — Gather context; select agents; run `vsp-task` to initialize.
+3.  **Execution Design** — Define tool order (read tasks parallel, write tasks serial).
+4.  **Parallel Execution** — Independent read tasks run as subagents; write operations remain serial.
+5.  **Sync & Report** — Append to memory, then run `vsp-sync` to commit.
+
+---
+> [!TIP]
+> **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (includes MCP connectivity, abapGit, and AI agent configuration).
+
+---
 *Maintained by the Harness Engineering Team | Last Updated: 2026-05-05*

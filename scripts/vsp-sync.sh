@@ -25,13 +25,19 @@ if ! grep -q "\[$DATE\]($DATE.md)" "$INDEX_FILE"; then
     echo "Updating memory index..."
     
     SUMMARY="Development update"
+    if [ -f "$MEMORY_FILE" ]; then
+        FIRST_HEADER=$(grep -m 1 "^## " "$MEMORY_FILE" | sed 's/^## //')
+        if [ ! -z "$FIRST_HEADER" ]; then
+            SUMMARY="$FIRST_HEADER"
+        fi
+    fi
+
     if [[ $MESSAGE =~ :[[:space:]]*(.*) ]]; then
         SUMMARY=${BASH_REMATCH[1]}
     fi
     NEW_ENTRY="| [$DATE]($DATE.md) | $SUMMARY |"
     
     # Insert after the header table
-    # Using a temporary file for maximum portability across MacOS/Linux sed
     sed "/^|------|---------|$/a \\
 $NEW_ENTRY" "$INDEX_FILE" > "$INDEX_FILE.tmp" && mv "$INDEX_FILE.tmp" "$INDEX_FILE"
 fi

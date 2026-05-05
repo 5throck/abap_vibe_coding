@@ -32,8 +32,16 @@ $indexContent = Get-Content $indexFile
 if (-not ($indexContent -match "\[$date\]\($date\.md\)")) {
     Write-Host "Updating memory index..." -ForegroundColor Green
     
-    # Create new entry line
+    # Try to extract first ## header from today's log as summary
     $summary = "Development update"
+    if (Test-Path $memoryFile) {
+        $logContent = Get-Content $memoryFile
+        $firstHeader = $logContent | Where-Object { $_ -match "^##\s+(.*)" } | Select-Object -First 1
+        if ($firstHeader -match "##\s+(.*)") {
+            $summary = $matches[1]
+        }
+    }
+    
     if ($Message -match ":\s*(.*)") { $summary = $matches[1] }
     $newEntry = "| [$date]($date.md) | $summary |"
     

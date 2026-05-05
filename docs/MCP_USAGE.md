@@ -462,6 +462,42 @@ Step 1: GetSource(type=MSAG, name=ZRAY_00)
 
 ---
 
+---
+
+## Specialized Tools (Requires Feature Flags)
+
+These tools require specific feature flags to be enabled in `.mcp.json` or `.env` (e.g., `VSP_FEATURE_TRANSPORT=on`).
+
+### 1. Transport Management (CTS)
+**Flag:** `VSP_FEATURE_TRANSPORT=on`
+
+| Task | Tool | Parameters | Description |
+|------|------|------------|-------------|
+| List transports | `ListTransports` | `user=DEV, status=modifiable` | List transport requests |
+| Get details | `GetTransport` | `transport_id=A4HK900094` | Get objects and tasks in a transport |
+| Create request | `CreateTransport` | `description=Task summary, type=workbench` | Create a new transport request |
+| Release request | `ReleaseTransport` | `transport_id=A4HK900094` | Release/Export a transport request |
+
+### 2. OData & RAP (Restful ABAP Programming)
+**Flag:** `VSP_FEATURE_RAP=on`
+
+| Task | Tool | Parameters | Description |
+|------|------|------------|-------------|
+| Get Service Metadata | `GetODataMetadata` | `service_name=Z_MY_SERVICE_BINDING` | Get OData V2/V4 service definition |
+| Test Service | `TestODataService` | `service_name=Z_MY_SERVICE_BINDING, entity=MyEntity` | Execute test call to service endpoint |
+| CDS Exposure | `GetCDSExposure` | `ddls_name=Z_MY_CDS` | Check if CDS is exposed as OData |
+
+### 3. Fiori & UI5 (BSP)
+**Flag:** `VSP_FEATURE_UI5=on`
+
+| Task | Tool | Parameters | Description |
+|------|------|------------|-------------|
+| List UI5 Projects | `ListUI5Projects` | `name=Z*` | Find BSP applications / UI5 projects |
+| Get UI5 Project | `GetUI5Project` | `project_name=Z_MY_APP` | Get file list and manifest metadata |
+| Read UI5 File | `ReadUI5File` | `project_name=Z_MY_APP, path=webapp/view/Main.view.xml` | Read specific project file |
+
+---
+
 ## Summary: When to Use What
 
 ```mermaid

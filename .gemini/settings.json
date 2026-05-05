@@ -9,7 +9,10 @@
       "env": {
         "VSP_MODE": "hyperfocused",
         "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "VSP_FEATURE_ABAPGIT": "on",
+        "VSP_FEATURE_TRANSPORT": "on",
+        "VSP_FEATURE_UI5": "on",
+        "VSP_FEATURE_RAP": "on"
       }
     },
     "abap-docs": {
@@ -50,6 +53,16 @@
       "mcp__abap__InstallAbapGit",
       "mcp__abap__GetInactiveObjects",
       "mcp__abap__GetPackage",
+      "mcp__abap__ListTransports",
+      "mcp__abap__GetTransport",
+      "mcp__abap__CreateTransport",
+      "mcp__abap__ReleaseTransport",
+      "mcp__abap__GetODataMetadata",
+      "mcp__abap__TestODataService",
+      "mcp__abap__GetCDSExposure",
+      "mcp__abap__ListUI5Projects",
+      "mcp__abap__GetUI5Project",
+      "mcp__abap__ReadUI5File",
       "mcp__abap-docs__*",
       "mcp__sap-docs__*",
       "Bash(git init *)",

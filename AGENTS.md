@@ -170,7 +170,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
 - **Role**: Environment setup and deployment management.
 - **Responsibilities**:
     - Install infrastructure (`vsp install`) and manage Transport Requests.
-- **Key Tools**: `vsp install`, `vsp system info`.
+- **Key Tools**: `vsp install`, `vsp system info`, `CreateTransport`, `ReleaseTransport`, `ListTransports`.
 
 ### 6. 🔍 Intelligence Investigator
 - **Role**: Codebase exploration and knowledge extraction.
@@ -185,7 +185,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
     - Design and implement OData, RFC, IDoc, and RESTful APIs.
     - Troubleshoot connectivity, authentication, and integration payloads.
     - Optimize data exchange performance between SAP and external platforms.
-- **Key Tools**: `/IWFND/MAINT_SERVICE`, `SICF`, `vsp debug`, `browser_subagent`.
+- **Key Tools**: `GetODataMetadata`, `TestODataService`, `GetCDSExposure`, `browser_subagent`.
 
 ### 8. 🎨 Fiori Developer / UX Designer
 - **Role**: High-aesthetic UI/UX design and SAPUI5/Fiori implementation.
@@ -193,7 +193,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
     - Design modern, premium interfaces following SAP Fiori Guidelines and project "Rich Aesthetics" standards.
     - Implement Fiori Elements or custom UI5 applications.
     - Ensure responsive design and cross-device compatibility.
-- **Key Tools**: `browser_subagent`, `generate_image`, `vsp debug`.
+- **Key Tools**: `ListUI5Projects`, `GetUI5Project`, `ReadUI5File`, `browser_subagent`, `generate_image`.
 
 ---
 
@@ -203,7 +203,7 @@ Load the matching `docs/SAP ERP Module/<module>-analyst.md` file at activation f
     - Design and maintain complex layouts for business documents.
     - Implement and optimize print programs for data retrieval.
     - Ensure cross-output format consistency (PDF, XML, Print).
-- **Key Tools**: `vsp debug`, `GrepObjects`, `EditSource`.
+- **Key Tools**: `GetSource` (for print programs), `EditSource`, `browser_subagent`.
 
 ---
 
