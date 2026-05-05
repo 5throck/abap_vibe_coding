@@ -7,7 +7,10 @@
       "env": {
         "VSP_MODE": "hyperfocused",
         "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "VSP_FEATURE_ABAPGIT": "on",
+        "VSP_FEATURE_TRANSPORT": "on",
+        "VSP_FEATURE_UI5": "on",
+        "VSP_FEATURE_RAP": "on"
       }
     },
     "abap-macos": {
@@ -16,7 +19,10 @@
       "env": {
         "VSP_MODE": "hyperfocused",
         "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "VSP_FEATURE_ABAPGIT": "on",
+        "VSP_FEATURE_TRANSPORT": "on",
+        "VSP_FEATURE_UI5": "on",
+        "VSP_FEATURE_RAP": "on"
       }
     },
     "abap-linux": {
@@ -25,7 +31,10 @@
       "env": {
         "VSP_MODE": "hyperfocused",
         "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "VSP_FEATURE_ABAPGIT": "on",
+        "VSP_FEATURE_TRANSPORT": "on",
+        "VSP_FEATURE_UI5": "on",
+        "VSP_FEATURE_RAP": "on"
       }
     }
   }
