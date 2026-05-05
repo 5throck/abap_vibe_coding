@@ -11,6 +11,7 @@ MEMORY_FILE="$MEMORY_DIR/$DATE.md"
 INDEX_FILE="$MEMORY_DIR/MEMORY.md"
 
 echo "--- VSP Sync & Report ---"
+bash "$SCRIPT_DIR/vsp-audit.sh" || exit 1
 
 # 1. Check for today's memory log
 if [ ! -f "$MEMORY_FILE" ]; then
