@@ -2,8 +2,8 @@
 
 **vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
-> **Shared reference for all AI tools**: Claude Code CLI, Claude Code Desktop App, Gemini CLI, and Antigravity.
-> Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../GEMINI.md` (Gemini CLI).
+> **Shared reference for all AI tools**: Claude Code CLI, Claude Code Desktop App, Codex, Gemini CLI, and Antigravity.
+> Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `../GEMINI.md` (Gemini CLI).
 > Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire — run Post-Write chain manually.
 > Agent roles and orchestration rules live in `../AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `SKILL.md`.
@@ -160,6 +160,7 @@ Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZC
 | `pkg/llvm2abap/`, `pkg/wasmcomp/` | Research | Not production; don't treat as stable |
 | `pkg/adt/debugger.go` (REST) | Deprecated | Prefer `websocket_debug.go` |
 | `docs/subagents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
+| `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `docs/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
 *Last Updated: 2026-05-05*

@@ -9,7 +9,7 @@ This file defines the roles and responsibilities of each agent operating within 
 - **Responsibilities**:
     - **Initial Triage**: Receive and analyze all user requests first.
     - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
-    - **Consistency Check**: Ensure all changes are reflected across `docs/CONTEXT.md`, `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
+    - **Consistency Check**: Ensure all changes are reflected across `docs/CONTEXT.md`, `CLAUDE.md`, `.codex/config.toml`, `.codex/hooks.json`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
     - **Deployment Oversight**: Verify that all work is committed to the Git repository.
 - **Key Tools**: `browser_subagent`, `memory/`, Project Dashboards.
 
@@ -320,7 +320,7 @@ Agents must choose the appropriate tool for each task type. All tools share the 
 **Rule**: Default to Claude Code CLI or App for orchestration. Prefer CLI on Linux or when hook automation is required. Use Desktop App for visual diff review, PR monitoring, and parallel sessions. Use Antigravity for file-centric editing. Use Gemini CLI when web research or `browser_subagent` delegation is needed.
 
 ### 📜 Documentation Synchronization Rule
-- **Single Source of Truth**: `docs/CONTEXT.md` holds all shared dev context (build, codebase, ABAP rules, Harness workflow). `CLAUDE.md` contains Claude Code-specific config. `GEMINI.md` contains Gemini CLI overrides.
+- **Single Source of Truth**: `docs/CONTEXT.md` holds all shared dev context (build, codebase, ABAP rules, Harness workflow). `CLAUDE.md` contains Claude Code-specific config. `.codex/config.toml` and `.codex/hooks.json` contain Codex-specific config. `GEMINI.md` contains Gemini CLI overrides.
 - **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.
 
 ### 📦 Git Reflection Rule
