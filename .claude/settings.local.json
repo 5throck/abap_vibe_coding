@@ -49,7 +49,11 @@
       "Bash(git -C /c/git/abap ls-files)",
       "Bash(sed -n '89,93p' memory/2026-05-01.md)",
       "Bash(python -c \"import json; d=json.load\\(open\\('.gemini/settings.json'\\)\\); perms=[p for p in d['permissions']['allow'] if 'abap-docs' in p or 'sap-docs' in p]; print\\(perms\\)\")",
-      "Bash(python -c \"import json; d=json.load\\(open\\('.gemini/settings.json'\\)\\); [print\\(h['command']\\) for hook in d['hooks']['PostToolUse'] for h in hook['hooks']]\")"
+      "Bash(python -c \"import json; d=json.load\\(open\\('.gemini/settings.json'\\)\\); [print\\(h['command']\\) for hook in d['hooks']['PostToolUse'] for h in hook['hooks']]\")",
+      "Bash(grep -E \"\\\\.md$|vsp\")",
+      "mcp__web-search-prime__web_search_prime",
+      "mcp__web-reader__webReader",
+      "Bash(chmod +x C:/git/abap/scripts/sync-md.sh)"
     ]
   },
   "enableAllProjectMcpServers": true,
