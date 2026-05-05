@@ -12,7 +12,7 @@
 3. [Install Core Tools](#3-install-core-tools)
 4. [Clone the Repository](#4-clone-the-repository)
 5. [Configure vsp (MCP Server)](#5-configure-vsp-mcp-server)
-6. [Configure Claude Code](#6-configure-claude-code)
+6. [Configure Claude Code (CLI + Desktop App)](#6-configure-claude-code-cli--desktop-app)
 7. [Configure Antigravity (Optional)](#7-configure-antigravity-optional)
 8. [Configure Gemini CLI (Optional)](#8-configure-gemini-cli-optional)
 9. [Install VSP WebSocket Infrastructure on SAP](#9-install-vsp-websocket-infrastructure-on-sap)
@@ -517,7 +517,7 @@ This file is committed and shared. Current content:
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File <repo-root>\\scripts\\sync-md.ps1"
+            "command": "bash scripts/sync-md.sh"
           }
         ]
       }
@@ -530,9 +530,7 @@ This sets up:
 - **Read-only MCP tools auto-approved** (GetSource, RunQuery, GrepPackages, etc.)
 - **`abap-docs` / `sap-docs` tools auto-approved** (wildcard covers all tools from each server)
 - **Claude Preview tools auto-approved** (screenshot, snapshot, logs)
-- **PostToolUse hooks**: runs `sync-md.ps1` after every Write/Edit
-
-> **`<repo-root>`** in the hook commands is replaced with your actual repo path when you commit this file to your machine. See §6-B for the per-developer path binding.
+- **PostToolUse hooks**: runs `sync-md.sh` after every Write/Edit (cross-platform wrapper — works on Windows Git Bash, macOS, and Linux)
 
 No changes needed to this file — it is already in the repo.
 
@@ -664,6 +662,38 @@ Run this query: SELECT * FROM t000
 
 Expected: a table showing your SAP client(s).
 
+### 6-E. Claude Code Desktop App (Windows / macOS only)
+
+The Desktop App shares all configuration with the CLI — `.mcp.json` and `.claude/settings.json` are loaded automatically without any additional setup.
+
+**Download**: https://claude.ai/download
+
+**What's the same as CLI**:
+- MCP servers from `.mcp.json` are loaded automatically
+- `.claude/settings.json` and `.claude/settings.local.json` are respected
+- All skills, slash commands, and custom agents work identically
+
+**Key differences from CLI**:
+
+| Feature | CLI | Desktop App |
+|---------|:---:|:-----------:|
+| Platform | Windows / macOS / Linux | Windows / macOS only |
+| PostToolUse hooks | ✅ fires automatically | ⚠️ does **not** fire (known issue) |
+| Visual diff / inline review | ❌ | ✅ |
+| Parallel sessions (worktrees) | CLI flag | ✅ automatic |
+| PR monitoring + CI status | ❌ | ✅ |
+| Computer use (GUI automation) | ❌ | ✅ |
+
+**Hook limitation**: The Post-Write Mandatory Chain (`SyntaxCheck → RunUnitTests → RunATCCheck`) is NOT triggered automatically in the Desktop App. You must run all three steps manually after every `WriteSource` or `EditSource` call.
+
+**Linux developers**: The Desktop App is not available on Linux. Use Claude Code CLI instead.
+
+**Recommended use cases for Desktop App**:
+- Visual diff review of ABAP source changes
+- PR monitoring and CI status during code review
+- Parallel sessions with automatic worktree management
+- Computer use for SAP GUI interaction
+
 ---
 
 ## 7. Configure Antigravity (Optional)
@@ -676,10 +706,15 @@ Antigravity is a VS Code-based editor that can connect to the same abap MCP serv
 
 Open the Antigravity user settings file:
 
-**Windows**: `%APPDATA%\Antigravity\User\settings.json`
+| OS | Settings file path |
+|----|-------------------|
+| Windows | `%APPDATA%\Antigravity\User\settings.json` |
+| macOS | `~/Library/Application Support/Antigravity/User/settings.json` |
+| Linux | `~/.config/Antigravity/User/settings.json` |
 
 Add the following block (merge with existing content — do not replace the file):
 
+**Windows**:
 ```json
 {
   "mcp": {
@@ -714,8 +749,68 @@ Replace `C:\\<path-to-repo>\\vsp.exe` with the absolute path to your local `vsp.
 "command": "C:\\git\\abap\\vsp.exe"
 ```
 
+**macOS**:
+```json
+{
+  "mcp": {
+    "servers": {
+      "abap": {
+        "type": "stdio",
+        "command": "/Users/<username>/abap/vsp",
+        "args": ["--mode", "hyperfocused"],
+        "env": {
+          "VSP_MODE": "hyperfocused",
+          "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+          "VSP_FEATURE_ABAPGIT": "on"
+        }
+      },
+      "abap-docs": {
+        "type": "http",
+        "url": "https://mcp-abap.marianzeis.de/mcp"
+      },
+      "sap-docs": {
+        "type": "http",
+        "url": "https://mcp-sap-docs.marianzeis.de/mcp"
+      }
+    }
+  }
+}
+```
+
+Replace `/Users/<username>/abap/vsp` with your actual home directory path. Ensure the binary is executable: `chmod +x ~/abap/vsp`.
+
+**Linux**:
+```json
+{
+  "mcp": {
+    "servers": {
+      "abap": {
+        "type": "stdio",
+        "command": "/home/<username>/abap/vsp",
+        "args": ["--mode", "hyperfocused"],
+        "env": {
+          "VSP_MODE": "hyperfocused",
+          "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+          "VSP_FEATURE_ABAPGIT": "on"
+        }
+      },
+      "abap-docs": {
+        "type": "http",
+        "url": "https://mcp-abap.marianzeis.de/mcp"
+      },
+      "sap-docs": {
+        "type": "http",
+        "url": "https://mcp-sap-docs.marianzeis.de/mcp"
+      }
+    }
+  }
+}
+```
+
+Replace `/home/<username>/abap/vsp` with your actual home directory path. Ensure the binary is executable: `chmod +x ~/abap/vsp`.
+
 > **`abap-docs` / `sap-docs`** use HTTP transport — no path configuration needed.
-> **Sync warning**: If you move or rebuild `vsp.exe`, update **both** `.mcp.json` (for Claude Code CLI) and the Antigravity user settings independently.
+> **Sync warning**: If you move or rebuild the `vsp` binary, update **both** `.mcp.json` (for Claude Code CLI) and the Antigravity user settings independently.
 
 ### 7-B. Verify Antigravity sees the MCP server
 
@@ -753,11 +848,11 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
   "mcpServers": {
     "abap": {
       "command": "./vsp.exe",
-      "args": [],
+      "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP",
-        "VSP_FEATURE_ABAPGIT": "off"
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "VSP_FEATURE_ABAPGIT": "on"
       }
     },
     "abap-docs": {
@@ -782,6 +877,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
       "mcp__abap__GetCDSDependencies",
       "mcp__abap__SyntaxCheck",
       "mcp__abap__RunUnitTests",
+      "mcp__abap__RunATCCheck",
       "mcp__abap__GetTable",
       "mcp__abap__WriteSource",
       "mcp__abap__EditSource",
@@ -813,14 +909,14 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File scripts/sync-md.ps1"
+            "command": "bash scripts/sync-md.sh"
           }
         ]
       }
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["abap"]
+  "enabledMcpjsonServers": ["abap", "abap-docs", "sap-docs"]
 }
 ```
 
@@ -831,11 +927,11 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
   "mcpServers": {
     "abap": {
       "command": "./vsp",
-      "args": [],
+      "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP",
-        "VSP_FEATURE_ABAPGIT": "off"
+        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "VSP_FEATURE_ABAPGIT": "on"
       }
     },
     "abap-docs": {
@@ -860,6 +956,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
       "mcp__abap__GetCDSDependencies",
       "mcp__abap__SyntaxCheck",
       "mcp__abap__RunUnitTests",
+      "mcp__abap__RunATCCheck",
       "mcp__abap__GetTable",
       "mcp__abap__WriteSource",
       "mcp__abap__EditSource",
@@ -897,7 +994,7 @@ See `AGENTS.md § Tool Selection Rule` for the full decision guide.
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["abap"]
+  "enabledMcpjsonServers": ["abap", "abap-docs", "sap-docs"]
 }
 ```
 
@@ -1221,6 +1318,7 @@ Use this list when onboarding a new team member.
 
 ### Optional (advanced)
 
+- [ ] Install Claude Code Desktop App (Windows/macOS only) — same `.mcp.json`, no extra setup; note hooks do not fire (§6-E)
 - [ ] Install and configure Antigravity with abap MCP (§7)
 - [ ] Install Gemini CLI and configure `.gemini/settings.json` (§8)
 - [ ] Install ZADT_VSP for debugging capability (§9)
@@ -1305,5 +1403,5 @@ bash scripts/git-sync.sh
 ```
 
 ---
-*Document version: 1.5 — 2026-05-04*
+*Document version: 1.6 — 2026-05-05*
 *Maintained by: VSP Harness Engineering Team*

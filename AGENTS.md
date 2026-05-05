@@ -150,8 +150,10 @@ Load the matching `contexts/<module>-analyst.md` file at activation for deep dom
 - **Responsibilities**:
     - Author and execute Unit Tests based on Analyst's Acceptance Criteria.
     - Follow `docs/testing-guidelines.md` for ABAP Unit structures and TEST-SEAMS.
+    - Run `RunATCCheck` after unit tests pass; Priority 1 findings block `Activate`.
     - Analyze runtime errors and provide debugging guides.
-- **Key Tools**: `RunUnitTests`, `vsp debug`, `vsp amdp`.
+- **Key Tools**: `RunUnitTests`, `RunATCCheck`, `vsp debug`, `vsp amdp`.
+- **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `SKILL.md § Post-Write Mandatory Chain`).
 
 ### 4. 🗄️ DBA (Database Agent)
 - **Role**: Data modeling and SQL performance optimization.
@@ -249,29 +251,33 @@ Request received
 
 | Task type | Phase 1 (parallel) | Phase 2 (serial) |
 |-----------|--------------------|------------------|
-| New ABAP object | investigator + analyst + schema | WriteSource → SyntaxCheck → RunUnitTests |
-| Bug fix | investigator (find occurrences) + schema (confirm structure) | EditSource → SyntaxCheck → RunUnitTests |
+| New ABAP object | investigator + analyst + schema | WriteSource → SyntaxCheck → RunUnitTests → RunATCCheck |
+| Bug fix | investigator (find occurrences) + schema (confirm structure) | EditSource → SyntaxCheck → RunUnitTests → RunATCCheck |
 | Data analysis report | analyst + schema (parallel, no write) | — (read-only task ends here) |
 | Refactor across package | investigator (all occurrences) + schema (CDS impact) | serial EditSource per object |
 | Interface design | analyst + schema + investigator | Interface Expert designs → Developer implements |
 
 ---
 
-### 🖥️ Tool Selection Rule (Claude Code CLI vs Antigravity)
+### 🖥️ Tool Selection Rule
 
-Agents must choose the appropriate tool for each task type. Both tools share the same abap MCP server but differ in capability.
+Agents must choose the appropriate tool for each task type. All tools share the same abap MCP server but differ in capability and platform support.
 
-| Task type | Claude Code CLI | Antigravity | Gemini CLI |
-|-----------|:--------------:|:-----------:|:----------:|
-| PM multi-agent dispatch | ✅ Plan mode + subagents | ❌ Worktree tools unavailable | ✅ browser_subagent |
-| Serial write chain (SyntaxCheck → EditSource → RunUnitTests) | ✅ Hook automation fires | ⚠️ Hook unverified | ✅ Supported |
-| ABAP object browse / edit | ⚠️ Terminal only | ✅ File explorer + diff view | ⚠️ Terminal only |
-| MCP read/query (GetSource, RunQuery, GrepObjects) | ✅ | ✅ Identical result | ✅ Identical result |
-| Git commit / PR | ✅ `commit-commands` skills | ⚠️ Extension terminal only | ✅ Bash tools |
-| Web research / browser subagent | ❌ | ❌ | ✅ Native capability |
-| Quick lookup / search | ✅ | ✅ Native search preferred | ✅ |
+| Task type | Claude Code CLI | Claude Code App | Antigravity | Gemini CLI |
+|-----------|:--------------:|:--------------:|:-----------:|:----------:|
+| PM multi-agent dispatch | ✅ Plan mode + subagents | ✅ Plan mode + subagents | ❌ | ✅ browser_subagent |
+| Serial write chain (SyntaxCheck → RunUnitTests → RunATCCheck) | ✅ Hook fires automatically | ⚠️ Hook does NOT fire — run manually | ⚠️ Hook unverified | ✅ Supported |
+| ATC code quality check (RunATCCheck) | ✅ | ✅ | ✅ | ✅ Identical result |
+| ABAP object browse / edit | ⚠️ Terminal only | ✅ Visual diff + inline review | ✅ File explorer + diff view | ⚠️ Terminal only |
+| MCP read/query (GetSource, RunQuery, GrepObjects) | ✅ | ✅ Identical result | ✅ Identical result | ✅ Identical result |
+| Git commit / PR | ✅ `commit-commands` skills | ✅ PR monitoring + CI status | ⚠️ Extension terminal only | ✅ Bash tools |
+| Web research / browser subagent | ❌ | ❌ | ❌ | ✅ Native capability |
+| Parallel sessions (visual worktrees) | ❌ | ✅ Automatic | ❌ | ❌ |
+| Computer use (GUI automation) | ❌ | ✅ Win/macOS | ❌ | ❌ |
+| Linux support | ✅ | ❌ | ✅ | ✅ |
+| Quick lookup / search | ✅ | ✅ | ✅ Native search preferred | ✅ |
 
-**Rule**: Default to Claude Code CLI for orchestration. Use Antigravity for file-centric editing. Use Gemini CLI when web research or `browser_subagent` delegation is needed.
+**Rule**: Default to Claude Code CLI or App for orchestration. Prefer CLI on Linux or when hook automation is required. Use Desktop App for visual diff review, PR monitoring, and parallel sessions. Use Antigravity for file-centric editing. Use Gemini CLI when web research or `browser_subagent` delegation is needed.
 
 ### 📜 Documentation Synchronization Rule
 - **Single Source of Truth**: `CONTEXT.md` holds all shared dev context (build, codebase, ABAP rules, Harness workflow). `CLAUDE.md` contains Claude Code-specific config. `GEMINI.md` contains Gemini CLI overrides.
@@ -282,4 +288,4 @@ Agents must choose the appropriate tool for each task type. Both tools share the
 - **Verification**: The PM agent verifies the repository status and memory file existence at the end of each major task.
 
 ---
-*Last Updated: 2026-05-04*
+*Last Updated: 2026-05-05*

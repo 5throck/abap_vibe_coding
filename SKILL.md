@@ -10,16 +10,16 @@ This file defines the ABAP development capabilities and optimized workflow patte
 
 ## Custom Commands (Claude Code Skills)
 
-| Command | Claude Code CLI | Antigravity | Notes |
-|---------|:--------------:|:-----------:|-------|
-| `/celebrate` | ✅ | ✅ | Loaded from `.claude/commands/celebrate.md` |
-| `/debug` | ✅ | ⚠️ Unverified | WebSocket-based; requires ZADT_VSP on SAP |
+| Command | Claude Code CLI | Claude Code App | Antigravity | Notes |
+|---------|:--------------:|:--------------:|:-----------:|-------|
+| `/celebrate` | ✅ | ✅ | ✅ | Loaded from `.claude/commands/celebrate.md` |
+| `/debug` | ✅ | ✅ | ⚠️ Unverified | WebSocket-based; requires ZADT_VSP on SAP |
 
 
 
-## Claude Code Skills (Antigravity Compatible)
+## Claude Code Skills (CLI, Desktop App, and Antigravity Compatible)
 
-> These skills are available via the Claude Code extension in Antigravity. Skills requiring CLI-only tools (worktrees, loop scheduling, status line) are excluded.
+> These skills are available in Claude Code CLI, Claude Code Desktop App, and via the Claude Code extension in Antigravity. Skills requiring CLI-only tools (worktrees, loop scheduling, status line) may not be available in all environments.
 
 ### Development Workflow
 | Skill | Trigger | Description |
@@ -59,4 +59,29 @@ This file defines the ABAP development capabilities and optimized workflow patte
 - Parameter references and tool boundaries: see [MCP_USAGE.md](MCP_USAGE.md).
 
 ---
-*Last Updated: 2026-05-04*
+
+## Post-Write Mandatory Chain
+
+> Applies to all tools: **Claude Code CLI, Antigravity, Gemini CLI**
+
+After ANY `WriteSource` / `EditSource` / `Activate`, the executing agent MUST run these three steps in order:
+
+| Step | Tool | Pass Condition |
+|------|------|---------------|
+| 1 | `SyntaxCheck` | 0 errors |
+| 2 | `RunUnitTests` | 0 failures |
+| 3 | `RunATCCheck` | 0 Priority-1 findings |
+
+**ATC Priority levels**:
+- Priority 1 (Error) → **BLOCKS** deployment — fix before `Activate`
+- Priority 2 (Warning) → PM review required before proceeding
+- Priority 3 (Info) → Log to task-template § 4.2 only
+
+**In Gemini / Antigravity sessions**: route all three steps through `sap_execute`
+with `"action": "SyntaxCheck"`, `"action": "RunUnitTests"`, `"action": "RunATCCheck"`.
+
+> ⚠️ **Claude Code Desktop App**: `PostToolUse` hooks do **not** fire automatically.
+> Run all three steps of this chain manually after each write in Desktop sessions.
+
+---
+*Last Updated: 2026-05-05*

@@ -49,6 +49,15 @@ The following capabilities extend those in [SKILL.md](SKILL.md):
   keep write operations (EditSource, WriteSource) in the primary session.
 - **Advanced Diagnostics**: Use `vsp health` to validate architecture and
   `vsp slim` for context optimization before large read sessions.
+- **Post-Write Test Chain**: After any write operation, execute the mandatory chain
+  defined in `SKILL.md § Post-Write Mandatory Chain`:
+  `SyntaxCheck` → `RunUnitTests` → `RunATCCheck`.
+  All three steps apply identically in Gemini sessions via `sap_execute`:
+  ```json
+  { "action": "SyntaxCheck",   "object_url": "/sap/bc/adt/..." }
+  { "action": "RunUnitTests",  "object_url": "/sap/bc/adt/..." }
+  { "action": "RunATCCheck",   "object_url": "/sap/bc/adt/..." }
+  ```
 
 ## Git Commit Policy
 
@@ -69,4 +78,4 @@ The following capabilities extend those in [SKILL.md](SKILL.md):
 Do **not** copy shared sections from `CONTEXT.md` into this file.
 
 ---
-*Last Updated: 2026-05-04*
+*Last Updated: 2026-05-05*

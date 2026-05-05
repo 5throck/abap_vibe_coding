@@ -71,4 +71,30 @@ ENDMETHOD.
 - **Coverage**: Aim to test both positive (happy path) and negative (error handling/exceptions) scenarios.
 
 ---
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-04*
+
+## 4. ATC (ABAP Test Cockpit) Standards
+
+Run `RunATCCheck` on every object **after** `RunUnitTests` passes. This is the third mandatory step in the Post-Write chain.
+
+### Priority Thresholds
+
+| Priority | Label | Required Action |
+|----------|-------|----------------|
+| 1 | Error | **BLOCK** — must fix before `Activate` |
+| 2 | Warning | PM review required; explicit approval to proceed |
+| 3 | Info | Log to task-template § 4.2 only |
+
+### Common ATC Check Categories
+
+- **Naming conventions**: Z* prefix enforcement, method/variable naming
+- **Dead code**: unused variables, unreachable statements
+- **SQL quality**: `SELECT *` instead of explicit field list, missing `WHERE` clause guards
+- **Exception handling**: unhandled exceptions, missing `CATCH` blocks
+- **Performance**: nested SELECT in loops, missing indexes
+
+### Logging ATC Results
+
+Record findings in `task-template.md § 4.2 ATC Check Results`. Even Priority 3 findings should be logged for trend tracking across tasks.
+
+---
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-05*

@@ -17,6 +17,7 @@
       "mcp__abap__GetCDSDependencies",
       "mcp__abap__SyntaxCheck",
       "mcp__abap__RunUnitTests",
+      "mcp__abap__RunATCCheck",
       "mcp__abap-docs__*",
       "mcp__sap-docs__*"
     ]
@@ -28,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File scripts/sync-md.ps1"
+            "command": "bash scripts/sync-md.sh"
           }
         ]
       }

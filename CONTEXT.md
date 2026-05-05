@@ -2,8 +2,9 @@
 
 **vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
-> **Shared reference for all AI tools**: Claude Code CLI, Gemini CLI, and Antigravity.
-> Tool-specific overrides live in `CLAUDE.md` (Claude Code), `GEMINI.md` (Gemini CLI).
+> **Shared reference for all AI tools**: Claude Code CLI, Claude Code Desktop App, Gemini CLI, and Antigravity.
+> Tool-specific overrides live in `CLAUDE.md` (Claude Code CLI + Desktop App), `GEMINI.md` (Gemini CLI).
+> Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire — run Post-Write chain manually.
 > Agent roles and orchestration rules live in `AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `SKILL.md`.
 > ABAP development history (date-archived) lives in `memory/`.
@@ -100,6 +101,8 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - Naming: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program)
 - Always run SyntaxCheck before WriteSource
 - Run RunUnitTests after logic changes (refer to `docs/testing-guidelines.md`)
+- Run RunATCCheck after RunUnitTests — Priority 1 findings block deployment
+- Full sequence: see `SKILL.md § Post-Write Mandatory Chain`
 - Use EditSource for small changes
 
 ### Workflow (Harness Advanced)
@@ -121,7 +124,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
    .\scripts\vsp-task.ps1 -Name "Task Name" # Windows PS
    
    # 2. Parallel read (investigator + analyst + schema)
-   # 3. Serial write (SyntaxCheck → EditSource → RunUnitTests)
+   # 3. Serial write (SyntaxCheck → EditSource → RunUnitTests → RunATCCheck)
    
    # 4. Sync & Report (updates memory/, index, and git commit)
    ./scripts/vsp-sync.sh "feat: task summary"
@@ -157,4 +160,4 @@ Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZC
 | `docs/cli-agents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
 
 ---
-*Last Updated: 2026-05-04*
+*Last Updated: 2026-05-05*
