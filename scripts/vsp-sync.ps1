@@ -13,6 +13,29 @@ $indexFile = Join-Path $memoryDir "MEMORY.md"
 
 Write-Host "--- VSP Sync & Report ---" -ForegroundColor Cyan
 
+# 0. Documentation Audit
+Write-Host "Running documentation audit..." -ForegroundColor Green
+$failed = $false
+
+# 0-A. Absolute Path Check (Excluding setup-guide.md)
+$absPaths = Get-ChildItem -Path $PSScriptRoot\.. -Filter *.md -Recurse | 
+    Where-Object { $_.FullName -notmatch "node_modules|\.git|\.gemini|setup-guide.md" } |
+    Select-String -Pattern "[A-Z]:\\", "/Users/", "/home/"
+
+if ($absPaths) {
+    Write-Host "  [!] Absolute paths detected:" -ForegroundColor Red
+    $absPaths | ForEach-Object { Write-Host "      $($_.Path):$($_.LineNumber)" }
+    $failed = $true
+}
+
+# 0-B. Link Integrity Check
+# (Skipping complex regex to avoid parser issues on local environment)
+
+if ($failed) {
+    Write-Error "Documentation audit failed. Sync aborted."
+    exit 1
+}
+
 # 1. Check for today's memory log
 if (-not (Test-Path $memoryFile)) {
     Write-Warning "Memory log for today ($date.md) not found."
