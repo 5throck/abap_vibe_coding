@@ -230,7 +230,7 @@ Request received
   │          └── schema-inspector   → table/CDS structure (GetTable/GetCDSDependencies)
   │
   └─ Write? (EditSource, WriteSource, SyntaxCheck)
-       └─► SERIAL — PM executes directly, never delegate to subagent
+       └─► SERIAL — ABAP Developer executes
              One object at a time to prevent lock conflicts.
 ```
 
@@ -241,13 +241,13 @@ Request received
 | `sap-investigator` | `docs/subagents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
 | `read-only-analyst` | `docs/subagents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
 | `schema-inspector` | `docs/subagents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
-| `code-writer` | PM executes directly | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
-| `test-runner` | PM executes directly | ❌ After write | `RunUnitTests` |
+| `code-writer` | `docs/subagents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
+| `test-runner` | `docs/subagents/test-runner.md` | ❌ After write | `RunUnitTests` |
 
 #### Parallel Dispatch Rules
 
 1. **Single message, multiple Agent() calls** — all parallel subagents must be dispatched in one turn.
-2. **No write delegation** — `EditSource`, `WriteSource`, `SyntaxCheck` are always executed by PM directly.
+2. **Serial write execution** — `EditSource`, `WriteSource`, `SyntaxCheck` are executed by the ABAP Developer in serial to prevent lock conflicts.
 3. **Merge before proceeding** — PM waits for ALL parallel subagents to return before moving to the next serial step.
 4. **Error handling** — if any parallel subagent fails, PM resolves the failure before proceeding. Do not skip.
 5. **Context passing** — PM includes the relevant `docs/SAP ERP Module/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
