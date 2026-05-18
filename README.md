@@ -1,5 +1,8 @@
 # Harness Engineering for SAP ABAP
 
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Contributing](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 ## Project Mission
 This project aims to revolutionize SAP ABAP development by establishing a robust **Harness Engineering** framework. It leverages AI agents to automate, standardize, and optimize the entire development lifecycle—from business requirements analysis to system deployment.
 
@@ -51,4 +54,11 @@ For the detailed execution sequence, see [AGENTS.md § Collaborative Workflow](A
 > **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) — step-by-step environment setup (includes MCP connectivity, abapGit, and AI agent configuration).
 
 ---
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-05*
+## License
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL v3)**.
+See [LICENSE](LICENSE) for details. Commercial licensing is available — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-19*
