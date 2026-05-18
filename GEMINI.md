@@ -59,6 +59,12 @@ The following capabilities extend those in [docs/skill.md](docs/skill.md):
   { "action": "RunATCCheck",   "object_url": "/sap/bc/adt/..." }
   ```
 
+## Documentation Language Rule
+
+All `.md` files must be written in English. **Exception**: any file whose name contains `_ko` (e.g., `README_ko.md`) **must** be written entirely in Korean.
+
+---
+
 ## Git Commit Policy
 
 **Auto-commits and hooks are disabled** per `docs/context.md § Harness Advanced Workflow`. The PM agent must run `git add -A && git commit` manually at the end of each task. Use Bash git commands directly for commits.
