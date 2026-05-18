@@ -40,6 +40,9 @@ All memory entries must be written in **English**.
 ## Documentation Language Rule
 
 **All `.md` files (including `docs/skill.md`, `AGENTS.md`, `MEMORY.md`, etc.) must be written in English at all times.** This ensures global accessibility and consistency for all AI agents and human developers.
+
+**Exception — Korean localization files**: Any `.md` file whose name contains `_ko` (e.g., `README_ko.md`) **must** be written entirely in Korean. Do not mix languages within these files.
+
 - **File Isolation**: Always create `.abap` files in the `scratch/` directory.
 
 ---
