@@ -321,31 +321,60 @@ cd ~/abap
 
 ### 5-A. Download the vsp binary
 
+Go to the releases page and download the binary for your platform:
+
 ```
-https://github.com/5throck/vsp/releases/latest
+https://github.com/oisee/vibing-steampunk/releases/latest
 ```
 
-**Windows** (Git Bash): Download `vsp_windows_amd64.exe`, then:
+| Platform | Filename |
+|----------|---------|
+| Windows x64 (most common) | `vsp-windows-amd64.exe` |
+| Windows ARM64 | `vsp-windows-arm64.exe` |
+| Windows x86 | `vsp-windows-386.exe` |
+| macOS Apple Silicon | `vsp-darwin-arm64` |
+| macOS Intel | `vsp-darwin-amd64` |
+| Linux x64 | `vsp-linux-amd64` |
+| Linux ARM64 | `vsp-linux-arm64` |
+| Linux ARM | `vsp-linux-arm` |
+| Linux x86 | `vsp-linux-386` |
+
+Each release also includes `checksums.txt` (SHA-256) for integrity verification.
+
+**Windows** (Git Bash): Download `vsp-windows-amd64.exe`, then:
 ```bash
-mv ~/Downloads/vsp_windows_amd64.exe ~/abap/vsp.exe
+mv ~/Downloads/vsp-windows-amd64.exe ~/abap/vsp.exe
+```
+
+**Optional — verify checksum (Windows PowerShell)**:
+```powershell
+# Download checksums.txt alongside the binary, then:
+Get-FileHash ~/abap/vsp.exe -Algorithm SHA256
+# Compare with the vsp-windows-amd64.exe line in checksums.txt
 ```
 
 **macOS (Apple Silicon)**:
 ```bash
-mv ~/Downloads/vsp_darwin_arm64 ~/abap/vsp
+mv ~/Downloads/vsp-darwin-arm64 ~/abap/vsp
 chmod +x ~/abap/vsp
 ```
 
 **macOS (Intel)**:
 ```bash
-mv ~/Downloads/vsp_darwin_amd64 ~/abap/vsp
+mv ~/Downloads/vsp-darwin-amd64 ~/abap/vsp
 chmod +x ~/abap/vsp
 ```
 
-**Linux**:
+**Linux (x64)**:
 ```bash
-mv ~/Downloads/vsp_linux_amd64 ~/abap/vsp
+mv ~/Downloads/vsp-linux-amd64 ~/abap/vsp
 chmod +x ~/abap/vsp
+```
+
+**Optional — verify checksum (macOS/Linux)**:
+```bash
+sha256sum ~/abap/vsp
+# Compare with the matching line in checksums.txt
 ```
 
 ### 5-B. Create .env
@@ -427,6 +456,8 @@ If you get an error, check:
 
 ### 5-D. Create .mcp.json
 
+> **⚠️ Env var prefix note**: This project uses `VSP_MODE` / `VSP_ALLOWED_PACKAGES` in `env`, but the official vibing-steampunk README documents `SAP_MODE` / `SAP_ALLOWED_PACKAGES`. The `--mode` flag in `args` guarantees the mode is set correctly regardless. If package restrictions do not appear to be applied, try switching to the `SAP_*` prefix (e.g. `SAP_ALLOWED_PACKAGES`). See [github.com/oisee/vibing-steampunk](https://github.com/oisee/vibing-steampunk) for the authoritative reference.
+
 **Windows** — create `%USERPROFILE%\abap\.mcp.json`:
 
 ```json
@@ -480,8 +511,10 @@ If you get an error, check:
 
 > **`abap-docs`**: ABAP keyword and API reference (marianzeis.de).
 > **`sap-docs`**: SAP Help Portal documentation search.
-> **Expert mode** (more tools, use for debugging or advanced operations):
-> Change `"VSP_MODE": "focused"` — gives access to 45 tools instead of 1.
+> **Focused mode** (more tools, standard development):
+> Change `"VSP_MODE": "focused"` — gives access to 100 tools instead of 1.
+> **Expert mode** (all tools, debugging / advanced operations):
+> Change `"VSP_MODE": "expert"` — gives access to 147 tools..
 
 ---
 
@@ -1274,9 +1307,11 @@ Use this list when onboarding a new team member.
 - [ ] Install Node.js 18+ (`node --version`)
 - [ ] Install Claude Code (`claude --version`)
 - [ ] Clone the repository into `~/abap`
-- [ ] Download `vsp` binary from releases page, place in repo root
-  - Windows: `~/abap/vsp.exe`
-  - macOS/Linux: `~/abap/vsp` + `chmod +x ~/abap/vsp`
+- [ ] Download `vsp` binary from https://github.com/oisee/vibing-steampunk/releases/latest, place in repo root
+  - Windows: download `vsp-windows-amd64.exe` → rename/move to `~/abap/vsp.exe`
+  - macOS Apple Silicon: download `vsp-darwin-arm64` → `~/abap/vsp` + `chmod +x ~/abap/vsp`
+  - macOS Intel: download `vsp-darwin-amd64` → `~/abap/vsp` + `chmod +x ~/abap/vsp`
+  - Linux x64: download `vsp-linux-amd64` → `~/abap/vsp` + `chmod +x ~/abap/vsp`
 - [ ] Create `.env` with SAP credentials
 - [ ] Create `.mcp.json` using template from §5-D
 - [ ] Create `.claude/settings.local.json` using template from §6-B for your OS
@@ -1330,8 +1365,8 @@ Use this list when onboarding a new team member.
 | Mode | Tools | Best for |
 |------|-------|---------|
 | `hyperfocused` | 1 (`sap_execute`) | AI agents — minimal hallucination risk |
-| `focused` | ~19 | Standard development sessions |
-| `expert` | ~45 | Debugging, advanced operations |
+| `focused` | 100 | Standard development sessions |
+| `expert` | 147 | Debugging, advanced operations |
 
 Change mode in `.mcp.json` `env.VSP_MODE` and `.env` `VSP_MODE`.
 

@@ -90,6 +90,8 @@ Config file: `.mcp.json` (project root) — auto-loaded by both the CLI and the 
 }
 ```
 
+> **⚠️ Env var prefix note**: The official vibing-steampunk README uses `SAP_MODE` / `SAP_ALLOWED_PACKAGES` as env var names, while this project uses `VSP_MODE` / `VSP_ALLOWED_PACKAGES`. The `--mode` arg in `args` ensures the mode is set regardless. If package restrictions are not being applied, switch to the `SAP_*` prefix (e.g. `"SAP_ALLOWED_PACKAGES": "Z*,$TMP,..."`).
+
 The relative path `./vsp` works because Claude Code CLI resolves it against the project root.
 
 ---
