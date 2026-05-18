@@ -29,6 +29,7 @@ Required fields per entry:
 
 | Date | Summary |
 |------|---------|
+| [2026-05-18](2026-05-18.md) | correct vibing-steampunk binary names and mode tool counts |
 | [2026-05-05](2026-05-05.md) | Harness & specialized tools update (Transports, OData, UI5); Path standardization; Sync script enhancement |
 | [2026-05-04](2026-05-04.md) | VSP WebSocket infrastructure & abapGit installation; NW 7.52 compatibility patches; Documentation standardization |
 | [2026-05-01](2026-05-01.md) | ZPROG_SBOOK_QUERY OO refactor; ZPROG_EPM_DEMO creation; ZADT_VSP 7.52 patches; hyperfocused mode config |

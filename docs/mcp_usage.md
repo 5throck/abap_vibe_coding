@@ -60,7 +60,7 @@ SELECT carrid, COUNT(*) as cnt FROM sflight GROUP BY carrid ORDER BY cnt DESC
 
 ```mermaid
 flowchart TD
-    subgraph Focused["Focused Mode (Default) - 19 Tools"]
+    subgraph Focused["Focused Mode (Default) - 100 Tools"]
         U[Unified Tools]
         U --> GS[GetSource]
         U --> WS[WriteSource]
@@ -91,7 +91,7 @@ flowchart TD
         T --> UT[RunUnitTests]
     end
 
-    subgraph Expert["Expert Mode - 45 Tools"]
+    subgraph Expert["Expert Mode - 147 Tools"]
         direction TB
         F[All Focused Tools]
         A[+ Atomic Operations]
@@ -559,7 +559,7 @@ flowchart TD
 
 ---
 
-**Last Updated:** 2026-05-05
-**Last Verified:** 2026-05-01 (focused mode tool list; Go source not present in this repo — tool count unverified against `tools_focused.go`)
-**MCP Server Version:** v2.2.0+
+**Last Updated:** 2026-05-18
+**Last Verified:** 2026-05-18 (tool counts confirmed from vibing-steampunk v2.38.1 README: focused=100, expert=147)
+**MCP Server Version:** v2.38.1
 **Maintained by:** vsp project

@@ -25,7 +25,10 @@
       "Bash(bash /tmp/validation.sh)",
       "Bash(bash /tmp/tool_diff.sh)",
       "Bash(bash /tmp/final_audit.sh)",
-      "mcp__abap__SAP"
+      "mcp__abap__SAP",
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:brainstorming:*)",
+      "Bash(bash scripts/vsp-sync.sh \"docs: correct vibing-steampunk binary names and mode tool counts\")"
     ]
   },
   "enableAllProjectMcpServers": true,
