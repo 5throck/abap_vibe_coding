@@ -244,9 +244,9 @@ cd ~/abap
 │   └── settings.local.json    ← Local extended permissions (create manually)
 ├── .gemini\
 │   └── settings.json          ← Gemini CLI config (create manually)
+├── agents\                    ← Agent definitions (subagents + ERP module analysts)
+├── skills\                    ← Auto-discovered skill files (abap-dev, post-write-chain, ERP modules)
 ├── docs\
-│   ├── sap-erp-module\        ← SAP module analyst deep-knowledge files
-│   ├── subagents\             ← Subagent prompt templates
 │   └── task-template.md
 ├── memory\                    ← Date-stamped development logs
 ├── scratch\                   ← Temporary ABAP files
@@ -286,9 +286,9 @@ cd ~/abap
 │   └── settings.local.json    ← Local extended permissions (create manually)
 ├── .gemini/
 │   └── settings.json          ← Gemini CLI config (create manually)
-├── agents/      ← SAP module analyst deep-knowledge files
+├── agents/                    ← Agent definitions (subagents + ERP module analysts)
+├── skills/                    ← Auto-discovered skill files (abap-dev, post-write-chain, ERP modules)
 ├── docs/
-│   ├── subagents/             ← Subagent prompt templates
 │   └── task-template.md
 ├── memory/                    ← Date-stamped development logs
 ├── scratch/                   ← Temporary ABAP files
@@ -1336,7 +1336,7 @@ Use this list when onboarding a new team member.
 - [ ] Install and configure Antigravity with abap MCP (§7)
 - [ ] Install Gemini CLI and configure `.gemini/settings.json` (§8)
 - [ ] Install ZADT_VSP for debugging capability (§9)
-- [ ] Review `subagents/` — understand parallel dispatch patterns
+- [ ] Review `agents/` — understand agent roles and parallel dispatch patterns
 - [ ] Gemini CLI | ❌ | Automated hooks disabled — run Post-Write chain manually |
 - [ ] Antigravity | ❌ | No hook support in VS Code extension |
 
