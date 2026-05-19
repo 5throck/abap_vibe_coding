@@ -3,7 +3,7 @@
 This guide describes how to install and use the **ABAP Vibe Coding Plugin** in a consumer repository. 
 
 > [!NOTE]
-> This plugin extends Claude Code CLI with dedicated SAP ABAP workflows, automated triage, post-write quality gates, and git-sync automation.
+> This plugin extends Claude Code CLI with dedicated SAP ABAP workflows, automated triage, post-write quality gates, and vsp-sync audit and commit automation.
 
 ---
 
@@ -55,7 +55,8 @@ Create a `.claude/settings.json` file in the root of your consumer repository to
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/plugins/abap-vibe-coding/scripts/sync-md.sh"
+            "command": "bash \"$CLAUDE_PLUGIN_ROOT/scripts/sync-md.sh\" 2>/dev/null || pwsh -NonInteractive -File \"$CLAUDE_PLUGIN_ROOT/scripts/sync-md.ps1\" 2>/dev/null || powershell -NonInteractive -File \"$CLAUDE_PLUGIN_ROOT/scripts/sync-md.ps1\"",
+            "timeout": 30
           }
         ]
       }
@@ -89,7 +90,7 @@ Once successfully registered, you can use these premium slash-commands inside yo
 | Command | Usage | Description |
 |---------|-------|-------------|
 | `/triage "<request>"` | `/triage "Create a new flight flight agency report"` | Automatically scans keywords, creates a task file at `scratch/tasks/`, and outputs a parallel Phase 1 dispatch block. |
-| `/post-write <ObjectName>` | `/post-write ZCL_FLIGHT_REPORT` | Runs the mandatory ABAP quality gate chain: `SyntaxCheck` ➔ `RunUnitTests` ➔ `RunATCCheck`. |
+| `/post-write <ObjectName>` | `/post-write ZCL_FLIGHT_REPORT` | Runs the mandatory ABAP quality gate chain: `SyntaxCheck` -> `RunUnitTests` -> `RunATCCheck`. |
 | `/sync "<commit message>"` | `/sync "feat: add flight validation"` | Runs documentation audit, synchronizes memory indexes, and commits staged files cleanly. |
 
 ---
@@ -98,10 +99,10 @@ Once successfully registered, you can use these premium slash-commands inside yo
 
 For detailed guidelines regarding the complete Harness Governance, Agent role responsibilities, Fiori/BSP tool sets, and troubleshooting:
 
-- 📖 **Harness Engineering Core**: [abap_vibe_coding GitHub Repository](https://github.com/5throck/abap_vibe_coding)
-- 🏗️ **Governance & Roles**: [AGENTS.md](https://github.com/5throck/abap_vibe_coding/blob/main/AGENTS.md)
-- 📊 **Tool Boundaries**: [docs/tooling-matrix.md](https://github.com/5throck/abap_vibe_coding/blob/main/docs/tooling-matrix.md)
-- 💡 **MCP Server Details**: [docs/mcp_usage.md](https://github.com/5throck/abap_vibe_coding/blob/main/docs/mcp_usage.md)
+- **Harness Engineering Core**: [abap_vibe_coding GitHub Repository](https://github.com/5throck/abap_vibe_coding)
+- **Governance & Roles**: [AGENTS.md](https://github.com/5throck/abap_vibe_coding/blob/main/AGENTS.md)
+- **Tool Boundaries**: [docs/tooling-matrix.md](https://github.com/5throck/abap_vibe_coding/blob/main/docs/tooling-matrix.md)
+- **MCP Server Details**: [docs/mcp_usage.md](https://github.com/5throck/abap_vibe_coding/blob/main/docs/mcp_usage.md)
 
 ---
 *Last Updated: 2026-05-19*
