@@ -11,6 +11,9 @@ cookies.txt
 .claude/worktrees/
 .gemini/
 
+# Runtime / auto-generated plugin assets
+.agents/
+
 # Local scratch
 .local/
 scratch/temp/
