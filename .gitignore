@@ -7,12 +7,12 @@ cookies.txt
 *.mcp.json
 .vsp.json
 *.vsp.json
-.claude/
+.claude/settings.local.json
+.claude/worktrees/
 .gemini/
 
 # Local scratch
 .local/
-.codex/
 scratch/temp/
 
 # Build output
