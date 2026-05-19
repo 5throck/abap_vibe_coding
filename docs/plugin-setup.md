@@ -15,16 +15,23 @@ This guide describes how to install and use the **ABAP Vibe Coding Plugin** in a
 
 ---
 
-## 2. Register the Plugin
+## 2. Install and Register the Plugin
 
-Claude Code automatically discovers plugins placed in the `.claude/plugins` folder under your user home directory, or registered via the project-level `.claude/settings.json` file.
+Depending on whether you are actively developing and testing the harness plugin or setting it up permanently in a consumer repository, choose one of the following installation methods:
 
-To register this plugin for a specific repository:
+### Method A. Local Development and Testing (Ad-hoc)
+If you want to test the plugin locally without copying files under your user home profile, invoke Claude Code directly pointing to the cloned plugin directory:
+```bash
+# Windows / macOS / Linux
+claude --plugin-dir /path/to/abap-harness-engineering
+```
 
-### 2-A. Add the plugin folder
-Copy this plugin repository into your consumer project's path or install it globally under:
-- **Windows**: `%USERPROFILE%\.claude\plugins\abap-vibe-coding`
-- **macOS/Linux**: `~/.claude/plugins/abap-vibe-coding`
+### Method B. Permanent Consumer Repository Installation (Recommended)
+Copy the plugin repository folder directly into your user home's plugin folder to make it globally discoverable by Claude Code:
+- **Windows**: Copy the folder to `%USERPROFILE%\.claude\plugins\abap-vibe-coding`
+- **macOS/Linux**: Copy the folder to `~/.claude/plugins/abap-vibe-coding`
+
+*(Note: Once published, this can also be installed directly from the Claude Code Extension Marketplace)*
 
 ### 2-B. Configure permissions in `.claude/settings.json`
 Create a `.claude/settings.json` file in the root of your consumer repository to approve the tools and set up automated hooks:

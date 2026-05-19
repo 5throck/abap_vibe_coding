@@ -19,7 +19,7 @@ This skill defines the ABAP development capabilities and optimized workflow patt
 
 - Always execute `SyntaxCheck` after any modification to verify quality.
 - Focus operations primarily within `Z*` and `$TMP` packages.
-- **File Isolation**: Always create `.abap` files within the `scratch/` directory to maintain a clean root.
+- **File Isolation**: Task handoff files live in `scratch/tasks/`, while local `.abap` working copies may live directly under `scratch/`. This maintains a clean workspace root.
 
 ---
 
