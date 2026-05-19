@@ -136,9 +136,7 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 
 ---
 
-## Conventions
-
-Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZCL_ADT_<name>`, packages `$ZADT*`.
+## Task Handoffs: `scratch/tasks/task-YYYY-MM-DD-NNN.md`. Memory Logs: `memory/YYYY-MM-DD.md`. SAP objects: `ZADT_<nn>_<name>`, `ZCL_ADT_<name>`, packages `$ZADT*`.
 
 ---
 
