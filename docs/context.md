@@ -74,6 +74,9 @@ pkg/
 
 ## Adding a New MCP Tool in Upstream VSP
 
+> [!NOTE]
+> This section is only relevant when contributing to the upstream vsp engine source repository.
+
 1. Handler in `handlers_*.go`:
 ```go
 func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {

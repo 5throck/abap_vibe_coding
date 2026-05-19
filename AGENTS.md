@@ -284,15 +284,26 @@ Request received
 
 #### Subagent Roster
 
-| Subagent | Prompt file | Parallelizable | Tools allowed |
-|----------|-------------|:--------------:|---------------|
+##### 1. Parallel Research & Design Agents (Read-Only)
+These subagents can be run simultaneously during initial triage and design phases. They must never perform write actions.
+
+| Subagent | Prompt file | Parallelizable | Design/Read Allowed Tools |
+|----------|-------------|:--------------:|---------------------------|
 | `sap-investigator` | `agents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
 | `read-only-analyst` | `agents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
 | `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
+| `fiori-dev` (Design Mode) | `agents/fiori-developer.md` | ✅ Design only | `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `browser_subagent` |
+| `form-expert` (Design Mode) | `agents/form-expert.md` | ✅ Design only | `GrepObjects` |
+
+##### 2. Serial Execution & Verification Agents (Write-Capable)
+These subagents are run sequentially because they execute write operations (lock management) or verification sequences.
+
+| Subagent | Prompt file | Parallelizable | Write/Execution Allowed Tools |
+|----------|-------------|:--------------:|------------------------------|
 | `code-writer` | `agents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
-| `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests` |
-| `fiori-dev` | `agents/fiori-developer.md` | ✅ Design only | **Design/Read**: `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `browser_subagent`<br>**Write**: `EditSource`, `SyntaxCheck` (serial only) |
-| `form-expert` | `agents/form-expert.md` | ✅ Design only | **Design/Read**: `GrepObjects`<br>**Write**: `EditSource` (serial only) |
+| `fiori-dev` (Write Mode) | `agents/fiori-developer.md` | ❌ Serial Write | `EditSource`, `SyntaxCheck` |
+| `form-expert` (Write Mode) | `agents/form-expert.md` | ❌ Serial Write | `EditSource` |
+| `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests`, `RunATCCheck` (verification) |
 | `gui-scripter` | `agents/gui-scripter.md` | ❌ Never | `browser_subagent`, `vsp debug` |
 
 #### Parallel Dispatch Rules
