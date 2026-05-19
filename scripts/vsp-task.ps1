@@ -1,6 +1,6 @@
 # vsp-task.ps1
 # Usage: .\scripts\vsp-task.ps1 [-Name "task-name"]
-# Creates a new task file in scratch/ from the template.
+# Creates a new task file in scratch/tasks/ from the template.
 
 param(
     [string]$Name = "new-task"

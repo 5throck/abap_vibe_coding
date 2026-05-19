@@ -1,13 +1,13 @@
 ---
 name: new-task
-description: Create a new task file in scratch/ from the task template for tracking ABAP development work.
+description: Create a new task file in scratch/tasks/ from the task template for tracking ABAP development work.
 argument-hint: "[task-name]"
 allowed-tools: ["Bash"]
 ---
 
 # New Task
 
-Create a new task file in scratch/ from the task template.
+Create a new task file in scratch/tasks/ from the task template.
 
 Run the appropriate command for the current platform, where $ARGUMENTS is used as the task name:
 

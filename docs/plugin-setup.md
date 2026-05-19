@@ -65,6 +65,10 @@ Create a `.claude/settings.json` file in the root of your consumer repository to
 }
 ```
 
+> [!NOTE]
+> `CLAUDE_PLUGIN_ROOT` is an environment variable automatically populated by the Claude Code plugin runtime pointing to the active plugin folder. 
+> If you are performing manual testing or executing the scripts directly outside of the automatic hook lifecycle, please run the script (e.g. `scripts/sync-md.sh` or `scripts/sync-md.ps1`) directly from your workspace root.
+
 ---
 
 ## 3. Environment Variables (`.env`)

@@ -1,7 +1,7 @@
 #!/bin/bash
 # vsp-task.sh
 # Usage: ./scripts/vsp-task.sh [task-name]
-# Creates a new task file in scratch/ from the template.
+# Creates a new task file in scratch/tasks/ from the template.
 
 NAME=${1:-"new-task"}
 DATE=$(date +%Y-%m-%d)
