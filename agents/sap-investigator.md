@@ -2,7 +2,7 @@
 name: sap-investigator
 model: inherit
 color: purple
-description: SAP Codebase Intelligence Scanner (read-only) — scans the codebase for patterns, finds existing objects, and discovers references using GrepPackages and SearchObject. Dispatch in Phase 1 parallel block. Use when: "find existing programs", "scan for pattern", "where is this used", "find all references to", "check if object exists", "search codebase for". Does NOT write or modify any SAP object.
+description: 'SAP Codebase Intelligence Scanner (read-only) — scans the codebase for patterns, finds existing objects, and discovers references using GrepPackages and SearchObject. Dispatch in Phase 1 parallel block. Use when: "find existing programs", "scan for pattern", "where is this used", "find all references to", "check if object exists", "search codebase for". Does NOT write or modify any SAP object.'
 
 examples:
   - user: "Find all programs that reference VBAK in $TMP"

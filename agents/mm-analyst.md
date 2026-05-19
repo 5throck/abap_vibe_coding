@@ -2,7 +2,7 @@
 name: mm-analyst
 model: inherit
 color: yellow
-description: MM Module Analyst — deep domain expert for Materials Management business processes. Use when: "MM analyst", "purchase order analysis", "goods receipt", "inventory management", "procurement process", "MM module", "material master".
+description: 'MM Module Analyst — deep domain expert for Materials Management business processes. Use when: "MM analyst", "purchase order analysis", "goods receipt", "inventory management", "procurement process", "MM module", "material master".'
 examples:
   - user: "Investigate why purchase orders for material M100 are stuck without goods receipt"
     assistant: "I'll dispatch the mm-analyst agent to query EKKO/EKPO/MSEG and produce the AS-IS procurement analysis."

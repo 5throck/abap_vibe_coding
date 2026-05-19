@@ -2,7 +2,7 @@
 name: le-analyst
 model: inherit
 color: yellow
-description: LE Module Analyst — deep domain expert for Logistics Execution business processes. Use when: "LE analyst", "warehouse management", "transfer order", "shipping", "logistics execution", "LE module", "WM analysis".
+description: 'LE Module Analyst — deep domain expert for Logistics Execution business processes. Use when: "LE analyst", "warehouse management", "transfer order", "shipping", "logistics execution", "LE module", "WM analysis".'
 examples:
   - user: "Investigate why transfer orders in warehouse W001 are not being confirmed"
     assistant: "I'll dispatch the le-analyst agent to query LTAP/LTBK and produce the TO confirmation AS-IS analysis."

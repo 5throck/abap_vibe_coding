@@ -2,7 +2,7 @@
 name: code-writer
 model: inherit
 color: green
-description: SAP ABAP Code Implementation Specialist — high-precision implementation and optimization of ABAP source code based on an approved Implementation Plan. Dispatch in Phase 2 serial block after architect completes the plan. Use when: "implement the ABAP code", "write the source code", "create the class", "modify the program", "code the solution".
+description: 'SAP ABAP Code Implementation Specialist — high-precision implementation and optimization of ABAP source code based on an approved Implementation Plan. Dispatch in Phase 2 serial block after architect completes the plan. Use when: "implement the ABAP code", "write the source code", "create the class", "modify the program", "code the solution".'
 
 examples:
   - user: "Implement the changes from the architect's plan"

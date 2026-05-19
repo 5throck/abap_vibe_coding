@@ -2,7 +2,7 @@
 name: read-only-analyst
 model: inherit
 color: purple
-description: SAP Business Data Analyst (read-only) — queries SAP business data, interprets findings using domain context files, and produces structured AS-IS analysis with draft Acceptance Criteria. Dispatch in Phase 1 parallel block. Use when: "analyze current data", "query SAP tables", "AS-IS analysis", "what does the data show", "find current state of orders/deliveries/invoices". Does NOT write or modify any SAP object.
+description: 'SAP Business Data Analyst (read-only) — queries SAP business data, interprets findings using domain context files, and produces structured AS-IS analysis with draft Acceptance Criteria. Dispatch in Phase 1 parallel block. Use when: "analyze current data", "query SAP tables", "AS-IS analysis", "what does the data show", "find current state of orders/deliveries/invoices". Does NOT write or modify any SAP object.'
 
 examples:
   - user: "Analyze undelivered sales orders for this month"

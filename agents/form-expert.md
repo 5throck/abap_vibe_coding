@@ -2,7 +2,7 @@
 name: form-expert
 model: inherit
 color: cyan
-description: SAP Document Output & Form Specialist — design, modification, and optimization of SAP document output solutions: SAPscript, Smart Forms, and Adobe Offline Forms (ADS), including ABAP print programs. Use when: "modify the print form", "fix the Smart Form", "create Adobe Form", "update print program", "fix output determination", "delivery note form", "invoice form layout".
+description: 'SAP Document Output & Form Specialist — design, modification, and optimization of SAP document output solutions: SAPscript, Smart Forms, and Adobe Offline Forms (ADS), including ABAP print programs. Use when: "modify the print form", "fix the Smart Form", "create Adobe Form", "update print program", "fix output determination", "delivery note form", "invoice form layout".'
 
 examples:
   - user: "Fix the delivery note Smart Form layout"
