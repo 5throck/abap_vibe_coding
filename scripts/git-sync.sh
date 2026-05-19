@@ -1,18 +1,19 @@
 #!/bin/bash
-# git-sync.sh
+# scripts/git-sync.sh
 # Usage: ./scripts/git-sync.sh [message]
+# Commits and pushes all changes to the current branch.
 
-MESSAGE=${1:-"Auto-sync: Documentation and configuration updates"}
+MESSAGE=${1:-"chore: auto-sync documentation and configuration"}
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-echo "Starting auto-sync to Git..."
+echo "--- Git Sync ---"
+echo "Branch: $BRANCH"
 
-# Add all changes except ignored files
 git add .
 
-# Check if there are changes to commit
 if ! git diff --cached --quiet; then
     git commit -m "$MESSAGE"
-    git push origin main
+    git push origin "$BRANCH"
     echo "Successfully synced to Git."
 else
     echo "No changes to sync."

@@ -1,7 +1,7 @@
 ---
 name: ABAP Development Skills
 description: Use when working on SAP ABAP development tasks — provides specialized workflows for BAPI exploration, transport management, unit testing, performance analysis, impact architecture analysis, and documentation audits. Trigger on any SAP/ABAP coding, debugging, or system analysis task.
-version: 1.0.0
+version: 1.1.0
 ---
 
 # ABAP Development Skills (vsp)
@@ -13,7 +13,7 @@ This skill defines the ABAP development capabilities and optimized workflow patt
 - **Surgical Edits**: Use `EditSource` for changes under 50 lines to ensure syntax safety and atomicity.
 - **Context Awareness**: Use `GetContext` when analyzing large classes to save tokens and focus on structural understanding.
 - **Graph Analysis**: Perform impact analysis via `AnalyzeCallGraph` before refactoring.
-- **SQL Accuracy**: Adhere to ABAP SQL standards (e.g., use `DESCENDING` instead of `DESC`) when using `RunQuery`.
+- **SQL Accuracy**: See ABAP SQL rules in `sap:performance-analyzer` below.
 
 ## Best Practices
 
@@ -33,7 +33,7 @@ This skill defines the ABAP development capabilities and optimized workflow patt
 1. Use `SearchObject` with `type=FUNC` and a keyword pattern (e.g. `BAPI_SALESORDER_*`) to locate candidate function modules.
 2. For each candidate, call `GetSource` to read the function module signature (importing/exporting/tables parameters).
 3. Use `GetFunctionGroup` to understand the group the BAPI belongs to and related functions.
-4. Call `RunQuery` on `BAPISTRUCT` or relevant parameter tables to understand data structures.
+4. Call `GetTable` on the relevant parameter structures (e.g. `BAPIORDERS`, `BAPISDORDER`) to understand field definitions and types.
 5. Document findings: BAPI name, parameters, return code structure (BAPIRET2), known limitations.
 
 **Output format**:
@@ -85,12 +85,28 @@ Limitations: <known issues or missing fields>
 3. Write the test class using `WriteSource` with `FOR TESTING`, `RISK LEVEL HARMLESS`, `DURATION SHORT`.
 4. Run `RunUnitTests` — all methods must pass before considering the task complete.
 
-**Test naming convention**:
+**Test class skeleton**:
 ```abap
 CLASS ltc_<object_name> DEFINITION FOR TESTING
   RISK LEVEL HARMLESS DURATION SHORT.
   PRIVATE SECTION.
-    METHODS test_<ac_id>_<scenario> FOR TESTING.
+    DATA: cut TYPE REF TO <class_under_test>.
+    CLASS-METHODS: class_setup.
+    CLASS-METHODS: class_teardown.
+    METHODS: setup.
+    METHODS: teardown.
+    METHODS: test_<ac_id>_<scenario> FOR TESTING.
+ENDCLASS.
+
+CLASS ltc_<object_name> IMPLEMENTATION.
+  METHOD setup.
+    cut = NEW #( ).
+  ENDMETHOD.
+  METHOD test_<ac_id>_<scenario>.
+    " Arrange — inject mock data via TEST-INJECTION
+    " Act    — call cut->method( )
+    " Assert — cl_abap_unit_assert=>assert_equals( )
+  ENDMETHOD.
 ENDCLASS.
 ```
 
@@ -116,13 +132,14 @@ ENDCLASS.
 5. **Apply fixes** using `EditSource` — replace problem patterns with:
    - `SELECT field1, field2 INTO TABLE @DATA(lt_result) FROM table WHERE ...`
    - Single JOIN instead of nested SELECT
-   - `FOR ALL ENTRIES IN` instead of SELECT inside LOOP
+   - `FOR ALL ENTRIES IN lt_driver` — **only when `lt_driver` is guaranteed non-empty**; always guard with `IF lt_driver IS NOT INITIAL` to prevent full-table read
 6. Run `SyntaxCheck` and `RunUnitTests` after every change.
 
-**ABAP SQL performance rules**:
+**ABAP SQL rules**:
 - Use `DESCENDING` not `DESC`; `ASCENDING` not `ASC`
 - Use `max_rows` parameter, not `LIMIT`
 - Always specify field list — avoid `SELECT *` in production code
+- `FOR ALL ENTRIES IN`: guard with `IF <table> IS NOT INITIAL` — an empty driving table reads the entire target table
 
 ---
 
@@ -166,13 +183,17 @@ ENDCLASS.
 **Trigger**: Before finalization/sync, or before running `/sync` command.
 
 **Workflow**:
-1. **Identify OS**: Determine if running on Windows (PowerShell) or macOS/Linux (Bash).
-2. **Execute Audit**:
-   - **Windows**: `powershell -ExecutionPolicy Bypass -File $CLAUDE_PLUGIN_ROOT/scripts/vsp-audit.ps1`
-   - **Unix**: `bash $CLAUDE_PLUGIN_ROOT/scripts/vsp-audit.sh`
-3. **Analyze Results**:
-   - If audit passes: proceed to `vsp-sync`.
-   - If audit fails: identify the specific issue (Broken link, Absolute path, Missing pair) and fix it in the source `.md` or script.
-4. **Re-run**: Repeat until the audit returns 0 errors.
+1. Run the audit script — it works on all platforms since `sync-md.sh` calls `vsp-audit.sh` directly:
+   ```bash
+   bash scripts/vsp-audit.sh
+   ```
+   On Windows from PowerShell:
+   ```powershell
+   .\scripts\vsp-audit.ps1
+   ```
+2. **Analyze Results**:
+   - If audit passes: proceed to `/sync`.
+   - If audit fails: identify the specific issue (Broken link, Absolute path, Missing `.ps1`/`.sh` pair) and fix it in the source `.md` or script.
+3. **Re-run**: Repeat until the audit returns 0 errors.
 
 **Gate**: A passing audit is required before running the final `/sync` command.

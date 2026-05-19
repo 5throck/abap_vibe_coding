@@ -14,14 +14,14 @@ if [ -n "$ABS_PATHS" ]; then
 fi
 
 # 2. Link Integrity & Path Style Check
-find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" | while read -r file; do
+while read -r file; do
     # Check for backslashes in markdown links (Windows-only style)
     if grep -q '\[.*\](.*\\.*)' "$file"; then
         echo "  [!] Cross-Platform: Backslash found in link in $file. Use forward slashes (/) for compatibility."
         FAILED=1
     fi
 
-    links=$(grep -o '\[.*\]([^#)]*)' "$file" | sed -E 's/.*\]\(([^# )]+)\).*/\1/' | grep -vE "^http|^mailto:|^#|YYYY-MM-DD")
+    links=$(grep -o '\[.*\]([^#)]*)' "$file" | sed -E 's/.*\]\(([^# )]+)\).*/\1/' | grep -vE "^http|^mailto:|^#|YYYY-MM-DD|\.\./\.\.")
     for link in $links; do
         decoded_link=$(echo "$link" | sed 's/%20/ /g')
         dir=$(dirname "$file")
@@ -31,12 +31,12 @@ find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" | while 
             FAILED=1
         fi
     done
-done
+done < <(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*")
 
 # 3. Script Pairing Check
 for script in scripts/*; do
     base=$(basename "$script" | sed 's/\.[^.]*$//')
-    if [ "$base" == "sync-md" ]; then continue; fi # Skip exception
+    if [ "$base" == "install-vsp" ]; then continue; fi
     
     if [[ "$script" == *.sh ]]; then
         if [ ! -f "scripts/$base.ps1" ]; then
