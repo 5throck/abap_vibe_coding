@@ -1,7 +1,7 @@
 ---
 name: devops-admin
 model: inherit
-color: orange
+color: yellow
 description: 'SAP DevOps / Admin — manages environment setup, Transport Requests (CTS), abapGit integration, and VSP infrastructure installations. Dispatch for transport management and setup validation. Use when: "create transport", "release transport request", "install abapGit", "deploy infrastructure", "vsp admin checks".'
 
 examples:
