@@ -3,7 +3,7 @@
 # Standardized packaging script to sanitize and copy core framework assets to the plugin repository.
 
 param(
-    [string]$TargetDir = "C:\git\abap_vibe_coding_plugin",
+    [string]$TargetDir = $(if ($env:CLAUDE_PLUGIN_ROOT) { $env:CLAUDE_PLUGIN_ROOT } else { "C:\git\abap_vibe_coding_plugin" }),
     [string]$CommitMessage
 )
 

@@ -3,7 +3,7 @@
 # Usage: bash ./scripts/vsp-publish.sh "feat: align with main reference implementation"
 # Standardized packaging script to sanitize and copy core framework assets to the plugin repository.
 
-TARGET_DIR="C:/git/abap_vibe_coding_plugin"
+TARGET_DIR="${CLAUDE_PLUGIN_ROOT:-C:/git/abap_vibe_coding_plugin}"
 COMMIT_MESSAGE="$1"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

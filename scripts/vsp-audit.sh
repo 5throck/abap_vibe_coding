@@ -1,6 +1,7 @@
 #!/bin/bash
 # scripts/vsp-audit.sh
 # Cross-platform documentation audit (Unix: macOS/Linux)
+# Note: Intentionally omits 'set -e' — runs all checks to report every issue at once.
 
 FAILED=0
 echo "--- Documentation Audit (Unix) ---"
