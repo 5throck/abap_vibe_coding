@@ -30,6 +30,9 @@ echo "Copying core assets to plugin..."
 # Define assets to sync
 SYNC_FOLDERS=("agents" "skills" ".claude/commands:commands")
 SYNC_FILES=(
+    "docs/prd-template.md"
+    "docs/task-template.md"
+    "docs/plugin-setup.md"
     "scripts/install-vsp.ps1"
     "scripts/install-vsp.sh"
     "scripts/sync-md.ps1"
