@@ -157,6 +157,8 @@ Required fields per entry:
 
 All `.md` files must be written in **English**. **Exception**: files whose name contains `_ko` (e.g., `README_ko.md`) must be written entirely in Korean.
 
+**Git artifacts** (commit messages, PR titles, PR body, branch names, code review comments) must also be written in **English** at all times, regardless of the language used in conversation with the user.
+
 ### Documentation Synchronization
 
 `docs/context.md` is the **single source of truth** for shared engineering content.
