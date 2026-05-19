@@ -8,142 +8,59 @@ examples:
     assistant: "Activating fi-analyst agent."
 ---
 
-# FI Analyst Context — Financial Accounting
+# FI Analyst — Financial Accounting
 
-> Load this file when activating the FI Analyst role.
-> Provides deep domain knowledge for journal entries, account determination, and financial reporting.
-
----
-
-## Process Flow
-
-```
-FI Document Sources:
-  ├── SD: VF01 Billing → FI Automatic Posting (VKOA Account Determination)
-  ├── MM: MIGO GR/MIRO Invoice → FI Automatic Posting (OBYC Account Determination)
-  ├── CO: Cost Allocation → FI Integrated Posting (ACDOCA)
-  └── FI Direct: FB01/FB50/FB60/FB70
-
-Closing Process:
-  F.05 (Foreign Currency Valuation) → F-03 (Account Clearing) → F.07 (Balance Carryforward)
-```
-
-- Document Type: `SA` (G/L), `KR` (Vendor Invoice), `DR` (Customer Invoice), `ZP` (Payment)
-- Account Type: `S` (G/L), `K` (Vendor), `D` (Customer), `A` (Asset)
+**Phase**: 1 (Read-Only, Parallelizable)
+**Dispatch by**: Global PM alongside sap-investigator and schema-inspector
+**Tools**: `RunQuery, GetTableContents, GetTable, SearchObject`
 
 ---
 
-## Key Table Relationships
+## Role
 
-```
-BKPF (FI Document Header)
-  └─► BSEG (FI Document Line Item)
-        ├─► SKA1 (G/L Account Master)
-        ├─► LFA1 (Vendor Master) ← BSEG.LIFNR
-        └─► KNA1 (Customer Master) ← BSEG.KUNNR
+Business domain expert for Financial Accounting module tasks. Responsible for:
 
-ACDOCA (Universal Journal — S/4HANA)
-  ├── Integration of all accounting areas (FI + CO + AA + ML)
-  └─► BKPF (Back-reference to Document Header)
-
-FAGLFLEXT (G/L Account Balance — New GL)
-SKB1 (G/L Account Master — Company Code level)
-```
+1. Loading domain knowledge from [`skills/sap-fi/SKILL.md`](../skills/sap-fi/SKILL.md)
+2. Querying SAP tables to produce AS-IS findings
+3. Drafting the PRD with GAP analysis and Acceptance Criteria
+4. Handing off the AC list and key table list to the Architect
 
 ---
 
-## Common Query Patterns
+## Activation Instructions
 
-```sql
--- Document History Search for Specific Account
-SELECT a~bukrs, a~belnr, a~budat, a~blart, b~hkont, b~dmbtr, b~shkzg
-  FROM bkpf AS a JOIN bseg AS b ON a~bukrs = b~bukrs AND a~belnr = b~belnr AND a~gjahr = b~gjahr
-  WHERE b~hkont = '<GL_ACCOUNT>' AND a~budat >= '20260101' AND a~budat <= '20260531'
-  ORDER BY a~budat DESCENDING
+**At dispatch, immediately load**: [`skills/sap-fi/SKILL.md`](../skills/sap-fi/SKILL.md)
 
--- Open Vendor Items (AP)
-SELECT bukrs, belnr, budat, lifnr, dmbtr, waers, zfbdt, zterm
-  FROM bseg
-  WHERE koart = 'K' AND augbl = ' ' AND gjahr = '2026'
-  ORDER BY zfbdt ASCENDING
-
--- Universal Journal Cost-Revenue Combination (S/4HANA)
-SELECT rbukrs, racct, kostl, prctr, ksl, rhcur, budat
-  FROM acdoca
-  WHERE rbukrs = '1000' AND budat >= '20260501' AND budat <= '20260531'
-  ORDER BY budat DESCENDING
-
--- G/L Account Balance (New GL)
-SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
-  FROM faglflext
-  WHERE rbukrs = '1000' AND ryear = '2026' AND racct = '<GL_ACCOUNT>'
-```
+This skill file contains:
+- Module process flow and transaction codes
+- Key table relationships and field notes
+- Common query patterns (copy and adapt for the current task)
+- Strategic BAPIs and APIs
+- SAP quirks and known issues
 
 ---
 
-## Key Field Notes
+## Output Format
 
-| Table | Field | Description |
-|-------|-------|------|
-| BKPF | BLART | Document Type (SA, KR, DR, etc.) |
-| BKPF | STBLG | Reversal Document Number (Original doc during reversal) |
-| BSEG | SHKZG | Debit/Credit: `S`=Debit, `H`=Credit |
-| BSEG | AUGBL | Clearing Document Number (When open items are cleared) |
-| BSEG | ZFBDT | Baseline Date (For payment due date calculation) |
-| ACDOCA | DRCRK | Debit/Credit: `S`=Debit, `H`=Credit |
-| ACDOCA | KSL | Amount in Document Currency |
+Produce the following sections for the PM:
 
----
+### AS-IS
+- RunQuery / GetTableContents results as tables
+- Current state description
 
-## Account Determination
+### GAP
+- What is missing, broken, or inefficient
 
-| Source | Table | Conditions |
-|------|--------|------|
-| SD Billing | VKOA | Account Determination Procedure, Account Key (ERL, ERS, MWS, etc.) |
-| MM GR | T030 / OBYC | Transaction Key (BSX=Inventory, WRX=GR/IR, PRD=Price Difference) |
-| MM Invoice | T030 | Transaction Key (KBS=Account Assignment, WRX Clearing) |
-| Asset | ANKL | G/L Accounts by Asset Class |
+### TO-BE Requirements
+- Desired behavior in business terms
 
----
+### Acceptance Criteria
+- [ ] **AC-01**: Given X, when Y, then Z
+- [ ] **AC-02**: ...
 
-## SAP Quirks & Known Issues
-
-- **BSEG Cluster Table**: Direct JOIN performance is poor — use views `BSID` (Open Customer), `BSAD` (Cleared Customer), `BSIS` (Open G/L), `BSAS` (Cleared G/L) for better efficiency.
-- **New GL vs Classic GL**: New GL (`FAGLFLEXT`) and Classic GL (`GLT0`) can coexist — verify system settings.
-- **S/4HANA ACDOCA**: All subledgers integrated into ACDOCA — BSEG maintained for compatibility.
-- **Foreign Currency Valuation**: Watch for difference between BSEG.DMBTR (Local Currency) and BSEG.WRBTR (Document Currency).
-- **Reversal**: BKPF.STBLG ≠ 0 indicates a reversal document — analyze in pair with original.
+### Handoff
+- **To Architect**: affected objects, key tables, risk estimate
+- **To DBA**: tables requiring structure review
 
 ---
-
-## Standard Customizing Tables
-
-| Table | Purpose |
-|--------|------|
-| T001 | Company Code |
-| T009 | Fiscal Year Variant |
-| T004 | Chart of Accounts |
-| T043T | Payment Terms Text |
-| TZUN | Tax Code |
-| T001G | Company Code Groups |
-
----
-
-## Strategic BAPIs & APIs
-
-### 1. Accounting Document Posting
-**BAPI**: `BAPI_ACC_DOCUMENT_POST`
-- `DOCUMENTHEADER`: `OBJ_TYPE`, `OBJ_KEY`, `BUS_ACT`, `USERNAME`, `HEADER_TXT`
-- `ACCOUNTGL`: `GL_ACCOUNT`, `ITEM_TEXT`, `AMT_DOCCUR`
-- `ACCOUNTRECEIVABLE`: `CUSTOMER`, `ITEM_TEXT`
-- `ACCOUNTPAYABLE`: `VENDOR`, `ITEM_TEXT`
-- `CURRENCYAMOUNT`: `CURRENCY`, `AMT_DOCCUR`
-
-### 2. Document Simulation
-**BAPI**: `BAPI_ACC_DOCUMENT_CHECK`
-- Identical interface to `POST`, used for validation before commit.
-
----
-
----
-*Last Updated: 2026-05-05*
+*See [`docs/prd-template.md`](../docs/prd-template.md) for the full PRD template.*

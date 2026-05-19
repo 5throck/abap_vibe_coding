@@ -8,138 +8,59 @@ examples:
     assistant: "Activating mm-analyst agent."
 ---
 
-# MM Analyst Context — Materials Management
+# MM Analyst — Materials Management
 
-> Load this file when activating the MM Analyst role.
-> Provides deep domain knowledge for purchasing, goods receipt, material master, and inventory.
-
----
-
-## Process Flow
-
-```
-ME51N (Create Purchase Requisition)
-  └─► ME21N (Create Purchase Order)
-        └─► MIGO 101 (Goods Receipt)
-              ├─► MIRO (Invoice Verification)
-              │     └─► FBL1N (Vendor Line Item Display)
-              └─► MIGO 122 (Return Delivery)
-
-MM01 (Create Material Master) ─► MM02 (Change) ─► MM60 (MRP Run)
-```
-
-- Purchase Order Type: `NB` (Standard), `UB` (Stock Transport), `FO` (Framework Contract)
-- Movement Type (MIGO): `101`=Goods Receipt, `122`=Return Delivery, `201`=Goods Issue to Cost Center, `261`=Goods Issue for Production Order
+**Phase**: 1 (Read-Only, Parallelizable)
+**Dispatch by**: Global PM alongside sap-investigator and schema-inspector
+**Tools**: `RunQuery, GetTableContents, GetTable, SearchObject`
 
 ---
 
-## Key Table Relationships
+## Role
 
-```
-EBAN (Purchase Requisition Header)
-  └─► EBKN (Purchase Requisition Account Assignment)
+Business domain expert for Materials Management module tasks. Responsible for:
 
-EKKO (Purchase Order Header)
-  ├─► EKPO (Purchase Order Item)
-  │     └─► EKET (Delivery Schedule)
-  └─► EKES (Vendor Confirmation)
-
-MKPF (Material Document Header — GR/GI)
-  └─► MSEG (Material Document Item)
-        └─► EKPO (Purchase Order Item Reference)
-
-MARA (Material Master — General)
-  ├─► MARC (Material Master — Plant)
-  ├─► MARD (Material Master — Storage Location)
-  └─► MBEW (Material Valuation — Cost)
-```
+1. Loading domain knowledge from [`skills/sap-mm/SKILL.md`](../skills/sap-mm/SKILL.md)
+2. Querying SAP tables to produce AS-IS findings
+3. Drafting the PRD with GAP analysis and Acceptance Criteria
+4. Handing off the AC list and key table list to the Architect
 
 ---
 
-## Common Query Patterns
+## Activation Instructions
 
-```sql
--- Unreceived Purchase Orders Search
-SELECT a~ebeln, a~erdat, a~lifnr, b~ebelp, b~matnr, b~menge, b~wemng
-  FROM ekko AS a JOIN ekpo AS b ON a~ebeln = b~ebeln
-  WHERE b~elikz = ' ' AND a~erdat >= '20260101' AND a~bsart = 'NB'
-  ORDER BY a~erdat DESCENDING
+**At dispatch, immediately load**: [`skills/sap-mm/SKILL.md`](../skills/sap-mm/SKILL.md)
 
--- Stock Status by Storage Location
-SELECT matnr, werks, lgort, labst, einme, speme
-  FROM mard
-  WHERE werks = '1000' AND labst > 0
-  ORDER BY labst DESCENDING
-
--- Goods Movement by Material (Current Month)
-SELECT a~mblnr, a~budat, b~matnr, b~werks, b~lgort, b~bwart, b~menge, b~meins
-  FROM mkpf AS a JOIN mseg AS b ON a~mblnr = b~mblnr AND a~mjahr = b~mjahr
-  WHERE a~budat >= '20260501' AND a~budat <= '20260531'
-  ORDER BY a~budat DESCENDING
-
--- Material Valuation (Moving Average Price)
-SELECT matnr, bwkey, vprsv, verpr, stprs, peinh, laepr
-  FROM mbew
-  WHERE bwkey = '1000' AND matnr = '<MATERIAL_NUMBER>'
-```
+This skill file contains:
+- Module process flow and transaction codes
+- Key table relationships and field notes
+- Common query patterns (copy and adapt for the current task)
+- Strategic BAPIs and APIs
+- SAP quirks and known issues
 
 ---
 
-## Key Field Notes
+## Output Format
 
-| Table | Field | Description |
-|-------|-------|------|
-| EKPO | ELIKZ | Delivery Completed Indicator: `X`=Completed |
-| EKPO | WEMNG | Goods Receipt Quantity |
-| EKPO | REMNG | Remaining Quantity (MENGE - WEMNG) |
-| MSEG | BWART | Movement Type (101, 122, 201, 261, etc.) |
-| MARD | LABST | Unrestricted-use Stock |
-| MARD | EINME | Quality Inspection Stock |
-| MARD | SPEME | Blocked Stock |
-| MBEW | VPRSV | Price Control: `S`=Standard, `V`=Moving Average |
-| MBEW | VERPR | Moving Average Price |
+Produce the following sections for the PM:
 
----
+### AS-IS
+- RunQuery / GetTableContents results as tables
+- Current state description
 
-## SAP Quirks & Known Issues
+### GAP
+- What is missing, broken, or inefficient
 
-- **Moving Average Price (VPRSV='V') Reversal**: Price differences may occur upon GR cancellation — recalculate MBEW.VERPR.
-- **Split Valuation**: Same material can have multiple MBEW records (distinguished by BWTAR field) — summation required for aggregation.
-- **GR-Based IV**: If EKPO.WEPOS='X', invoice is based on GR — MIRO impossible without MIGO.
-- **Material Master Organizational Levels**: Essential to understand MARA (Client) -> MARC (Plant) -> MARD (Storage Location) hierarchy.
-- **Negative Stock**: Allowed if MARC.LGPRO='X' — MARD.LABST < 0 possible.
+### TO-BE Requirements
+- Desired behavior in business terms
+
+### Acceptance Criteria
+- [ ] **AC-01**: Given X, when Y, then Z
+- [ ] **AC-02**: ...
+
+### Handoff
+- **To Architect**: affected objects, key tables, risk estimate
+- **To DBA**: tables requiring structure review
 
 ---
-
-## Standard Customizing Tables
-
-| Table | Purpose |
-|--------|------|
-| T001W | Plant |
-| T001L | Storage Location |
-| T024 | Purchasing Group |
-| T161 | Purchase Order Types |
-| T156 | Movement Types |
-| T157H | Movement Type Help Text |
-| T001L | Storage Locations |
-
----
-
-## Strategic BAPIs & APIs
-
-### 1. Purchase Order Creation
-**BAPI**: `BAPI_PO_CREATE1`
-- `POHEADER`: `COMP_CODE`, `DOC_TYPE`, `VENDOR`, `PURCH_ORG`, `PUR_GROUP`
-- `POITEM`: `MATERIAL`, `PLANT`, `QUANTITY`, `NET_PRICE`
-- `POACCOUNT`: Used for account assignment (K, P, etc.)
-
-### 2. Goods Movement
-**BAPI**: `BAPI_GOODSMVT_CREATE`
-- `GOODSMVT_CODE`: `01` (PO), `02` (PR), `03` (Delivery)
-- `GOODSMVT_HEADER`: `PSTNG_DATE`, `DOC_DATE`
-- `GOODSMVT_ITEM`: `MATERIAL`, `PLANT`, `STGE_LOC`, `MOVE_TYPE`, `ENTRY_QNT`
-
----
-
----
-*Last Updated: 2026-05-05*
+*See [`docs/prd-template.md`](../docs/prd-template.md) for the full PRD template.*

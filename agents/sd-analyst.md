@@ -8,130 +8,59 @@ examples:
     assistant: "Activating sd-analyst agent."
 ---
 
-# SD Analyst Context — Sales & Distribution
+# SD Analyst — Sales & Distribution
 
-> Load this file when activating the SD Analyst role.
-> Provides deep domain knowledge for process analysis, table relationships, and common query patterns.
-
----
-
-## Process Flow
-
-```
-VA01 (Create Quote/Order)
-  └─► VA02 (Change Order) / VA03 (Display)
-        └─► VL01N (Create Delivery)
-              └─► VL02N (Confirm Picking/Goods Issue)
-                    └─► VF01 (Create Billing Document)
-                          └─► VF02 (Cancel/Modify Billing Document)
-```
-
-- Sales Order Type: `TA` (Standard), `RE` (Return), `KA` (Consignment), `CS` (Service)
-- Delivery Type: `LF` (Standard Delivery), `LR` (Return Delivery)
-- Billing Type: `F2` (Standard Billing), `G2` (Credit Memo), `L2` (Debit Memo)
+**Phase**: 1 (Read-Only, Parallelizable)
+**Dispatch by**: Global PM alongside sap-investigator and schema-inspector
+**Tools**: `RunQuery, GetTableContents, GetTable, SearchObject`
 
 ---
 
-## Key Table Relationships
+## Role
 
-```
-VBAK (Sales Order Header)
-  ├── VBKD (Business Data: Payment Terms, Incoterms)
-  └── VBAP (Sales Order Item)
-        ├── VBEP (Schedule Lines)
-        ├── KONV (Pricing Condition Details)  ← VBAP.KNUMV = KONV.KNUMV
-        └── VBFA (Document Flow)      ← Delivery/Billing Connection
+Business domain expert for Sales & Distribution module tasks. Responsible for:
 
-LIKP (Delivery Header)
-  └── LIPS (Delivery Item)
-        └── VBFA (Delivery → Billing Flow)
-
-VBRK (Billing Header)
-  └── VBRP (Billing Item)
-        └── BKPF/BSEG (FI Document Connection)  ← VBRK.BELNR
-```
+1. Loading domain knowledge from [`skills/sap-sd/SKILL.md`](../skills/sap-sd/SKILL.md)
+2. Querying SAP tables to produce AS-IS findings
+3. Drafting the PRD with GAP analysis and Acceptance Criteria
+4. Handing off the AC list and key table list to the Architect
 
 ---
 
-## Common Query Patterns
+## Activation Instructions
 
-```sql
--- Undelivered Sales Orders (Incomplete Delivery Items)
-SELECT a~vbeln, a~erdat, a~kunnr, b~posnr, b~matnr, b~kwmeng, b~lfsta
-  FROM vbak AS a JOIN vbap AS b ON a~vbeln = b~vbeln
-  WHERE a~auart = 'TA' AND b~lfsta <> 'C' AND a~erdat >= '20260101'
-  ORDER BY a~erdat DESCENDING
+**At dispatch, immediately load**: [`skills/sap-sd/SKILL.md`](../skills/sap-sd/SKILL.md)
 
--- Unbilled Deliveries Search
-SELECT a~vbeln, a~erdat, a~kunag, b~posnr, b~matnr, b~fksta
-  FROM likp AS a JOIN lips AS b ON a~vbeln = b~vbeln
-  WHERE b~fksta <> 'C'
-
--- Pricing Condition Details (Specific Order)
-SELECT a~kschl, a~kwert, a~waers, a~kpein, a~kmein
-  FROM konv AS a JOIN vbak AS b ON b~knumv = a~knumv
-  WHERE b~vbeln = '<ORDER_NUMBER>'
-
--- Sales Aggregation by Customer (Current Month)
-SELECT kunnr, COUNT(*) AS order_cnt, SUM( netwr ) AS total_net
-  FROM vbak
-  WHERE auart = 'TA' AND erdat >= '20260501' AND erdat <= '20260531'
-  GROUP BY kunnr ORDER BY total_net DESCENDING
-```
+This skill file contains:
+- Module process flow and transaction codes
+- Key table relationships and field notes
+- Common query patterns (copy and adapt for the current task)
+- Strategic BAPIs and APIs
+- SAP quirks and known issues
 
 ---
 
-## Key Field Notes
+## Output Format
 
-| Table | Field | Description |
-|-------|-------|------|
-| VBAP | KWMENG | Quantity — Always stored in Base Unit (MEINS) |
-| VBAP | LFSTA | Delivery Status: ` `=Not Processed, `A`=Partial, `B`=Completed |
-| VBAP | FKSTA | Billing Status: ` `=Not Processed, `A`=Partial, `C`=Completed |
-| VBAK | AUART | Sales Order Type (TA, RE, KA, etc.) |
-| KONV | KSCHL | Condition Type (PR00=Base Price, MWST=Tax, etc.) |
-| VBFA | VBTYP_N | Subsequent Document Type: `J`=Delivery, `M`=Billing |
+Produce the following sections for the PM:
 
----
+### AS-IS
+- RunQuery / GetTableContents results as tables
+- Current state description
 
-## SAP Quirks & Known Issues
+### GAP
+- What is missing, broken, or inefficient
 
-- **Pricing Re-determination**: KONV records are deleted and recreated — use CDHDR/CDPOS for history tracking
-- **Partial Delivery**: Split based on VBEP (Schedule Lines), one VBAP item can have multiple VBEP records
-- **Return Orders (RE)**: Always check VBAK.AUGRU (Order Reason) field
-- **Credit Block**: VBUK.CMGST = `B` indicates a credit block — check before shipment
-- **VBFA Document Flow**: Recursive structure requires repeated queries for multi-level tracking
+### TO-BE Requirements
+- Desired behavior in business terms
 
----
+### Acceptance Criteria
+- [ ] **AC-01**: Given X, when Y, then Z
+- [ ] **AC-02**: ...
 
-## Standard Customizing Tables
-
-| Table | Purpose |
-|--------|------|
-| TVAK | Sales Order Type Definition |
-| TVLK | Delivery Type Definition |
-| TVFK | Billing Type Definition |
-| VKOA | Account Determination (FI Link) |
-| T685 | Pricing Condition Type Definition |
-| TVZA | Payment Terms |
-| VBUK | Sales Document Header Status (Legacy) |
-| VBUP | Sales Document Item Status (Legacy) |
+### Handoff
+- **To Architect**: affected objects, key tables, risk estimate
+- **To DBA**: tables requiring structure review
 
 ---
-
-## Strategic BAPIs & APIs
-
-### 1. Sales Order Creation
-**BAPI**: `BAPI_SALESORDER_CREATEFROMDAT2`
-- `ORDER_HEADER_IN`: `AUART` (Type), `VKORG` (Sales Org), `VTWEG` (Dist. Channel)
-- `ORDER_ITEMS_IN`: `MATERIAL`, `PLANT`, `TARGET_QUY`
-- `ORDER_PARTNERS`: `PARTN_ROLE` (`SP`=Sold-to, `SH`=Ship-to), `PARTN_NUMB`
-
-### 2. Delivery Management
-**BAPI**: `BAPI_OUTB_DELIVERY_CREATE_SLS`
-- Used to create delivery from sales order.
-
----
-
----
-*Last Updated: 2026-05-05*
+*See [`docs/prd-template.md`](../docs/prd-template.md) for the full PRD template.*

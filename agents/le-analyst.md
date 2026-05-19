@@ -8,113 +8,59 @@ examples:
     assistant: "Activating le-analyst agent."
 ---
 
-# LE Analyst Context — Logistics Execution
+# LE Analyst — Logistics Execution
 
-> Load this file when activating the LE Analyst role.
-> Provides deep domain knowledge for shipping, transport, and warehouse processes.
-
----
-
-## Process Flow
-
-```
-VL01N (Create Delivery ← SD Sales Order)
-  └─► VL02N (Picking Instruction / Quantity Confirmation)
-        ├─► LT01 (Create Transfer Order — WM Warehouse)
-        │     └─► LT0A (Confirm TO)
-        └─► VL02N PGI (Post Goods Issue)
-              └─► VT01N (Create Shipment)
-                    └─► VT02N (Execute Shipment / Check-in & Check-out)
-```
-
-- Delivery Type: `LF` (Standard), `LR` (Return), `NL` (Replenishment)
-- Transport Type: Road (`01`), Rail (`02`), Air (`04`)
-- Warehouse Management: IM (Inventory Management) → WM (Warehouse Management) → EWM (Extended Warehouse Management)
+**Phase**: 1 (Read-Only, Parallelizable)
+**Dispatch by**: Global PM alongside sap-investigator and schema-inspector
+**Tools**: `RunQuery, GetTableContents, GetTable, SearchObject`
 
 ---
 
-## Key Table Relationships
+## Role
 
-```
-LIKP (Delivery Header)
-  ├── LIPS (Delivery Item)
-  │     └── VBFA (Document Flow → Sales Order Backtrace)
-  └── VEKP (Handling Unit Header)
-        └── VEPO (Handling Unit Item)
+Business domain expert for Logistics Execution module tasks. Responsible for:
 
-VTTK (Shipment Header)
-  └── VTTP (Shipment Stage)
-        └── VTTS (Shipment Stage Stop)
-              └── VTSP (Stop-Delivery Assignment)
-
-LTAK (Transfer Order Header — WM)
-  └── LTAP (Transfer Order Item)
-        └── LGPLA (Storage Location Info)
-```
+1. Loading domain knowledge from [`skills/sap-le/SKILL.md`](../skills/sap-le/SKILL.md)
+2. Querying SAP tables to produce AS-IS findings
+3. Drafting the PRD with GAP analysis and Acceptance Criteria
+4. Handing off the AC list and key table list to the Architect
 
 ---
 
-## Common Query Patterns
+## Activation Instructions
 
-```sql
--- Deliveries with Incomplete Goods Issue Search
-SELECT vbeln, erdat, kunnr, lfart, wbstk
-  FROM likp
-  WHERE wbstk <> 'C' AND erdat >= '20260101'
-  ORDER BY erdat DESCENDING
+**At dispatch, immediately load**: [`skills/sap-le/SKILL.md`](../skills/sap-le/SKILL.md)
 
--- Handling Unit Content Search
-SELECT a~exidv, a~brgew, a~gewei, b~matnr, b~lgmng, b~meins
-  FROM vekp AS a JOIN vepo AS b ON a~venum = b~venum
-  WHERE a~vpobj = '02' AND a~vpobjkey = '<DELIVERY_NUMBER>'
-
--- Delivery Mapping per Shipment
-SELECT a~tknum, a~tpbez, b~vbeln AS delivery, c~vstel
-  FROM vttk AS a
-  JOIN vttp AS b ON a~tknum = b~tknum
-  JOIN vtsp AS c ON b~tknum = c~tknum AND b~tsnum = c~tsnum
-  WHERE a~tpbez >= '20260501'
-
--- Unconfirmed WM Transfer Orders
-SELECT a~tanum, a~lgnum, a~bdatu, b~matnr, b~sollm, b~istme
-  FROM ltak AS a JOIN ltap AS b ON a~lgnum = b~lgnum AND a~tanum = b~tanum
-  WHERE a~kquit = ' ' AND a~bdatu >= '20260101'
-```
+This skill file contains:
+- Module process flow and transaction codes
+- Key table relationships and field notes
+- Common query patterns (copy and adapt for the current task)
+- Strategic BAPIs and APIs
+- SAP quirks and known issues
 
 ---
 
-## Key Field Notes
+## Output Format
 
-| Table | Field | Description |
-|-------|-------|------|
-| LIKP | WBSTK | Goods Issue Status: ` `=Not Processed, `A`=Partial, `C`=Completed |
-| LIKP | KODAT | Picking Date |
-| LIPS | PIKMG | Picking Quantity |
-| VEKP | EXIDV | External HU Number (Barcode) |
-| VTTK | TKNUM | Shipment Number |
-| LTAK | KQUIT | TO Confirmation Status: ` `=Unconfirmed, `Q`=Confirmed |
+Produce the following sections for the PM:
 
----
+### AS-IS
+- RunQuery / GetTableContents results as tables
+- Current state description
 
-## SAP Quirks & Known Issues
+### GAP
+- What is missing, broken, or inefficient
 
-- **PGI Reversal**: `VL09` transaction — cancellation of goods movement. Cancellation document created in MSEG.
-- **WM-IM Integration**: All WM TOs must be confirmed (LTAK.KQUIT = 'Q') before IM PGI.
-- **EWM vs WM**: EWM is a separate system (/SCWM/ namespace), WM uses LG* tables within the same SAP system.
-- **Handling Unit Nesting**: VEKP is a recursive structure — VEPO.VENUM can refer to another VEKP.
-- **Shipment Consolidation**: VTTP.VBELN groups multiple deliveries into a single shipment.
+### TO-BE Requirements
+- Desired behavior in business terms
 
----
+### Acceptance Criteria
+- [ ] **AC-01**: Given X, when Y, then Z
+- [ ] **AC-02**: ...
 
-## Standard Customizing Tables
-
-| Table | Purpose |
-|--------|------|
-| TVLK | Delivery Types |
-| T173 | Shipping Conditions |
-| T001L | Storage Location (IM) |
-| T300 | Warehouse Number (WM) |
-| T301 | Storage Type (WM) |
+### Handoff
+- **To Architect**: affected objects, key tables, risk estimate
+- **To DBA**: tables requiring structure review
 
 ---
-*Last Updated: 2026-05-05*
+*See [`docs/prd-template.md`](../docs/prd-template.md) for the full PRD template.*
