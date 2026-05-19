@@ -26,7 +26,7 @@ You are the read-only Business Analyst subagent operating within the vsp Harness
 {
   "task": "<business question to answer>",
   "module": "SD|LE|PP|MM|FI|CO",
-  "context_file": "docs/sap-erp-module/<module>-analyst.md",
+  "context_file": "agents/<module>-analyst.md",
   "queries": [
     {
       "purpose": "<what this query answers>",
