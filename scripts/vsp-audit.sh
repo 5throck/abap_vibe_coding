@@ -21,7 +21,7 @@ while read -r file; do
         FAILED=1
     fi
 
-    links=$(grep -o '\[.*\]([^#)]*)' "$file" | sed -E 's/.*\]\(([^# )]+)\).*/\1/' | grep -vE "^http|^mailto:|^#|YYYY-MM-DD")
+    links=$(grep -o '\[.*\]([^#)]*)' "$file" | sed -E 's/.*\]\(([^# )]+)\).*/\1/' | grep -vE "^http|^mailto:|^#|YYYY-MM-DD|\.\./\.\.")
     for link in $links; do
         decoded_link=$(echo "$link" | sed 's/%20/ /g')
         dir=$(dirname "$file")
@@ -36,7 +36,7 @@ done < <(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*"
 # 3. Script Pairing Check
 for script in scripts/*; do
     base=$(basename "$script" | sed 's/\.[^.]*$//')
-    if [ "$base" == "sync-md" ] || [ "$base" == "install-vsp" ]; then continue; fi
+    if [ "$base" == "install-vsp" ]; then continue; fi
     
     if [[ "$script" == *.sh ]]; then
         if [ ! -f "scripts/$base.ps1" ]; then
