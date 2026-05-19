@@ -3,7 +3,7 @@
 # Standardized packaging script to sanitize and copy core framework assets to the plugin repository.
 
 param(
-    [string]$TargetDir = $(if ($env:CLAUDE_PLUGIN_ROOT) { $env:CLAUDE_PLUGIN_ROOT } else { "C:\git\abap_vibe_coding_plugin" }),
+    [string]$TargetDir = $env:CLAUDE_PLUGIN_ROOT,
     [string]$CommitMessage
 )
 
@@ -12,7 +12,11 @@ $SourceDir = Resolve-Path (Join-Path $ScriptDir "..")
 
 Write-Host "--- Harness Packaging & Publishing Hook ---" -ForegroundColor Cyan
 
-# 1. Validate Target Directory
+# 1. Resolve and validate target directory (CLAUDE_PLUGIN_ROOT required; no hardcoded fallback)
+if ([string]::IsNullOrWhiteSpace($TargetDir)) {
+    Write-Error "CLAUDE_PLUGIN_ROOT is not set and -TargetDir was not provided.`nUsage: `$env:CLAUDE_PLUGIN_ROOT='C:\path\to\abap_vibe_coding_plugin'; .\scripts\vsp-publish.ps1 -CommitMessage '<message>'"
+    exit 1
+}
 if (-not (Test-Path $TargetDir)) {
     Write-Error "Target plugin directory '$TargetDir' does not exist."
     exit 1
