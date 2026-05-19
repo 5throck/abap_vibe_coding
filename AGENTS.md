@@ -291,8 +291,8 @@ Request received
 | `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
 | `code-writer` | `agents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
 | `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests` |
-| `fiori-dev` | `agents/fiori-developer.md` | ✅ Design only | `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `EditSource`, `SyntaxCheck`, `browser_subagent` |
-| `form-expert` | `agents/form-expert.md` | ✅ Design only | `GrepObjects`, `EditSource` |
+| `fiori-dev` | `agents/fiori-developer.md` | ✅ Design only | **Design/Read**: `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `browser_subagent`<br>**Write**: `EditSource`, `SyntaxCheck` (serial only) |
+| `form-expert` | `agents/form-expert.md` | ✅ Design only | **Design/Read**: `GrepObjects`<br>**Write**: `EditSource` (serial only) |
 | `gui-scripter` | `agents/gui-scripter.md` | ❌ Never | `browser_subagent`, `vsp debug` |
 
 #### Parallel Dispatch Rules

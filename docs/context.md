@@ -89,7 +89,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 
 ---
 
-## Common Issues
+## Upstream VSP / SAP Runtime Common Issues
 
 1. **CSRF errors** — auto-refreshed in `http.go`
 2. **Lock conflicts** — edit handler does auto lock/unlock

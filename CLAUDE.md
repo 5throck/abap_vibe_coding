@@ -61,7 +61,7 @@ The relative path `./vsp` works because Claude Code CLI resolves it against the 
 
 ## Claude Code Settings
 
-- `.claude/settings.json` — shared team permissions (committed to repo)
+- `.claude/settings.json` — shared team permissions (committed to repo; note that `.claude/` is a hidden dot-folder and may not show in standard listing tools by default)
 - `.claude/settings.local.json` — personal write permissions + git operations (gitignored)
 
 Both files are loaded automatically. `enableAllProjectMcpServers: true` is set in the local file to activate the abap MCP server.
