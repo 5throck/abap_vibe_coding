@@ -1,7 +1,7 @@
 # PRD / Acceptance Criteria Template
 
 > **Usage**: Fill this template during the Business Analysis phase (§1 of the task-template).
-> One PRD per task. Save completed PRDs alongside the task file in `scratch/`.
+> One PRD per task. Save completed PRDs alongside the task file in `scratch/tasks/`.
 > All content must be written in **English**.
 
 ---

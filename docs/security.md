@@ -9,7 +9,7 @@ Security policy and sanitization rules for the **vsp** repository.
 ## Committed Files — Never Include
 
 Never commit `.env`, `cookies.txt`, `.mcp.json`, or local agent/MCP config files
-(all listed in `.gitignore`).
+(all listed in `.gitignore`). Note that only sample configurations containing zero secrets (such as `.mcp.json.sample` and `.env.sample`) are tracked and committed.
 
 ---
 
@@ -17,8 +17,8 @@ Never commit `.env`, `cookies.txt`, `.mcp.json`, or local agent/MCP config files
 
 The public repo must not contain concrete identifiers that tie code or docs to a
 live SAP system, a real user, or a customer's ABAP namespace. Anything that does
-belongs under `.local/` (gitignored) and never in `sap-erp-module/`, `reports/`,
-`docs/`, or any tracked test fixture.
+belongs under gitignored directories (like `scratch/temp/`) and never in tracked
+directories like `docs/`, `memory/`, `agents/`, `skills/`, `scripts/`, or `scratch/tasks/`.
 
 **Never in tracked files:**
 - Real SAP usernames — use `TESTUSER`
@@ -36,16 +36,14 @@ belongs under `.local/` (gitignored) and never in `sap-erp-module/`, `reports/`,
 - Public GitHub handles that are already in the Go module path
 - Upstream OSS attribution for library authors
 
-**Operational scratch goes under `.local/`** — session notes, live CR dumps, bug
-repros with real identifiers, debugging transcripts. The `.local/` dir is
-gitignored. If you need to reference it from a tracked doc, redact first.
+**Operational scratch goes under gitignored paths (like `scratch/temp/`)** — session notes, live CR dumps, bug
+repros with real identifiers, debugging transcripts. If you need to reference it from a tracked doc, redact first.
 
 ---
 
 ## Pre-Commit Scan
 
-Before every commit that touches `reports/`, `sap-erp-module/`, `docs/`, or test
-fixtures, scan the staged diff:
+Before every commit that touches `docs/`, `memory/`, `agents/`, `skills/`, `scripts/`, or `scratch/tasks/`, scan the staged diff:
 
 ```bash
 git diff --cached | grep -nE \
@@ -54,12 +52,11 @@ git diff --cached | grep -nE \
   '\bDEVK[0-9]{6,}\b'
 ```
 
-That catches IPv4 literals and SAP transport IDs. Pair it with
-`.local/scripts/check-identifiers.sh` (gitignored — the signature would otherwise
-be the leak it prevents) for the names-based families.
+That catches IPv4 literals and SAP transport IDs. Pair it with the cross-platform audit scripts
+(`scripts/vsp-audit.sh` / `scripts/vsp-audit.ps1`) to run comprehensive checks on all markdown files.
 
 Rule of thumb: "would a stranger reading this file be able to identify the
-customer, the system, or a live account?" If yes, redact and move under `.local/`.
+customer, the system, or a live account?" If yes, redact and move under gitignored paths.
 
 ---
 *Last Updated: 2026-05-19*

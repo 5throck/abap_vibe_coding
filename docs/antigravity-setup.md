@@ -12,8 +12,8 @@ Antigravity is an AI coding assistant that runs as a VS Code extension. Because 
 
 - VS Code installed and running
 - Antigravity extension installed and activated
-- `vsp` binary present at `C:\git\abap\vsp.exe` (Windows) or `/path/to/repo/vsp` (macOS/Linux)
-- `.env` file configured at the repository root (`C:\git\abap\.env`)
+- `vsp` binary present at `C:\Users\<your-username>\abap\vsp.exe` (Windows) or `~/abap/vsp` (macOS/Linux)
+- `.env` file configured at the repository root (`C:\Users\<your-username>\abap\.env`)
 
 ---
 
@@ -30,7 +30,7 @@ MCP servers for Antigravity are registered in VS Code's **user** `settings.json`
 {
   "antigravity.mcpServers": {
     "abap": {
-      "command": "C:\\git\\abap\\vsp.exe",
+      "command": "C:\\Users\\<your-username>\\abap\\vsp.exe",
       "args": ["--mode", "hyperfocused"],
       "env": {
         "VSP_MODE": "hyperfocused",
@@ -53,7 +53,7 @@ MCP servers for Antigravity are registered in VS Code's **user** `settings.json`
 }
 ```
 
-> **macOS / Linux**: Replace the `command` path with the absolute path to the `vsp` binary in your local clone, e.g. `/home/user/git/abap/vsp`.
+> **macOS / Linux**: Replace the `command` path with the absolute path to the `vsp` binary in your local clone, e.g. `/home/<username>/abap/vsp`.
 
 ---
 
@@ -63,18 +63,18 @@ MCP servers for Antigravity are registered in VS Code's **user** `settings.json`
 
 **Windows (PowerShell — user scope):**
 ```powershell
-[System.Environment]::SetEnvironmentVariable("VSP_BASE_URL", "http://vhcalnplci:50000", "User")
-[System.Environment]::SetEnvironmentVariable("VSP_USER",     "your-sap-user",           "User")
-[System.Environment]::SetEnvironmentVariable("VSP_PASSWORD", "your-sap-password",       "User")
-[System.Environment]::SetEnvironmentVariable("VSP_CLIENT",   "001",                     "User")
+[System.Environment]::SetEnvironmentVariable("SAP_URL",      "http://vhcalnplci:50000", "User")
+[System.Environment]::SetEnvironmentVariable("SAP_USER",     "your-sap-user",           "User")
+[System.Environment]::SetEnvironmentVariable("SAP_PASSWORD", "your-sap-password",       "User")
+[System.Environment]::SetEnvironmentVariable("SAP_CLIENT",   "001",                     "User")
 ```
 
 **macOS / Linux (`~/.bashrc` or `~/.zshrc`):**
 ```bash
-export VSP_BASE_URL="http://vhcalnplci:50000"
-export VSP_USER="your-sap-user"
-export VSP_PASSWORD="your-sap-password"
-export VSP_CLIENT="001"
+export SAP_URL="http://vhcalnplci:50000"
+export SAP_USER="your-sap-user"
+export SAP_PASSWORD="your-sap-password"
+export SAP_CLIENT="001"
 ```
 
 Restart VS Code after setting environment variables.
@@ -122,8 +122,8 @@ bash scripts/vsp-sync.sh "feat: summary of change"
 | Capability | Claude Code CLI | Claude Code App | Gemini CLI | Antigravity |
 |------------|:---------------:|:---------------:|:----------:|:-----------:|
 | MCP auto-connect | ✅ | ✅ | ✅ | ✅ (manual reg.) |
-| PostToolUse hook | ✅ | ❌ | ✅ | ❌ |
-| Post-Write chain | Automatic | Manual (`/post-write`) | Automatic | Manual |
+| PostToolUse hook | ✅ | ❌ | ❌ | ❌ |
+| Post-Write chain | Automatic | Manual (`/post-write`) | Manual | Manual |
 | Git commit | `/sync` | `/sync` | Manual | Manual |
 | Project-level config | ✅ `.mcp.json` | ✅ `.mcp.json` | ✅ `.gemini/settings.json` | ❌ user-level only |
 

@@ -514,7 +514,7 @@ If you get an error, check:
 > **Focused mode** (more tools, standard development):
 > Change `"VSP_MODE": "focused"` — gives access to 100 tools instead of 1.
 > **Expert mode** (all tools, debugging / advanced operations):
-> Change `"VSP_MODE": "expert"` — gives access to 147 tools..
+> Change `"VSP_MODE": "expert"` — gives access to 147 tools.
 
 ---
 
@@ -784,7 +784,7 @@ The relative path `./vsp` works if Antigravity is started from the project root.
 
 **Example** (Absolute path fallback):
 ```json
-"command": "C:\\git\\abap\\vsp"
+"command": "C:\\Users\\<your-username>\\abap\\vsp.exe"
 ```
 
 **macOS**:
@@ -871,7 +871,7 @@ Expected: SAP system details returned via the abap MCP server.
 | MCP read / query only | ✅ | ✅ |
 | Git commit / PR | ✅ | ⚠️ |
 
-See `AGENTS.md § Tool Selection Rule` for the full decision guide.
+See `docs/tooling-matrix.md` for the full decision guide.
 
 ---
 
@@ -1032,7 +1032,7 @@ Gemini CLI is preferred when:
 - **Long-running background research** needs to be delegated without blocking the main session
 - Comparing with `abap-docs` / `sap-docs` MCP servers for SAP documentation lookups
 
-See `AGENTS.md § Tool Selection Rule` for the full decision guide.
+See `docs/tooling-matrix.md` for the full decision guide.
 
 ---
 
@@ -1177,17 +1177,10 @@ Run a SyntaxCheck on ZPROG_SBOOK_QUERY
 ```
 ✅ Returns "No syntax errors" or a list of errors
 
-### Checkpoint 7 — Git Automation
+### Checkpoint 7 — Documentation & Path Audit Automation
 
-Create a test file and verify the hook fires:
-```bash
-echo "# test" > scratch/test.md
-```
-Then in Claude: edit any `.md` file and check:
-```bash
-git log --oneline -3
-```
-✅ An auto-commit appears after the edit
+In a Claude Code CLI session, edit any `.md` file (or make a Write/Edit tool call) and check the terminal:
+✅ The `PostToolUse` hook automatically fires and executes `bash scripts/sync-md.sh` to run the documentation and path audit, ensuring cross-platform link integrity in real-time. (Note: Git auto-commits are disabled in CLI sessions; all changes remain staged or unstaged for manual commit via `/sync` or standard git commands.)
 
 ---
 
@@ -1230,36 +1223,30 @@ git log --oneline -3
 
 ### Problem: Git hooks not firing
 
-**Symptom**: No auto-commits after editing `.md` files
+**Symptom**: `PostToolUse` hook does not fire after editing `.md` files
 
 **Windows** (PowerShell):
 ```powershell
 # 1. Test the script manually (run from repo root)
-powershell -ExecutionPolicy Bypass -File scripts\git-sync.ps1
+powershell -ExecutionPolicy Bypass -File scripts\sync-md.ps1
 
 # 2. Check PowerShell execution policy
 Get-ExecutionPolicy
 
 # 3. Verify hook config
 cat .claude/settings.json
-
-# 4. Confirm git remote is configured
-git remote -v
 ```
 
 **macOS/Linux**:
 ```bash
 # 1. Test the script manually
-bash ~/abap/scripts/git-sync.sh
+bash ~/abap/scripts/sync-md.sh
 
 # 2. Verify hook config
 cat .claude/settings.json
 
-# 3. Confirm git remote is configured
-git remote -v
-
-# 4. Check that the hook command path in settings.local.json is absolute
-cat .claude/settings.local.json
+# 3. Check that the hook command in settings.json matches your path
+cat .claude/settings.json
 ```
 
 ---
@@ -1317,14 +1304,14 @@ Use this list when onboarding a new team member.
 - [ ] Create `.claude/settings.local.json` using template from §6-B for your OS
 - [ ] Run `./vsp system info` (Windows: `./vsp.exe system info`) — confirm green output
 - [ ] Start `claude` in repo directory, run `/mcp` — confirm `abap` listed
-- [ ] Run Checkpoint 3–6 from Section 10
+- [ ] Run Checkpoint 3–6 from Section 11
 
 ### First session orientation (30 min)
 
 - [ ] Read `../README.md` — understand the Harness Engineering concept
 - [ ] Read `docs/context.md` — shared project context (build commands, codebase map, ABAP dev rules)
 - [ ] Read `../AGENTS.md` — understand your role and available agents
-- [ ] Read `docs/skill.md` — review tool boundaries and best practices
+- [ ] Read `docs/tooling-matrix.md` — understand tool boundaries and best practices
 - [ ] Read `docs/mcp_usage.md` §Critical Limitations — especially ABAP SQL syntax
 - [ ] Review `agents/<module>-analyst.md` (sd, mm, fi, co, pp, le) if you are a Business Analyst
 - [ ] Review `task-template.md` — understand the handoff workflow
