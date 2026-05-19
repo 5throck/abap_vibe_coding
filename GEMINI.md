@@ -50,7 +50,7 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 - **Advanced Diagnostics**: Use `vsp health` to validate architecture and
   `vsp slim` for context optimization before large read sessions.
 - **Post-Write Test Chain**: After any write operation, execute the mandatory chain
-  defined in `skills/abap-dev/SKILL.md § Post-Write Mandatory Chain`:
+  defined in [skills/post-write-chain/SKILL.md](skills/post-write-chain/SKILL.md):
   `SyntaxCheck` → `RunUnitTests` → `RunATCCheck`.
   All three steps apply identically in Gemini sessions via `sap_execute`:
   ```json
