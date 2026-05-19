@@ -15,7 +15,7 @@
 | PP Module Knowledge | [`skills/sap-pp/SKILL.md`](../skills/sap-pp/SKILL.md) |
 | LE Module Knowledge | [`skills/sap-le/SKILL.md`](../skills/sap-le/SKILL.md) |
 
-Claude Code auto-discovers all skills in the `skills/` directory. No manual loading required.
+Skills are organized in the `skills/` directory. Session and tool-specific discovery/loading instructions are defined in `CLAUDE.md` and `AGENTS.md`.
 
 ---
 *Migrated: 2026-05-19*

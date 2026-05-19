@@ -515,9 +515,9 @@ These tools require specific feature flags to be enabled in `.mcp.json` or `.env
 
 | Task | Tool | Parameters | Description |
 |------|------|------------|-------------|
-| List UI5 Projects | `ListUI5Projects` | `name=Z*` | Find BSP applications / UI5 projects |
-| Get UI5 Project | `GetUI5Project` | `project_name=Z_MY_APP` | Get file list and manifest metadata |
-| Read UI5 File | `ReadUI5File` | `project_name=Z_MY_APP, path=webapp/view/Main.view.xml` | Read specific project file |
+| List UI5 Projects | `UI5ListApps` | `name=Z*` | Find BSP applications / UI5 projects |
+| Get UI5 Project | `UI5GetApp` | `project_name=Z_MY_APP` | Get file list and manifest metadata |
+| Read UI5 File | `UI5GetFileContent` | `project_name=Z_MY_APP, path=webapp/view/Main.view.xml` | Read specific project file |
 
 ---
 

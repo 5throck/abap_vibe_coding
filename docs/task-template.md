@@ -1,6 +1,6 @@
 # Task Handoff Template
 
-> **Usage**: Copy this file to `scratch/task-YYYY-MM-DD-NNN.md` at the start of each task.
+> **Usage**: Copy this file to `scratch/tasks/task-YYYY-MM-DD-NNN.md` at the start of each task.
 > Each agent fills in their section, then passes to the next role.
 > The PM archives the completed file to `memory/YYYY-MM-DD.md` after git commit.
 
@@ -154,6 +154,7 @@ Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
   SyntaxCheck(object_url)
   EditSource(object_url, old_string, new_string)
   RunUnitTests(object_url)
+  RunATCCheck(object_url)
   memory log → git commit
 ```
 
@@ -168,6 +169,7 @@ Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
   WriteSource(object_url, source, mode=create|update)
   SyntaxCheck(object_url)
   RunUnitTests(object_url)
+  RunATCCheck(object_url)
   memory log → git commit
 ```
 
@@ -179,8 +181,7 @@ Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
 
 [serial per object — never parallelize writes]
   for each object in impact_list:
-    SyntaxCheck → EditSource(replace_all=true) → verify
-  RunUnitTests(all affected objects)
+    SyntaxCheck → EditSource(replace_all=true) → RunUnitTests → RunATCCheck
   memory log → git commit
 ```
 

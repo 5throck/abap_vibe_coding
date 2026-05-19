@@ -13,15 +13,15 @@ This file defines the roles and responsibilities of each agent operating within 
 - **Responsibilities**:
     - **Initial Triage**: Receive and analyze all user requests first.
     - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
-    - **Consistency Check**: Ensure all changes are reflected across `docs/context.md`, `CLAUDE.md`, `.codex/config.toml`, `.codex/hooks.json`, `GEMINI.md`, `AGENTS.md`, and `memory/MEMORY.md`.
+    - **Consistency Check**: Ensure agent roles and workflow consistency are maintained across the project.
     - **Deployment Oversight**: Verify that all work is committed to the Git repository.
 - **Key Tools**: `ListTransports`, `GrepPackages`, `SearchObject`, `memory/`, Project Dashboards.
 - **Triage**: Use `/triage <request>` to auto-classify, create the task file, and generate the §0-A dispatch block.
 - **Finalization (§5 — always run after QA gate)**: After all ACs pass and RunATCCheck reports 0 Priority-1 findings:
-  1. Run `sap:documentation-audit` to ensure cross-platform integrity.
+  1. Run documentation audit via `scripts/vsp-audit.ps1` (Windows) or `scripts/vsp-audit.sh` (Unix) (or equivalent `sap:documentation-audit` skill) to ensure cross-platform integrity.
   2. Copy the §5 Finalization block from the Architect Report into `memory/YYYY-MM-DD.md`
-  3. Run `/sync` to execute vsp-audit + memory index update + git commit
-  3. Report to user: objects changed, AC status, primary ADT URL
+  3. Synchronize and commit via `scripts/vsp-sync.ps1` or `scripts/vsp-sync.sh` (or equivalent `/sync` command) to execute audit checks, memory index updates, and git commit.
+  4. Report to user: objects changed, AC status, primary ADT URL
 
 ### Business Analysts
 
@@ -231,13 +231,13 @@ Load the matching `agents/<module>-analyst.md` file at activation for deep domai
 
 ---
 
-## Collaboration & System Rules
+## Agent Coordination & Orchestration Rules
 
 ### 🔄 Agent Coordination Workflow (Harness Advanced)
 
 1.  **Triage & Initial Research (PM & Subagents)**:
     *   The **Global PM** receives and classifies the request.
-    *   Immediate research is dispatched (Parallel: `sap-investigator` + `schema-inspector`) to gather technical context before any discussion.
+    *   Immediate research is dispatched (Parallel: `sap-investigator` + `read-only-analyst` + `schema-inspector`) to gather technical and business data before any discussion.
 
 2.  **Business Analysis & AC Definition (Biz Group)**:
     *   Module analysts (SD, MM, etc.) discuss the request based on research data.
@@ -284,15 +284,26 @@ Request received
 
 #### Subagent Roster
 
-| Subagent | Prompt file | Parallelizable | Tools allowed |
-|----------|-------------|:--------------:|---------------|
+##### 1. Parallel Research & Design Agents (Read-Only)
+These subagents can be run simultaneously during initial triage and design phases. They must never perform write actions.
+
+| Subagent | Prompt file | Parallelizable | Design/Read Allowed Tools |
+|----------|-------------|:--------------:|---------------------------|
 | `sap-investigator` | `agents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
 | `read-only-analyst` | `agents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
 | `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
+| `fiori-dev` (Design Mode) | `agents/fiori-developer.md` | ✅ Design only | `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `browser_subagent` |
+| `form-expert` (Design Mode) | `agents/form-expert.md` | ✅ Design only | `GrepObjects` |
+
+##### 2. Serial Execution & Verification Agents (Write-Capable)
+These subagents are run sequentially because they execute write operations (lock management) or verification sequences.
+
+| Subagent | Prompt file | Parallelizable | Write/Execution Allowed Tools |
+|----------|-------------|:--------------:|------------------------------|
 | `code-writer` | `agents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
-| `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests` |
-| `fiori-dev` | `agents/fiori-developer.md` | ✅ Always | `generate_image`, `browser_subagent` |
-| `form-expert` | `agents/form-expert.md` | ✅ Design only | `GrepObjects`, `EditSource` |
+| `fiori-dev` (Write Mode) | `agents/fiori-developer.md` | ❌ Serial Write | `EditSource`, `SyntaxCheck` |
+| `form-expert` (Write Mode) | `agents/form-expert.md` | ❌ Serial Write | `EditSource` |
+| `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests`, `RunATCCheck` (verification) |
 | `gui-scripter` | `agents/gui-scripter.md` | ❌ Never | `browser_subagent`, `vsp debug` |
 
 #### Parallel Dispatch Rules
@@ -312,8 +323,8 @@ Request received
 | Data analysis report | analyst + schema | — (read-only task ends here) |
 | Refactor across package | investigator + schema | code-writer per object → test-runner |
 | Interface design | analyst + schema + investigator | Interface Expert designs → code-writer implements |
-| Fiori / UX design | analyst + browser_subagent | fiori-dev designs → code-writer implements |
-| Form / Output design | analyst + schema | form-expert designs → code-writer implements |
+| Fiori / UX design | analyst + browser_subagent (Design Phase) | fiori-dev (Write Phase) → test-runner |
+| Form / Output design | analyst + schema (Design Phase) | form-expert (Write Phase) → test-runner |
 | Automation Scripting | analyst + investigator | gui-scripter develops → code-writer integrates |
 
 ---

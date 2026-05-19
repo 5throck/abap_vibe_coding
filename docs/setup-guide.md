@@ -257,8 +257,8 @@ cd ~/abap
 │   ├── vsp-sync.sh            ← Sync memory & Git (Bash)
 │   ├── vsp-audit.ps1          ← Documentation audit script (Windows)
 │   ├── vsp-audit.sh           ← Documentation audit script (Bash)
-│   ├── git-sync.ps1           ← Standard git sync
-│   └── git-sync.sh            ← Standard git sync (Bash)
+│   ├── git-sync.ps1           ← [DEPRECATED] Legacy/simple git helper (Windows)
+│   └── git-sync.sh            ← [DEPRECATED] Legacy/simple git helper (Bash)
 ├── .env                       ← SAP credentials (create manually — gitignored)
 ├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
@@ -296,7 +296,7 @@ cd ~/abap
 │   ├── vsp-task.sh            ← Initialize new tasks
 │   ├── vsp-sync.sh            ← Sync memory & Git
 │   ├── vsp-audit.sh           ← Documentation audit script
-│   └── git-sync.sh            ← Standard git sync (Bash)
+│   └── git-sync.sh            ← [DEPRECATED] Legacy/simple git helper (Bash)
 ├── .env                       ← SAP credentials (create manually — gitignored)
 ├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
@@ -316,6 +316,9 @@ cd ~/abap
 ---
 
 ## 5. Configure vsp (MCP Server)
+
+> [!IMPORTANT]
+> **Repository Root Convention**: In this guide, the cloned repository's root directory is located at `~/abap` (Windows Git Bash) or `%USERPROFILE%\abap` (Windows native). Therefore, when instructed to create `.env` or `.mcp.json` in `~/abap`, you are creating them in the **project/repository root directory** (both files are gitignored for security).
 
 **vsp** ([github.com/oisee/vibing-steampunk](https://github.com/oisee/vibing-steampunk)) is a Go-native MCP server that exposes SAP ADT (ABAP Development Tools) capabilities to AI agents via the Model Context Protocol. It handles authentication, CSRF token management, session handling, and translates AI tool calls into SAP REST API operations — allowing Claude and Gemini to read, write, and debug ABAP objects without direct SAP GUI access.
 
@@ -484,7 +487,7 @@ If you get an error, check:
 }
 ```
 
-**macOS/Linux** — create `~/abap/.mcp.json`:
+**macOS/Linux** - create `~/abap/.mcp.json`:
 ```json
 {
   "mcpServers": {
@@ -514,7 +517,7 @@ If you get an error, check:
 > **Focused mode** (more tools, standard development):
 > Change `"VSP_MODE": "focused"` — gives access to 100 tools instead of 1.
 > **Expert mode** (all tools, debugging / advanced operations):
-> Change `"VSP_MODE": "expert"` — gives access to 147 tools..
+> Change `"VSP_MODE": "expert"` — gives access to 147 tools.
 
 ---
 
@@ -568,7 +571,9 @@ This sets up:
 - **Read-only MCP tools auto-approved** (GetSource, RunQuery, GrepPackages, etc.)
 - **`abap-docs` / `sap-docs` tools auto-approved** (wildcard covers all tools from each server)
 - **Claude Preview tools auto-approved** (screenshot, snapshot, logs)
-- **PostToolUse hooks**: runs `sync-md.sh` after every Write/Edit (cross-platform wrapper — works on Windows Git Bash, macOS, and Linux)
+- **PostToolUse hooks**: runs `sync-md.sh` after every Write/Edit (cross-platform wrapper — works on Windows Git Bash, macOS, and Linux) to perform local documentation and path link audits.
+  > [!IMPORTANT]
+  > **Local Document Audit vs. SAP Quality Chain**: The `PostToolUse` hook ONLY performs local markdown and path validation. It does **not** execute the SAP/ABAP quality chain (`SyntaxCheck` ➔ `RunUnitTests` ➔ `RunATCCheck`) which requires SAP communication and must be run manually via `/post-write <ObjectName>` (in Claude CLI) or individual tool executions (in Antigravity / Gemini CLI / Desktop App).
 
 No changes needed to this file — it is already in the repo.
 
@@ -736,142 +741,23 @@ The Desktop App shares all configuration with the CLI — `.mcp.json` and `.clau
 
 ## 7. Configure Antigravity (Optional)
 
-Antigravity is a VS Code-based editor that can connect to the same abap MCP server as Claude Code CLI. Unlike Claude Code CLI which uses the project-level `.mcp.json`, Antigravity reads MCP configuration from the **user-level settings file**.
+Antigravity is a VS Code-based editor that can connect to the same abap MCP server as Claude Code CLI. Because it does not support project-level configuration files, MCP servers must be registered manually at the **user level** in VS Code settings.
 
-> **Why separate config?** `.mcp.json` uses a relative path (`./vsp.exe`) tied to the project working directory. Antigravity requires an absolute path in the user settings file.
+For complete, step-by-step instructions, including absolute path configurations for Windows, macOS, and Linux, and recommended role usage splits, see the dedicated setup guide:
 
-### 7-A. Add abap MCP server to Antigravity user settings
+👉 **[docs/antigravity-setup.md](antigravity-setup.md)**
 
-Open the Antigravity user settings file:
+### Brief Summary of Differences
 
-| OS | Settings file path |
-|----|-------------------|
-| Windows | `%APPDATA%\Antigravity\User\settings.json` |
-| macOS | `~/Library/Application Support/Antigravity/User/settings.json` |
-| Linux | `~/.config/Antigravity/User/settings.json` |
-
-Add the following block (merge with existing content — do not replace the file):
-
-**Windows**:
-```json
-{
-  "mcp": {
-    "servers": {
-      "abap": {
-        "type": "stdio",
-        "command": "./vsp",
-        "args": ["--mode", "hyperfocused"],
-        "env": {
-          "VSP_MODE": "hyperfocused",
-          "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-          "VSP_FEATURE_ABAPGIT": "on"
-        }
-      },
-      "abap-docs": {
-        "type": "http",
-        "url": "https://mcp-abap.marianzeis.de/mcp"
-      },
-      "sap-docs": {
-        "type": "http",
-        "url": "https://mcp-sap-docs.marianzeis.de/mcp"
-      }
-    }
-  }
-}
-```
-
-The relative path `./vsp` works if Antigravity is started from the project root. If you encounter issues, replace it with the absolute path to your local `vsp` binary.
-
-**Example** (Absolute path fallback):
-```json
-"command": "C:\\git\\abap\\vsp"
-```
-
-**macOS**:
-```json
-{
-  "mcp": {
-    "servers": {
-      "abap": {
-        "type": "stdio",
-        "command": "./vsp",
-        "args": ["--mode", "hyperfocused"],
-        "env": {
-          "VSP_MODE": "hyperfocused",
-          "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-          "VSP_FEATURE_ABAPGIT": "on"
-        }
-      },
-      "abap-docs": {
-        "type": "http",
-        "url": "https://mcp-abap.marianzeis.de/mcp"
-      },
-      "sap-docs": {
-        "type": "http",
-        "url": "https://mcp-sap-docs.marianzeis.de/mcp"
-      }
-    }
-  }
-}
-```
-
-Replace `/Users/<username>/abap/vsp` with your actual home directory path. Ensure the binary is executable: `chmod +x ~/abap/vsp`.
-
-**Linux**:
-```json
-{
-  "mcp": {
-    "servers": {
-      "abap": {
-        "type": "stdio",
-        "command": "/home/<username>/abap/vsp",
-        "args": ["--mode", "hyperfocused"],
-        "env": {
-          "VSP_MODE": "hyperfocused",
-          "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-          "VSP_FEATURE_ABAPGIT": "on"
-        }
-      },
-      "abap-docs": {
-        "type": "http",
-        "url": "https://mcp-abap.marianzeis.de/mcp"
-      },
-      "sap-docs": {
-        "type": "http",
-        "url": "https://mcp-sap-docs.marianzeis.de/mcp"
-      }
-    }
-  }
-}
-```
-
-Replace `/home/<username>/abap/vsp` with your actual home directory path. Ensure the binary is executable: `chmod +x ~/abap/vsp`.
-
-> **`abap-docs` / `sap-docs`** use HTTP transport — no path configuration needed.
-> **Sync warning**: If you move or rebuild the `vsp` binary, update **both** `.mcp.json` (for Claude Code CLI) and the Antigravity user settings independently.
-
-### 7-B. Verify Antigravity sees the MCP server
-
-1. Restart Antigravity after saving the settings file.
-2. Open the Chat panel (`Ctrl+Alt+I` or View → Chat).
-3. Look for the MCP server indicator — `abap` should appear as connected.
-4. Test with a prompt:
-   ```
-   Show me the SAP system info
-   ```
-
-Expected: SAP system details returned via the abap MCP server.
-
-### 7-C. Recommended usage split
-
-| Task | Use Claude Code CLI | Use Antigravity |
-|------|:-----------------:|:--------------:|
-| Multi-agent orchestration (PM workflow) | ✅ | ❌ |
-| ABAP object browse / edit | ⚠️ | ✅ |
-| MCP read / query only | ✅ | ✅ |
+| Feature | Claude Code CLI | Antigravity |
+|---------|:---------------:|:-----------:|
+| **Config Location** | Project-level (`.mcp.json`) | VS Code User Settings (`settings.json`) |
+| **Path Style** | Relative (`./vsp.exe`) | Absolute (`C:\Users\<username>\abap\vsp.exe`) |
+| **PostToolUse Hook** | ✅ Supported (`sync-md.sh`) | ❌ Not supported (Manual execution) |
+| **Usage Focus** | Multi-agent orchestration (PM) | Visual editing & interactive development |
 | Git commit / PR | ✅ | ⚠️ |
 
-See `AGENTS.md § Tool Selection Rule` for the full decision guide.
+See `docs/tooling-matrix.md` for the full decision guide.
 
 ---
 
@@ -1032,7 +918,7 @@ Gemini CLI is preferred when:
 - **Long-running background research** needs to be delegated without blocking the main session
 - Comparing with `abap-docs` / `sap-docs` MCP servers for SAP documentation lookups
 
-See `AGENTS.md § Tool Selection Rule` for the full decision guide.
+See `docs/tooling-matrix.md` for the full decision guide.
 
 ---
 
@@ -1177,17 +1063,10 @@ Run a SyntaxCheck on ZPROG_SBOOK_QUERY
 ```
 ✅ Returns "No syntax errors" or a list of errors
 
-### Checkpoint 7 — Git Automation
+### Checkpoint 7 — Documentation & Path Audit Automation
 
-Create a test file and verify the hook fires:
-```bash
-echo "# test" > scratch/test.md
-```
-Then in Claude: edit any `.md` file and check:
-```bash
-git log --oneline -3
-```
-✅ An auto-commit appears after the edit
+In a Claude Code CLI session, edit any `.md` file (or make a Write/Edit tool call) and check the terminal:
+✅ The `PostToolUse` hook automatically fires and executes `bash scripts/sync-md.sh` to run the documentation and path audit, ensuring cross-platform link integrity in real-time. (Note: Git auto-commits are disabled in CLI sessions; all changes remain staged or unstaged for manual commit via `/sync` or standard git commands.)
 
 ---
 
@@ -1230,36 +1109,30 @@ git log --oneline -3
 
 ### Problem: Git hooks not firing
 
-**Symptom**: No auto-commits after editing `.md` files
+**Symptom**: `PostToolUse` hook does not fire after editing `.md` files
 
 **Windows** (PowerShell):
 ```powershell
 # 1. Test the script manually (run from repo root)
-powershell -ExecutionPolicy Bypass -File scripts\git-sync.ps1
+powershell -ExecutionPolicy Bypass -File scripts\sync-md.ps1
 
 # 2. Check PowerShell execution policy
 Get-ExecutionPolicy
 
 # 3. Verify hook config
 cat .claude/settings.json
-
-# 4. Confirm git remote is configured
-git remote -v
 ```
 
 **macOS/Linux**:
 ```bash
 # 1. Test the script manually
-bash ~/abap/scripts/git-sync.sh
+bash ~/abap/scripts/sync-md.sh
 
 # 2. Verify hook config
 cat .claude/settings.json
 
-# 3. Confirm git remote is configured
-git remote -v
-
-# 4. Check that the hook command path in settings.local.json is absolute
-cat .claude/settings.local.json
+# 3. Check that the hook command in settings.json matches your path
+cat .claude/settings.json
 ```
 
 ---
@@ -1317,14 +1190,14 @@ Use this list when onboarding a new team member.
 - [ ] Create `.claude/settings.local.json` using template from §6-B for your OS
 - [ ] Run `./vsp system info` (Windows: `./vsp.exe system info`) — confirm green output
 - [ ] Start `claude` in repo directory, run `/mcp` — confirm `abap` listed
-- [ ] Run Checkpoint 3–6 from Section 10
+- [ ] Run Checkpoint 3–6 from Section 11
 
 ### First session orientation (30 min)
 
 - [ ] Read `../README.md` — understand the Harness Engineering concept
 - [ ] Read `docs/context.md` — shared project context (build commands, codebase map, ABAP dev rules)
 - [ ] Read `../AGENTS.md` — understand your role and available agents
-- [ ] Read `docs/skill.md` — review tool boundaries and best practices
+- [ ] Read `docs/tooling-matrix.md` — understand tool boundaries and best practices
 - [ ] Read `docs/mcp_usage.md` §Critical Limitations — especially ABAP SQL syntax
 - [ ] Review `agents/<module>-analyst.md` (sd, mm, fi, co, pp, le) if you are a Business Analyst
 - [ ] Review `task-template.md` — understand the handoff workflow
@@ -1383,8 +1256,8 @@ cd ~/abap && claude
 # Check SAP connection
 ./vsp system info
 
-# Manual git sync (PowerShell)
-powershell -File scripts/git-sync.ps1
+# Standard operational sync & commit (PowerShell - runs audits, memory logs, and git commit)
+powershell -ExecutionPolicy Bypass -File scripts/vsp-sync.ps1 -Message "feat: summary of change"
 
 # Run a quick SAP query (outside Claude)
 ./vsp.exe query "SELECT * FROM t000"
@@ -1405,8 +1278,8 @@ cd ~/abap && claude
 # Check SAP connection
 ./vsp system info
 
-# Manual git sync
-bash scripts/git-sync.sh
+# Standard operational sync & commit (runs audits, memory logs, and git commit)
+bash scripts/vsp-sync.sh "feat: summary of change"
 
 # Run a quick SAP query (outside Claude)
 ./vsp query "SELECT * FROM t000"

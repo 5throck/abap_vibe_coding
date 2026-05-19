@@ -30,6 +30,9 @@ echo "Copying core assets to plugin..."
 # Define assets to sync
 SYNC_FOLDERS=("agents" "skills" ".claude/commands:commands")
 SYNC_FILES=(
+    "docs/prd-template.md"
+    "docs/task-template.md"
+    "docs/plugin-setup.md"
     "scripts/install-vsp.ps1"
     "scripts/install-vsp.sh"
     "scripts/sync-md.ps1"
@@ -78,7 +81,65 @@ for file in "${SYNC_FILES[@]}"; do
     fi
 done
 
-# 4. Commit and Push inside the Target Repository
+# 4. Hash Verification
+echo "Verifying copied assets integrity..."
+VERIFY_FAILED=0
+
+# Verify folders
+for item in "${SYNC_FOLDERS[@]}"; do
+    SRC=$(echo "$item" | cut -d':' -f1)
+    TGT=$(echo "$item" | cut -d':' -f2)
+    if [ "$SRC" == "$TGT" ]; then
+        TGT_DIR="$TARGET_DIR/$SRC"
+    else
+        TGT_DIR="$TARGET_DIR/$TGT"
+    fi
+    SRC_DIR="$SOURCE_DIR/$SRC"
+    
+    if [ -d "$SRC_DIR" ]; then
+        # Find all files recursively in SRC_DIR
+        while read -r sf; do
+            rel_path="${sf#$SRC_DIR/}"
+            tf="$TGT_DIR/$rel_path"
+            if [ ! -f "$tf" ]; then
+                echo "  [!] Missing target file: $TGT/$rel_path"
+                VERIFY_FAILED=1
+                continue
+            fi
+            
+            src_hash=$(md5sum "$sf" | awk '{print $1}')
+            tgt_hash=$(md5sum "$tf" | awk '{print $1}')
+            if [ "$src_hash" != "$tgt_hash" ]; then
+                echo "  [!] Hash mismatch in file: $TGT/$rel_path"
+                VERIFY_FAILED=1
+            fi
+        done < <(find "$SRC_DIR" -type f)
+    fi
+done
+
+# Verify files
+for file in "${SYNC_FILES[@]}"; do
+    SRC_FILE="$SOURCE_DIR/$file"
+    TGT_FILE="$TARGET_DIR/$file"
+    
+    if [ -f "$SRC_FILE" ]; then
+        src_hash=$(md5sum "$SRC_FILE" | awk '{print $1}')
+        tgt_hash=$(md5sum "$TGT_FILE" | awk '{print $1}')
+        if [ "$src_hash" != "$tgt_hash" ]; then
+            echo "  [!] Hash mismatch in file: $file"
+            VERIFY_FAILED=1
+        fi
+    fi
+done
+
+if [ $VERIFY_FAILED -ne 0 ]; then
+    echo "Integrity check FAILED. Assets do not match."
+    exit 1
+else
+    echo "Integrity verification PASSED. All copied assets match 100%."
+fi
+
+# 5. Commit and Push inside the Target Repository
 if [ -n "$COMMIT_MESSAGE" ]; then
     echo "Staging and committing in target plugin repository..."
     CURRENT_DIR=$(pwd)

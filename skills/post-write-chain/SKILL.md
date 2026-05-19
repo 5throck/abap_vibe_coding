@@ -4,6 +4,8 @@ description: Use after ANY WriteSource, EditSource, or Activate operation on SAP
 version: 1.0.0
 ---
 
+> ⚠️ **Desktop App**: `PostToolUse` hooks do **not** fire automatically. Run `/post-write <object-name>` **manually** after every WriteSource or EditSource in Desktop App sessions.
+
 # Post-Write Mandatory Chain
 
 Applies to all tools: **Claude Code CLI, Antigravity, Gemini CLI**

@@ -45,7 +45,7 @@ Run the task creation script:
 bash "${CLAUDE_PLUGIN_ROOT:-.}/scripts/vsp-task.sh" "$ARGUMENTS"
 ```
 
-Note the generated filename (e.g., `scratch/task-2026-05-05-001.md`).
+Note the generated filename (e.g., `scratch/tasks/task-2026-05-05-001.md`).
 
 ### 4. Pre-fill §0
 
@@ -114,7 +114,7 @@ Replace `<MODULE_TABLE_N>` with the module's standard tables from `schema-inspec
 ### 6. Next Step Reminder
 
 ```
-✅ Task file created: scratch/task-YYYY-MM-DD-NNN.md
+✅ Task file created: scratch/tasks/task-YYYY-MM-DD-NNN.md
 📋 Copy §0 and §0-A above into the task file.
 ▶  Dispatch all 3 agents IN A SINGLE MESSAGE (parallel).
 ⏳ Wait for all 3 results, then synthesize into §1 Business Analysis.

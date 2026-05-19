@@ -27,6 +27,9 @@ $Assets = @(
     @{ Source = "agents"; Target = "agents"; IsFolder = $true },
     @{ Source = "skills"; Target = "skills"; IsFolder = $true },
     @{ Source = ".claude\commands"; Target = "commands"; IsFolder = $true },
+    @{ Source = "docs\prd-template.md"; Target = "docs\prd-template.md"; IsFolder = $false },
+    @{ Source = "docs\task-template.md"; Target = "docs\task-template.md"; IsFolder = $false },
+    @{ Source = "docs\plugin-setup.md"; Target = "docs\plugin-setup.md"; IsFolder = $false },
     @{ Source = "scripts\install-vsp.ps1"; Target = "scripts\install-vsp.ps1"; IsFolder = $false },
     @{ Source = "scripts\install-vsp.sh"; Target = "scripts\install-vsp.sh"; IsFolder = $false },
     @{ Source = "scripts\sync-md.ps1"; Target = "scripts\sync-md.ps1"; IsFolder = $false },
@@ -69,7 +72,52 @@ foreach ($asset in $Assets) {
     }
 }
 
-# 3. Commit and Push inside the Target Repository
+# 3. Hash Verification
+Write-Host "Verifying copied assets integrity..." -ForegroundColor Green
+$VerifyFailed = $false
+foreach ($asset in $Assets) {
+    $srcPath = Join-Path $SourceDir $asset.Source
+    $tgtPath = Join-Path $TargetDir $asset.Target
+    
+    if (-not (Test-Path $srcPath)) { continue }
+    
+    if ($asset.IsFolder) {
+        $srcFiles = Get-ChildItem -Path $srcPath -File -Recurse
+        foreach ($sf in $srcFiles) {
+            $relPath = $sf.FullName.Substring($srcPath.Length + 1)
+            $tfPath = Join-Path $tgtPath $relPath
+            
+            if (-not (Test-Path $tfPath)) {
+                Write-Error "  [!] Missing target file: $($asset.Target)\$relPath"
+                $VerifyFailed = $true
+                continue
+            }
+            
+            $srcHash = (Get-FileHash -Path $sf.FullName -Algorithm MD5).Hash
+            $tgtHash = (Get-FileHash -Path $tfPath -Algorithm MD5).Hash
+            if ($srcHash -ne $tgtHash) {
+                Write-Error "  [!] Hash mismatch in file: $($asset.Target)\$relPath"
+                $VerifyFailed = $true
+            }
+        }
+    } else {
+        $srcHash = (Get-FileHash -Path $srcPath -Algorithm MD5).Hash
+        $tgtHash = (Get-FileHash -Path $tgtPath -Algorithm MD5).Hash
+        if ($srcHash -ne $tgtHash) {
+            Write-Error "  [!] Hash mismatch in file: $($asset.Target)"
+            $VerifyFailed = $true
+        }
+    }
+}
+
+if ($VerifyFailed) {
+    Write-Error "Integrity check FAILED. Assets do not match."
+    exit 1
+} else {
+    Write-Host "Integrity verification PASSED. All copied assets match 100%." -ForegroundColor Green
+}
+
+# 4. Commit and Push inside the Target Repository
 if (-not [string]::IsNullOrWhiteSpace($CommitMessage)) {
     Write-Host "Staging and committing in target plugin repository..." -ForegroundColor Green
     $currDir = Get-Location

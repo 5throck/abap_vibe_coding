@@ -8,11 +8,13 @@
 > Agent roles and orchestration rules live in `../AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `docs/skill.md` (legacy entry point; current skills are auto-discovered from the `skills/` directory).
 > ABAP development history (date-archived) lives in `../memory/`.
-> Module analyst deep-knowledge files live in `agents/`.
+> Module analyst deep-knowledge files live in `../agents/` (relative to repo root).
 
 ---
 
-## Build & Test
+## Upstream VSP Reference Build & Test
+
+> **Note**: The following build and test commands apply to the upstream **vsp** Go engine repository, not this configuration/harness repository.
 
 ```bash
 go build -o vsp ./cmd/vsp              # Build
@@ -25,7 +27,9 @@ Key flags: `--mode hyperfocused|focused|expert` (Note: `hyperfocused` is the sta
 
 ---
 
-## Codebase
+## Upstream VSP Codebase Structure
+
+> **Note**: This outlines the directory layout of the upstream **vsp** engine source repository for reference when contributing to handlers or MCP protocols.
 
 ```
 cmd/vsp/              CLI entry + 28 commands
@@ -46,21 +50,32 @@ pkg/
   wasmcomp/           WASM→ABAP (research)
 ```
 
-| Task | Files |
-|------|-------|
+### Upstream VSP Modification Map
+
+| Task | Upstream Go Source Files |
+|------|-------------------------|
 | Add MCP tool | `tools_register.go` + `handlers_*.go` + `tools_focused.go` |
 | Add ADT operation | `pkg/adt/client.go`, `crud.go`, `devtools.go`, `codeintel.go` |
 | Add graph feature | `pkg/graph/` |
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
-| Fix MCP/docs/config | `../README.md`, `agents/*`, `handlers_universal.go` |
-| Add/update analyst context | `agents/<module>-analyst.md` |
+| Fix MCP router / shell | `handlers_universal.go` |
+
+### Harness Configuration & Documentation Map
+
+| Task | Local Harness Configuration / Markdown Files |
+|------|---------------------------------------------|
+| Fix MCP/docs/config | `../README.md`, `../agents/*` |
+| Add/update analyst context | `../agents/<module>-analyst.md` |
 | New task handoff | copy `task-template.md` → `../scratch/tasks/task-YYYY-MM-DD-NNN.md` |
-| Add/update subagent prompt | `agents/<role>.md` |
+| Add/update subagent prompt | `../agents/<role>.md` |
 
 ---
 
-## Adding a New MCP Tool
+## Adding a New MCP Tool in Upstream VSP
+
+> [!NOTE]
+> This section is only relevant when contributing to the upstream vsp engine source repository.
 
 1. Handler in `handlers_*.go`:
 ```go
@@ -77,7 +92,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 
 ---
 
-## Common Issues
+## Upstream VSP / SAP Runtime Common Issues
 
 1. **CSRF errors** — auto-refreshed in `http.go`
 2. **Lock conflicts** — edit handler does auto lock/unlock
@@ -91,27 +106,18 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 
 ## ABAP Development
 
-### System Info
+### System Defaults
 - System: NPL, Client: 001
 - Host: vhcalnplci:50000
 - ABAP Version: 7.52 (Verified via `vsp system info`)
-
-### Rules
 - Package: `$TMP` (no transport required)
-- Naming: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program)
-- Always run SyntaxCheck before WriteSource
-- Run RunUnitTests after logic changes (refer to `docs/testing-guidelines.md`)
-- Run RunATCCheck after RunUnitTests — Priority 1 findings block deployment
-- Full sequence: see `skills/post-write-chain/SKILL.md § Post-Write Mandatory Chain`
-- Use EditSource for small changes
-- **Local Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 
 ### ABAP Development Rules
 - **Naming**: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program).
 - **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
-- **QA Chain**: After any edit, the `Post-Write Mandatory Chain` MUST be executed. 
+- **Write Operations**: Use `EditSource` for small changes. Always run `SyntaxCheck` before `WriteSource`.
+- **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` → `RunUnitTests` → `RunATCCheck`). Priority 1 findings block deployment. See [skills/post-write-chain/SKILL.md § Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details.
 - **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
-- See [skills/post-write-chain/SKILL.md § Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details.
 
 ### Developer Quick Start (Task Lifecycle)
 
@@ -130,9 +136,7 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 
 ---
 
-## Conventions
-
-Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZCL_ADT_<name>`, packages `$ZADT*`.
+## Task Handoffs: `scratch/tasks/task-YYYY-MM-DD-NNN.md`. Memory Logs: `memory/YYYY-MM-DD.md`. SAP objects: `ZADT_<nn>_<name>`, `ZCL_ADT_<name>`, packages `$ZADT*`.
 
 ---
 
@@ -191,7 +195,7 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 | `pkg/adt/ui5.go` | Read-only | Write needs `/UI5/CL_REPOSITORY_LOAD` |
 | `pkg/llvm2abap/`, `pkg/wasmcomp/` | Research | Not production; don't treat as stable |
 | `pkg/adt/debugger.go` (REST) | Deprecated | Prefer `websocket_debug.go` |
-| `agents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
+| `../agents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---

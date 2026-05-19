@@ -23,23 +23,9 @@ Then read `docs/context.md` for shared project context (build commands, codebase
 
 ## Claude Code: CLI vs Desktop App
 
-Both the CLI and the Desktop App share the same configuration files and MCP server setup. Key differences to be aware of:
+Both the CLI and the Desktop App share the same configuration files and MCP server setup. Key differences, especially regarding hook behavior and UI features, are detailed in [docs/tooling-matrix.md](docs/tooling-matrix.md).
 
-| Feature | CLI | Desktop App |
-|---------|:---:|:-----------:|
-| Platform | Windows / macOS / Linux | Windows / macOS only |
-| `.mcp.json` auto-load | ✅ | ✅ identical |
-| `.claude/settings.json` | ✅ | ✅ identical |
-| PostToolUse hooks fire | ✅ | ⚠️ does not fire (known issue) |
-| Custom skills / slash commands | ✅ | ✅ |
-| Plan mode + subagent dispatch | ✅ | ✅ |
-| Visual diff / inline review | ❌ | ✅ |
-| Parallel sessions (auto worktrees) | ❌ | ✅ |
-| PR monitoring + CI status bar | ❌ | ✅ |
-| Computer use (GUI automation) | ❌ | ✅ Win/macOS |
-| Live app preview (embedded browser) | ❌ | ✅ |
-
-> **Hook limitation**: `PostToolUse` hooks configured in `.claude/settings.json` do **not** fire in the Desktop App. After any `WriteSource` / `EditSource`, run the Post-Write Mandatory Chain manually (see `skills/abap-dev/SKILL.md § Post-Write Mandatory Chain`) and sync via `scripts/vsp-sync.sh` or `scripts/vsp-sync.ps1`.
+> **Hook limitation**: `PostToolUse` hooks configured in `.claude/settings.json` do **not** fire in the Desktop App. After any `WriteSource` / `EditSource`, run the Post-Write Mandatory Chain manually (see [skills/post-write-chain/SKILL.md](skills/post-write-chain/SKILL.md)) and sync via `scripts/vsp-sync.sh` or `scripts/vsp-sync.ps1`.
 
 > **Linux developers**: Use CLI only — the Desktop App is not available on Linux.
 
@@ -75,7 +61,7 @@ The relative path `./vsp` works because Claude Code CLI resolves it against the 
 
 ## Claude Code Settings
 
-- `.claude/settings.json` — shared team permissions (committed to repo)
+- `.claude/settings.json` — shared team permissions (committed to repo; note that `.claude/` is a hidden dot-folder and may not show in standard listing tools by default)
 - `.claude/settings.local.json` — personal write permissions + git operations (gitignored)
 
 Both files are loaded automatically. `enableAllProjectMcpServers: true` is set in the local file to activate the abap MCP server.
