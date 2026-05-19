@@ -1,9 +1,12 @@
+---
+name: SAP LE Module — Logistics Execution
+description: Use when working on LE module tasks — shipping, transport, warehouse management, delivery processing, or handling units. Provides process flows, key table relationships, common query patterns, field notes, SAP quirks, and customizing tables for the LE module.
+version: 1.0.0
+---
+
 # LE Analyst Context — Logistics Execution
 
-> Load this file when activating the LE Analyst role.
-> Provides deep domain knowledge for shipping, transport, and warehouse processes.
-
----
+Load this skill when activating the LE Analyst role. Provides deep domain knowledge for shipping, transport, and warehouse processes.
 
 ## Process Flow
 
@@ -20,8 +23,6 @@ VL01N (Create Delivery ← SD Sales Order)
 - Delivery Type: `LF` (Standard), `LR` (Return), `NL` (Replenishment)
 - Transport Type: Road (`01`), Rail (`02`), Air (`04`)
 - Warehouse Management: IM (Inventory Management) → WM (Warehouse Management) → EWM (Extended Warehouse Management)
-
----
 
 ## Key Table Relationships
 
@@ -41,8 +42,6 @@ LTAK (Transfer Order Header — WM)
   └── LTAP (Transfer Order Item)
         └── LGPLA (Storage Location Info)
 ```
-
----
 
 ## Common Query Patterns
 
@@ -71,20 +70,16 @@ SELECT a~tanum, a~lgnum, a~bdatu, b~matnr, b~sollm, b~istme
   WHERE a~kquit = ' ' AND a~bdatu >= '20260101'
 ```
 
----
-
 ## Key Field Notes
 
 | Table | Field | Description |
-|-------|-------|------|
+|-------|-------|-------------|
 | LIKP | WBSTK | Goods Issue Status: ` `=Not Processed, `A`=Partial, `C`=Completed |
 | LIKP | KODAT | Picking Date |
 | LIPS | PIKMG | Picking Quantity |
 | VEKP | EXIDV | External HU Number (Barcode) |
 | VTTK | TKNUM | Shipment Number |
 | LTAK | KQUIT | TO Confirmation Status: ` `=Unconfirmed, `Q`=Confirmed |
-
----
 
 ## SAP Quirks & Known Issues
 
@@ -94,17 +89,12 @@ SELECT a~tanum, a~lgnum, a~bdatu, b~matnr, b~sollm, b~istme
 - **Handling Unit Nesting**: VEKP is a recursive structure — VEPO.VENUM can refer to another VEKP.
 - **Shipment Consolidation**: VTTP.VBELN groups multiple deliveries into a single shipment.
 
----
-
 ## Standard Customizing Tables
 
 | Table | Purpose |
-|--------|------|
+|-------|---------|
 | TVLK | Delivery Types |
 | T173 | Shipping Conditions |
 | T001L | Storage Location (IM) |
 | T300 | Warehouse Number (WM) |
 | T301 | Storage Type (WM) |
-
----
-*Last Updated: 2026-05-05*

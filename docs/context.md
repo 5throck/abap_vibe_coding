@@ -8,7 +8,7 @@
 > Agent roles and orchestration rules live in `../AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `skill.md`.
 > ABAP development history (date-archived) lives in `../memory/`.
-> Module analyst deep-knowledge files live in `sap-erp-module/`.
+> Module analyst deep-knowledge files live in `agents/`.
 
 ---
 
@@ -54,7 +54,7 @@ pkg/
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
 | Fix MCP/docs/config | `../README.md`, `subagents/*`, `handlers_universal.go` |
-| Add/update analyst context | `sap-erp-module/<module>-analyst.md` |
+| Add/update analyst context | `agents/<module>-analyst.md` |
 | New task handoff | copy `task-template.md` → `../scratch/task-YYYY-MM-DD-NNN.md` |
 | Add/update subagent prompt | `subagents/<role>.md` |
 
@@ -111,7 +111,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 - **QA Chain**: After any edit, the `Post-Write Mandatory Chain` MUST be executed. 
 - **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
-- See [docs/skill.md § Post-Write Mandatory Chain](skill.md#post-write-mandatory-chain) for details.
+- See [skills/abap-dev/SKILL.md § Post-Write Mandatory Chain](skill.md#post-write-mandatory-chain) for details.
 
 ### Developer Quick Start (Task Lifecycle)
 
@@ -122,7 +122,7 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 ..\scripts\vsp-task.ps1 -Name "Task Description"
 
 # 2. Execution (Research -> Implementation -> Verification)
-# Use specialized skills from docs/skill.md
+# Use specialized skills from skills/abap-dev/SKILL.md
 
 # 3. Synchronize & Commit
 ..\scripts\vsp-sync.ps1 -Message "feat: implementation summary"
@@ -146,8 +146,8 @@ Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZC
 | `pkg/adt/ui5.go` | Read-only | Write needs `/UI5/CL_REPOSITORY_LOAD` |
 | `pkg/llvm2abap/`, `pkg/wasmcomp/` | Research | Not production; don't treat as stable |
 | `pkg/adt/debugger.go` (REST) | Deprecated | Prefer `websocket_debug.go` |
-| `docs/subagents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
-| `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `docs/skill.md` skill loading aligned with Claude/Gemini settings |
+| `agents/*` | Config drift | Codex TOML format may differ from Claude/Gemini JSON docs |
+| `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
 *Last Updated: 2026-05-05*

@@ -23,14 +23,14 @@ This file defines the roles and responsibilities of each agent operating within 
 
 Each analyst activates on matching trigger keywords, queries the SAP system directly via
 read-only MCP tools, produces a structured PRD/AC output, and hands off to the Technical Group.
-Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation for deep domain knowledge.
+Load the matching `agents/<module>-analyst.md` file at activation for deep domain knowledge.
 
 ---
 
 #### 2. 📦 SD Analyst (Sales & Distribution)
 
 - **Trigger keywords**: Sales Order, Delivery, Billing, Shipping, Pricing, Quote, SD, VA*, VL*, VF*, VK*, VBAK, VBAP, LIKP, VBRK
-- **Context file**: [`docs/sap-erp-module/sd-analyst.md`](docs/sap-erp-module/sd-analyst.md)
+- **Context file**: [`agents/sd-analyst.md`](agents/sd-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`, `GrepPackages`
 - **Output Format**:
   ```
@@ -48,7 +48,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 #### 3. 🚛 LE Analyst (Logistics Execution)
 
 - **Trigger keywords**: Shipment Processing, Transport, Route Determination, Warehouse, WM, EWM, Handling Unit, Shipment, Route, Warehouse, LE, LT*, HU, VEKP, VEPO, VTTP, LIKP
-- **Context file**: [`docs/sap-erp-module/le-analyst.md`](docs/sap-erp-module/le-analyst.md)
+- **Context file**: [`agents/le-analyst.md`](agents/le-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -66,7 +66,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 #### 4. 🏭 PP Analyst (Production Planning)
 
 - **Trigger keywords**: Production Order, BOM, Routing, MRP, Capacity Planning, Material Requirements, Production Order, Routing, Work Center, PP, CO*, MAST, STKO, AFKO, PLKO
-- **Context file**: [`docs/sap-erp-module/pp-analyst.md`](docs/sap-erp-module/pp-analyst.md)
+- **Context file**: [`agents/pp-analyst.md`](agents/pp-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -84,7 +84,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 #### 5. 🛒 MM Analyst (Materials Management)
 
 - **Trigger keywords**: Purchasing, Order, Goods Receipt, Material Master, Inventory, Inspection, Purchase Order, Goods Receipt, Material Master, Inventory, MM, ME*, MARA, MARC, EKKO, EKPO, MKPF, MSEG
-- **Context file**: [`docs/sap-erp-module/mm-analyst.md`](docs/sap-erp-module/mm-analyst.md)
+- **Context file**: [`agents/mm-analyst.md`](agents/mm-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -102,7 +102,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 #### 6. 💰 FI Analyst (Financial Accounting)
 
 - **Trigger keywords**: Journal Entry, Account, GL, AR, AP, Fixed Asset, Settlement, Compliance, Journal Entry, Account, Fiscal Year, FI, FB*, F-*, BKPF, BSEG, ACDOCA, SKA1
-- **Context file**: [`docs/sap-erp-module/fi-analyst.md`](docs/sap-erp-module/fi-analyst.md)
+- **Context file**: [`agents/fi-analyst.md`](agents/fi-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -120,7 +120,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 #### 7. 📊 CO Analyst (Controlling)
 
 - **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKP, COEP, COSP, CE1*
-- **Context file**: [`docs/sap-erp-module/co-analyst.md`](docs/sap-erp-module/co-analyst.md)
+- **Context file**: [`agents/co-analyst.md`](agents/co-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
   ```
@@ -142,12 +142,12 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 - **Responsibilities**:
     - Design technical architecture based on Analyst-authored PRDs.
     - Perform impact analysis using `AnalyzeCallGraph` and provide expert architect-level assessment for BAPI/CDS changes (`sap:impact-architecture`).
-    - **Select implementation pattern** (A/B/C) using the deterministic rules in [`docs/subagents/architect.md`](docs/subagents/architect.md).
+    - **Select implementation pattern** (A/B/C) using the deterministic rules in [`agents/architect.md`](agents/architect.md).
     - Generate the §5 Finalization block in every Architect Report so PM can run it without manual composition.
     - Define structural separation between **Function** (Interface/Entry) and **Logic** (Core/Business) components from an OOP perspective.
     - **Rule**: Utilize ABAP Objects (Classes/Interfaces) only when explicitly necessary to balance complexity and performance.
 - **Key Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`, `GrepPackages`, `GetSource`.
-- **Subagent prompt**: [`docs/subagents/architect.md`](docs/subagents/architect.md)
+- **Subagent prompt**: [`agents/architect.md`](agents/architect.md)
 
 ### 2. 💻 ABAP Developer
 - **Role**: Feature implementation and source code optimization.
@@ -165,7 +165,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
     - Analyze runtime errors and provide debugging guides.
     - Perform security and compliance audits (Authorization object checks, SQL Injection prevention).
 - **Key Tools**: `RunUnitTests`, `RunATCCheck`, `SyntaxCheck`, `GetSource`.
-- **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `docs/skill.md § Post-Write Mandatory Chain`).
+- **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `skills/post-write-chain/SKILL.md`).
 
 ### 4. 🗄️ DBA (Database Agent)
 - **Role**: Data modeling and SQL performance optimization.
@@ -259,7 +259,7 @@ Load the matching `docs/sap-erp-module/<module>-analyst.md` file at activation f
 ### 🤖 PM Subagent Dispatch Protocol
 
 This protocol defines **when and how** PM dispatches parallel subagents.
-Subagent prompt templates live in `docs/subagents/`.
+Agent definitions live in `agents/`.
 
 #### Dispatch Decision Tree
 
@@ -282,14 +282,14 @@ Request received
 
 | Subagent | Prompt file | Parallelizable | Tools allowed |
 |----------|-------------|:--------------:|---------------|
-| `sap-investigator` | `docs/subagents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
-| `read-only-analyst` | `docs/subagents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
-| `schema-inspector` | `docs/subagents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
-| `code-writer` | `docs/subagents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
-| `test-runner` | `docs/subagents/test-runner.md` | ❌ After write | `RunUnitTests` |
-| `fiori-dev` | `docs/subagents/fiori-developer.md` | ✅ Always | `generate_image`, `browser_subagent` |
-| `form-expert` | `docs/subagents/form-expert.md` | ✅ Design only | `GrepObjects`, `EditSource` |
-| `gui-scripter` | `docs/subagents/gui-scripter.md` | ❌ Never | `browser_subagent`, `vsp debug` |
+| `sap-investigator` | `agents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
+| `read-only-analyst` | `agents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
+| `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
+| `code-writer` | `agents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
+| `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests` |
+| `fiori-dev` | `agents/fiori-developer.md` | ✅ Always | `generate_image`, `browser_subagent` |
+| `form-expert` | `agents/form-expert.md` | ✅ Design only | `GrepObjects`, `EditSource` |
+| `gui-scripter` | `agents/gui-scripter.md` | ❌ Never | `browser_subagent`, `vsp debug` |
 
 #### Parallel Dispatch Rules
 
@@ -297,7 +297,7 @@ Request received
 2. **Serial write execution** — `EditSource`, `WriteSource`, `SyntaxCheck` are executed by the ABAP Developer in serial to prevent lock conflicts.
 3. **Merge before proceeding** — PM waits for ALL parallel subagents to return before moving to the next serial step.
 4. **Error handling** — if any parallel subagent fails, PM resolves the failure before proceeding. Do not skip.
-5. **Context passing** — PM includes the relevant `docs/sap-erp-module/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
+5. **Context passing** — PM includes the relevant `agents/<module>-analyst.md` path in each subagent prompt so the subagent has domain context without reading all files.
 
 #### Typical Dispatch Sequences by Task Type
 

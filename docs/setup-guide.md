@@ -286,7 +286,7 @@ cd ~/abap
 │   └── settings.local.json    ← Local extended permissions (create manually)
 ├── .gemini/
 │   └── settings.json          ← Gemini CLI config (create manually)
-├── docs/sap-erp-module/      ← SAP module analyst deep-knowledge files
+├── agents/      ← SAP module analyst deep-knowledge files
 ├── docs/
 │   ├── subagents/             ← Subagent prompt templates
 │   └── task-template.md

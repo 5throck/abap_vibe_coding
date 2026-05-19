@@ -1,9 +1,12 @@
+---
+name: SAP FI Module — Financial Accounting
+description: Use when working on FI module tasks — journal entries, account determination, G/L, accounts payable/receivable, or financial reporting. Provides process flows, key table relationships, common query patterns, field notes, SAP quirks, and standard BAPIs for the FI module.
+version: 1.0.0
+---
+
 # FI Analyst Context — Financial Accounting
 
-> Load this file when activating the FI Analyst role.
-> Provides deep domain knowledge for journal entries, account determination, and financial reporting.
-
----
+Load this skill when activating the FI Analyst role. Provides deep domain knowledge for journal entries, account determination, and financial reporting.
 
 ## Process Flow
 
@@ -21,8 +24,6 @@ Closing Process:
 - Document Type: `SA` (G/L), `KR` (Vendor Invoice), `DR` (Customer Invoice), `ZP` (Payment)
 - Account Type: `S` (G/L), `K` (Vendor), `D` (Customer), `A` (Asset)
 
----
-
 ## Key Table Relationships
 
 ```
@@ -39,8 +40,6 @@ ACDOCA (Universal Journal — S/4HANA)
 FAGLFLEXT (G/L Account Balance — New GL)
 SKB1 (G/L Account Master — Company Code level)
 ```
-
----
 
 ## Common Query Patterns
 
@@ -69,12 +68,10 @@ SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
   WHERE rbukrs = '1000' AND ryear = '2026' AND racct = '<GL_ACCOUNT>'
 ```
 
----
-
 ## Key Field Notes
 
 | Table | Field | Description |
-|-------|-------|------|
+|-------|-------|-------------|
 | BKPF | BLART | Document Type (SA, KR, DR, etc.) |
 | BKPF | STBLG | Reversal Document Number (Original doc during reversal) |
 | BSEG | SHKZG | Debit/Credit: `S`=Debit, `H`=Credit |
@@ -83,18 +80,14 @@ SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
 | ACDOCA | DRCRK | Debit/Credit: `S`=Debit, `H`=Credit |
 | ACDOCA | KSL | Amount in Document Currency |
 
----
-
 ## Account Determination
 
 | Source | Table | Conditions |
-|------|--------|------|
+|--------|-------|------------|
 | SD Billing | VKOA | Account Determination Procedure, Account Key (ERL, ERS, MWS, etc.) |
 | MM GR | T030 / OBYC | Transaction Key (BSX=Inventory, WRX=GR/IR, PRD=Price Difference) |
 | MM Invoice | T030 | Transaction Key (KBS=Account Assignment, WRX Clearing) |
 | Asset | ANKL | G/L Accounts by Asset Class |
-
----
 
 ## SAP Quirks & Known Issues
 
@@ -104,12 +97,10 @@ SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
 - **Foreign Currency Valuation**: Watch for difference between BSEG.DMBTR (Local Currency) and BSEG.WRBTR (Document Currency).
 - **Reversal**: BKPF.STBLG ≠ 0 indicates a reversal document — analyze in pair with original.
 
----
-
 ## Standard Customizing Tables
 
 | Table | Purpose |
-|--------|------|
+|-------|---------|
 | T001 | Company Code |
 | T009 | Fiscal Year Variant |
 | T004 | Chart of Accounts |
@@ -117,11 +108,9 @@ SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
 | TZUN | Tax Code |
 | T001G | Company Code Groups |
 
----
-
 ## Strategic BAPIs & APIs
 
-### 1. Accounting Document Posting
+### Accounting Document Posting
 **BAPI**: `BAPI_ACC_DOCUMENT_POST`
 - `DOCUMENTHEADER`: `OBJ_TYPE`, `OBJ_KEY`, `BUS_ACT`, `USERNAME`, `HEADER_TXT`
 - `ACCOUNTGL`: `GL_ACCOUNT`, `ITEM_TEXT`, `AMT_DOCCUR`
@@ -129,11 +118,6 @@ SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
 - `ACCOUNTPAYABLE`: `VENDOR`, `ITEM_TEXT`
 - `CURRENCYAMOUNT`: `CURRENCY`, `AMT_DOCCUR`
 
-### 2. Document Simulation
+### Document Simulation
 **BAPI**: `BAPI_ACC_DOCUMENT_CHECK`
 - Identical interface to `POST`, used for validation before commit.
-
----
-
----
-*Last Updated: 2026-05-05*

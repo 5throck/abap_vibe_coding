@@ -1,3 +1,13 @@
+---
+name: read-only-analyst
+model: inherit
+color: purple
+description: SAP Read-Only Analyst — queries SAP tables and produces AS-IS findings and PRD drafts. Dispatched in Phase 1 (parallel). Use when: "query SAP data", "AS-IS analysis", "read table contents", "RunQuery", "GetTableContents", "data investigation".
+examples:
+  - user: "Use read-only-analyst for this task"
+    assistant: "Activating read-only-analyst agent."
+---
+
 # Subagent Prompt: read-only-analyst
 
 **Role**: SAP Business Data Analyst
@@ -25,7 +35,7 @@ You will receive a JSON block at the start of your task:
 {
   "task": "<business question to answer>",
   "module": "SD|LE|PP|MM|FI|CO",
-  "context_file": "docs/sap-erp-module/<module>-analyst.md",   // load this for domain knowledge
+  "context_file": "agents/<module>-analyst.md",   // load this for domain knowledge
   "queries": [
     {
       "purpose": "<what this query answers>",
@@ -43,7 +53,7 @@ Return a structured report in this exact format:
 
 **Module**: <SD|LE|PP|MM|FI|CO>
 **Task**: <restate the task>
-**Context loaded**: docs/sap-erp-module/<module>-analyst.md
+**Context loaded**: agents/<module>-analyst.md
 
 #### Query Results
 
@@ -134,7 +144,7 @@ Input:
 {
   "task": "Analyze undelivered sales orders in the current month to identify bottlenecks",
   "module": "SD",
-  "context_file": "docs/sap-erp-module/sd-analyst.md",
+  "context_file": "agents/sd-analyst.md",
   "queries": [
     {
       "purpose": "Count undelivered orders by customer",

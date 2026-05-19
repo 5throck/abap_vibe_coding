@@ -73,7 +73,7 @@ Based on the detected module, output the ready-to-use dispatch block:
 ```markdown
 ## 0-A. PM Parallel Dispatch (Phase 1 — Read-Only)
 
-Agent 1 — sap-investigator  (prompt: docs/subagents/sap-investigator.md)
+Agent 1 — sap-investigator  (prompt: agents/sap-investigator.md)
   Task: Scan existing codebase for related objects
   Input:
   {
@@ -84,20 +84,20 @@ Agent 1 — sap-investigator  (prompt: docs/subagents/sap-investigator.md)
     "max_results": 30
   }
 
-Agent 2 — read-only-analyst  (prompt: docs/subagents/read-only-analyst.md)
+Agent 2 — read-only-analyst  (prompt: agents/read-only-analyst.md)
   Task: Query SAP tables for AS-IS data
   Input:
   {
     "task": "<$ARGUMENTS>",
     "module": "<MODULE>",
-    "context_file": "docs/sap-erp-module/<module>-analyst.md",
+    "context_file": "agents/<module>-analyst.md",
     "queries": [
       { "purpose": "Count affected records", "sql": "SELECT COUNT(*) FROM <MAIN_TABLE> WHERE <condition>", "max_rows": 50 }
     ],
     "tables_to_inspect": ["<MODULE_TABLE_1>", "<MODULE_TABLE_2>"]
   }
 
-Agent 3 — schema-inspector  (prompt: docs/subagents/schema-inspector.md)
+Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
   Task: Inspect table structures
   Input:
   {
