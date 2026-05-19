@@ -1,5 +1,9 @@
 # Harness Engineering: Agent Definitions
 
+> **Scope**: This file is the agent registry and orchestration contract.
+> Shared engineering rules (memory logging, language, file isolation, post-write chain, git) live in [docs/context.md](docs/context.md#project-wide-rules-all-tools).
+> Tool-specific overrides live in [CLAUDE.md](CLAUDE.md), [GEMINI.md](GEMINI.md), and [.codex/](.codex/).
+
 This file defines the roles and responsibilities of each agent operating within the ABAP development ecosystem, organized into Business and Technical groups.
 
 ## 🏢 Business Group (Project Governance & Analysis)
@@ -314,34 +318,4 @@ Request received
 
 ---
 
-### 🖥️ Tool Selection Rule
-
-Agents must choose the appropriate tool for each task type. All tools share the same abap MCP server but differ in capability and platform support.
-
-| Task type | Claude Code CLI | Claude Code App | Antigravity | Gemini CLI |
-|-----------|:--------------:|:--------------:|:-----------:|:----------:|
-| PM multi-agent dispatch | ✅ Plan mode + subagents | ✅ Plan mode + subagents | ❌ | ✅ browser_subagent |
-| Serial write chain (SyntaxCheck → RunUnitTests → RunATCCheck) | ✅ Hook fires automatically | ⚠️ Hook does NOT fire — run manually | ⚠️ Hook unverified | ✅ Supported |
-| ATC code quality check (RunATCCheck) | ✅ | ✅ | ✅ | ✅ Identical result |
-| ABAP object browse / edit | ⚠️ Terminal only | ✅ Visual diff + inline review | ✅ File explorer + diff view | ⚠️ Terminal only |
-| MCP read/query (GetSource, RunQuery, GrepObjects) | ✅ | ✅ Identical result | ✅ Identical result | ✅ Identical result |
-| Git commit / PR | ✅ `commit-commands` skills | ✅ PR monitoring + CI status | ⚠️ Extension terminal only | ✅ Bash tools |
-| Web research / browser subagent | ❌ | ❌ | ❌ | ✅ Native capability |
-| Parallel sessions (visual worktrees) | ❌ | ✅ Automatic | ❌ | ❌ |
-| Computer use (GUI automation) | ❌ | ✅ Win/macOS | ❌ | ❌ |
-| Linux support | ✅ | ❌ | ✅ | ✅ |
-| Quick lookup / search | ✅ | ✅ | ✅ Native search preferred | ✅ |
-
-**Rule**: Default to Claude Code CLI or App for orchestration. Prefer CLI on Linux or when hook automation is required. Use Desktop App for visual diff review, PR monitoring, and parallel sessions. Use Antigravity for file-centric editing. Use Gemini CLI when web research or `browser_subagent` delegation is needed.
-
-### 📜 Documentation Synchronization Rule
-- **Single Source of Truth**: `docs/context.md` holds all shared dev context (build, codebase, ABAP rules, Harness workflow). `CLAUDE.md` contains Claude Code-specific config. `.codex/config.toml` and `.codex/hooks.json` contain Codex-specific config. `GEMINI.md` contains Gemini CLI overrides.
-- **Consistency**: Roles defined in `AGENTS.md` must be consistent with the logic in all other `.md` files.
-
-### 📦 Git Reflection Rule
-- **Continuous Commitment**: All development artifacts (ABAP sources, docs, research reports) and **memory logs** must be committed to the local Git repository.
-- **File Isolation**: Agents MUST only create local `.abap` files in the `scratch/` directory.
-- **Verification**: The PM agent verifies the repository status and memory file existence at the end of each major task.
-
----
 *Last Updated: 2026-05-19*

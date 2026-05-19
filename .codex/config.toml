@@ -1,0 +1,27 @@
+[features]
+codex_hooks = true
+
+[mcp_servers.abap]
+args = [
+    "--mode",
+    "hyperfocused",
+]
+command = "./vsp"
+
+[mcp_servers.abap.env]
+VSP_ALLOWED_PACKAGES = "Z*,$TMP,$ZADT_VSP,$VSP_ADT"
+VSP_FEATURE_ABAPGIT = "on"
+VSP_FEATURE_RAP = "on"
+VSP_FEATURE_TRANSPORT = "on"
+VSP_FEATURE_UI5 = "on"
+VSP_MODE = "hyperfocused"
+
+[mcp_servers.abap-docs]
+url = "https://mcp-abap.marianzeis.de/mcp"
+
+[mcp_servers.sap-docs]
+url = "https://mcp-sap-docs.marianzeis.de/mcp"
+
+[[skills.config]]
+enabled = true
+path = "docs"

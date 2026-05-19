@@ -59,30 +59,13 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
   { "action": "RunATCCheck",   "object_url": "/sap/bc/adt/..." }
   ```
 
-## Documentation Language Rule
-
-All `.md` files must be written in English. **Exception**: any file whose name contains `_ko` (e.g., `README_ko.md`) **must** be written entirely in Korean.
+> **Common engineering rules** (memory logging, language, file isolation, post-write chain, git): [docs/context.md § Project-Wide Rules](docs/context.md#project-wide-rules-all-tools).
 
 ---
 
 ## Git Commit Policy
 
-**Auto-commits and hooks are disabled** per `docs/context.md § Harness Advanced Workflow`. The PM agent must run `git add -A && git commit` manually at the end of each task. Use Bash git commands directly for commits.
-- **File Isolation**: Always create `.abap` files in the `scratch/` directory.
-
----
-
-## Documentation Synchronization Rule
-
-`docs/context.md` is the **single source of truth** for shared content.
-
-| Change type | Action |
-|-------------|--------|
-| Shared content (build, codebase, priorities, issues) | Update `docs/context.md` only — no edit needed here |
-| Gemini-specific config or skill | Update this file only |
-| Agent roles or workflow | Update `AGENTS.md`; reflect summary in `docs/context.md` |
-
-Do **not** copy shared sections from `docs/context.md` into this file.
+**Auto-commits and hooks are disabled** in Gemini CLI sessions. The PM agent must run `git add -A && git commit` manually at the end of each task. Use Bash git commands directly for commits.
 
 ---
 *Last Updated: 2026-05-19*

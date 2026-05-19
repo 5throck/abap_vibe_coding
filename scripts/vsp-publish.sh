@@ -3,7 +3,6 @@
 # Usage: bash ./scripts/vsp-publish.sh "feat: align with main reference implementation"
 # Standardized packaging script to sanitize and copy core framework assets to the plugin repository.
 
-TARGET_DIR="C:/git/abap_vibe_coding_plugin"
 COMMIT_MESSAGE="$1"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,7 +10,16 @@ SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "--- Harness Packaging & Publishing Hook ---"
 
-# 1. Validate Target Directory
+# 1. Resolve target directory (env var required; no hardcoded fallback)
+if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
+    TARGET_DIR="$CLAUDE_PLUGIN_ROOT"
+else
+    echo "  [!] CLAUDE_PLUGIN_ROOT is not set."
+    echo "  [!] Usage: CLAUDE_PLUGIN_ROOT=/path/to/abap_vibe_coding_plugin bash ./scripts/vsp-publish.sh \"<message>\""
+    exit 1
+fi
+
+# 2. Validate Target Directory
 if [ ! -d "$TARGET_DIR" ]; then
     echo "  [!] Target plugin directory '$TARGET_DIR' does not exist."
     exit 1

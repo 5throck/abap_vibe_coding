@@ -39,7 +39,7 @@ foreach ($f in $docFiles) {
 }
 
 # 3. Script Pairing Check (Ensure both .ps1 and .sh exist for automation)
-$scripts = Get-ChildItem -Path "scripts" -Include *.ps1, *.sh
+$scripts = Get-ChildItem -Path "scripts\*" -Include *.ps1, *.sh
 $scriptBasenames = $scripts | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_.Name) } | Select-Object -Unique
 foreach ($base in $scriptBasenames) {
     $ps1 = Join-Path "scripts" "$base.ps1"

@@ -1,6 +1,7 @@
 #!/bin/bash
 # scripts/vsp-audit.sh
 # Cross-platform documentation audit (Unix: macOS/Linux)
+# Note: Intentionally omits 'set -e' — runs all checks to report every issue at once.
 
 FAILED=0
 echo "--- Documentation Audit (Unix) ---"
@@ -41,12 +42,12 @@ for script in scripts/*; do
     if [[ "$script" == *.sh ]]; then
         if [ ! -f "scripts/$base.ps1" ]; then
             echo "  [!] Cross-Platform: Missing .ps1 pair for '$base.sh'"
-            # FAILED=1
+            FAILED=1
         fi
     elif [[ "$script" == *.ps1 ]]; then
         if [ ! -f "scripts/$base.sh" ]; then
             echo "  [!] Cross-Platform: Missing .sh pair for '$base.ps1'"
-            # FAILED=1
+            FAILED=1
         fi
     fi
 done
