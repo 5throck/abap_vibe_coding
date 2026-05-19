@@ -63,6 +63,18 @@ CLASS zcl_vsp_apc_handler IMPLEMENTATION.
     mo_context = i_context.
     mo_message_manager = i_message_manager.
 
+    " Security: Enforce Developer Authority Check (S_DEVELOP)
+    AUTHORITY-CHECK OBJECT 'S_DEVELOP'
+      ID 'DEVCLASS' FIELD '*'
+      ID 'OBJTYPE'  FIELD '*'
+      ID 'OBJNAME'  FIELD '*'
+      ID 'P_GROUP'  FIELD '*'
+      ID 'ACTVT'    FIELD '02'. " Change / Execute
+    IF sy-subrc <> 0.
+      send_error( iv_id = 'welcome' iv_code = 'UNAUTHORIZED' iv_message = 'Developer authority (S_DEVELOP) is required to access VSP harness' ).
+      RAISE EXCEPTION TYPE cx_apc_error.
+    ENDIF.
+
     DATA lv_uuid TYPE sysuuid_c32.
     TRY.
         lv_uuid = cl_system_uuid=>create_uuid_c32_static( ).
