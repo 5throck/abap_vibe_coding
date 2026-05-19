@@ -20,7 +20,7 @@ Required fields per entry:
 - Object name, type, package, ADT URL
 - Purpose summary
 - Key technical decisions
-- Issue history (symptom ??root cause ??resolution)
+- Issue history (symptom -> root cause -> resolution)
 - MCP / config changes
 
 ---
@@ -40,7 +40,7 @@ Required fields per entry:
 
 ## Adding an Entry
 
-When creating a new log file, add a row to the table above ??newest date at the top.
+When creating a new log file, add a row to the table above -> newest date at the top.
 
 Format: `| [YYYY-MM-DD](YYYY-MM-DD.md) | one-line summary |`
 

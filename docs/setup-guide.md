@@ -257,8 +257,8 @@ cd ~/abap
 │   ├── vsp-sync.sh            ← Sync memory & Git (Bash)
 │   ├── vsp-audit.ps1          ← Documentation audit script (Windows)
 │   ├── vsp-audit.sh           ← Documentation audit script (Bash)
-│   ├── git-sync.ps1           ← Legacy/simple git helper (Windows)
-│   └── git-sync.sh            ← Legacy/simple git helper (Bash)
+│   ├── git-sync.ps1           ← [DEPRECATED] Legacy/simple git helper (Windows)
+│   └── git-sync.sh            ← [DEPRECATED] Legacy/simple git helper (Bash)
 ├── .env                       ← SAP credentials (create manually — gitignored)
 ├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
@@ -296,7 +296,7 @@ cd ~/abap
 │   ├── vsp-task.sh            ← Initialize new tasks
 │   ├── vsp-sync.sh            ← Sync memory & Git
 │   ├── vsp-audit.sh           ← Documentation audit script
-│   └── git-sync.sh            ← Legacy/simple git helper (Bash)
+│   └── git-sync.sh            ← [DEPRECATED] Legacy/simple git helper (Bash)
 ├── .env                       ← SAP credentials (create manually — gitignored)
 ├── .mcp.json                  ← MCP server config for Claude Code CLI (create manually — gitignored)
 ├── .gitignore
