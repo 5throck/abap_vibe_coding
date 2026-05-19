@@ -397,9 +397,9 @@ SAP_PASSWORD=<YOUR_PASSWORD>
 SAP_CLIENT=<CLIENT_NUMBER>
 SAP_LANGUAGE=EN
 
-# VSP Mode
-VSP_MODE=hyperfocused
-VSP_ALLOWED_PACKAGES=Z*,$TMP
+# SAP Mode
+SAP_MODE=hyperfocused
+SAP_ALLOWED_PACKAGES=Z*,$TMP
 ```
 
 **Example for NPL trial**:
@@ -409,8 +409,8 @@ SAP_USER=DEVELOPER
 SAP_PASSWORD=<YOUR_PASSWORD>
 SAP_CLIENT=001
 SAP_LANGUAGE=EN
-VSP_MODE=hyperfocused
-VSP_ALLOWED_PACKAGES=Z*,$TMP
+SAP_MODE=hyperfocused
+SAP_ALLOWED_PACKAGES=Z*,$TMP
 ```
 
 **Example for corporate system**:
@@ -420,8 +420,8 @@ SAP_USER=JSMITH
 SAP_PASSWORD=MySecurePass123
 SAP_CLIENT=100
 SAP_LANGUAGE=EN
-VSP_MODE=focused
-VSP_ALLOWED_PACKAGES=Z*,Y*,$TMP
+SAP_MODE=focused
+SAP_ALLOWED_PACKAGES=Z*,Y*,$TMP
 ```
 
 > **Security**: `.env` is in `.gitignore`. Verify it is never staged:
@@ -459,7 +459,7 @@ If you get an error, check:
 
 ### 5-D. Create .mcp.json
 
-> **⚠️ Env var prefix note**: This project uses `VSP_MODE` / `VSP_ALLOWED_PACKAGES` in `env`, but the official vibing-steampunk README documents `SAP_MODE` / `SAP_ALLOWED_PACKAGES`. The `--mode` flag in `args` guarantees the mode is set correctly regardless. If package restrictions do not appear to be applied, try switching to the `SAP_*` prefix (e.g. `SAP_ALLOWED_PACKAGES`). See [github.com/oisee/vibing-steampunk](https://github.com/oisee/vibing-steampunk) for the authoritative reference.
+> **Note**: This project standardizes on the standard `SAP_*` prefix format for connection and feature flags (e.g. `SAP_MODE`, `SAP_ALLOWED_PACKAGES`), ensuring 100% compatibility with the upstream `vsp` engine.
 
 **Windows** — create `%USERPROFILE%\abap\.mcp.json`:
 
@@ -470,9 +470,9 @@ If you get an error, check:
       "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
-        "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "SAP_MODE": "hyperfocused",
+        "SAP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "SAP_FEATURE_ABAPGIT": "on"
       }
     },
     "abap-docs": {
@@ -495,9 +495,9 @@ If you get an error, check:
       "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
-        "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "SAP_MODE": "hyperfocused",
+        "SAP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "SAP_FEATURE_ABAPGIT": "on"
       }
     },
     "abap-docs": {
@@ -515,9 +515,9 @@ If you get an error, check:
 > **`abap-docs`**: ABAP keyword and API reference (marianzeis.de).
 > **`sap-docs`**: SAP Help Portal documentation search.
 > **Focused mode** (more tools, standard development):
-> Change `"VSP_MODE": "focused"` — gives access to 100 tools instead of 1.
+> Change `"SAP_MODE": "focused"` — gives access to 100 tools instead of 1.
 > **Expert mode** (all tools, debugging / advanced operations):
-> Change `"VSP_MODE": "expert"` — gives access to 147 tools.
+> Change `"SAP_MODE": "expert"` — gives access to 147 tools.
 
 ---
 
@@ -774,9 +774,9 @@ See `docs/tooling-matrix.md` for the full decision guide.
       "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
-        "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "SAP_MODE": "hyperfocused",
+        "SAP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "SAP_FEATURE_ABAPGIT": "on"
       }
     },
     "abap-docs": {
@@ -840,9 +840,9 @@ See `docs/tooling-matrix.md` for the full decision guide.
       "command": "./vsp",
       "args": ["--mode", "hyperfocused"],
       "env": {
-        "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on"
+        "SAP_MODE": "hyperfocused",
+        "SAP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "SAP_FEATURE_ABAPGIT": "on"
       }
     },
     "abap-docs": {
