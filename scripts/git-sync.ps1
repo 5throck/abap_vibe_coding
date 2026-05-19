@@ -1,17 +1,22 @@
+# scripts/git-sync.ps1
+# Usage: .\scripts\git-sync.ps1 [-Message "..."]
+# Commits and pushes all changes to the current branch.
+
 param(
-    [string]$Message = "Auto-sync: Documentation and configuration updates"
+    [string]$Message = "chore: auto-sync documentation and configuration"
 )
 
-Write-Host "Starting auto-sync to Git..." -ForegroundColor Cyan
+$branch = git rev-parse --abbrev-ref HEAD
 
-# Add all changes except ignored files
+Write-Host "--- Git Sync ---" -ForegroundColor Cyan
+Write-Host "Branch: $branch"
+
 git add .
 
-# Check if there are changes to commit
 $status = git status --porcelain
 if ($null -ne $status -and $status.Length -gt 0) {
     git commit -m "$Message"
-    git push origin main
+    git push origin $branch
     Write-Host "Successfully synced to Git." -ForegroundColor Green
 } else {
     Write-Host "No changes to sync." -ForegroundColor Yellow

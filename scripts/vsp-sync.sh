@@ -1,5 +1,5 @@
 #!/bin/bash
-# vsp-sync.sh
+# scripts/vsp-sync.sh
 # Usage: ./scripts/vsp-sync.sh "type: summary"
 # Syncs memory logs, updates index, and commits to Git.
 
@@ -21,31 +21,31 @@ if [ ! -f "$MEMORY_FILE" ]; then
 fi
 
 # 2. Update MEMORY.md index if needed
-if ! grep -q "\[$DATE\]($DATE.md)" "$INDEX_FILE"; then
+if [ -f "$INDEX_FILE" ] && ! grep -q "\[$DATE\]($DATE.md)" "$INDEX_FILE"; then
     echo "Updating memory index..."
-    
-    SUMMARY="Development update"
-    if [ -f "$MEMORY_FILE" ]; then
-        FIRST_HEADER=$(grep -m 1 "^## " "$MEMORY_FILE" | sed 's/^## //')
-        if [ ! -z "$FIRST_HEADER" ]; then
-            SUMMARY="$FIRST_HEADER"
-        fi
-    fi
 
+    SUMMARY="Development update"
+    FIRST_HEADER=$(grep -m 1 "^## " "$MEMORY_FILE" | sed 's/^## //')
+    if [ -n "$FIRST_HEADER" ]; then
+        SUMMARY="$FIRST_HEADER"
+    fi
     if [[ $MESSAGE =~ :[[:space:]]*(.*) ]]; then
         SUMMARY=${BASH_REMATCH[1]}
     fi
+
     NEW_ENTRY="| [$DATE]($DATE.md) | $SUMMARY |"
-    
-    # Insert after the header table
-    sed "/^|------|---------|$/a \\
-$NEW_ENTRY" "$INDEX_FILE" > "$INDEX_FILE.tmp" && mv "$INDEX_FILE.tmp" "$INDEX_FILE"
+
+    # awk is portable across macOS and Linux (sed -i in-place differs between them)
+    awk -v entry="$NEW_ENTRY" '
+        /^\|------\|---------\|$/ { print; print entry; next }
+        { print }
+    ' "$INDEX_FILE" > "$INDEX_FILE.tmp" && mv "$INDEX_FILE.tmp" "$INDEX_FILE"
 fi
 
 # 3. Git Commit
 if [ -z "$MESSAGE" ]; then
     echo -n "Enter commit message (e.g., feat: add new report): "
-    read MESSAGE
+    read -r MESSAGE
 fi
 
 if [ -z "$MESSAGE" ]; then
