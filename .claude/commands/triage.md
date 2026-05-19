@@ -1,12 +1,13 @@
+---
+name: triage
+description: Automatically classify the incoming SAP ABAP request, create a task file, and generate the Phase 1 parallel dispatch block for sap-investigator, read-only-analyst, and schema-inspector agents.
+argument-hint: "<user request text>"
+allowed-tools: ["Bash"]
+---
+
 # /triage — Task Triage & Auto-Dispatch
 
 Automatically classify the incoming request, create a task file, and generate the §0-A parallel dispatch block.
-
-## Usage
-
-```
-/triage <user request text>
-```
 
 ## Steps
 
@@ -41,7 +42,7 @@ If no module matches, assign `CROSS` and note it.
 Run the task creation script:
 
 ```bash
-bash scripts/vsp-task.sh "$ARGUMENTS"
+bash "${CLAUDE_PLUGIN_ROOT:-.}/scripts/vsp-task.sh" "$ARGUMENTS"
 ```
 
 Note the generated filename (e.g., `scratch/task-2026-05-05-001.md`).

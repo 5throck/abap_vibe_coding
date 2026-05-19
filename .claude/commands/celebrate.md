@@ -1,9 +1,13 @@
-# Celebrate Skill
+---
+name: celebrate
+description: Celebrate the successful completion of a task to boost team morale.
+argument-hint: "[celebration-message]"
+allowed-tools: ["Bash"]
+---
 
-This skill is a tool for celebrating when a task has been successfully completed.
+# Celebrate
 
-## Usage
-`/celebrate [message]`
+This command is a tool for celebrating when a task has been successfully completed.
 
 ## Description
 Use this to boost team morale after successful code deployment or problem resolution.

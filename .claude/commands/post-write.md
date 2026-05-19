@@ -1,3 +1,10 @@
+---
+name: post-write
+description: Run the Post-Write quality gate chain (SyntaxCheck → RunUnitTests → RunATCCheck) for the specified ABAP object. Use after any WriteSource or EditSource operation in Desktop App or Antigravity where hooks do not fire automatically.
+argument-hint: "<object-name>"
+allowed-tools: ["mcp__abap__SyntaxCheck", "mcp__abap__RunUnitTests", "mcp__abap__RunATCCheck"]
+---
+
 # Post-Write Mandatory Chain
 
 Run the Post-Write quality gate chain for the ABAP object specified in $ARGUMENTS.

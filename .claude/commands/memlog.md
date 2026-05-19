@@ -1,3 +1,10 @@
+---
+name: memlog
+description: Open or create today's memory log file and display its current contents so the agent can append a new development entry.
+argument-hint: "[object-name]"
+allowed-tools: ["Read", "Write", "Bash"]
+---
+
 # Memory Log
 
 Open (or create) today's memory log file and display its current contents so the agent can append a new entry.
@@ -16,7 +23,7 @@ Open (or create) today's memory log file and display its current contents so the
 
 ```
 
-3. Remind the agent to append a new entry using the standard format from `docs/task-template.md § 5`:
+3. Remind the agent to append a new entry using the standard format:
 
 ```markdown
 ## <Object Name> (<Object Type>)
@@ -33,5 +40,5 @@ Open (or create) today's memory log file and display its current contents so the
 ## Notes
 
 - $ARGUMENTS (if provided) is treated as the object name for the log entry header.
-- All memory files must be written in **English** (see CLAUDE.md § Documentation Language Rule).
-- The MEMORY.md index is updated automatically by `scripts/vsp-sync.sh`.
+- All memory files must be written in **English**.
+- The MEMORY.md index is updated automatically by the sync script.

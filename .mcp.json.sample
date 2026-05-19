@@ -36,6 +36,14 @@
         "VSP_FEATURE_UI5": "on",
         "VSP_FEATURE_RAP": "on"
       }
+    },
+    "abap-docs": {
+      "type": "http",
+      "url": "https://mcp.abap.help/mcp"
+    },
+    "sap-docs": {
+      "type": "http",
+      "url": "https://mcp.sap.help/mcp"
     }
   }
 }
