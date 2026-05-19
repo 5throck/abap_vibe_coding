@@ -1,7 +1,7 @@
 ---
 name: dba
 model: inherit
-color: purple
+color: magenta
 description: 'SAP DBA (Database Agent) — handles data modeling, ERD design, Normalization (1NF to 3NF), index optimization, and SQL performance tuning. Dispatch for data modeling or complex SQL query analysis. Use when: "design tables", "normalize database", "create index", "tune SQL performance", "DBA review", "CDS view structure design".'
 
 examples:
