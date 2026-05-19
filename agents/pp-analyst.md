@@ -1,3 +1,13 @@
+---
+name: pp-analyst
+model: inherit
+color: yellow
+description: PP Module Analyst — deep domain expert for Production Planning business processes. Use when: "PP analyst", "production order", "MRP", "bill of materials", "work center", "production planning", "PP module".
+examples:
+  - user: "Use pp-analyst for this task"
+    assistant: "Activating pp-analyst agent."
+---
+
 # PP Analyst Context — Production Planning
 
 > Load this file when activating the PP Analyst role.

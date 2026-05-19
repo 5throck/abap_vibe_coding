@@ -41,7 +41,7 @@ See [docs/mcp_usage.md](docs/mcp_usage.md) for the full tool catalog and paramet
 
 ## Gemini Skill Additions
 
-The following capabilities extend those in [docs/skill.md](docs/skill.md):
+The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/abap-dev/SKILL.md):
 
 - **Role-Based Execution**: Switch between Business and Technical roles defined in `AGENTS.md`
   by explicitly stating the active role at the start of a task.
@@ -50,7 +50,7 @@ The following capabilities extend those in [docs/skill.md](docs/skill.md):
 - **Advanced Diagnostics**: Use `vsp health` to validate architecture and
   `vsp slim` for context optimization before large read sessions.
 - **Post-Write Test Chain**: After any write operation, execute the mandatory chain
-  defined in `docs/skill.md § Post-Write Mandatory Chain`:
+  defined in `skills/abap-dev/SKILL.md § Post-Write Mandatory Chain`:
   `SyntaxCheck` → `RunUnitTests` → `RunATCCheck`.
   All three steps apply identically in Gemini sessions via `sap_execute`:
   ```json

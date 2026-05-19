@@ -2,13 +2,16 @@
 
 **Claude Code (CLI & Desktop App)** configuration for the vsp/SAP ABAP Harness Engineering project.
 
-> **Doc intent:** This file is Claude Code-specific. Shared project context (build, codebase map, ABAP rules, Harness workflow) lives in [docs/context.md](docs/context.md). Agent roles live in [AGENTS.md](AGENTS.md). Per-session skills live in [docs/skill.md](docs/skill.md).
+> **Doc intent:** This file is Claude Code-specific. Shared project context (build, codebase map, ABAP rules, Harness workflow) lives in [docs/context.md](docs/context.md). Agent roles live in [AGENTS.md](AGENTS.md). Per-session skills live in [skills/abap-dev/SKILL.md](skills/abap-dev/SKILL.md).
 
 ---
 
 ## Session Start
 
-**You MUST read `docs/skill.md` at the start of every session or before using any ABAP-related tools.** It contains technical guidelines, optimization settings, and custom skill definitions that take precedence over general knowledge.
+**At the start of every session, load the following skills before using any ABAP-related tools:**
+
+1. [`skills/abap-dev/SKILL.md`](skills/abap-dev/SKILL.md) — SAP development workflows and optimization settings
+2. [`skills/post-write-chain/SKILL.md`](skills/post-write-chain/SKILL.md) — mandatory QA chain after any write
 
 Then read `docs/context.md` for shared project context (build commands, codebase map, ABAP dev rules).
 
@@ -39,7 +42,7 @@ All memory entries must be written in **English**.
 
 ## Documentation Language Rule
 
-**All `.md` files (including `docs/skill.md`, `AGENTS.md`, `MEMORY.md`, etc.) must be written in English at all times.** This ensures global accessibility and consistency for all AI agents and human developers.
+**All `.md` files (including `skills/abap-dev/SKILL.md`, `AGENTS.md`, `MEMORY.md`, etc.) must be written in English at all times.** This ensures global accessibility and consistency for all AI agents and human developers.
 
 **Exception — Korean localization files**: Any `.md` file whose name contains `_ko` (e.g., `README_ko.md`) **must** be written entirely in Korean. Do not mix languages within these files.
 
@@ -65,7 +68,7 @@ Both the CLI and the Desktop App share the same configuration files and MCP serv
 | Computer use (GUI automation) | ❌ | ✅ Win/macOS |
 | Live app preview (embedded browser) | ❌ | ✅ |
 
-> **Hook limitation**: `PostToolUse` hooks configured in `.claude/settings.json` do **not** fire in the Desktop App. After any `WriteSource` / `EditSource`, run the Post-Write Mandatory Chain manually (see `docs/skill.md § Post-Write Mandatory Chain`) and sync via `scripts/vsp-sync.sh` or `scripts/vsp-sync.ps1`.
+> **Hook limitation**: `PostToolUse` hooks configured in `.claude/settings.json` do **not** fire in the Desktop App. After any `WriteSource` / `EditSource`, run the Post-Write Mandatory Chain manually (see `skills/abap-dev/SKILL.md § Post-Write Mandatory Chain`) and sync via `scripts/vsp-sync.sh` or `scripts/vsp-sync.ps1`.
 
 > **Linux developers**: Use CLI only — the Desktop App is not available on Linux.
 

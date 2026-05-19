@@ -39,7 +39,7 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 | :--- | :--- |
 | **[AGENTS.md](AGENTS.md)** | 역할, 협업 워크플로우, 서브에이전트 디스패치 프로토콜 |
 | **[docs/context.md](docs/context.md)** | **공유** 프로젝트 컨텍스트: 빌드 명령어, 코드베이스 맵, 개발 규칙 |
-| **[docs/skill.md](docs/skill.md)** | 전문 AI 스킬(BAPI 탐색기, 메모리 인텔리전스) 및 QA 체인 |
+| **[skills/abap-dev/SKILL.md](skills/abap-dev/SKILL.md)** | 전문 AI 스킬(BAPI 탐색기, 메모리 인텔리전스) 및 QA 체인 |
 | **[docs/setup-guide.md](docs/setup-guide.md)** | 단계별 환경 설정(MCP, SAP, abapGit) |
 | **[memory/MEMORY.md](memory/MEMORY.md)** | 개발 이력 및 아키텍처 결정 인덱스 |
 

@@ -1,9 +1,12 @@
+---
+name: SAP CO Module — Controlling
+description: Use when working on CO module tasks — cost center accounting, internal orders, CO-PA profitability analysis, or cost allocation. Provides process flows, key table relationships, common query patterns, field notes, SAP quirks, and customizing tables for the CO module.
+version: 1.0.0
+---
+
 # CO Analyst Context — Controlling
 
-> Load this file when activating the CO Analyst role.
-> Provides deep domain knowledge for cost center accounting, internal orders, and profitability analysis.
-
----
+Load this skill when activating the CO Analyst role. Provides deep domain knowledge for cost center accounting, internal orders, and profitability analysis.
 
 ## Process Flow
 
@@ -19,8 +22,6 @@ Cost Allocation:
 Profitability Analysis (CO-PA):
   SD Billing → KE21N (Direct CO-PA Posting) → KE30 (PA Report)
 ```
-
----
 
 ## Key Table Relationships
 
@@ -40,8 +41,6 @@ AUFK (Order Master Header - common for Internal/Production Order)
 COBK (CO Document Header)
   └─► COEJ / COEP (CO Document Line Item)
 ```
-
----
 
 ## Common Query Patterns
 
@@ -69,12 +68,10 @@ SELECT aufnr, gjahr, versn, wip_value
   WHERE kokrs = '1000' AND gjahr = '2026' AND versn = '0'
 ```
 
----
-
 ## Key Field Notes
 
 | Table | Field | Description |
-|-------|-------|------|
+|-------|-------|-------------|
 | COSP | WRTTP | Value Type: `01`=Planned, `04`=Actual, `11`=Actual Allocation |
 | COSP | WKGBTR | Amount (Local Currency) |
 | COSP | KSTAR | Cost Element |
@@ -83,22 +80,18 @@ SELECT aufnr, gjahr, versn, wip_value
 | CE1xxxx | KWBHKM | Cost of Goods Sold (COGS) |
 | COAS | OBJNR | Order Object Number (Key for Distribution/Assessment) |
 
----
-
 ## CO-PA Structure
 
 CO-PA has two types:
 
 | Type | Table | Features |
-|------|--------|------|
+|------|-------|----------|
 | **Account-based** | ACDOCA | Recommended for S/4HANA, fully integrated with FI |
 | **Costing-based** | CE1xxxx | Traditional, value-field based, real-time aggregation |
 
 - Controlling Area = `KOKRS` — Required for all CO queries
 - CO-PA Characteristics: KDGRP (Customer Group), ARTNR (Product Group), BZIRK (Sales District)
 - CO-PA Value Fields: VV010 (Sales), VV020 (COGS), VV030 (SG&A)
-
----
 
 ## SAP Quirks & Known Issues
 
@@ -108,17 +101,12 @@ CO-PA has two types:
 - **Actual Assessment**: Result of KSU5 execution is recorded in COEP with BEKNZ='A'.
 - **CO-PA Reversal**: Negative records created in CE1xxxx — must sum with original document for final balance.
 
----
-
 ## Standard Customizing Tables
 
 | Table | Purpose |
-|--------|------|
+|-------|---------|
 | TKA01 | Controlling Area |
 | CSLA | Activity Type Master |
 | TKA05 | Version (Planned/Actual) |
 | TKEV | CO-PA Operating Concern |
 | TKE1 | CO-PA Characteristic Definition |
-
----
-*Last Updated: 2026-05-05*

@@ -28,20 +28,20 @@
 > Wait for all 3 results before proceeding to §1 Business Analysis.
 
 ```
-Agent 1 — sap-investigator  (prompt: docs/subagents/sap-investigator.md)
+Agent 1 — sap-investigator  (prompt: agents/sap-investigator.md)
   Task: Scan existing codebase for related objects
   Input: package=$TMP, keywords=["<keyword1>", "<keyword2>"]
   Expected output: matching object list + source snippets
 
-Agent 2 — read-only-analyst  (prompt: docs/subagents/read-only-analyst.md)
+Agent 2 — read-only-analyst  (prompt: agents/read-only-analyst.md)
   Task: Query SAP tables for AS-IS data
-  Input: module=<SD|MM|FI|...>, context_file=docs/sap-erp-module/<module>-analyst.md
+  Input: module=<SD|MM|FI|...>, context_file=agents/<module>-analyst.md
   Queries to run:
     - <!-- AS-IS query 1 -->
     - <!-- AS-IS query 2 -->
   Expected output: PRD draft with AS-IS findings and AC candidates
 
-Agent 3 — schema-inspector  (prompt: docs/subagents/schema-inspector.md)
+Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
   Task: Inspect table structures and CDS dependencies
   Input: tables=["<TABLE1>", "<TABLE2>"], cds_views=["<VIEW1>"]
   Expected output: field lists, key fields, CDS dependency tree
@@ -55,7 +55,7 @@ Agent 3 — schema-inspector  (prompt: docs/subagents/schema-inspector.md)
 ## 1. Business Analysis
 
 **Agent**: <!-- e.g., SD Analyst -->
-**Context file loaded**: `docs/sap-erp-module/<module>-analyst.md`
+**Context file loaded**: `agents/<module>-analyst.md`
 
 ### AS-IS
 
@@ -90,7 +90,7 @@ Agent 3 — schema-inspector  (prompt: docs/subagents/schema-inspector.md)
 
 ## 1-A. Governance Approval
 
-> See [docs/skill.md § sap:impact-architecture](../docs/skill.md) for the impact analysis pattern.
+> See [skills/abap-dev/SKILL.md § sap:impact-architecture](../skills/abap-dev/SKILL.md) for the impact analysis pattern.
 > PM must obtain explicit approval before proceeding to Technical Design.
 
 **Agent**: PM (with Architect input)

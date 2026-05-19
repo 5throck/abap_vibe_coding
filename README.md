@@ -38,7 +38,7 @@ For detailed roles, trigger keywords, and handoff protocols, see [AGENTS.md](AGE
 | :--- | :--- |
 | **[AGENTS.md](AGENTS.md)** | Roles, collaborative workflow, and subagent dispatch protocols. |
 | **[docs/context.md](docs/context.md)** | **Shared** project context: build commands, codebase map, and development rules. |
-| **[docs/skill.md](docs/skill.md)** | Specialized AI skills (BAPI explorer, memory intelligence) and QA chains. |
+| **[skills/abap-dev/SKILL.md](skills/abap-dev/SKILL.md)** | Specialized AI skills (BAPI explorer, memory intelligence) and QA chains. |
 | **[docs/setup-guide.md](docs/setup-guide.md)** | Step-by-step environment setup (MCP, SAP, abapGit). |
 | **[memory/MEMORY.md](memory/MEMORY.md)** | Index of development history and architectural decisions. |
 
