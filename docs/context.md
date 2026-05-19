@@ -136,6 +136,49 @@ Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZC
 
 ---
 
+## Project-Wide Rules (All Tools)
+
+> These rules apply equally to Claude Code, Gemini CLI, Codex, Antigravity, and any other AI tool operating in this project. Tool-specific overrides live in `CLAUDE.md`, `GEMINI.md`, and `.codex/`.
+
+### Memory Logging
+
+Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to `memory/YYYY-MM-DD.md`.
+
+Required fields per entry:
+- **Object name, type, package, and ADT URL**
+- **Purpose summary** (what it does, what it queries, how it outputs)
+- **Key technical decisions** (design choices, reasons, alternatives considered)
+- **Issue history** (symptom → root cause → resolution)
+- **MCP / config changes** (`.mcp.json`, `.gemini/settings.json`, etc.)
+
+**When to read**: Only when a recurring error occurs or when uncertain about a past design decision. Do **not** read memory files on every session start. All entries must be written in **English**.
+
+### Documentation Language
+
+All `.md` files must be written in **English**. **Exception**: files whose name contains `_ko` (e.g., `README_ko.md`) must be written entirely in Korean.
+
+### Documentation Synchronization
+
+`docs/context.md` is the **single source of truth** for shared engineering content.
+
+| Change type | Action |
+|-------------|--------|
+| Shared content (build, codebase, rules, issues) | Update `docs/context.md` only |
+| Tool-specific config or skill | Update `CLAUDE.md`, `GEMINI.md`, or `.codex/` only |
+| Agent roles or workflow | Update `AGENTS.md`; reflect summary in `docs/context.md` |
+
+Do **not** copy shared sections from `docs/context.md` into tool-specific files.
+
+### Git Reflection
+
+All development artifacts (ABAP sources, docs, research reports) and memory logs must be committed to the local Git repository. The PM agent verifies repository status and memory file existence at the end of each major task.
+
+### Tooling Matrix
+
+For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs Antigravity vs Gemini CLI) and hook behavior by environment, see [docs/tooling-matrix.md](tooling-matrix.md).
+
+---
+
 ## Areas Requiring Care
 
 | Area | Risk | Notes |

@@ -59,9 +59,7 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
   { "action": "RunATCCheck",   "object_url": "/sap/bc/adt/..." }
   ```
 
-## Common Session Rules
-
-Memory logging, documentation language, file isolation, and the post-write quality gate apply to **all platforms**. See [AGENTS.md § Common Session Rules](AGENTS.md#-common-session-rules-all-platforms) for the authoritative definitions.
+> **Common engineering rules** (memory logging, language, file isolation, post-write chain, git): [docs/context.md § Project-Wide Rules](docs/context.md#project-wide-rules-all-tools).
 
 ---
 
