@@ -43,11 +43,11 @@ MCP servers for Antigravity are registered in VS Code's **user** `settings.json`
     },
     "abap-docs": {
       "type": "http",
-      "url": "https://mcp.abap.help/mcp"
+      "url": "https://mcp-abap.marianzeis.de/mcp"
     },
     "sap-docs": {
       "type": "http",
-      "url": "https://mcp.sap.help/mcp"
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
     }
   }
 }

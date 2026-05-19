@@ -477,11 +477,11 @@ If you get an error, check:
     },
     "abap-docs": {
       "type": "http",
-      "url": "https://mcp.abap.help/mcp"
+      "url": "https://mcp-abap.marianzeis.de/mcp"
     },
     "sap-docs": {
       "type": "http",
-      "url": "https://mcp.sap.help/mcp"
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
     }
   }
 }
@@ -502,17 +502,17 @@ If you get an error, check:
     },
     "abap-docs": {
       "type": "http",
-      "url": "https://mcp.abap.help/mcp"
+      "url": "https://mcp-abap.marianzeis.de/mcp"
     },
     "sap-docs": {
       "type": "http",
-      "url": "https://mcp.sap.help/mcp"
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
     }
   }
 }
 ```
 
-> **`abap-docs`**: ABAP keyword and API reference (mcp.abap.help).
+> **`abap-docs`**: ABAP keyword and API reference (marianzeis.de).
 > **`sap-docs`**: SAP Help Portal documentation search.
 > **Focused mode** (more tools, standard development):
 > Change `"VSP_MODE": "focused"` — gives access to 100 tools instead of 1.
@@ -781,11 +781,11 @@ See `docs/tooling-matrix.md` for the full decision guide.
     },
     "abap-docs": {
       "type": "http",
-      "url": "https://mcp.abap.help/mcp"
+      "url": "https://mcp-abap.marianzeis.de/mcp"
     },
     "sap-docs": {
       "type": "http",
-      "url": "https://mcp.sap.help/mcp"
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
     }
   },
   "permissions": {
@@ -847,11 +847,11 @@ See `docs/tooling-matrix.md` for the full decision guide.
     },
     "abap-docs": {
       "type": "http",
-      "url": "https://mcp.abap.help/mcp"
+      "url": "https://mcp-abap.marianzeis.de/mcp"
     },
     "sap-docs": {
       "type": "http",
-      "url": "https://mcp.sap.help/mcp"
+      "url": "https://mcp-sap-docs.marianzeis.de/mcp"
     }
   },
   "permissions": {
