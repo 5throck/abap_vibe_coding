@@ -314,6 +314,47 @@ Request received
 
 ---
 
+### 📝 Common Session Rules (All Platforms)
+
+The rules in this section apply equally to **Claude Code (CLI & Desktop App), Gemini CLI, Antigravity, and any other AI tool** operating in this project. Platform-specific overrides are in `CLAUDE.md` and `GEMINI.md`.
+
+#### Memory Logging
+
+Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to the current date's memory file (`memory/YYYY-MM-DD.md`).
+
+Required fields per entry:
+- **Object name, type, package, and ADT URL**
+- **Purpose summary** (what it does, what it queries, how it outputs)
+- **Key technical decisions** (design choices, reasons, alternatives considered)
+- **Issue history** (symptom → root cause → resolution)
+- **MCP / config changes** (`.mcp.json`, `.gemini/settings.json`, etc.)
+
+**When to read**: Only when a recurring or hard-to-diagnose error occurs, or when uncertain about a past design decision. Do **not** read memory files on every session start.
+
+All memory entries must be written in **English**.
+
+#### Documentation Language
+
+All `.md` files must be written in **English** at all times. This ensures global accessibility and consistency for all AI agents and human developers.
+
+**Exception**: Any `.md` file whose name contains `_ko` (e.g., `README_ko.md`) **must** be written entirely in Korean. Do not mix languages within these files.
+
+#### File Isolation
+
+Always create `.abap` scratch files in the `scratch/` directory. Never create ABAP source files outside this directory.
+
+#### Post-Write Mandatory Chain
+
+After any `WriteSource` or `EditSource`, always run the full quality gate in order:
+
+```
+SyntaxCheck → RunUnitTests → RunATCCheck
+```
+
+Zero Priority-1 ATC findings are required before `Activate`. See [`skills/post-write-chain/SKILL.md`](skills/post-write-chain/SKILL.md) for the complete chain definition and tool parameters.
+
+---
+
 ### 🖥️ Tool Selection Rule
 
 Agents must choose the appropriate tool for each task type. All tools share the same abap MCP server but differ in capability and platform support.

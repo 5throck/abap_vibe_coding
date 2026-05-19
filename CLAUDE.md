@@ -17,36 +17,9 @@ Then read `docs/context.md` for shared project context (build commands, codebase
 
 ---
 
-## Memory Logging Rules
+## Common Session Rules
 
-### When to write
-Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to the **current date's memory file** (`memory/YYYY-MM-DD.md`).
-
-Required entries:
-- **Object name, type, package, and ADT URL**
-- **Purpose summary** (what it does, what it queries, how it outputs)
-- **Key technical decisions** (design choices, reasons, alternatives considered)
-- **Issue history** (symptom → root cause → resolution)
-- **MCP / config changes** (`.mcp.json`, `.gemini/settings.json`, etc.)
-
-### When to read
-**Do NOT read memory files on every session start.** Only consult the relevant date's file when:
-- A recurring or hard-to-diagnose error occurs
-- Uncertain about a past design decision
-- Investigating why something was implemented a certain way
-
-### Format
-All memory entries must be written in **English**.
-
----
-
-## Documentation Language Rule
-
-**All `.md` files (including `skills/abap-dev/SKILL.md`, `AGENTS.md`, `MEMORY.md`, etc.) must be written in English at all times.** This ensures global accessibility and consistency for all AI agents and human developers.
-
-**Exception — Korean localization files**: Any `.md` file whose name contains `_ko` (e.g., `README_ko.md`) **must** be written entirely in Korean. Do not mix languages within these files.
-
-- **File Isolation**: Always create `.abap` files in the `scratch/` directory.
+Memory logging, documentation language, file isolation, and the post-write quality gate apply to **all platforms**. See [AGENTS.md § Common Session Rules](AGENTS.md#-common-session-rules-all-platforms) for the authoritative definitions.
 
 ---
 
@@ -111,12 +84,6 @@ Both files are loaded automatically. `enableAllProjectMcpServers: true` is set i
 
 ---
 
----
-
-*Last Updated: 2026-05-19*
-
----
-
 ## Hooks
 
 A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scripts/sync-md.sh` (cross-platform wrapper). This hook is defined in `.claude/settings.json`.
@@ -129,3 +96,8 @@ A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scr
 | Antigravity | ❌ | No hook support in VS Code extension |
 
 `sync-md.sh` detects the platform (Windows vs Unix) and delegates to `vsp-audit.ps1` or `vsp-audit.sh` to perform an immediate documentation and path audit after every edit. This ensures cross-platform integrity is maintained in real-time.
+
+
+---
+
+*Last Updated: 2026-05-19*
