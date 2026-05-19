@@ -85,4 +85,4 @@ All `.md` files must be written in English. **Exception**: any file whose name c
 Do **not** copy shared sections from `docs/context.md` into this file.
 
 ---
-*Last Updated: 2026-05-05*
+*Last Updated: 2026-05-19*

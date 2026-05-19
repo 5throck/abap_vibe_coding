@@ -97,4 +97,4 @@ Run `RunATCCheck` on every object **after** `RunUnitTests` passes. This is the t
 Record findings in `task-template.md § 4.2 ATC Check Results`. Even Priority 3 findings should be logged for trend tracking across tasks.
 
 ---
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-05*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-19*

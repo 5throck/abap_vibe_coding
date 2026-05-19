@@ -72,14 +72,15 @@ if (-not [string]::IsNullOrWhiteSpace($CommitMessage)) {
     Set-Location $TargetDir
     
     try {
+        $branch = & git rev-parse --abbrev-ref HEAD
         git add -A
         $status = git status --porcelain
         if ([string]::IsNullOrWhiteSpace($status)) {
             Write-Host "No changes detected in plugin repository. Distribution up to date." -ForegroundColor Yellow
         } else {
             git commit -m "$CommitMessage"
-            Write-Host "Pushing to remote origin master..." -ForegroundColor Green
-            git push origin master
+            Write-Host "Pushing to remote origin $branch..." -ForegroundColor Green
+            git push origin $branch
             Write-Host "Distribution successfully pushed!" -ForegroundColor Green
         }
     } catch {
