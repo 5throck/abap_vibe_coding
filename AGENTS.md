@@ -329,4 +329,51 @@ These subagents are run sequentially because they execute write operations (lock
 
 ---
 
+### 🗺️ Agent Role Boundary Matrix
+
+Use this matrix to resolve ambiguity when multiple agents could handle a request.
+
+#### Research Agents — When to Use Which
+
+| Scenario | Use | Do NOT use |
+|----------|-----|------------|
+| Search for objects by name pattern across packages | `sap-investigator` | `read-only-analyst`, `schema-inspector` |
+| Query business data from SAP tables (VBAK, EKKO, BKPF…) | `read-only-analyst` | `sap-investigator` |
+| Inspect a CDS view's dependencies or a table's field structure | `schema-inspector` | `read-only-analyst` |
+| Trace which programs call a specific function module | `sap-investigator` (`GrepObjects`) | `schema-inspector` |
+| Analyse existing ABAP source logic | `sap-investigator` (`GetSource` + `AnalyzeCallGraph`) | `read-only-analyst` |
+| Check if a column/index exists on a DB table | `schema-inspector` (`GetTable`) | `read-only-analyst` |
+
+#### Technical Agents — When to Use Which
+
+| Scenario | Use | Do NOT use |
+|----------|-----|------------|
+| Design the DB/CDS schema (ERD, normalization, indexing) | `dba` | `architect` |
+| Design the implementation pattern (A/B/C) and execution plan | `architect` | `dba` |
+| Write or modify ABAP source code | `code-writer` | `architect` |
+| Run SyntaxCheck → RunUnitTests → RunATCCheck | `test-runner` | `code-writer` |
+| Create / release a Transport Request | `devops-admin` | `code-writer` |
+| Design OData / RFC / IDoc interfaces | `interface-expert` | `architect` |
+| Design Fiori / UI5 screens | `fiori-developer` | `interface-expert` |
+| Automate SAP GUI transactions (BDC, scripting) | `gui-scripter` | `code-writer` |
+
+#### Business Analyst Selection
+
+| Trigger keywords | Activate |
+|------------------|---------|
+| Sales Order, Delivery, Billing, Pricing, VA\*, VL\*, VF\*, VBAK | `sd-analyst` |
+| Purchase Order, Goods Receipt, Material Master, ME\*, EKKO, MARA | `mm-analyst` |
+| Shipment, Transport Route, Warehouse, WM, EWM, VTTP | `le-analyst` |
+| Production Order, BOM, MRP, Routing, CO\*, AFKO | `pp-analyst` |
+| Journal Entry, GL, AR, AP, Fixed Asset, FB\*, BKPF, ACDOCA | `fi-analyst` |
+| Cost Center, Internal Order, CO-PA, Allocation, KS\*, COEP | `co-analyst` |
+
+#### Escalation Rules
+
+- If **both** `dba` and `schema-inspector` are needed: run `schema-inspector` first (read-only research), then dispatch `dba` with findings.
+- If **both** `architect` and `dba` are needed: architect defines the pattern, dba validates the data model — always in that order.
+- If a task spans multiple business modules: activate **all relevant analysts in parallel**, then PM synthesizes their ACs before proceeding to `architect`.
+
+---
+
 *Last Updated: 2026-05-19*

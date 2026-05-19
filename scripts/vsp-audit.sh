@@ -34,11 +34,9 @@ while read -r file; do
     done
 done < <(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/.claude/*" -not -path "*/.gemini/*")
 
-# 3. Script Pairing Check
+# 3. Script Pairing Check (all scripts must have both .ps1 and .sh)
 for script in scripts/*; do
     base=$(basename "$script" | sed 's/\.[^.]*$//')
-    if [ "$base" == "install-vsp" ]; then continue; fi
-    
     if [[ "$script" == *.sh ]]; then
         if [ ! -f "scripts/$base.ps1" ]; then
             echo "  [!] Cross-Platform: Missing .ps1 pair for '$base.sh'"
@@ -58,6 +56,17 @@ if [ -f "CLAUDE.md" ] && [ -f "GEMINI.md" ]; then
         echo "  [!] Redundancy: CLAUDE.md and GEMINI.md are identical."
     fi
 fi
+
+# 5. MCP Config Prefix Consistency Check
+# All config files must use SAP_* prefix (not VSP_*) for env vars
+for cfg in .mcp.json .codex/config.toml .gemini/settings.json; do
+    if [ -f "$cfg" ]; then
+        if grep -qE "VSP_MODE|VSP_ALLOWED_PACKAGES|VSP_FEATURE_" "$cfg"; then
+            echo "  [!] Prefix inconsistency in $cfg: found VSP_* env vars — use SAP_* prefix instead."
+            FAILED=1
+        fi
+    fi
+done
 
 if [ $FAILED -ne 0 ]; then
     echo "Audit FAILED."
