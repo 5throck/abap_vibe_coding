@@ -6,11 +6,6 @@
 TARGET_DIR="C:/git/abap_vibe_coding_plugin"
 COMMIT_MESSAGE="$1"
 
-# Convert windows-style path to unix-style if we are running in Unix/MSYS
-if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
-    TARGET_DIR="C:/git/abap_vibe_coding_plugin"
-fi
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -81,18 +76,19 @@ if [ -n "$COMMIT_MESSAGE" ]; then
     CURRENT_DIR=$(pwd)
     cd "$TARGET_DIR" || exit 1
     
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
     git add -A
     STATUS=$(git status --porcelain)
     if [ -z "$STATUS" ]; then
         echo "No changes detected in plugin repository. Distribution up to date."
     else
-        git commit -m "$COMMIT_MESSAGE"
-        echo "Pushing to remote origin master..."
-        git push origin master
+        git commit -m "$COMMIT_MESSAGE" || { echo "  [!] Commit failed."; exit 1; }
+        echo "Pushing to remote origin $BRANCH..."
+        git push origin "$BRANCH" || { echo "  [!] Push failed."; exit 1; }
         echo "Distribution successfully pushed!"
     fi
     
-    cd "$CURRENT_DIR" || exit
+    cd "$CURRENT_DIR" || exit 1
 fi
 
 echo "Harness packaging complete!"

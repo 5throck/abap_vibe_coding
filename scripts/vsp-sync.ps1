@@ -20,11 +20,22 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# 1. Check for today's memory log
+# 1. Check for today's memory log — auto-create if missing
 if (-not (Test-Path $memoryFile)) {
-    Write-Warning "Memory log for today ($date.md) not found."
-    Write-Host "Please create it before syncing to ensure development history is preserved."
-    exit 1
+    Write-Host "Memory log for today not found. Auto-creating $date.md..." -ForegroundColor Yellow
+    New-Item -ItemType Directory -Path $memoryDir -Force | Out-Null
+    $time = Get-Date -Format "HH:mm"
+    $header = @(
+        "# Memory Log: $date",
+        "",
+        "<!-- Auto-created by vsp-sync.ps1. Add entries below. -->",
+        "",
+        "## $time — Session",
+        "",
+        "<!-- Describe what was done today -->"
+    )
+    Set-Content -Path $memoryFile -Value $header
+    Write-Host "Created: $memoryFile" -ForegroundColor Green
 }
 
 # 2. Update MEMORY.md index if needed

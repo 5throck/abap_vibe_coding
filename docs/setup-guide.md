@@ -1279,7 +1279,7 @@ cat .claude/settings.local.json
 
 **Symptom**: `"DESC" is not allowed in ORDER BY`
 
-**Solution**: Use ABAP SQL syntax (see `MCP_USAGE.md`):
+**Solution**: Use ABAP SQL syntax (see `docs/mcp_usage.md`):
 ```sql
 -- Wrong
 ORDER BY field DESC
@@ -1322,11 +1322,11 @@ Use this list when onboarding a new team member.
 ### First session orientation (30 min)
 
 - [ ] Read `../README.md` — understand the Harness Engineering concept
-- [ ] Read `CONTEXT.md` — shared project context (build commands, codebase map, ABAP dev rules)
+- [ ] Read `docs/context.md` — shared project context (build commands, codebase map, ABAP dev rules)
 - [ ] Read `../AGENTS.md` — understand your role and available agents
-- [ ] Read `SKILL.md` — review tool boundaries and best practices
-- [ ] Read `MCP_USAGE.md` §Critical Limitations — especially ABAP SQL syntax
-- [ ] Review `SAP ERP Module/<your-module>-analyst.md` if you are a Business Analyst
+- [ ] Read `docs/skill.md` — review tool boundaries and best practices
+- [ ] Read `docs/mcp_usage.md` §Critical Limitations — especially ABAP SQL syntax
+- [ ] Review `agents/<module>-analyst.md` (sd, mm, fi, co, pp, le) if you are a Business Analyst
 - [ ] Review `task-template.md` — understand the handoff workflow
 - [ ] Do a test task: ask Claude to query `SFLIGHT` and explain the result
 
@@ -1337,8 +1337,6 @@ Use this list when onboarding a new team member.
 - [ ] Install Gemini CLI and configure `.gemini/settings.json` (§8)
 - [ ] Install ZADT_VSP for debugging capability (§9)
 - [ ] Review `agents/` — understand agent roles and parallel dispatch patterns
-- [ ] Gemini CLI | ❌ | Automated hooks disabled — run Post-Write chain manually |
-- [ ] Antigravity | ❌ | No hook support in VS Code extension |
 
 ---
 
@@ -1353,7 +1351,7 @@ Use this list when onboarding a new team member.
 | `.gemini/settings.json` | ❌ | Gemini CLI config (abap + abap-docs + sap-docs) | Each developer (optional) |
 | `%APPDATA%\Antigravity\User\settings.json` | ❌ (outside repo) | Antigravity MCP config (abap + abap-docs + sap-docs) | Each developer (optional) |
 | `vsp` / `vsp.exe` | ❌ | MCP server binary | Download from releases |
-| `docs/CONTEXT.md` | ✅ | Shared project context for all AI tools | Repo (already exists) |
+| `docs/context.md` | ✅ | Shared project context for all AI tools | Repo (already exists) |
 | `CLAUDE.md` | ✅ | Claude Code CLI-specific config | Repo (already exists) |
 | `GEMINI.md` | ✅ | Gemini CLI-specific overrides | Repo (already exists) |
 | `AGENTS.md` | ✅ | Agent roles + dispatch protocol | Repo (already exists) |
@@ -1419,5 +1417,5 @@ bash scripts/git-sync.sh
 ```
 
 ---
-*Document version: 1.6 — 2026-05-05*
+*Document version: 1.6 — 2026-05-19*
 *Maintained by: VSP Harness Engineering Team*

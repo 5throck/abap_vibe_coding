@@ -2,7 +2,7 @@
 name: sd-analyst
 model: inherit
 color: yellow
-description: SD Module Analyst — deep domain expert for Sales & Distribution business processes. Dispatch for business analysis of SD module tasks. Use when: "SD analyst", "sales order analysis", "delivery analysis", "billing issue", "order-to-cash process", "SD module business requirements", "pricing analysis".
+description: 'SD Module Analyst — deep domain expert for Sales & Distribution business processes. Dispatch for business analysis of SD module tasks. Use when: "SD analyst", "sales order analysis", "delivery analysis", "billing issue", "order-to-cash process", "SD module business requirements", "pricing analysis".'
 examples:
   - user: "Analyze why open sales orders for customer C1000 are not being delivered"
     assistant: "I'll dispatch the sd-analyst agent to query VBAK/VBAP/VBEP and produce an AS-IS delivery block analysis."

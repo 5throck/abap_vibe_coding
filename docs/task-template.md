@@ -289,4 +289,4 @@ git commit -m "<type>: <summary>"
 - Notes: <!-- anything the user should know -->
 
 ---
-*Template version: 1.1 — 2026-05-05*
+*Template version: 1.1 — 2026-05-19*

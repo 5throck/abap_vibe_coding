@@ -13,11 +13,20 @@ INDEX_FILE="$MEMORY_DIR/MEMORY.md"
 echo "--- VSP Sync & Report ---"
 bash "$SCRIPT_DIR/vsp-audit.sh" || exit 1
 
-# 1. Check for today's memory log
+# 1. Check for today's memory log — auto-create if missing
 if [ ! -f "$MEMORY_FILE" ]; then
-    echo "Warning: Memory log for today ($DATE.md) not found."
-    echo "Please create it before syncing to ensure development history is preserved."
-    exit 1
+    echo "Memory log for today not found. Auto-creating $DATE.md..."
+    mkdir -p "$MEMORY_DIR"
+    {
+        echo "# Memory Log: $DATE"
+        echo ""
+        echo "<!-- Auto-created by vsp-sync.sh. Add entries below. -->"
+        echo ""
+        echo "## $(date '+%H:%M') — Session"
+        echo ""
+        echo "<!-- Describe what was done today -->"
+    } > "$MEMORY_FILE"
+    echo "Created: $MEMORY_FILE"
 fi
 
 # 2. Update MEMORY.md index if needed

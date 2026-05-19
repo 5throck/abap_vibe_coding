@@ -344,4 +344,4 @@ Agents must choose the appropriate tool for each task type. All tools share the 
 - **Verification**: The PM agent verifies the repository status and memory file existence at the end of each major task.
 
 ---
-*Last Updated: 2026-05-05*
+*Last Updated: 2026-05-19*

@@ -2,7 +2,7 @@
 name: schema-inspector
 model: inherit
 color: purple
-description: SAP Data Schema & Dependency Inspector (read-only) — inspects SAP table structures, CDS view definitions, and produces dependency maps and field references for the Architect and DBA. Dispatch in Phase 1 parallel block. Use when: "inspect table structure", "show table fields", "CDS dependency tree", "what fields does this table have", "schema context for", "table relationships". Does NOT write or modify any SAP object.
+description: 'SAP Data Schema & Dependency Inspector (read-only) — inspects SAP table structures, CDS view definitions, and produces dependency maps and field references for the Architect and DBA. Dispatch in Phase 1 parallel block. Use when: "inspect table structure", "show table fields", "CDS dependency tree", "what fields does this table have", "schema context for", "table relationships". Does NOT write or modify any SAP object.'
 
 examples:
   - user: "Show me the structure of VBAK and VBAP tables"

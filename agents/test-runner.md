@@ -2,7 +2,7 @@
 name: test-runner
 model: inherit
 color: red
-description: SAP Quality Assurance Specialist — stability verification and quality governance of ABAP objects using RunUnitTests and RunATCCheck. Dispatch in Phase 3 validation block after code-writer completes. Use when: "run unit tests", "run ATC check", "quality gate", "verify the implementation", "test the changes", "check for ATC violations".
+description: 'SAP Quality Assurance Specialist — stability verification and quality governance of ABAP objects using RunUnitTests and RunATCCheck. Dispatch in Phase 3 validation block after code-writer completes. Use when: "run unit tests", "run ATC check", "quality gate", "verify the implementation", "test the changes", "check for ATC violations".'
 
 examples:
   - user: "Run the quality gate for ZCL_EXAMPLE"

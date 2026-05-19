@@ -2,7 +2,7 @@
 name: fiori-developer
 model: inherit
 color: cyan
-description: SAP Fiori & UI5 Implementation Specialist — design and implementation of SAP Fiori / SAPUI5 applications following SAP Fiori Design Guidelines. Use when: "build a Fiori app", "create UI5 application", "modify OData service", "design the Fiori UI", "fix Fiori tile", "update CDS exposure for OData".
+description: 'SAP Fiori & UI5 Implementation Specialist — design and implementation of SAP Fiori / SAPUI5 applications following SAP Fiori Design Guidelines. Use when: "build a Fiori app", "create UI5 application", "modify OData service", "design the Fiori UI", "fix Fiori tile", "update CDS exposure for OData".'
 
 examples:
   - user: "Build a Fiori app for sales order display"

@@ -6,7 +6,7 @@
 > Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `../GEMINI.md` (Gemini CLI).
 > Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire — run Post-Write chain manually.
 > Agent roles and orchestration rules live in `../AGENTS.md`.
-> Per-session technical guidelines and custom skills live in `skill.md` (Superseded by `skills/` directory).
+> Per-session technical guidelines and custom skills live in `docs/skill.md` (legacy entry point; current skills are auto-discovered from the `skills/` directory).
 > ABAP development history (date-archived) lives in `../memory/`.
 > Module analyst deep-knowledge files live in `agents/`.
 
@@ -53,10 +53,10 @@ pkg/
 | Add graph feature | `pkg/graph/` |
 | Add lint rule | `pkg/abaplint/rules.go` |
 | Add integration test | `pkg/adt/integration_test.go` |
-| Fix MCP/docs/config | `../README.md`, `subagents/*`, `handlers_universal.go` |
+| Fix MCP/docs/config | `../README.md`, `agents/*`, `handlers_universal.go` |
 | Add/update analyst context | `agents/<module>-analyst.md` |
 | New task handoff | copy `task-template.md` → `../scratch/tasks/task-YYYY-MM-DD-NNN.md` |
-| Add/update subagent prompt | `subagents/<role>.md` |
+| Add/update subagent prompt | `agents/<role>.md` |
 
 ---
 
@@ -150,4 +150,4 @@ Reports: `reports/YYYY-MM-DD-NNN-title.md`. SAP objects: `ZADT_<nn>_<name>`, `ZC
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
-*Last Updated: 2026-05-05*
+*Last Updated: 2026-05-19*

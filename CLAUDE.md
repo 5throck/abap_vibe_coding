@@ -27,7 +27,7 @@ Required entries:
 - **Purpose summary** (what it does, what it queries, how it outputs)
 - **Key technical decisions** (design choices, reasons, alternatives considered)
 - **Issue history** (symptom → root cause → resolution)
-- **MCP / config changes** (`.mcp.json`, `.vsp.json`, etc.)
+- **MCP / config changes** (`.mcp.json`, `.gemini/settings.json`, etc.)
 
 ### When to read
 **Do NOT read memory files on every session start.** Only consult the relevant date's file when:
@@ -113,7 +113,7 @@ Both files are loaded automatically. `enableAllProjectMcpServers: true` is set i
 
 ---
 
-*Last Updated: 2026-05-05*
+*Last Updated: 2026-05-19*
 
 ---
 

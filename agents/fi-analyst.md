@@ -2,7 +2,7 @@
 name: fi-analyst
 model: inherit
 color: yellow
-description: FI Module Analyst — deep domain expert for Financial Accounting business processes. Use when: "FI analyst", "financial accounting", "general ledger", "accounts payable", "accounts receivable", "FI module", "posting analysis".
+description: 'FI Module Analyst — deep domain expert for Financial Accounting business processes. Use when: "FI analyst", "financial accounting", "general ledger", "accounts payable", "accounts receivable", "FI module", "posting analysis".'
 examples:
   - user: "Analyze open accounts payable items that are overdue in company code 1000"
     assistant: "I'll dispatch the fi-analyst agent to query BSIK/BSAK and produce the AP aging AS-IS report."
