@@ -69,4 +69,4 @@ Be respectful and constructive. We follow the [Contributor Covenant](https://www
 
 ## Questions?
 
-Open a [GitHub Discussion](../../discussions) or create an issue with the `question` label.
+Open a [GitHub Discussion](https://github.com/5throck/abap_vibe_coding/discussions) or create an issue with the `question` label.

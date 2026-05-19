@@ -6,7 +6,7 @@
 > Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `../GEMINI.md` (Gemini CLI).
 > Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire — run Post-Write chain manually.
 > Agent roles and orchestration rules live in `../AGENTS.md`.
-> Per-session technical guidelines and custom skills live in `skill.md`.
+> Per-session technical guidelines and custom skills live in `skill.md` (Superseded by `skills/` directory).
 > ABAP development history (date-archived) lives in `../memory/`.
 > Module analyst deep-knowledge files live in `agents/`.
 
@@ -102,7 +102,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - Always run SyntaxCheck before WriteSource
 - Run RunUnitTests after logic changes (refer to `docs/testing-guidelines.md`)
 - Run RunATCCheck after RunUnitTests — Priority 1 findings block deployment
-- Full sequence: see `skill.md § Post-Write Mandatory Chain`
+- Full sequence: see `skills/post-write-chain/SKILL.md § Post-Write Mandatory Chain`
 - Use EditSource for small changes
 - **Local Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 
@@ -111,7 +111,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 - **QA Chain**: After any edit, the `Post-Write Mandatory Chain` MUST be executed. 
 - **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
-- See [skills/abap-dev/SKILL.md § Post-Write Mandatory Chain](skill.md#post-write-mandatory-chain) for details.
+- See [skills/post-write-chain/SKILL.md § Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details.
 
 ### Developer Quick Start (Task Lifecycle)
 

@@ -6,7 +6,7 @@ FAILED=0
 echo "--- Documentation Audit (Unix) ---"
 
 # 1. Absolute Path Check
-ABS_PATHS=$(grep -rEi "[A-Z]:\\\\|/Users/|/home/" . --include="*.md" | grep -vE "node_modules|\.git|setup-guide.md|antigravity-setup.md")
+ABS_PATHS=$(grep -rEi "[A-Z]:\\\\|/Users/|/home/" . --include="*.md" | grep -vE "node_modules|\.git|\.claude|\.gemini|setup-guide.md|antigravity-setup.md")
 if [ -n "$ABS_PATHS" ]; then
     echo "  [!] Absolute paths detected!"
     echo "$ABS_PATHS" | head -n 5
@@ -31,7 +31,7 @@ while read -r file; do
             FAILED=1
         fi
     done
-done < <(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*")
+done < <(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/.claude/*" -not -path "*/.gemini/*")
 
 # 3. Script Pairing Check
 for script in scripts/*; do
