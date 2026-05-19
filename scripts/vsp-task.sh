@@ -7,7 +7,7 @@ NAME=${1:-"new-task"}
 DATE=$(date +%Y-%m-%d)
 TIME=$(date "+%Y-%m-%d %H:%M:%S")
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRATCH_DIR="$SCRIPT_DIR/../scratch"
+SCRATCH_DIR="$SCRIPT_DIR/../scratch/tasks"
 TEMPLATE_FILE="$SCRIPT_DIR/../docs/task-template.md"
 
 # Create scratch dir if it doesn't exist
@@ -79,6 +79,7 @@ TARGET_FILE_PATH="$SCRATCH_DIR/$TARGET_FILE_NAME"
 
 sed -e "s/<!-- date and time -->/$TIME/g" \
     -e "s/<!-- paste original user request verbatim -->/Request for: $NAME/g" \
+    -e "s|](../skills/|](../../skills/|g" \
     "$TEMPLATE_FILE" > "$TARGET_FILE_PATH"
 
 echo "Created new task: $TARGET_FILE_NAME"

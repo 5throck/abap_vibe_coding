@@ -7,7 +7,7 @@ param(
 )
 
 $date = Get-Date -Format "yyyy-MM-dd"
-$scratchDir = Join-Path $PSScriptRoot "..\scratch"
+$scratchDir = Join-Path $PSScriptRoot "..\scratch\tasks"
 $templateFile = Join-Path $PSScriptRoot "..\docs\task-template.md"
 
 # Create scratch dir if it doesn't exist
@@ -60,6 +60,8 @@ if (-not (Test-Path $templateFile)) {
     $content = Get-Content $templateFile -Raw
     $content = $content -replace "<!-- date and time -->", (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
     $content = $content -replace "<!-- paste original user request verbatim -->", "Request for: $Name"
+    # Adjust relative paths since task is created in scratch/tasks/ (two levels deep) instead of docs/ (one level deep)
+    $content = $content -replace "\]\(\.\./skills/", "](../../skills/"
     Set-Content -Path $targetFilePath -Value $content
 }
 

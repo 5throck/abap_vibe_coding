@@ -55,7 +55,7 @@ pkg/
 | Add integration test | `pkg/adt/integration_test.go` |
 | Fix MCP/docs/config | `../README.md`, `subagents/*`, `handlers_universal.go` |
 | Add/update analyst context | `agents/<module>-analyst.md` |
-| New task handoff | copy `task-template.md` → `../scratch/task-YYYY-MM-DD-NNN.md` |
+| New task handoff | copy `task-template.md` → `../scratch/tasks/task-YYYY-MM-DD-NNN.md` |
 | Add/update subagent prompt | `subagents/<role>.md` |
 
 ---
