@@ -4,8 +4,10 @@ model: inherit
 color: yellow
 description: MM Module Analyst — deep domain expert for Materials Management business processes. Use when: "MM analyst", "purchase order analysis", "goods receipt", "inventory management", "procurement process", "MM module", "material master".
 examples:
-  - user: "Use mm-analyst for this task"
-    assistant: "Activating mm-analyst agent."
+  - user: "Investigate why purchase orders for material M100 are stuck without goods receipt"
+    assistant: "I'll dispatch the mm-analyst agent to query EKKO/EKPO/MSEG and produce the AS-IS procurement analysis."
+  - user: "We need an MM analyst to look at the inventory valuation discrepancy in plant 1000"
+    assistant: "Let me use the mm-analyst agent to examine MARD/MBEW stock data and draft the GAP analysis."
 ---
 
 # MM Analyst — Materials Management
