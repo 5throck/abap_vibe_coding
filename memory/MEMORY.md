@@ -20,7 +20,7 @@ Required fields per entry:
 - Object name, type, package, ADT URL
 - Purpose summary
 - Key technical decisions
-- Issue history (symptom → root cause → resolution)
+- Issue history (symptom ??root cause ??resolution)
 - MCP / config changes
 
 ---
@@ -29,6 +29,7 @@ Required fields per entry:
 
 | Date | Summary |
 |------|---------|
+| [2026-05-19](2026-05-19.md) | record today's audit logs in memory and update MEMORY.md index |
 | [2026-05-18](2026-05-18.md) | correct vibing-steampunk binary names and mode tool counts |
 | [2026-05-05](2026-05-05.md) | Harness & specialized tools update (Transports, OData, UI5); Path standardization; Sync script enhancement |
 | [2026-05-04](2026-05-04.md) | VSP WebSocket infrastructure & abapGit installation; NW 7.52 compatibility patches; Documentation standardization |
@@ -39,6 +40,6 @@ Required fields per entry:
 
 ## Adding an Entry
 
-When creating a new log file, add a row to the table above — newest date at the top.
+When creating a new log file, add a row to the table above ??newest date at the top.
 
 Format: `| [YYYY-MM-DD](YYYY-MM-DD.md) | one-line summary |`
