@@ -14,19 +14,11 @@ This file indexes the agent roles and defines the orchestration workflow for the
 ## 🏢 Business Group (Project Governance & Analysis)
 
 ### 1. 👑 Global Project Manager (PM)
-- **Role**: Overall project management, roadmap definition, and single point of entry for all requests.
-- **Responsibilities**:
-    - **Initial Triage**: Receive and analyze all user requests first.
-    - **Agent Orchestration**: Discuss requirements with relevant functional and technical agents before execution.
-    - **Consistency Check**: Ensure agent roles and workflow consistency are maintained across the project.
-    - **Deployment Oversight**: Verify that all work is committed to the Git repository.
-- **Key Tools**: `ListTransports`, `GrepPackages`, `SearchObject`, `memory/`, Project Dashboards.
-- **Triage**: Use `/triage <request>` to auto-classify, create the task file, and generate the §0-A dispatch block.
-- **Finalization (§5 — always run after QA gate)**: After all ACs pass and RunATCCheck reports 0 Priority-1 findings:
-  1. Run documentation audit via `scripts/vsp-audit.ps1` (Windows) or `scripts/vsp-audit.sh` (Unix) (or equivalent `sap:documentation-audit` skill) to ensure cross-platform integrity.
-  2. Copy the §5 Finalization block from the Architect Report into `memory/YYYY-MM-DD.md`
-  3. Synchronize and commit via `scripts/vsp-sync.ps1` or `scripts/vsp-sync.sh` (or equivalent `/sync` command) to execute audit checks, memory index updates, and git commit.
-  4. Report to user: objects changed, AC status, primary ADT URL
+- **Entry point**: All user requests go through PM first — no agent is dispatched without PM triage
+- **Key Tools**: `ListTransports`, `GrepPackages`, `SearchObject`, `RunUnitTests`, `RunATCCheck`
+- **Workflow**: 6-step harness lifecycle — Triage → Business Analysis → Governance → Tech Design → Implementation → Finalization (see `agents/pm.md`)
+- **Triage shortcut**: `/triage <request>` auto-classifies, creates the task file, and generates the §0-A parallel dispatch block
+- **Subagent prompt**: [`agents/pm.md`](agents/pm.md)
 
 ### Business Analysts
 
@@ -86,12 +78,14 @@ Load the matching `agents/<module>-analyst.md` file at activation for tools, out
 ## 🛠️ Technical Group (System Execution & Implementation)
 
 Technical agents are dispatched by the PM in Phase 2 (serial execution) or Phase 1 (read-only research).
+The **Architect acts as Technical Execution Lead** — it owns Pattern selection, sequences the execution team (code-writer → test-runner), and coordinates DBA/Interface Expert involvement.
 Full behavioral rules, tool contracts, and output formats live in the linked `agents/*.md` files.
 
-### 1. 🏗️ Architect
-- **When to dispatch**: After §1 Business Analysis; PRD contains ≥1 ABAP object to design or refactor
+### 1. 🏗️ Architect _(Technical Execution Lead)_
+- **When to dispatch**: After §1 Business Analysis; PM hands off PRD + AC list for technical design
+- **Technical Lead responsibilities**: Select Pattern A/B/C; sequence code-writer → test-runner; coordinate DBA and Interface Expert as needed; produce §5 Finalization block for PM
 - **Key Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`, `GrepPackages`, `GetSource`
-- **Output**: Pattern A/B/C execution plan + §5 Finalization block
+- **Output**: Execution plan (pattern + object list + serial steps) + §5 Finalization block
 - **Subagent prompt**: [`agents/architect.md`](agents/architect.md)
 
 ### 2. 💻 ABAP Developer
@@ -335,4 +329,4 @@ If the cross-module analysis reveals conflicting ACs (e.g., SD wants field X, FI
 
 ---
 
-*Last Updated: 2026-05-21*
+*Last Updated: 2026-05-21 (rev 2)*
