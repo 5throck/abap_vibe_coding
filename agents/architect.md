@@ -97,7 +97,13 @@ Evaluate these conditions IN ORDER and stop at the first match:
     IF SyntaxCheck fails:
       Step N.3b: EditSource(object_url, fix only the reported error)
       Step N.3c: SyntaxCheck(object_url)
-      IF still fails: STOP and report to PM — do not proceed
+      IF still fails: STOP — do not proceed to object N+1
+        ROLLBACK PROCEDURE:
+          1. List all objects successfully modified in steps 1..(N-1)
+          2. For each unactivated object: GetRevisionSource → WriteSource (restore prior version)
+          3. For each activated object: document as "manual review required" in Task §2 Rollback Plan
+          4. PM creates recovery task: task-YYYY-MM-DD-NNN-rollback.md
+          5. Report to user: [modified list] + [rollback status per object]
     Step N.4: (continue to next object only after N.3 passes)
 
   After all objects:
