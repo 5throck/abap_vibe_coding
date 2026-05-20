@@ -9,6 +9,12 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed (2026-05-21 AGENTS.md Refactoring)
+- `AGENTS.md`: Refactored Business Group analyst entries (SD/LE/PP/MM/FI/CO) to dispatch-card format — removed redundant `Allowed Tools` and `Output Format` skeleton blocks; renamed `Context file` → `Subagent prompt`; deduplicated trigger keyword lists
+- `AGENTS.md`: Refactored Technical Group entries (Architect/ABAP Developer/QA Engineer/DBA/DevOps/Intelligence Investigator/Interface Expert/Fiori Developer/Form Expert/GUI Scripter) to dispatch-card format — replaced `Responsibilities` detail bullets with `When to dispatch` + `Output` summary; added missing `Subagent prompt` links to all agents (`code-writer.md`, `test-runner.md`, `dba.md`, `devops-admin.md`, `sap-investigator.md`, `interface-expert.md`, `fiori-developer.md`, `form-expert.md`, `gui-scripter.md`)
+- `AGENTS.md`: Added Technical Group intro note directing readers to `agents/*.md` for full behavioral rules
+- `AGENTS.md`: Updated Last Updated to 2026-05-21
+
 ### Fixed (2026-05-21 Consistency Audit)
 - `GEMINI.md`: Removed `browser_subagent` reference from Multi-Agent Coordination section; corrected "single tool" description — hyperfocused mode exposes all 101 operations via `sap_execute`
 - `docs/tooling-matrix.md`: Removed `browser_subagent` from PM dispatch cell and Default Rule note; renamed "Web research / browser subagent" row to "Web research"; updated Last Updated to 2026-05-20
