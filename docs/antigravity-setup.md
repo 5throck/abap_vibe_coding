@@ -33,12 +33,12 @@ MCP servers for Antigravity are registered in VS Code's **user** `settings.json`
       "command": "C:\\Users\\<your-username>\\abap\\vsp.exe",
       "args": ["--mode", "hyperfocused"],
       "env": {
-        "VSP_MODE": "hyperfocused",
-        "VSP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "VSP_FEATURE_ABAPGIT": "on",
-        "VSP_FEATURE_TRANSPORT": "on",
-        "VSP_FEATURE_UI5": "on",
-        "VSP_FEATURE_RAP": "on"
+        "SAP_MODE": "hyperfocused",
+        "SAP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
+        "SAP_FEATURE_ABAPGIT": "on",
+        "SAP_FEATURE_TRANSPORT": "on",
+        "SAP_FEATURE_UI5": "on",
+        "SAP_FEATURE_RAP": "on"
       }
     },
     "abap-docs": {

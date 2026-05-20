@@ -924,26 +924,74 @@ See `docs/tooling-matrix.md` for the full decision guide.
 
 ## 9. Install VSP WebSocket Infrastructure on SAP
 
-The VSP WebSocket infrastructure enables advanced features like interactive debugging (TPDAPI), dynamic RFC execution, and background report monitoring.
+The VSP WebSocket infrastructure (`ZADT_VSP`) enables advanced features: interactive debugging (TPDAPI), dynamic RFC execution, and background report monitoring. Without it, `RunReport`, `CallRFC`, and the ABAP debugger will not work.
+
+> **Installation order is mandatory**: automated deployment (9-A) → SAP GUI finalization (9-C) → verify (9-D). Steps 9-C cannot be automated and must be completed in SAP GUI before ZADT_VSP is functional.
 
 ### 9-A. Automated Installation
+
 Inside a Claude or Gemini session:
-```bash
+```
 Install VSP infrastructure to package $TMP
 ```
 
-### 9-B. Compatibility Notes for NW 7.52 (NPL)
-If the automated installation fails or shows syntax errors, apply these manual patches:
-- **REGEX Compatibility**: NW 7.52 does not support `FIND PCRE`. All instances must be replaced with `FIND REGEX`.
-- **Dynamic Table Handling**: In `ZCL_VSP_RFC_SERVICE`, ensure field symbols for tables are typed as `ANY TABLE` to prevent "not an internal table" errors.
-- **Optional Services**: If `abapGit` or `AMDP` services are missing, comment out their instantiation in the `class_constructor` of `ZCL_VSP_APC_HANDLER`.
+This deploys the following ABAP objects to your SAP system:
+- `ZCL_VSP_APC_HANDLER` — WebSocket APC handler class
+- `ZCL_VSP_RFC_SERVICE` — RFC service class
+- `ZADT_VSP` — APC application object
 
-### 9-C. Finalize in SAP GUI
-1. **SAPC (APC Management)**: Create application `ZADT_VSP` with handler class `ZCL_VSP_APC_HANDLER` (Stateful).
-2. **SICF (ICF Management)**: Activate service node `/sap/bc/apc/sap/zadt_vsp`.
+> If the session asks which package to use, enter `$TMP` (local, no transport required).
+
+### 9-B. Compatibility Notes for NW 7.52 (NPL)
+
+If the automated installation fails or shows syntax errors, apply these manual patches before proceeding to 9-C:
+
+- **REGEX Compatibility**: NW 7.52 does not support `FIND PCRE`. Replace all instances with `FIND REGEX` in the deployed source.
+- **Dynamic Table Handling**: In `ZCL_VSP_RFC_SERVICE`, ensure field symbols for dynamic tables are typed as `ANY TABLE` before `LOOP AT`.
+- **Optional Services**: If `abapGit` or `AMDP` services are missing on your system, comment out their instantiation in `class_constructor` of `ZCL_VSP_APC_HANDLER`.
+
+### 9-C. Mandatory SAP GUI Finalization
+
+> ⚠️ **These two steps cannot be automated.** ZADT_VSP will not function until both are completed. Do not skip.
+
+#### Step 1 — Register APC Application (Transaction SAPC)
+
+1. Open SAP GUI → Transaction **`SAPC`** (APC Management).
+2. Click **"New"** (or press `F5`) to create a new APC application.
+3. Fill in the fields:
+
+   | Field | Value |
+   |-------|-------|
+   | Application Name | `ZADT_VSP` |
+   | Description | `VSP WebSocket Handler` |
+   | Handler Class | `ZCL_VSP_APC_HANDLER` |
+   | Session Type | **Stateful** |
+   | WebSocket URI | `/sap/bc/apc/sap/zadt_vsp` (auto-filled) |
+
+4. Click **"Save"** (or press `Ctrl+S`).
+5. Confirm the transport dialog — select **"Local Object"** (or assign to a transport if required).
+
+#### Step 2 — Activate ICF Service Node (Transaction SICF)
+
+1. Open SAP GUI → Transaction **`SICF`** (HTTP Service Framework).
+2. In the service tree, navigate to:
+   ```
+   default_host → sap → bc → apc → sap → zadt_vsp
+   ```
+   > Tip: Use the search filter (binoculars icon) with `zadt_vsp` if the tree is large.
+3. Right-click on **`zadt_vsp`** → **"Activate Service"**.
+4. Confirm the activation dialog.
+5. Verify the node icon changes from grey (inactive) to green (active).
+
+> **If the node does not exist**: the automated installation (9-A) may not have created the ICF entry. Re-run the installation, or create the node manually:
+> - Right-click on `/sap/bc/apc/sap/` → **"New Sub-Element"**
+> - Name: `zadt_vsp`, Handler: `ZCL_VSP_APC_HANDLER`
 
 ### 9-D. Verify ZADT_VSP
-**Windows** (Git Bash):
+
+Run from the repo root after completing 9-C:
+
+**Windows** (Git Bash or PowerShell):
 ```bash
 ./vsp system info
 ```
@@ -953,10 +1001,15 @@ If the automated installation fails or shows syntax errors, apply these manual p
 ./vsp system info
 ```
 
-If ZADT_VSP is installed, the output includes:
+Expected output includes:
 ```
 ZADT_VSP: installed (version x.x)
 ```
+
+If you see `ZADT_VSP: not installed`, re-check:
+1. SAPC application `ZADT_VSP` exists and handler class is `ZCL_VSP_APC_HANDLER` (Stateful)
+2. SICF node `/sap/bc/apc/sap/zadt_vsp` is **active** (green icon)
+3. SAP user has `S_BTCH_ADM` authorization for WebSocket operations
 
 ---
 
@@ -1137,13 +1190,13 @@ cat .claude/settings.json
 
 ---
 
-### Problem: `VSP_ALLOWED_PACKAGES` blocks an object
+### Problem: `SAP_ALLOWED_PACKAGES` blocks an object
 
 **Symptom**: `object not in allowed packages` error
 
-**Solution** (both platforms — edit `.mcp.json` and `.env`):
+**Solution** (both platforms — edit `.mcp.json`):
 ```json
-"VSP_ALLOWED_PACKAGES": "Z*,Y*,$TMP,ZSPECIAL_PKG"
+"SAP_ALLOWED_PACKAGES": "Z*,Y*,$TMP,ZSPECIAL_PKG"
 ```
 
 ---
