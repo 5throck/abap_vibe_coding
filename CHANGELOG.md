@@ -9,6 +9,30 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- `AGENTS.md`: Removed 5 incorrect `browser_subagent` references from Form Expert, GUI Scripter, Fiori Dev (Design Mode), and Dispatch Sequences table — tool does not exist in vsp MCP server (IMP-01)
+- `docs/context.md`: Clarified that `hyperfocused` mode registers all 101 individual MCP tools, not a single unified tool — addresses Interface Expert tool availability concern (IMP-02)
+
+### Added
+- `AGENTS.md`: Cross-Module Integration Orchestration section — parallel activation rule, PRD ownership policy, primary analyst designation, and 4 standard scenario templates (SD-FI, MM-FI, SD-LE, PP-MM) (IMP-09)
+- `docs/context.md`: Deployed vsp Binary version table (`v2.38.1`, built 2026-04-07) (IMP-05)
+- `docs/context.md`: Canonical ABAP SQL Reference section for all agents (DESCENDING, max_rows, tilde notation, anti-patterns) (IMP-08)
+- `scripts/vsp-audit.ps1` / `vsp-audit.sh`: Check 6 — reports vsp binary version on each audit run (IMP-05)
+- `agents/architect.md`: Pattern C partial-failure rollback procedure — 5-step recovery process when multi-object refactor aborts mid-sequence (IMP-04)
+- `docs/testing-guidelines.md`: ATC Priority-2 Escalation Workflow — three disposition options (Fix / Suppress-with-justification / Defer) with recording location and decision criteria (IMP-03)
+- `docs/testing-guidelines.md`: ABAP Unit Test Skeleton section with method naming convention and AAA pattern reference (IMP-10)
+- `scratch/stable/z_unit_test_skeleton.clas.abap`: Reference ABAP Unit test skeleton with TEST-SEAM injection pattern (IMP-10)
+- `agents/sap-investigator.md`: 6 cross-module pattern groups — SD-FI, MM-FI, SD-LE, PP-MM, LE extended, PP extended (IMP-06)
+- `skills/sap-co/SKILL.md`, `sap-pp/SKILL.md`, `sap-le/SKILL.md`: Strategic BAPIs & APIs section added to complete all 8 required skill sections (IMP-07)
+- `scratch/tasks/task-2026-05-20-001` through `-010`: Task handoff files for all 10 improvement items from 2026-05-20 all-hands review meeting
+
+### Changed
+- `agents/test-runner.md`: ATC P2 standard updated to reference new escalation workflow (IMP-03)
+- `docs/task-template.md`: Rollback Plan table added to §2 Technical Design; P2 Disposition field added to §4.2 ATC Check Results (IMP-03, IMP-04)
+- `agents/read-only-analyst.md`: Inline ABAP SQL Quick Reference replaced with canonical reference pointer to `docs/context.md` (IMP-08)
+- `agents/dba.md`: SQL syntax rule reference added to behavior rules (IMP-08)
+- `agents/interface-expert.md`: Confirmed tool availability note added to `## Your Tools` section (IMP-02)
+
 ---
 
 ## [0.5.0] — 2026-05-20
