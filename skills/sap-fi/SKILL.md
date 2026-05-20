@@ -112,12 +112,27 @@ SELECT rldnr, rbukrs, racct, ryear, drcrk, tslvt, tsl01, tsl02
 
 ### Accounting Document Posting
 **BAPI**: `BAPI_ACC_DOCUMENT_POST`
-- `DOCUMENTHEADER`: `OBJ_TYPE`, `OBJ_KEY`, `BUS_ACT`, `USERNAME`, `HEADER_TXT`
-- `ACCOUNTGL`: `GL_ACCOUNT`, `ITEM_TEXT`, `AMT_DOCCUR`
-- `ACCOUNTRECEIVABLE`: `CUSTOMER`, `ITEM_TEXT`
-- `ACCOUNTPAYABLE`: `VENDOR`, `ITEM_TEXT`
-- `CURRENCYAMOUNT`: `CURRENCY`, `AMT_DOCCUR`
+- `DOCUMENTHEADER`: `OBJ_TYPE`, `OBJ_KEY`, `BUS_ACT` (`RFBU`=G/L posting), `USERNAME`, `COMP_CODE`, `DOC_DATE`, `PSTNG_DATE`, `HEADER_TXT`
+- `ACCOUNTGL`: `ITEMNO_ACC`, `GL_ACCOUNT`, `COMP_CODE`, `ITEM_TEXT`, `AMT_DOCCUR`, `DEBIT_CRED`
+- `ACCOUNTRECEIVABLE`: `ITEMNO_ACC`, `CUSTOMER`, `ITEM_TEXT`, `PMNT_BLOCK`
+- `ACCOUNTPAYABLE`: `ITEMNO_ACC`, `VENDOR`, `ITEM_TEXT`, `PMNT_BLOCK`
+- `CURRENCYAMOUNT`: `ITEMNO_ACC`, `CURRENCY`, `AMT_DOCCUR`, `AMT_BASE`
+- Note: commit with `BAPI_TRANSACTION_COMMIT`; always check `RETURN` for `TYPE = 'E'`
 
 ### Document Simulation
 **BAPI**: `BAPI_ACC_DOCUMENT_CHECK`
-- Identical interface to `POST`, used for validation before commit.
+- Identical interface to `BAPI_ACC_DOCUMENT_POST` — use for dry-run validation before actual posting.
+- `RETURN`: Returns errors without creating a document — no commit needed.
+
+### Document Reversal
+**BAPI**: `BAPI_ACC_DOCUMENT_REV_POST`
+- `DOCUMENTHEADER`: `OBJ_TYPE`, `OBJ_KEY`, `BUS_ACT` (`RFBU`), `USERNAME`, `COMP_CODE`
+- `REVERSAL`: `BELNR` (Document to reverse), `BUKRS`, `GJAHR`, `STGRD` (Reversal Reason), `STODT` (Reversal Date)
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+- Note: Creates a mirror document with reversed debit/credit signs; `BKPF.STBLG` links the pair
+
+### Incoming Invoice (MIRO equivalent)
+**BAPI**: `BAPI_INCOMINGINVOICE_CREATE`
+- `HEADERDATA`: `INVOICE_IND` (`X`=Invoice, space=Credit Memo), `DOC_DATE`, `PSTNG_DATE`, `COMP_CODE`, `CURRENCY`, `GROSS_AMOUNT`, `CALC_TAX_IND`
+- `ITEMDATA`: `INVOICE_DOC_ITEM`, `PO_NUMBER`, `PO_ITEM`, `QUANTITY`, `PO_UNIT`, `ITEM_AMOUNT`
+- `RETURN`: Standard BAPI return — check `TYPE = 'E'`; commit with `BAPI_TRANSACTION_COMMIT`

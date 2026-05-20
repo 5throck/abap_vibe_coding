@@ -104,10 +104,31 @@ SELECT kunnr, COUNT(*) AS order_cnt, SUM( netwr ) AS total_net
 
 ### Sales Order Creation
 **BAPI**: `BAPI_SALESORDER_CREATEFROMDAT2`
-- `ORDER_HEADER_IN`: `AUART` (Type), `VKORG` (Sales Org), `VTWEG` (Dist. Channel)
-- `ORDER_ITEMS_IN`: `MATERIAL`, `PLANT`, `TARGET_QUY`
-- `ORDER_PARTNERS`: `PARTN_ROLE` (`SP`=Sold-to, `SH`=Ship-to), `PARTN_NUMB`
+- `ORDER_HEADER_IN`: `AUART` (Type), `VKORG` (Sales Org), `VTWEG` (Dist. Channel), `SPART` (Division), `KUNNR` (Sold-to)
+- `ORDER_ITEMS_IN`: `MATERIAL`, `PLANT`, `TARGET_QTY`, `TARGET_QU` (UoM), `SALES_UNIT`
+- `ORDER_PARTNERS`: `PARTN_ROLE` (`SP`=Sold-to, `SH`=Ship-to, `BP`=Bill-to), `PARTN_NUMB`
+- `RETURN`: Standard BAPI return — check `TYPE = 'E'` before `BAPI_TRANSACTION_COMMIT`
 
-### Delivery Management
+### Sales Order Change
+**BAPI**: `BAPI_SALESORDER_CHANGE`
+- `SALESDOCUMENT`: Sales Order Number (`VBELN`)
+- `ORDER_HEADER_IN`: Fields to change — `REQ_DATE_H`, `PURCH_NO_C`, `INCOTERMS1`
+- `ORDER_HEADER_INX`: Checkboxes for changed fields (X = changed)
+- `ORDER_ITEM_IN`: `ITM_NUMBER`, `REQ_QTY`, `PLANT` — item-level changes
+- `ORDER_ITEM_INX`: Checkboxes for changed item fields
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+
+### Delivery Creation from Sales Order
 **BAPI**: `BAPI_OUTB_DELIVERY_CREATE_SLS`
-- Used to create delivery from sales order.
+- `SHIP_POINT`: Shipping Point (`VSTEL`)
+- `DUE_DATE`: Requested delivery date (filters which order items are due)
+- `SALES_ORDER_ITEMS`: `VBELN` (Sales Order), `POSNR` (Item) — leave empty to process all due items
+- `DELIVERY`: Returns created delivery number
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+
+### Billing Document Creation
+**BAPI**: `BAPI_BILLINGDOC_CREATEMULTIPLE`
+- `BILLINGDATAIN`: `REF_DOC` (Delivery/Order number), `REF_DOC_CA` (Category: `J`=Delivery, `C`=Order), `BILL_DATE`
+- `ERRORS`: Error table — check before commit
+- `SUCCESS`: Returns created billing document numbers
+- Note: Commit individually per document via `BAPI_TRANSACTION_COMMIT`; batch processing supported

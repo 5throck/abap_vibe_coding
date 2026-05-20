@@ -116,8 +116,24 @@ CO-PA has two types:
 ### Cost Center Creation (Multiple)
 **BAPI**: `BAPI_COSTCENTER_CREATEMULTIPLE`
 - `CONTROLLINGAREA`: Controlling Area key (`KOKRS`)
-- `COSTCENTERLIST`: Table of cost center records — `COSTCENTER`, `VALID_FROM`, `VALID_TO`, `NAME`, `DESCRIPT`, `PERSON_RESP`, `COSTCTR_TYPE`
+- `COSTCENTERLIST`: Table of cost center records — `COSTCENTER`, `VALID_FROM`, `VALID_TO`, `NAME`, `DESCRIPT`, `PERSON_RESP`, `COSTCTR_TYPE`, `PROFIT_CENTER`
 - `RETURN`: Standard BAPI return table — check `TYPE = 'E'` for errors before `BAPI_TRANSACTION_COMMIT`
+
+### Cost Center Change
+**BAPI**: `BAPI_COSTCENTER_CHANGE`
+- `CONTROLLINGAREA`: Controlling Area key (`KOKRS`)
+- `COSTCENTER`: Cost Center to change
+- `VALIDFROM` / `VALIDTO`: Validity period of the record to change
+- `COSTCENTER_DATA`: Fields to update — `NAME`, `DESCRIPT`, `PERSON_RESP`, `PROFIT_CENTER`, `COSTCTR_TYPE`
+- `COSTCENTER_DATA_X`: Checkboxes for changed fields (X = changed)
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+
+### Internal Order Create
+**BAPI**: `BAPI_INTERNALORDER_CREATE`
+- `CONTROLLINGAREA`: Controlling Area key (`KOKRS`)
+- `ORDER_DATA_PS`: `ORDER_TYPE`, `SHORT_TEXT`, `RESPONSIBLE_COST_CTR`, `PROFIT_CENTER`, `PERSON_RESP`, `PLANT`, `WBS_ELEMENT`
+- `ORDERID`: Returns created Internal Order number (`AUFNR`)
+- `RETURN`: Standard BAPI return — check `TYPE = 'E'`; commit with `BAPI_TRANSACTION_COMMIT`
 
 ### Internal Order Change
 **BAPI**: `BAPI_INTERNALORDER_CHANGE`

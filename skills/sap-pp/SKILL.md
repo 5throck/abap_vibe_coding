@@ -112,3 +112,16 @@ SELECT matnr, werks, plart, dispo, mabst, eisbe
 - `ORDER_DATA`: Fields to change — `QUANTITY`, `BASIC_START_DATE`, `BASIC_END_DATE`, `SCHED_TYPE`
 - `ORDER_DATA_X`: Checkboxes for changed fields (X = changed)
 - `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+
+### Production Order Release
+**BAPI**: `BAPI_PRODORD_RELEASE`
+- `NUMBER`: Production Order Number (`AUFNR`) — releases order to status `REL`
+- `RETURN`: Standard BAPI return — check `TYPE = 'E'`; commit with `BAPI_TRANSACTION_COMMIT`
+- Note: Only orders in `CRTD` (Created) or `MSPT` (Material Shortage) status can be released; triggers capacity planning update
+
+### Production Order Confirmation
+**BAPI**: `BAPI_PRODORD_COMPLETE_CONF`
+- `NUMBER`: Production Order Number (`AUFNR`)
+- `CONF_DATA`: `CONF_QTY` (Confirmed Yield), `SCRAP_QTY`, `CONF_UNIT`, `WORK_CENTER`, `CONF_ACTIVITY1`/`2`/`3` (Activity quantities), `FIN_CONF` (`X`=Final Confirmation → sets CNF status)
+- `TIMETICKETS`: Table for multiple operation confirmations — `OPERATION`, `CONF_QTY`, `FIN_CONF`
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`

@@ -109,9 +109,24 @@ SELECT a~tanum, a~lgnum, a~bdatu, b~matnr, b~sollm, b~istme
 - `DELIVERY_ITEM_CHANGES`: `DELIV_QTY`, `MATERIAL`, `BATCH` — item-level updates
 - `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
 
+### Outbound Delivery Goods Issue Confirmation / Cancellation
+**BAPI**: `BAPI_OUTB_DELIVERY_CONFIRM_DEC`
+- `DELIVERY`: Delivery number to confirm or reverse (`VBELN`)
+- `CONFIRM_DEC_CONTROL`: `ACTION` — `C`=Confirm Goods Issue, `R`=Reverse/Cancel Goods Issue
+- `POSTING_DATE`: Date for the confirmation posting
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+- Note: Cancellation creates a reversal goods movement in `MSEG`; mirrors `VL09` transaction
+
 ### WM Transfer Order Creation
 **BAPI**: `BAPI_WHSE_TO_CREATE`
 - `WAREHOUSE_NO`: Warehouse Number (`LGNUM` from `T300`)
 - `REFERENCE_DOC_NO`: Source document (e.g., delivery number or TO reference)
 - `TRANSFER_ORDER_ITEMS`: `MATNR`, `WERKS`, `LGORT`, `SOLLM` (target qty), `NLTYP` (dest. storage type), `NLPLA` (dest. bin)
 - `RETURN`: Standard BAPI return — confirm TO separately via `LT0A` or `BAPI_WHSE_TO_CONFIRM`
+
+### WM Transfer Order Confirmation
+**BAPI**: `BAPI_WHSE_TO_CONFIRM`
+- `WAREHOUSE_NO`: Warehouse Number (`LGNUM`)
+- `TANUM`: Transfer Order Number to confirm
+- `CONFIRMED_ITEMS`: Table of `TAPOS` (item number), `MATNR`, `ISQUI` (confirmed qty), `ISEUM` (UoM) — leave empty to confirm all items at target quantities
+- `RETURN`: Standard BAPI return — sets `LTAK.KQUIT = 'Q'`; commit with `BAPI_TRANSACTION_COMMIT`

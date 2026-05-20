@@ -9,6 +9,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (2026-05-21 BAPI Coverage Expansion)
+- `skills/sap-sd/SKILL.md`: Added `BAPI_SALESORDER_CHANGE` (Sales Order Change) and `BAPI_BILLINGDOC_CREATEMULTIPLE` (Billing Document Creation); expanded `BAPI_OUTB_DELIVERY_CREATE_SLS` stub to full parameter documentation; fixed typo `TARGET_QUY` → `TARGET_QTY` in `BAPI_SALESORDER_CREATEFROMDAT2`
+- `skills/sap-mm/SKILL.md`: Added `BAPI_PO_CHANGE` (Purchase Order Change) and `BAPI_MATERIAL_SAVEDATA` (Material Master Save); expanded existing BAPIs with additional parameter detail
+- `skills/sap-fi/SKILL.md`: Added `BAPI_ACC_DOCUMENT_REV_POST` (Document Reversal) and `BAPI_INCOMINGINVOICE_CREATE` (Incoming Invoice / MIRO equivalent); expanded `BAPI_ACC_DOCUMENT_POST` with full parameter detail
+- `skills/sap-co/SKILL.md`: Added `BAPI_COSTCENTER_CHANGE` (Cost Center Change) and `BAPI_INTERNALORDER_CREATE` (Internal Order Create); expanded existing BAPIs with additional parameter detail
+- `skills/sap-pp/SKILL.md`: Added `BAPI_PRODORD_RELEASE` (Production Order Release) and `BAPI_PRODORD_COMPLETE_CONF` (Production Order Confirmation)
+- `skills/sap-le/SKILL.md`: Added `BAPI_OUTB_DELIVERY_CONFIRM_DEC` (Delivery Goods Issue Confirmation/Cancellation) and `BAPI_WHSE_TO_CONFIRM` (WM Transfer Order Confirmation)
+
 ### Changed (2026-05-21 PM card + Architect Technical Lead)
 - `AGENTS.md`: PM entry converted to dispatch-card format — removed redundant §5 Finalization steps and Responsibilities bullets (detail lives in `agents/pm.md`); added `Entry point` and `Subagent prompt` fields
 - `AGENTS.md`: Architect designated as **Technical Execution Lead** — role explicitly stated in Technical Group intro and Architect card; added `Technical Lead responsibilities` field

@@ -110,11 +110,31 @@ SELECT matnr, bwkey, vprsv, verpr, stprs, peinh, laepr
 ### Purchase Order Creation
 **BAPI**: `BAPI_PO_CREATE1`
 - `POHEADER`: `COMP_CODE`, `DOC_TYPE`, `VENDOR`, `PURCH_ORG`, `PUR_GROUP`
-- `POITEM`: `MATERIAL`, `PLANT`, `QUANTITY`, `NET_PRICE`
-- `POACCOUNT`: Used for account assignment (K, P, etc.)
+- `POITEM`: `PO_ITEM`, `MATERIAL`, `PLANT`, `QUANTITY`, `NET_PRICE`, `PRICE_UNIT`
+- `POACCOUNT`: Used for account assignment (K=Cost Center, P=Project, etc.) — `PO_ITEM`, `SERIAL_NO`, `GL_ACCOUNT`, `COSTCENTER`
+- `RETURN`: Standard BAPI return — check `TYPE = 'E'` before `BAPI_TRANSACTION_COMMIT`
+
+### Purchase Order Change
+**BAPI**: `BAPI_PO_CHANGE`
+- `PURCHASEORDER`: PO Number (`EBELN`)
+- `POHEADER`: Fields to change — `VENDOR`, `PMNTTRMS`, `INCOTERMS1`
+- `POHEADERX`: Checkboxes for changed header fields (X = changed)
+- `POITEM`: `PO_ITEM`, `QUANTITY`, `NET_PRICE`, `PLANT` — item-level changes
+- `POITEMX`: Checkboxes for changed item fields
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
 
 ### Goods Movement
 **BAPI**: `BAPI_GOODSMVT_CREATE`
-- `GOODSMVT_CODE`: `01` (PO), `02` (PR), `03` (Delivery)
-- `GOODSMVT_HEADER`: `PSTNG_DATE`, `DOC_DATE`
-- `GOODSMVT_ITEM`: `MATERIAL`, `PLANT`, `STGE_LOC`, `MOVE_TYPE`, `ENTRY_QNT`
+- `GOODSMVT_CODE`: `01` (PO Reference), `02` (PR Reference), `03` (Delivery Reference), `04` (Other)
+- `GOODSMVT_HEADER`: `PSTNG_DATE`, `DOC_DATE`, `REF_DOC_NO`
+- `GOODSMVT_ITEM`: `MATERIAL`, `PLANT`, `STGE_LOC`, `MOVE_TYPE`, `ENTRY_QNT`, `ENTRY_UOM`, `PO_NUMBER`, `PO_ITEM`
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+
+### Material Master Save
+**BAPI**: `BAPI_MATERIAL_SAVEDATA`
+- `HEADDATA`: `MATERIAL`, `IND_SECTOR` (Industry Sector), `MATL_TYPE` (Material Type), `BASIC_VIEW` (X=create Basic Data view)
+- `CLIENTDATA`: `MATL_DESC`, `BASE_UOM`, `MATL_GROUP`, `DIVISION`
+- `CLIENTDATAX`: Checkboxes for changed client-level fields
+- `PLANTDATA`: `PLANT`, `PURCHASING`, `MRP_TYPE`, `MRP_CTRLER`, `LOT_SIZE`
+- `PLANTDATAX`: Checkboxes for changed plant-level fields
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
