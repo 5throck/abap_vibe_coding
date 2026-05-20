@@ -127,7 +127,7 @@ flowchart TD
 |----------|------|--------|
 | Standard development | Focused | Simpler, fewer choices |
 | Existing workflow scripts | Expert | Backward compatibility |
-| AI Agent Optimization | Hyperfocused | **Recommended.** Best for Gemini/Claude. Single tool reduces hallucinations. |
+| AI Agent Optimization | Hyperfocused | **Recommended.** Best for Gemini/Claude. All 101 ops accessible via `sap_execute`; single entry point reduces tool-selection hallucinations. |
 | Debugging lock issues | Expert | Direct LockObject access |
 | Learning the API | Expert | See all atomic operations |
 
@@ -489,10 +489,10 @@ Step 1: GetSource(type=MSAG, name=ZRAY_00)
 
 ## Specialized Tools (Requires Feature Flags)
 
-These tools require specific feature flags to be enabled in `.mcp.json` or `.env` (e.g., `VSP_FEATURE_TRANSPORT=on`).
+These tools require specific feature flags to be enabled in `.mcp.json` or `.env` (e.g., `SAP_FEATURE_TRANSPORT=on`).
 
 ### 1. Transport Management (CTS)
-**Flag:** `VSP_FEATURE_TRANSPORT=on`
+**Flag:** `SAP_FEATURE_TRANSPORT=on`
 
 | Task | Tool | Parameters | Description |
 |------|------|------------|-------------|
@@ -502,7 +502,7 @@ These tools require specific feature flags to be enabled in `.mcp.json` or `.env
 | Release request | `ReleaseTransport` | `transport_id=A4HK900094` | Release/Export a transport request |
 
 ### 2. OData & RAP (Restful ABAP Programming)
-**Flag:** `VSP_FEATURE_RAP=on`
+**Flag:** `SAP_FEATURE_RAP=on`
 
 | Task | Tool | Parameters | Description |
 |------|------|------------|-------------|
@@ -511,7 +511,7 @@ These tools require specific feature flags to be enabled in `.mcp.json` or `.env
 | CDS Exposure | `GetCDSExposure` | `ddls_name=Z_MY_CDS` | Check if CDS is exposed as OData |
 
 ### 3. Fiori & UI5 (BSP)
-**Flag:** `VSP_FEATURE_UI5=on`
+**Flag:** `SAP_FEATURE_UI5=on`
 
 | Task | Tool | Parameters | Description |
 |------|------|------------|-------------|

@@ -514,10 +514,11 @@ If you get an error, check:
 
 > **`abap-docs`**: ABAP keyword and API reference (marianzeis.de).
 > **`sap-docs`**: SAP Help Portal documentation search.
-> **Focused mode** (more tools, standard development):
-> Change `"SAP_MODE": "focused"` — gives access to 100 tools instead of 1.
+> **Focused mode** (named tools, standard development):
+> Change `"SAP_MODE": "focused"` — exposes ~100 individually named MCP tools instead of routing through `sap_execute`.
 > **Expert mode** (all tools, debugging / advanced operations):
-> Change `"SAP_MODE": "expert"` — gives access to 147 tools.
+> Change `"SAP_MODE": "expert"` — exposes 147 individually named MCP tools.
+> **Note**: hyperfocused mode still provides access to all 101 MCP operations — they are routed via `sap_execute` rather than registered as individual tool names. See `docs/context.md § Deployed vsp Binary`.
 
 ---
 
@@ -685,7 +686,7 @@ In the Claude session, run:
 Expected output:
 ```
 Connected MCP servers:
-  abap      — vsp (hyperfocused mode) · 1 tool (sap_execute)
+  abap      — vsp (hyperfocused mode) · 1 entry point (sap_execute, routes to 101 operations)
   abap-docs — ABAP keyword & API reference · N tools
   sap-docs  — SAP Help Portal search · N tools
 ```
@@ -914,7 +915,7 @@ Expected: `sap_execute` and abap-docs / sap-docs tools listed.
 ### 8-C. Recommended use cases for Gemini CLI
 
 Gemini CLI is preferred when:
-- **Web research** is required during development (`browser_subagent` native capability)
+- **Web research** is required during development (native web research capability)
 - **Long-running background research** needs to be delegated without blocking the main session
 - Comparing with `abap-docs` / `sap-docs` MCP servers for SAP documentation lookups
 
@@ -1288,11 +1289,11 @@ Use this list when onboarding a new team member.
 
 | Mode | Tools | Best for |
 |------|-------|---------|
-| `hyperfocused` | 1 (`sap_execute`) | AI agents — minimal hallucination risk |
-| `focused` | 100 | Standard development sessions |
-| `expert` | 147 | Debugging, advanced operations |
+| `hyperfocused` | 101 ops via `sap_execute` | AI agents — all tools accessible, hallucination-resistant single entry point |
+| `focused` | ~100 named tools | Standard development sessions |
+| `expert` | 147 named tools | Debugging, advanced operations |
 
-Change mode in `.mcp.json` `env.VSP_MODE` and `.env` `VSP_MODE`.
+Change mode in `.mcp.json` `env.SAP_MODE` and `.env` `SAP_MODE`.
 
 ---
 
@@ -1343,5 +1344,5 @@ bash scripts/vsp-sync.sh "feat: summary of change"
 ```
 
 ---
-*Document version: 1.6 — 2026-05-19*
+*Document version: 1.7 — 2026-05-20*
 *Maintained by: VSP Harness Engineering Team*

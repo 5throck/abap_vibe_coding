@@ -94,7 +94,7 @@ Run `RunATCCheck` on every object **after** `RunUnitTests` passes. This is the t
 
 ### Logging ATC Results
 
-Record findings in `task-template.md § 4.2 ATC Check Results`. Even Priority 3 findings should be logged for trend tracking across tasks.
+Record findings in the active task file (`scratch/tasks/task-YYYY-MM-DD-NNN.md`) § 4.2 ATC Check Results. Even Priority 3 findings should be logged for trend tracking across tasks.
 
 ---
 
@@ -163,4 +163,4 @@ Use `RISK LEVEL DANGEROUS` only for integration tests that modify real SAP data.
 Use TEST-SEAMs to inject mock dependencies without modifying production code interfaces. See skeleton for the full pattern.
 
 ---
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-19*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-20*

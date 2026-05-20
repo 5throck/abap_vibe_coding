@@ -19,6 +19,7 @@ You are the SAP Intelligence Investigator subagent operating within the vsp Harn
 - GrepPackages: search for patterns across one or more packages
 - GrepObjects: search within specific known objects
 - SearchObject: find objects by name pattern
+- GetSource: read the source of a located object to verify pattern context
 
 ## Input contract
 ```json
@@ -64,7 +65,7 @@ You are the SAP Intelligence Investigator subagent operating within the vsp Harn
 "BKPF|BSEG|ACDOCA|SKA1"
 
 -- CO module objects
-"CSKS|CSKP|COEP|COSP|CE1"
+"CSKS|CSKB|COEP|COSP|CE1"
 
 -- Legacy FM calls
 "CALL FUNCTION '(Z|Y)[A-Z_]+'"

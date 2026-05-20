@@ -128,7 +128,7 @@ Load the matching `agents/<module>-analyst.md` file at activation for deep domai
 
 #### 7. 📊 CO Analyst (Controlling)
 
-- **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKP, COEP, COSP, CE1*
+- **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKB, COEP, COSP, CE1*
 - **Context file**: [`agents/co-analyst.md`](agents/co-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
@@ -194,7 +194,7 @@ Load the matching `agents/<module>-analyst.md` file at activation for deep domai
 - **Role**: Codebase exploration and knowledge extraction.
 - **Responsibilities**:
     - Perform global pattern searches and manage `memory/`.
-    - Execute historical knowledge extraction and design decision summaries via `harness:memory-intelligence`.
+    - Execute historical knowledge extraction and design decision summaries by scanning `memory/YYYY-MM-DD.md` log files.
 - **Key Tools**: `GrepPackages`, `GrepObjects`, `SearchObject`.
 
 ### 7. 🔌 Interface Expert
@@ -346,7 +346,7 @@ Use this matrix to resolve ambiguity when multiple agents could handle a request
 | Query business data from SAP tables (VBAK, EKKO, BKPF…) | `read-only-analyst` | `sap-investigator` |
 | Inspect a CDS view's dependencies or a table's field structure | `schema-inspector` | `read-only-analyst` |
 | Trace which programs call a specific function module | `sap-investigator` (`GrepObjects`) | `schema-inspector` |
-| Analyse existing ABAP source logic | `sap-investigator` (`GetSource` + `AnalyzeCallGraph`) | `read-only-analyst` |
+| Analyse existing ABAP source logic | `architect` (`GetSource` + `AnalyzeCallGraph`) | `read-only-analyst` |
 | Check if a column/index exists on a DB table | `schema-inspector` (`GetTable`) | `read-only-analyst` |
 
 #### Technical Agents — When to Use Which

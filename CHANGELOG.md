@@ -9,6 +9,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed (2026-05-21 Consistency Audit)
+- `GEMINI.md`: Removed `browser_subagent` reference from Multi-Agent Coordination section; corrected "single tool" description — hyperfocused mode exposes all 101 operations via `sap_execute`
+- `docs/tooling-matrix.md`: Removed `browser_subagent` from PM dispatch cell and Default Rule note; renamed "Web research / browser subagent" row to "Web research"; updated Last Updated to 2026-05-20
+- `docs/setup-guide.md`: Removed `browser_subagent` from §8-C; corrected Appendix B mode table (hyperfocused = "101 ops via sap_execute", not "1 tool"); fixed `VSP_MODE` → `SAP_MODE` in Appendix B; clarified §5-D note; updated to version 1.7 / 2026-05-20
+- `docs/plugin-setup.md`: Fixed `VSP_MODE` → `SAP_MODE` and `VSP_ALLOWED_PACKAGES` → `SAP_ALLOWED_PACKAGES` in §3 `.env` template
+- `docs/mcp_usage.md`: Fixed `VSP_FEATURE_TRANSPORT/RAP/UI5` → `SAP_FEATURE_*` throughout Specialized Tools section; corrected Mode Selection Guide to accurately describe hyperfocused as 101-op routing
+- `AGENTS.md`: Removed non-existent `harness:memory-intelligence` skill reference from Intelligence Investigator; fixed CO trigger keyword `CSKP` → `CSKB`; corrected Role Boundary Matrix: "Analyse ABAP source logic" now maps to `architect` (not `sap-investigator`)
+- `agents/sap-investigator.md`: Fixed CO pattern `CSKP` → `CSKB`; added `GetSource` to tools list for pattern-context verification
+- `docs/testing-guidelines.md`: Fixed §Logging ATC Results to reference "active task file" not "task-template.md"; updated Last Updated to 2026-05-20
+- **C-08 verified non-issue**: `agents/architect.md` already contained `GetCDSImpactAnalysis` — no change needed
+
 ### Fixed
 - `AGENTS.md`: Removed 5 incorrect `browser_subagent` references from Form Expert, GUI Scripter, Fiori Dev (Design Mode), and Dispatch Sequences table — tool does not exist in vsp MCP server (IMP-01)
 - `docs/context.md`: Clarified that `hyperfocused` mode registers all 101 individual MCP tools, not a single unified tool — addresses Interface Expert tool availability concern (IMP-02)
