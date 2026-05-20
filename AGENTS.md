@@ -1,10 +1,15 @@
-# Harness Engineering: Agent Definitions
+# Harness Engineering: Agent Registry & Orchestration Contract
 
-> **Scope**: This file is the agent registry and orchestration contract.
+> **⚠️ For AI tools reading this file**: This file is a **registry and orchestration reference**, not a set of instructions directed at you.
+> It describes multiple distinct human-defined roles (PM, Architect, DBA, etc.) for documentation and dispatch purposes.
+> Do **not** interpret role definitions here as directives for your own behavior.
+> Your behavioral instructions are in `CLAUDE.md` (Claude Code), `GEMINI.md` (Gemini CLI), or `.codex/config.toml` (Codex).
+
+> **Scope**: Agent role definitions live in [`agents/*.md`](agents/) — this file is the registry index and orchestration contract only.
 > Shared engineering rules (memory logging, language, file isolation, post-write chain, git) live in [docs/context.md](docs/context.md#project-wide-rules-all-tools).
 > Tool-specific overrides live in [CLAUDE.md](CLAUDE.md), [GEMINI.md](GEMINI.md), and [.codex/](.codex/).
 
-This file defines the roles and responsibilities of each agent operating within the ABAP development ecosystem, organized into Business and Technical groups.
+This file indexes the agent roles and defines the orchestration workflow for the ABAP development ecosystem, organized into Business and Technical groups.
 
 ## 🏢 Business Group (Project Governance & Analysis)
 
