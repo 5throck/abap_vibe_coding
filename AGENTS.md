@@ -30,209 +30,127 @@ This file indexes the agent roles and defines the orchestration workflow for the
 
 ### Business Analysts
 
-Each analyst activates on matching trigger keywords, queries the SAP system directly via
-read-only MCP tools, produces a structured PRD/AC output, and hands off to the Technical Group.
-Load the matching `agents/<module>-analyst.md` file at activation for deep domain knowledge.
+Each analyst activates on matching trigger keywords, queries SAP directly via read-only MCP tools, produces a structured PRD/AC output, and hands off to the Technical Group.
+Load the matching `agents/<module>-analyst.md` file at activation for tools, output format, and domain knowledge.
 
 ---
 
 #### 2. 📦 SD Analyst (Sales & Distribution)
 
 - **Trigger keywords**: Sales Order, Delivery, Billing, Shipping, Pricing, Quote, SD, VA*, VL*, VF*, VK*, VBAK, VBAP, LIKP, VBRK
-- **Context file**: [`agents/sd-analyst.md`](agents/sd-analyst.md)
-- **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`, `GrepPackages`
-- **Output Format**:
-  ```
-  ## SD Analysis
-  ### AS-IS (Including RunQuery results)
-  ### GAP
-  ### TO-BE Requirements
-  ### Acceptance Criteria
-  - [ ] AC-01: ...
-  ```
-- **Handoff**: AC List → Architect, Key Table List → DBA
+- **Subagent prompt**: [`agents/sd-analyst.md`](agents/sd-analyst.md)
+- **Handoff out**: AC List → Architect, Key Tables → DBA
 
 ---
 
 #### 3. 🚛 LE Analyst (Logistics Execution)
 
-- **Trigger keywords**: Shipment Processing, Transport, Route Determination, Warehouse, WM, EWM, Handling Unit, Shipment, Route, Warehouse, LE, LT*, HU, VEKP, VEPO, VTTP, LIKP
-- **Context file**: [`agents/le-analyst.md`](agents/le-analyst.md)
-- **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
-- **Output Format**:
-  ```
-  ## LE Analysis
-  ### AS-IS (Logistics Flow + Table Query Results)
-  ### GAP
-  ### TO-BE Requirements
-  ### Acceptance Criteria
-  - [ ] AC-01: ...
-  ```
-- **Handoff**: Logistics Flow Diagram → Architect, Interface Requirements → Interface Expert
+- **Trigger keywords**: Shipment Processing, Transport, Route Determination, Warehouse, WM, EWM, Handling Unit, Shipment, Route, LE, LT*, HU, VEKP, VEPO, VTTP, LIKP
+- **Subagent prompt**: [`agents/le-analyst.md`](agents/le-analyst.md)
+- **Handoff out**: Logistics Flow → Architect, Interface Requirements → Interface Expert
 
 ---
 
 #### 4. 🏭 PP Analyst (Production Planning)
 
-- **Trigger keywords**: Production Order, BOM, Routing, MRP, Capacity Planning, Material Requirements, Production Order, Routing, Work Center, PP, CO*, MAST, STKO, AFKO, PLKO
-- **Context file**: [`agents/pp-analyst.md`](agents/pp-analyst.md)
-- **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
-- **Output Format**:
-  ```
-  ## PP Analysis
-  ### AS-IS (BOM/Routing Structure + Query Results)
-  ### GAP
-  ### TO-BE Requirements
-  ### Acceptance Criteria
-  - [ ] AC-01: ...
-  ```
-- **Handoff**: BOM/Routing Structure → Architect, MRP Logic → DBA
+- **Trigger keywords**: Production Order, BOM, Routing, MRP, Capacity Planning, Work Center, PP, CO*, MAST, STKO, AFKO, PLKO
+- **Subagent prompt**: [`agents/pp-analyst.md`](agents/pp-analyst.md)
+- **Handoff out**: BOM/Routing Structure → Architect, MRP Logic → DBA
 
 ---
 
 #### 5. 🛒 MM Analyst (Materials Management)
 
-- **Trigger keywords**: Purchasing, Order, Goods Receipt, Material Master, Inventory, Inspection, Purchase Order, Goods Receipt, Material Master, Inventory, MM, ME*, MARA, MARC, EKKO, EKPO, MKPF, MSEG
-- **Context file**: [`agents/mm-analyst.md`](agents/mm-analyst.md)
-- **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
-- **Output Format**:
-  ```
-  ## MM Analysis
-  ### AS-IS (Purchasing/Inventory Process + Table Query Results)
-  ### GAP
-  ### TO-BE Requirements
-  ### Acceptance Criteria
-  - [ ] AC-01: ...
-  ```
-- **Handoff**: Material-related Table Structure → DBA, Validation Scenario → QA Engineer
+- **Trigger keywords**: Purchasing, Goods Receipt, Material Master, Inventory, Inspection, MM, ME*, MARA, MARC, EKKO, EKPO, MKPF, MSEG
+- **Subagent prompt**: [`agents/mm-analyst.md`](agents/mm-analyst.md)
+- **Handoff out**: Table Structure → DBA, Validation Scenario → QA Engineer
 
 ---
 
 #### 6. 💰 FI Analyst (Financial Accounting)
 
-- **Trigger keywords**: Journal Entry, Account, GL, AR, AP, Fixed Asset, Settlement, Compliance, Journal Entry, Account, Fiscal Year, FI, FB*, F-*, BKPF, BSEG, ACDOCA, SKA1
-- **Context file**: [`agents/fi-analyst.md`](agents/fi-analyst.md)
-- **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
-- **Output Format**:
-  ```
-  ## FI Analysis
-  ### AS-IS (Posting Flow + Account Query Results)
-  ### GAP
-  ### TO-BE Requirements
-  ### Acceptance Criteria
-  - [ ] AC-01: ...
-  ```
-- **Handoff**: Account Determination Logic → Architect, Balance Verification Query → DBA
+- **Trigger keywords**: Journal Entry, Account, GL, AR, AP, Fixed Asset, Settlement, Compliance, Fiscal Year, FI, FB*, F-*, BKPF, BSEG, ACDOCA, SKA1
+- **Subagent prompt**: [`agents/fi-analyst.md`](agents/fi-analyst.md)
+- **Handoff out**: Account Determination Logic → Architect, Balance Query → DBA
 
 ---
 
 #### 7. 📊 CO Analyst (Controlling)
 
-- **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKB, COEP, COSP, CE1*
-- **Context file**: [`agents/co-analyst.md`](agents/co-analyst.md)
-- **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
-- **Output Format**:
-  ```
-  ## CO Analysis
-  ### AS-IS (Cost Flow + CO-PA Characteristic Value Query Results)
-  ### GAP
-  ### TO-BE Requirements
-  ### Acceptance Criteria
-  - [ ] AC-01: ...
-  ```
-- **Handoff**: Allocation Logic → Architect, CO-PA Mapping Table → DBA
+- **Trigger keywords**: Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, CO, KS*, KO*, CSKS, CSKB, COEP, COSP, CE1*
+- **Subagent prompt**: [`agents/co-analyst.md`](agents/co-analyst.md)
+- **Handoff out**: Allocation Logic → Architect, CO-PA Mapping → DBA
 
 ---
 
 ## 🛠️ Technical Group (System Execution & Implementation)
 
+Technical agents are dispatched by the PM in Phase 2 (serial execution) or Phase 1 (read-only research).
+Full behavioral rules, tool contracts, and output formats live in the linked `agents/*.md` files.
+
 ### 1. 🏗️ Architect
-- **Role**: System architecture design and complex dependency management.
-- **Responsibilities**:
-    - Design technical architecture based on Analyst-authored PRDs.
-    - Perform impact analysis using `AnalyzeCallGraph` and provide expert architect-level assessment for BAPI/CDS changes (`sap:impact-architecture`).
-    - **Select implementation pattern** (A/B/C) using the deterministic rules in [`agents/architect.md`](agents/architect.md).
-    - Generate the §5 Finalization block in every Architect Report so PM can run it without manual composition.
-    - Define structural separation between **Function** (Interface/Entry) and **Logic** (Core/Business) components from an OOP perspective.
-    - **Rule**: Utilize ABAP Objects (Classes/Interfaces) only when explicitly necessary to balance complexity and performance.
-- **Key Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`, `GrepPackages`, `GetSource`.
+- **When to dispatch**: After §1 Business Analysis; PRD contains ≥1 ABAP object to design or refactor
+- **Key Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`, `GrepPackages`, `GetSource`
+- **Output**: Pattern A/B/C execution plan + §5 Finalization block
 - **Subagent prompt**: [`agents/architect.md`](agents/architect.md)
 
 ### 2. 💻 ABAP Developer
-- **Role**: Feature implementation and source code optimization.
-- **Responsibilities**:
-    - Create/modify ABAP objects and optimize performance.
-    - Perform precision code modifications via `EditSource`.
-- **Key Tools**: `WriteSource`, `EditSource`, `SyntaxCheck`.
+- **When to dispatch**: After Architect delivers execution plan; serial write phase
+- **Key Tools**: `WriteSource`, `EditSource`, `SyntaxCheck`, `GetSource`
+- **Output**: Code Writer Report — implemented objects, syntax check status
+- **Subagent prompt**: [`agents/code-writer.md`](agents/code-writer.md)
 
 ### 3. 🧪 QA Engineer
-- **Role**: Stability verification and bug detection.
-- **Responsibilities**:
-    - Author and execute Unit Tests based on Analyst's Acceptance Criteria.
-    - Follow `docs/testing-guidelines.md` for ABAP Unit structures and TEST-SEAMS.
-    - Run `RunATCCheck` after unit tests pass; Priority 1 findings block `Activate`.
-    - Analyze runtime errors and provide debugging guides.
-    - Perform security and compliance audits (Authorization object checks, SQL Injection prevention).
-- **Key Tools**: `RunUnitTests`, `RunATCCheck`, `SyntaxCheck`, `GetSource`.
-- **Mandatory sequence**: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (see `skills/post-write-chain/SKILL.md`).
+- **When to dispatch**: After code-writer completes all writes in the execution plan
+- **Key Tools**: `RunUnitTests`, `RunATCCheck`, `SyntaxCheck`, `GetSource`
+- **Output**: Unit test pass/fail + ATC Priority-1/2/3 findings; P2 requires PM disposition
+- **Subagent prompt**: [`agents/test-runner.md`](agents/test-runner.md)
 
 ### 4. 🗄️ DBA (Database Agent)
-- **Role**: Data modeling and SQL performance optimization.
-- **Responsibilities**:
-    - Design Tables/Views/CDS and tune complex SQL queries.
-    - Conduct professional data modeling including **ERD (Entity Relationship Diagram)** design and **Normalization** (1NF to 3NF).
-    - Perform **Indexing** strategies and performance review for large-scale data processing.
-- **Key Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`.
+- **When to dispatch**: Task involves table/CDS/index design or complex SQL performance tuning
+- **Key Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
+- **Output**: ERD, normalization review, index recommendations, optimized SQL
+- **Subagent prompt**: [`agents/dba.md`](agents/dba.md)
 
 ### 5. 🚀 DevOps / Admin
-- **Role**: Environment setup and deployment management.
-- **Responsibilities**:
-    - Install infrastructure (`vsp install`) and manage Transport Requests.
-- **Key Tools**: `InstallZADTVSP`, `InstallAbapGit`, `GetSystemInfo`, `GetConnectionInfo`, `CreateTransport`, `AddToTransport`, `ReleaseTransport`, `ListTransports`, `GetTransport`.
+- **When to dispatch**: Transport management, infrastructure install (`ZADT_VSP`, abapGit), system audit
+- **Key Tools**: `InstallZADTVSP`, `InstallAbapGit`, `GetSystemInfo`, `CreateTransport`, `ReleaseTransport`
+- **Output**: Transport CTS report, install status, environment audit
+- **Subagent prompt**: [`agents/devops-admin.md`](agents/devops-admin.md)
 
 ### 6. 🔍 Intelligence Investigator
-- **Role**: Codebase exploration and knowledge extraction.
-- **Responsibilities**:
-    - Perform global pattern searches and manage `memory/`.
-    - Execute historical knowledge extraction and design decision summaries by scanning `memory/YYYY-MM-DD.md` log files.
-- **Key Tools**: `GrepPackages`, `GrepObjects`, `SearchObject`.
+- **When to dispatch**: Phase 1 parallel research; codebase pattern scan, historical design extraction
+- **Key Tools**: `GrepPackages`, `GrepObjects`, `SearchObject`, `GetSource`
+- **Output**: Investigator Report — matched objects, pattern summary, recommended action
+- **Subagent prompt**: [`agents/sap-investigator.md`](agents/sap-investigator.md)
 
 ### 7. 🔌 Interface Expert
-- **Role**: API design and external system integration management.
-- **Responsibilities**:
-    - Design and implement OData, RFC, IDoc, and RESTful APIs.
-    - Troubleshoot connectivity, authentication, and integration payloads.
-    - Optimize data exchange performance between SAP and external platforms.
-- **Key Tools**: `GetODataMetadata`, `TestODataService`, `GetCDSExposure`, `GetCDSDependencies`, `SearchObject`.
+- **When to dispatch**: OData/RFC/IDoc interface design required; external system integration
+- **Key Tools**: `GetODataMetadata`, `TestODataService`, `GetCDSExposure`, `GetCDSDependencies`
+- **Output**: Interface design spec, BAPI/API mapping, connectivity validation
+- **Subagent prompt**: [`agents/interface-expert.md`](agents/interface-expert.md)
 
 ### 8. 🎨 Fiori Developer / UX Designer
-- **Role**: High-aesthetic UI/UX design and SAPUI5/Fiori implementation.
-- **Responsibilities**:
-    - Design modern, premium interfaces following SAP Fiori Guidelines and project "Rich Aesthetics" standards.
-    - Implement Fiori Elements or custom UI5 applications.
-    - Ensure responsive design and cross-device compatibility.
-- **Key Tools**: `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `EditSource`, `SyntaxCheck`.
-- **Note**: Visual mockups are produced as HTML/SVG code artifacts — `generate_image` is not available in this environment.
+- **When to dispatch**: UI5/Fiori screen design or BSP implementation required
+- **Key Tools**: `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `EditSource`
+- **Output**: UI design artifacts (HTML/SVG mockups) + implemented UI5 source
+- **Subagent prompt**: [`agents/fiori-developer.md`](agents/fiori-developer.md)
 
 ---
 
 ### 9. 📑 Form Expert
-- **Role**: Specialized in document output design (SAP Script, Smart Forms, Adobe Forms) and print program development.
-- **Responsibilities**:
-    - Design and maintain complex layouts for business documents.
-    - Implement and optimize print programs for data retrieval.
-    - Ensure cross-output format consistency (PDF, XML, Print).
-- **Key Tools**: `GetSource` (for print programs), `EditSource`, `GrepObjects`, `SearchObject`, `RunQuery`, `SyntaxCheck`.
+- **When to dispatch**: SAP Script, Smart Forms, or Adobe Forms design; print program development
+- **Key Tools**: `GetSource`, `EditSource`, `GrepObjects`, `SearchObject`, `SyntaxCheck`
+- **Output**: Form layout design + print program implementation
+- **Subagent prompt**: [`agents/form-expert.md`](agents/form-expert.md)
 
 ---
 
 ### 10. 🤖 SAP GUI Scripting Expert
-- **Role**: Automation of SAP GUI workflows and legacy process integration.
-- **Responsibilities**:
-    - Develop and maintain automation scripts for manual transactions and legacy screens.
-    - Integrate GUI scripting with external automation tools and frameworks.
-    - Troubleshoot screen-scraping, session management, and interaction issues.
-- **Key Tools**: `GetSource`, `GrepObjects`, `SearchObject`, `RunQuery`.
+- **When to dispatch**: ⚠️ LAST RESORT — only when no BAPI/OData/RFC alternative exists; BDC or VBS automation required
+- **Key Tools**: `GetSource`, `GrepObjects`, `SearchObject`, `RunQuery`
+- **Output**: BDC program + screen flow documentation (DYNPRO numbers, field IDs)
+- **Subagent prompt**: [`agents/gui-scripter.md`](agents/gui-scripter.md)
 
 ---
 
@@ -417,4 +335,4 @@ If the cross-module analysis reveals conflicting ACs (e.g., SD wants field X, FI
 
 ---
 
-*Last Updated: 2026-05-20*
+*Last Updated: 2026-05-21*
