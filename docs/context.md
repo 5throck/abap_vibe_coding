@@ -171,6 +171,13 @@ Required fields per entry:
 
 **When to read**: Only when a recurring error occurs or when uncertain about a past design decision. Do **not** read memory files on every session start. All entries must be written in **English**.
 
+**Scope boundary** — `memory/` and `CHANGELOG.md` serve different purposes and must not be conflated:
+
+| Change type | Record in |
+|-------------|-----------|
+| ABAP object created or significantly modified | `memory/YYYY-MM-DD.md` |
+| Harness infrastructure changed (agents, skills, scripts, docs, config) | `CHANGELOG.md` — `[Unreleased]` section |
+
 ### Documentation Language
 
 All `.md` files must be written in **English**. **Exception**: files whose name contains `_ko` (e.g., `README_ko.md`) must be written entirely in Korean.
