@@ -12,6 +12,19 @@
 
 ---
 
+## Deployed vsp Binary
+
+| Item | Value |
+|------|-------|
+| Binary | `vsp.exe` (project root) |
+| Version | `2.38.1` (commit: a75fbfd9, built: 2026-04-07) |
+| Last Modified | 2026-05-01 |
+| Mode | `hyperfocused` (see `.mcp.json`) |
+
+> To upgrade: replace `vsp.exe` with the new binary and update this table.
+
+---
+
 ## Upstream VSP Reference Build & Test
 
 > **Note**: The following build and test commands apply to the upstream **vsp** Go engine repository, not this configuration/harness repository.
@@ -24,6 +37,8 @@ make build-all                          # 9 platforms
 ```
 
 Key flags: `--mode hyperfocused|focused|expert` (Note: `hyperfocused` is the standard mode for all AI agents), `--read-only`, `--allowed-packages "Z*"`, `--disabled-groups 5THD`
+
+> **Note on hyperfocused mode**: Despite the name, `hyperfocused` mode registers all 101 individual MCP tools (GetSource, GetODataMetadata, RunQuery, etc.) — not a single unified tool. The mode restricts which SAP **packages** and **features** are accessible, not which MCP tools are registered. Agent files may reference all their tools normally when `SAP_MODE=hyperfocused`.
 
 ---
 
@@ -133,6 +148,31 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` → `RunUnitTests` → `RunATCCheck`). Priority 1 findings block deployment. See [skills/post-write-chain/SKILL.md § Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details.
 - **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
 
+### ABAP SQL Reference (All Agents)
+
+> All agents that run `RunQuery` MUST follow these rules.
+
+```sql
+-- ✅ Correct ordering
+ORDER BY field DESCENDING        -- NOT: ORDER BY field DESC
+
+-- ✅ Row limiting (use max_rows parameter, not SQL LIMIT)
+RunQuery(sql=..., max_rows=50)   -- NOT: LIMIT 50 in SQL string
+
+-- ✅ Date format
+WHERE erdat >= '20260501'        -- YYYYMMDD string, no separators
+
+-- ✅ Table aliasing in JOINs
+FROM vbak AS a JOIN vbap AS b ON a~vbeln = b~vbeln
+
+-- ✅ Field references with tilde
+b~matnr    -- NOT: b.matnr
+
+-- ❌ Anti-patterns to avoid
+SELECT *                         -- always list explicit fields
+MANDT = '001'                    -- never hardcode client
+```
+
 ### Developer Quick Start (Task Lifecycle)
 
 For full project governance and role-based orchestration, refer to [AGENTS.md § Collaborative Workflow](../AGENTS.md#agent-coordination-workflow-harness-advanced).
@@ -220,4 +260,4 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
-*Last Updated: 2026-05-19*
+*Last Updated: 2026-05-20*

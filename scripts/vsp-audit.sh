@@ -68,6 +68,22 @@ for cfg in .mcp.json .codex/config.toml .gemini/settings.json; do
     fi
 done
 
+# ── Check 6: vsp binary version ─────────────────────────────────────────────
+echo ""
+echo "[Check 6] vsp binary version"
+VSP_PATH="$(dirname "$0")/../vsp.exe"
+if [ -f "$VSP_PATH" ]; then
+    VSP_VERSION=$("$VSP_PATH" --version 2>&1)
+    if [ -n "$VSP_VERSION" ]; then
+        echo "  vsp version: $VSP_VERSION"
+    else
+        echo "  WARNING: vsp binary found but --version returned no output"
+    fi
+else
+    echo "  FAIL: vsp.exe not found at $VSP_PATH"
+    FAILED=1
+fi
+
 if [ $FAILED -ne 0 ]; then
     echo "Audit FAILED."
     exit 1
