@@ -94,7 +94,73 @@ Run `RunATCCheck` on every object **after** `RunUnitTests` passes. This is the t
 
 ### Logging ATC Results
 
-Record findings in `task-template.md § 4.2 ATC Check Results`. Even Priority 3 findings should be logged for trend tracking across tasks.
+Record findings in the active task file (`scratch/tasks/task-YYYY-MM-DD-NNN.md`) § 4.2 ATC Check Results. Even Priority 3 findings should be logged for trend tracking across tasks.
 
 ---
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-19*
+
+## ATC Priority-2 Escalation Workflow
+
+ATC Priority-1 findings block activation. ATC Priority-3 are informational. Priority-2 (Warning) requires a documented disposition decision from the PM.
+
+### Three Disposition Options
+
+| Option | When to Use | Required Action |
+|--------|-------------|-----------------|
+| **Fix** | P2 is a genuine code quality issue (e.g., unreachable code, missing error handler) | Code-writer must resolve before transport. Re-run ATC after fix. |
+| **Suppress with Justification** | P2 is a known false positive, framework-generated code, or explicitly accepted deviation | PM documents reason in Task §4.2. Use ATC exemption comment if supported. |
+| **Defer** | P2 is valid but low-impact; not blocking current delivery | Log as backlog item in `memory/YYYY-MM-DD.md`. Create follow-up task. |
+
+### Recording Location
+
+All P2 decisions are recorded in the Task file `## 4. QA Verification` → `### 4.2 ATC Check Results` table under the **P2 Disposition** row.
+
+### Decision Criteria
+
+Escalate to the user if:
+- P2 count > 10 (systemic issue, not isolated warnings)
+- P2 findings suggest a design flaw rather than a style issue
+- P2 appears in security-sensitive code paths (auth checks, SQL, RFC)
+
+---
+
+## ABAP Unit Test Skeleton
+
+A reference skeleton is available at `scratch/stable/z_unit_test_skeleton.clas.abap`.
+
+### Method Naming Convention
+
+```
+test_<method_name>_<scenario>_<expected_result>
+```
+
+Examples:
+- `test_calculate_price_with_discount_returns_reduced_amount`
+- `test_get_customer_with_invalid_id_raises_exception`
+- `test_post_document_with_locked_period_returns_error`
+
+### Arrange–Act–Assert Pattern
+
+All test methods must follow AAA:
+1. **Arrange**: Set up input data and mocks
+2. **Act**: Call the method under test
+3. **Assert**: Verify the result with `cl_abap_unit_assert`
+
+### Class Header Requirements
+
+```abap
+CLASS zcl_test_example DEFINITION
+  PUBLIC FINAL
+  FOR TESTING
+  RISK LEVEL HARMLESS   " HARMLESS | DANGEROUS | CRITICAL
+  DURATION SHORT.       " SHORT | MEDIUM | LONG
+```
+
+Use `RISK LEVEL HARMLESS` for unit tests that don't write to the database.
+Use `RISK LEVEL DANGEROUS` only for integration tests that modify real SAP data.
+
+### TEST-SEAM Injection Pattern
+
+Use TEST-SEAMs to inject mock dependencies without modifying production code interfaces. See skeleton for the full pattern.
+
+---
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-20*

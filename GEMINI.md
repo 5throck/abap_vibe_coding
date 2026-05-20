@@ -13,8 +13,7 @@
 
 ### Recommended Mode
 
-Use `--mode hyperfocused` for all Gemini sessions. The single `sap_execute` tool
-reduces routing decisions and lowers hallucination risk on tool selection.
+Use `--mode hyperfocused` for all Gemini sessions. In hyperfocused mode all 101 MCP operations are accessible via `sap_execute`; the single entry point reduces tool-selection hallucinations without restricting capability.
 
 ```bash
 vsp mcp --mode hyperfocused
@@ -45,7 +44,7 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 
 - **Role-Based Execution**: Switch between Business and Technical roles defined in `AGENTS.md`
   by explicitly stating the active role at the start of a task.
-- **Multi-Agent Coordination**: Delegate long-running research to `browser_subagent`;
+- **Multi-Agent Coordination**: Delegate long-running research to background sessions;
   keep write operations (EditSource, WriteSource) in the primary session.
 - **Advanced Diagnostics**: Use `vsp health` to validate architecture and
   `vsp slim` for context optimization before large read sessions.
@@ -68,4 +67,4 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 **Auto-commits and hooks are disabled** in Gemini CLI sessions. The PM agent must run `git add -A && git commit` manually at the end of each task. Use Bash git commands directly for commits.
 
 ---
-*Last Updated: 2026-05-19*
+*Last Updated: 2026-05-20*

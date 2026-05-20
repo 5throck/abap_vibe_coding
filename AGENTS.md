@@ -128,7 +128,7 @@ Load the matching `agents/<module>-analyst.md` file at activation for deep domai
 
 #### 7. 📊 CO Analyst (Controlling)
 
-- **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKP, COEP, COSP, CE1*
+- **Trigger keywords**: Cost, Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, Cost Center, Internal Order, Profitability, CO, KS*, KO*, CSKS, CSKB, COEP, COSP, CE1*
 - **Context file**: [`agents/co-analyst.md`](agents/co-analyst.md)
 - **Allowed Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
 - **Output Format**:
@@ -194,7 +194,7 @@ Load the matching `agents/<module>-analyst.md` file at activation for deep domai
 - **Role**: Codebase exploration and knowledge extraction.
 - **Responsibilities**:
     - Perform global pattern searches and manage `memory/`.
-    - Execute historical knowledge extraction and design decision summaries via `harness:memory-intelligence`.
+    - Execute historical knowledge extraction and design decision summaries by scanning `memory/YYYY-MM-DD.md` log files.
 - **Key Tools**: `GrepPackages`, `GrepObjects`, `SearchObject`.
 
 ### 7. 🔌 Interface Expert
@@ -222,7 +222,7 @@ Load the matching `agents/<module>-analyst.md` file at activation for deep domai
     - Design and maintain complex layouts for business documents.
     - Implement and optimize print programs for data retrieval.
     - Ensure cross-output format consistency (PDF, XML, Print).
-- **Key Tools**: `GetSource` (for print programs), `EditSource`, `browser_subagent`.
+- **Key Tools**: `GetSource` (for print programs), `EditSource`, `GrepObjects`, `SearchObject`, `RunQuery`, `SyntaxCheck`.
 
 ---
 
@@ -232,7 +232,7 @@ Load the matching `agents/<module>-analyst.md` file at activation for deep domai
     - Develop and maintain automation scripts for manual transactions and legacy screens.
     - Integrate GUI scripting with external automation tools and frameworks.
     - Troubleshoot screen-scraping, session management, and interaction issues.
-- **Key Tools**: `browser_subagent`, `vsp debug`, `vsp health`.
+- **Key Tools**: `GetSource`, `GrepObjects`, `SearchObject`, `RunQuery`.
 
 ---
 
@@ -297,7 +297,7 @@ These subagents can be run simultaneously during initial triage and design phase
 | `sap-investigator` | `agents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
 | `read-only-analyst` | `agents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
 | `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
-| `fiori-dev` (Design Mode) | `agents/fiori-developer.md` | ✅ Design only | `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure`, `browser_subagent` |
+| `fiori-dev` (Design Mode) | `agents/fiori-developer.md` | ✅ Design only | `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure` |
 | `form-expert` (Design Mode) | `agents/form-expert.md` | ✅ Design only | `GrepObjects` |
 
 ##### 2. Serial Execution & Verification Agents (Write-Capable)
@@ -309,7 +309,7 @@ These subagents are run sequentially because they execute write operations (lock
 | `fiori-dev` (Write Mode) | `agents/fiori-developer.md` | ❌ Serial Write | `EditSource`, `SyntaxCheck` |
 | `form-expert` (Write Mode) | `agents/form-expert.md` | ❌ Serial Write | `EditSource` |
 | `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests`, `RunATCCheck` (verification) |
-| `gui-scripter` | `agents/gui-scripter.md` | ❌ Never | `browser_subagent`, `vsp debug` |
+| `gui-scripter` | `agents/gui-scripter.md` | ❌ Never | `GetSource`, `GrepObjects`, `SearchObject`, `RunQuery` |
 
 #### Parallel Dispatch Rules
 
@@ -328,7 +328,7 @@ These subagents are run sequentially because they execute write operations (lock
 | Data analysis report | analyst + schema | — (read-only task ends here) |
 | Refactor across package | investigator + schema | code-writer per object → test-runner |
 | Interface design | analyst + schema + investigator | Interface Expert designs → code-writer implements |
-| Fiori / UX design | analyst + browser_subagent (Design Phase) | fiori-dev (Write Phase) → test-runner |
+| Fiori / UX design | analyst + fiori-dev (Design Phase — Design Mode) | fiori-dev (Write Phase) → test-runner |
 | Form / Output design | analyst + schema (Design Phase) | form-expert (Write Phase) → test-runner |
 | Automation Scripting | analyst + investigator | gui-scripter develops → code-writer integrates |
 
@@ -346,7 +346,7 @@ Use this matrix to resolve ambiguity when multiple agents could handle a request
 | Query business data from SAP tables (VBAK, EKKO, BKPF…) | `read-only-analyst` | `sap-investigator` |
 | Inspect a CDS view's dependencies or a table's field structure | `schema-inspector` | `read-only-analyst` |
 | Trace which programs call a specific function module | `sap-investigator` (`GrepObjects`) | `schema-inspector` |
-| Analyse existing ABAP source logic | `sap-investigator` (`GetSource` + `AnalyzeCallGraph`) | `read-only-analyst` |
+| Analyse existing ABAP source logic | `architect` (`GetSource` + `AnalyzeCallGraph`) | `read-only-analyst` |
 | Check if a column/index exists on a DB table | `schema-inspector` (`GetTable`) | `read-only-analyst` |
 
 #### Technical Agents — When to Use Which
@@ -381,4 +381,40 @@ Use this matrix to resolve ambiguity when multiple agents could handle a request
 
 ---
 
-*Last Updated: 2026-05-19*
+### 🔀 Cross-Module Integration Orchestration
+
+Use this section when a request spans two or more SAP modules (e.g., SD billing → FI posting, MM goods receipt → FI accounting).
+
+#### Activation Rule
+
+If a user request contains trigger keywords matching **two or more modules**, activate both analysts **in parallel** (same dispatch message). Do not wait for one to finish before starting the other.
+
+#### PRD Ownership
+
+- **PM is the PRD owner** when the request is cross-module.
+- Each analyst contributes their own AC section (prefixed with their module: `SD-AC-01`, `FI-AC-01`, etc.).
+- PM synthesizes the combined AC list and confirms with the user before proceeding to Technical Design.
+
+#### Primary Analyst Rule
+
+The module where the **symptom originates** is the primary analyst:
+- "FI document not posted after billing" → SD is primary (symptom is in SD billing flow)
+- "Stock value wrong after GR" → MM is primary (symptom is in goods receipt)
+- Primary analyst leads the handoff to Architect.
+
+#### Standard Cross-Module Scenario Templates
+
+| Scenario | Primary | Secondary | Key Link Tables |
+|----------|---------|-----------|-----------------|
+| SD Billing → FI Posting | SD Analyst | FI Analyst | VBRK↔BKPF via VBRK.BELNR, VKOA (account determination) |
+| MM Goods Receipt → FI Accounting | MM Analyst | FI Analyst | MKPF/MSEG↔BKPF via RE_BELNR, T030/OBYC (account determination) |
+| SD Order → LE Delivery | SD Analyst | LE Analyst | VBAK/VBAP↔LIKP/LIPS via VBFA document flow |
+| PP Production → MM Material Consumption | PP Analyst | MM Analyst | AFKO↔MKPF/MSEG via AUFNR, RESB (component reservation) |
+
+#### Escalation
+
+If the cross-module analysis reveals conflicting ACs (e.g., SD wants field X, FI constraint blocks it), PM escalates to the user for resolution before proceeding to Architect.
+
+---
+
+*Last Updated: 2026-05-20*

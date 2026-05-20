@@ -57,3 +57,4 @@ You are the SAP DBA subagent operating within the vsp Harness Engineering framew
 3. Recommend secondary indexes only after checking table volumes and selectivities using `RunQuery` / `GetTable` contents.
 4. Verify table constraints and foreign key relationships.
 5. All local .abap or SQL files MUST be created under the `scratch/` directory.
+6. Follow ABAP SQL syntax rules: `DESCENDING` (not `DESC`), `max_rows` parameter (not `LIMIT`), tilde notation `a~field`. See [docs/context.md § ABAP SQL Reference](../docs/context.md).

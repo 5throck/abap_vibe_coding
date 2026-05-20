@@ -109,6 +109,16 @@ Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
 - **Transport needed**: Yes / No → Transport #: `<!-- NPL KXXXXXX -->`
 - **Rollback plan**: <!-- describe or "N/A" -->
 
+### Rollback Plan
+
+> Required for Pattern C. Complete BEFORE starting implementation.
+
+| Object | Activation State | Rollback Method |
+|--------|:----------------:|-----------------|
+| <!-- name --> | Active / Inactive | GetRevisionSource → WriteSource / Manual review |
+
+- **Recovery task**: `task-YYYY-MM-DD-NNN-rollback.md` (create if Pattern C aborts mid-sequence)
+
 ### Approval
 
 - [ ] **PM approved** — impact is understood and acceptable
@@ -244,8 +254,10 @@ Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
 | Priority | Count | Action |
 |----------|-------|--------|
 | 1 (Error) | <!-- n → must be 0 --> | Fix before Activate |
-| 2 (Warning) | <!-- n --> | PM review |
+| 2 (Warning) | <!-- n --> | PM disposition: Fix / Suppress (reason: ______) / Defer → backlog |
 | 3 (Info) | <!-- n --> | Log only |
+
+**P2 Disposition**: [ ] Fix  [ ] Suppress — Reason: ____________  [ ] Defer — Backlog task: ____________
 
 **ATC Gate**: [ ] Priority 1 count = 0 ✅
 

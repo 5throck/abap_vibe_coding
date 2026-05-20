@@ -110,3 +110,18 @@ CO-PA has two types:
 | TKA05 | Version (Planned/Actual) |
 | TKEV | CO-PA Operating Concern |
 | TKE1 | CO-PA Characteristic Definition |
+
+## Strategic BAPIs & APIs
+
+### Cost Center Creation (Multiple)
+**BAPI**: `BAPI_COSTCENTER_CREATEMULTIPLE`
+- `CONTROLLINGAREA`: Controlling Area key (`KOKRS`)
+- `COSTCENTERLIST`: Table of cost center records — `COSTCENTER`, `VALID_FROM`, `VALID_TO`, `NAME`, `DESCRIPT`, `PERSON_RESP`, `COSTCTR_TYPE`
+- `RETURN`: Standard BAPI return table — check `TYPE = 'E'` for errors before `BAPI_TRANSACTION_COMMIT`
+
+### Internal Order Change
+**BAPI**: `BAPI_INTERNALORDER_CHANGE`
+- `ORDERID`: Internal Order Number (`AUFNR`)
+- `ORDER_DATA_PS`: `RESPONSIBLE_COST_CTR`, `PROFIT_CENTER`, `PERSON_RESP`, `WBS_ELEMENT`
+- `ORDER_DATA_PS_X`: Checkboxes for changed fields (X = changed)
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`

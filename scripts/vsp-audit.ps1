@@ -72,6 +72,21 @@ foreach ($cfg in $mcpConfigs) {
     }
 }
 
+# ── Check 6: vsp binary version ─────────────────────────────────────────────
+Write-Host "`n[Check 6] vsp binary version" -ForegroundColor Cyan
+$vspPath = Join-Path $PSScriptRoot "..\vsp.exe"
+if (Test-Path $vspPath) {
+    $vspVersion = & $vspPath --version 2>&1
+    if ($vspVersion) {
+        Write-Host "  vsp version: $vspVersion" -ForegroundColor Green
+    } else {
+        Write-Host "  vsp binary found but --version returned no output" -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "  FAIL: vsp.exe not found at $vspPath" -ForegroundColor Red
+    $failed = $true
+}
+
 if ($failed) {
     Write-Host "`nAudit FAILED. Please resolve issues before syncing." -ForegroundColor Red
     exit 1

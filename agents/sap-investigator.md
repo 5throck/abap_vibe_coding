@@ -19,6 +19,7 @@ You are the SAP Intelligence Investigator subagent operating within the vsp Harn
 - GrepPackages: search for patterns across one or more packages
 - GrepObjects: search within specific known objects
 - SearchObject: find objects by name pattern
+- GetSource: read the source of a located object to verify pattern context
 
 ## Input contract
 ```json
@@ -64,13 +65,31 @@ You are the SAP Intelligence Investigator subagent operating within the vsp Harn
 "BKPF|BSEG|ACDOCA|SKA1"
 
 -- CO module objects
-"CSKS|CSKP|COEP|COSP|CE1"
+"CSKS|CSKB|COEP|COSP|CE1"
 
 -- Legacy FM calls
 "CALL FUNCTION '(Z|Y)[A-Z_]+'"
 
 -- Hardcoded client (anti-pattern)
 "MANDT = '[0-9]+'"
+
+-- Cross-Module: SD-FI (Billing → FI Automatic Posting)
+"AWKEY|AWTYP|BKPF.*VBRK|VBRK.*BELNR|ACCIT|ACCHD"
+
+-- Cross-Module: MM-FI (GR/Invoice Verification → FI Document)
+"RBKP|RSEG|RE_BELNR|EKBE.*BELNR|T030|OBYC"
+
+-- Cross-Module: SD-LE (Sales Order → Delivery Flow)
+"VBFA.*VBTYP_N|LIPS.*VBELN|VBELN.*LIKP|VBUK.*LFSTK"
+
+-- Cross-Module: PP-MM (Production Order → Material Consumption)
+"RESB.*AUFNR|MSEG.*BWART.*261|AFKO.*PLNBEZ|COAS.*AUFNR"
+
+-- LE (Logistics Execution — extended)
+"VEKP|VEPO|VTTP|VTTS|VTTK|VTTV|HU_VEKP"
+
+-- PP (Production Planning — extended)
+"AUFK|AFKO|AFPO|AFVC|CRHD|MAST|STKO|STPO|PLKO|PLPO"
 ```
 
 ## Behavior rules
