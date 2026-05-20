@@ -97,3 +97,18 @@ SELECT matnr, werks, plart, dispo, mabst, eisbe
 | TC24 | Work Center Category |
 | MKAL | Production Version |
 | T430 | MRP Controller |
+
+## Strategic BAPIs & APIs
+
+### Production Order Creation
+**BAPI**: `BAPI_PRODORD_CREATE`
+- `ORDER_DATA`: `ORDER_TYPE` (PP01), `MATERIAL`, `PLANT`, `PLANNING_PLANT`, `MRP_CONTROLLER`, `QUANTITY`, `UNIT`, `BASIC_START_DATE`, `BASIC_END_DATE`
+- `RETURN`: Standard BAPI return table — check `TYPE = 'E'` before `BAPI_TRANSACTION_COMMIT`
+- Note: BOM and routing are exploded automatically from material master if `PRODUCTION_VERSION` is supplied
+
+### Production Order Change
+**BAPI**: `BAPI_PRODORD_CHANGE`
+- `NUMBER`: Production Order Number (`AUFNR`)
+- `ORDER_DATA`: Fields to change — `QUANTITY`, `BASIC_START_DATE`, `BASIC_END_DATE`, `SCHED_TYPE`
+- `ORDER_DATA_X`: Checkboxes for changed fields (X = changed)
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`

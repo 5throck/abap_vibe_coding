@@ -98,3 +98,20 @@ SELECT a~tanum, a~lgnum, a~bdatu, b~matnr, b~sollm, b~istme
 | T001L | Storage Location (IM) |
 | T300 | Warehouse Number (WM) |
 | T301 | Storage Type (WM) |
+
+## Strategic BAPIs & APIs
+
+### Outbound Delivery Change (Picking / PGI)
+**BAPI**: `BAPI_OUTB_DELIVERY_CHANGE`
+- `DELIVERY`: Delivery number (`VBELN` from `LIKP`)
+- `DELIVERY_HEADER_CHANGES`: `ACTUAL_GI_DATE`, `BILL_OF_LADING`, `ROUTE`
+- `DELIVERY_HEADER_CONTROL`: `GOODS_ISSUE` = `X` to trigger Post Goods Issue
+- `DELIVERY_ITEM_CHANGES`: `DELIV_QTY`, `MATERIAL`, `BATCH` — item-level updates
+- `RETURN`: Standard BAPI return — commit with `BAPI_TRANSACTION_COMMIT`
+
+### WM Transfer Order Creation
+**BAPI**: `BAPI_WHSE_TO_CREATE`
+- `WAREHOUSE_NO`: Warehouse Number (`LGNUM` from `T300`)
+- `REFERENCE_DOC_NO`: Source document (e.g., delivery number or TO reference)
+- `TRANSFER_ORDER_ITEMS`: `MATNR`, `WERKS`, `LGORT`, `SOLLM` (target qty), `NLTYP` (dest. storage type), `NLPLA` (dest. bin)
+- `RETURN`: Standard BAPI return — confirm TO separately via `LT0A` or `BAPI_WHSE_TO_CONFIRM`
