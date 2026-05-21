@@ -9,6 +9,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (2026-05-21 Git Hook Configuration)
+- `.githooks/pre-commit`: Added Git hook to enforce `CHANGELOG.md` updates on every commit.
+- `.githooks/pre-push`: Added Git hook to block direct pushes to `main` branch; enforces PR-based workflow.
+- `.github/workflows/auto-merge.yml`: Added GitHub Actions workflow that automatically Squash & Merges a PR when it receives an "Approved" review.
+
 ### Added (2026-05-21 BAPI Coverage Expansion)
 - `skills/sap-sd/SKILL.md`: Added `BAPI_SALESORDER_CHANGE` (Sales Order Change) and `BAPI_BILLINGDOC_CREATEMULTIPLE` (Billing Document Creation); expanded `BAPI_OUTB_DELIVERY_CREATE_SLS` stub to full parameter documentation; fixed typo `TARGET_QUY` → `TARGET_QTY` in `BAPI_SALESORDER_CREATEFROMDAT2`
 - `skills/sap-mm/SKILL.md`: Added `BAPI_PO_CHANGE` (Purchase Order Change) and `BAPI_MATERIAL_SAVEDATA` (Material Master Save); expanded existing BAPIs with additional parameter detail

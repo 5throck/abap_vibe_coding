@@ -1,0 +1,16 @@
+#!/bin/sh
+# Prevent direct pushes to the main branch
+
+while read local_ref local_sha remote_ref remote_sha
+do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "==========================================================="
+    echo "❌ Error: Direct push to 'main' is strictly prohibited."
+    echo "==========================================================="
+    echo "Please create a new branch and submit a Pull Request."
+    echo "==========================================================="
+    exit 1
+  fi
+done
+
+exit 0
