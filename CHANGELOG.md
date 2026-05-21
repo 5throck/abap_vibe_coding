@@ -9,6 +9,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (2026-05-21 Memory Log)
+- `memory/2026-05-21.md`: Session log for 2026-05-21 — consistency audit, dispatch-card refactor, BAPI lifecycle expansion, Project Constitution compliance
+- `memory/MEMORY.md`: Updated index with 2026-05-21 entry; Last Updated bumped
+
 ### Added (2026-05-21 Git Hook Configuration)
 - `.githooks/pre-commit`: Added Git hook to enforce `CHANGELOG.md` updates on every commit.
 - `.githooks/pre-push`: Added Git hook to block direct pushes to `main` branch; enforces PR-based workflow.

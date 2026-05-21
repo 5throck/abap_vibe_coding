@@ -29,6 +29,7 @@ Required fields per entry:
 
 | Date | Summary |
 |------|---------|
+| [2026-05-21](2026-05-21.md) | consistency audit, dispatch-card refactor, BAPI expansion, Project Constitution compliance |
 | [2026-05-19](2026-05-19.md) | record today's audit logs in memory and update MEMORY.md index |
 | [2026-05-18](2026-05-18.md) | correct vibing-steampunk binary names and mode tool counts |
 | [2026-05-05](2026-05-05.md) | Harness & specialized tools update (Transports, OData, UI5); Path standardization; Sync script enhancement |
@@ -46,4 +47,4 @@ Format: `| [YYYY-MM-DD](YYYY-MM-DD.md) | one-line summary |`
 
 ---
 
-*Last Updated: 2026-05-19*
+*Last Updated: 2026-05-21*
