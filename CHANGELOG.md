@@ -14,6 +14,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - `.githooks/pre-push`: Added Git hook to block direct pushes to `main` branch; enforces PR-based workflow.
 - `.github/workflows/auto-merge.yml`: Added GitHub Actions workflow that automatically Squash & Merges a PR when it receives an "Approved" review.
 
+### Added (2026-05-21 Project Constitution Compliance)
+- `scripts/dev-sync.sh` / `dev-sync.ps1`: Added Project Constitution §3 standard entry-point wrappers delegating to `vsp-sync.sh` / `vsp-sync.ps1`
+- `docs/context.md`: Added `Project Overview`, `Tech Stack`, `Agents`, and `Skills` summary sections per Project Constitution §7 required sections
+- `CLAUDE.md`: Added `.claude/commands/` listing with slash command inventory; added note clarifying root `commands/` folder is legacy; updated Last Updated to 2026-05-21
+
+### Changed (2026-05-21 Project Constitution Compliance)
+- `.claude/commands/sync.md`: Updated script invocation from `vsp-sync.sh` → `dev-sync.sh` to align with Project Constitution §3 standard
+
 ### Added (2026-05-21 BAPI Coverage Expansion)
 - `skills/sap-sd/SKILL.md`: Added `BAPI_SALESORDER_CHANGE` (Sales Order Change) and `BAPI_BILLINGDOC_CREATEMULTIPLE` (Billing Document Creation); expanded `BAPI_OUTB_DELIVERY_CREATE_SLS` stub to full parameter documentation; fixed typo `TARGET_QUY` → `TARGET_QTY` in `BAPI_SALESORDER_CREATEFROMDAT2`
 - `skills/sap-mm/SKILL.md`: Added `BAPI_PO_CHANGE` (Purchase Order Change) and `BAPI_MATERIAL_SAVEDATA` (Material Master Save); expanded existing BAPIs with additional parameter detail
