@@ -1,0 +1,21 @@
+#!/bin/sh
+# Enforce CHANGELOG.md update on commit
+# Note: This is a bash script executed by Git on all platforms including Windows (via Git Bash).
+
+if ! git diff --cached --name-only | grep -q "^CHANGELOG.md$"; then
+  echo "==========================================================="
+  echo "❌ Error: CHANGELOG.md must be updated for every commit."
+  echo "==========================================================="
+  echo "The project rules enforce that the CHANGELOG.md file is"
+  echo "updated to document your changes."
+  echo ""
+  echo "Please edit CHANGELOG.md, stage it (git add CHANGELOG.md),"
+  echo "and then try your commit again."
+  echo ""
+  echo "(If you must bypass this check for a special case,"
+  echo " you can use 'git commit --no-verify')"
+  echo "==========================================================="
+  exit 1
+fi
+
+exit 0

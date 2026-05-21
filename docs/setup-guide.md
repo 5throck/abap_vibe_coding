@@ -231,6 +231,13 @@ git clone https://github.com/<your-org>/abap_vibe_coding.git ~/abap
 cd ~/abap
 ```
 
+### 4-B. Configure Git Hooks
+This project enforces `CHANGELOG.md` updates on every commit using a pre-commit hook. 
+To enable this locally, run:
+```bash
+git config core.hooksPath .githooks
+```
+
 > **Note**: `vsp` binary is in `.gitignore` and is NOT in the repository.
 > You must download it separately (see Section 5).
 
