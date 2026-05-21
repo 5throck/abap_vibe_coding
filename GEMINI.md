@@ -66,5 +66,27 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 
 **Auto-commits and hooks are disabled** in Gemini CLI sessions. The PM agent must run `git add -A && git commit` manually at the end of each task. Use Bash git commands directly for commits.
 
+## Gemini-Specific Workflows
+
+### 1. Planning Mode & Architecture Changes
+For complex tasks or architectural modifications, Gemini must enter **Planning Mode**:
+1. Create a detailed technical design using the **Implementation Plan** artifact.
+2. Obtain explicit user approval before modifying code.
+3. Track tasks using `task.md` and document changes in `walkthrough.md`.
+4. Ensure that after changes are verified, the outcomes are summarized in the project's `memory/YYYY-MM-DD.md` log.
+
+### 2. Executing Custom Commands
+Unlike Claude Code, Gemini does not natively register local custom slash commands from `.gemini/commands/` or `.claude/commands/`. Instead:
+- Automation workflows like `/sync` or `/memlog` are simulated or executed directly as project scripts (e.g., executing `.\scripts\dev-sync.ps1` or `./scripts/dev-sync.sh` via terminal tools).
+- System-provided slash commands (like `/goal`, `/schedule`, `/browser`, `/grill-me`) can be recommended to the user.
+
+### 3. Coexistence, Precedence & Migration of .claude
+This project contains a `.claude/` directory. To prevent configuration drift and avoid issues when transitioning away from Claude Code, Gemini follows these rules:
+- **Absolute Precedence**: `.gemini/` always takes absolute precedence over `.claude/`. If `.gemini/` exists, `.claude/` is ignored by Gemini to prevent duplicate or conflicting configurations.
+- **Fallback (Coexistence Phase)**: If a project lacks a `.gemini/` directory but contains `.claude/`, Gemini will temporarily read and respect `.claude/settings.json`, `.claude/settings.local.json`, and `.claude/commands/` as the fallback source of truth.
+- **Graceful Migration**: If the project transitions fully away from Claude Code, or if Gemini needs to write new project-level settings/commands, Gemini should proactively offer to migrate the `.claude/` configuration to `.gemini/` (copying and adapting files) rather than leaving legacy files orphaned.
+- **Command Emulation**: Custom slash commands defined as markdown files in `.claude/commands/` must be emulated by Gemini. Read the `.md` file to understand the underlying script execution and run those commands directly via terminal tools.
+- **Gemini Integration Rule**: Gemini can dynamically instantiate roles defined in `AGENTS.md` using the `define_subagent` and `invoke_subagent` tools.
+
 ---
-*Last Updated: 2026-05-20*
+*Last Updated: 2026-05-21*
