@@ -12,7 +12,7 @@ Sync today's development session to Git: run the documentation audit, update the
 Run:
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT:-.}/scripts/vsp-sync.sh" "$ARGUMENTS"
+bash "${CLAUDE_PLUGIN_ROOT:-.}/scripts/dev-sync.sh" "$ARGUMENTS"
 ```
 
 $ARGUMENTS should be a conventional commit message (e.g. `feat: add ZCL_MY_CLASS`).

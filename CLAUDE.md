@@ -63,8 +63,11 @@ The relative path `./vsp` works because Claude Code CLI resolves it against the 
 
 - `.claude/settings.json` — shared team permissions (committed to repo; note that `.claude/` is a hidden dot-folder and may not show in standard listing tools by default)
 - `.claude/settings.local.json` — personal write permissions + git operations (gitignored)
+- `.claude/commands/` — slash commands (`/sync`, `/memlog`, `/new-task`, `/triage`, `/transport`, `/post-write`, `/celebrate`)
 
 Both files are loaded automatically. `enableAllProjectMcpServers: true` is set in the local file to activate the abap MCP server.
+
+> **Note**: The project root also contains a `commands/` folder (legacy location). The active slash commands used by Claude Code are in `.claude/commands/` — do not edit the root `commands/` folder.
 
 ---
 
@@ -84,4 +87,4 @@ A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scr
 
 ---
 
-*Last Updated: 2026-05-19*
+*Last Updated: 2026-05-21*

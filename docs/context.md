@@ -12,6 +12,64 @@
 
 ---
 
+## Project Overview
+
+SAP ABAP Harness Engineering framework — a PM-led, multi-agent development harness for SAP ABAP projects using the **vsp** MCP server. Provides governance workflows, role-based agents, reusable skills, and automated QA chains for ABAP development.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| MCP Server | `vsp` Go binary v2.38.1 — connects to SAP via ADT (ABAP Development Tools REST API) |
+| AI Orchestration | Claude Code CLI / Desktop App, Gemini CLI, Antigravity (VS Code extension) |
+| SAP Connection | HTTP/HTTPS to SAP NetWeaver AS ABAP; configured via `.env` (`SAP_*` prefix) |
+| Scripting | Bash (`.sh`) + PowerShell (`.ps1`) pairs for all automation |
+| Documentation | Markdown — `docs/`, `agents/`, `skills/`, `memory/` |
+
+---
+
+## Agents
+
+Full behavioral rules in each `agents/*.md` file. Summary:
+
+| Agent | Role |
+|-------|------|
+| `pm` | Orchestrator — governs 6-phase workflow (Triage → Finalization) |
+| `architect` | Technical Execution Lead — pattern selection (A/B/C), execution plan |
+| `code-writer` | ABAP implementation — WriteSource / EditSource |
+| `test-runner` | QA — SyntaxCheck → RunUnitTests → RunATCCheck |
+| `dba` | Database / CDS / table design |
+| `devops-admin` | Transports, system config, abapGit |
+| `sap-investigator` | Cross-system read-only investigation |
+| `schema-inspector` | Table / structure read-only analysis |
+| `read-only-analyst` | ABAP SQL queries and reporting |
+| `interface-expert` | RFC / BAPI / IDoc integration |
+| `fiori-developer` | UI5 / Fiori app development |
+| `form-expert` | Smart Forms / Adobe Forms |
+| `gui-scripter` | SAP GUI scripting automation |
+| `sd/mm/fi/co/pp/le-analyst` | SAP module domain experts (Business Group) |
+
+---
+
+## Skills
+
+Auto-discovered from `skills/` directory. Each skill is `skills/<name>/SKILL.md`.
+
+| Skill | Trigger |
+|-------|---------|
+| `abap-dev` | Any ABAP development session — MCP tool optimization, write workflows |
+| `post-write-chain` | After any WriteSource / EditSource — mandatory QA chain |
+| `sap-sd` | SD module tasks (sales orders, deliveries, billing) |
+| `sap-mm` | MM module tasks (purchasing, goods receipt, inventory) |
+| `sap-fi` | FI module tasks (journal entries, account determination) |
+| `sap-co` | CO module tasks (cost centers, internal orders, CO-PA) |
+| `sap-pp` | PP module tasks (BOM, routing, production orders, MRP) |
+| `sap-le` | LE module tasks (shipping, warehouse, transfer orders) |
+
+---
+
 ## Deployed vsp Binary
 
 | Item | Value |
