@@ -17,6 +17,15 @@ cookies.txt
 # Local scratch
 .local/
 scratch/temp/
+scratch/tasks/*.md
+!scratch/tasks/.gitkeep
+
+# Session logs (per-session, not for version control)
+memory/*.md
+
+# Generated specs and plans (brainstorming/planning artifacts)
+docs/superpowers/specs/
+docs/superpowers/plans/
 
 # Build output
 vsp
