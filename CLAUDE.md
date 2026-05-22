@@ -8,12 +8,17 @@
 
 ## Session Start
 
-**At the start of every session, load the following skills before using any ABAP-related tools:**
+At the start of every Claude Code session, run this checklist:
 
-1. [`skills/abap-dev/SKILL.md`](skills/abap-dev/SKILL.md) — SAP development workflows and optimization settings
-2. [`skills/post-write-chain/SKILL.md`](skills/post-write-chain/SKILL.md) — mandatory QA chain after any write
-
-Then read `docs/context.md` for shared project context (build commands, codebase map, ABAP dev rules).
+```
+0. git config core.hooksPath .githooks   # activate hooks (run once per clone)
+1. Read ../CONSTITUTION.md               # workspace design standard
+2. Read docs/context.md                  # project knowledge — build, codebase map, ABAP rules
+3. Read AGENTS.md                        # canonical agent roster
+4. Read memory/MEMORY.md                 # recent session history (skip if absent)
+5. Load skills/abap-dev/SKILL.md         # SAP development workflows and optimization settings
+6. Load skills/post-write-chain/SKILL.md # mandatory QA chain after any write
+```
 
 ---
 
