@@ -417,7 +417,7 @@ ENDCLASS.
 ```abap
 CLASS ltcl_inv_stock DEFINITION FOR TESTING
   RISK LEVEL HARMLESS DURATION SHORT
-  INHERITING FROM cl_aunit_assert.
+  INHERITING FROM cl_abap_unit_assert.
   PRIVATE SECTION.
     DATA: mo_cut TYPE REF TO zcl_inv_stock.
     METHODS: setup.
@@ -1234,7 +1234,7 @@ Expected: New stock entry with updated quantity
 2. Enter program name: ZPROG_INV_MGMT
 3. Select: Goods Issue
 4. Enter:
-   - Production Order: (Use a valid order from AFKO)
+   - Production Order: (Use a valid order from AUFK)
    - Plant: 1000
    - Posting Date: Today's date
 5. Press Execute (F8)
@@ -1253,7 +1253,7 @@ Expected: Status = 'E', error message set
 
 - [ ] **Step 5: Run ATC Check**
 
-Run: `mcp__abap__SAP` action="analyze" params="type=atc,package=$ZINV"``
+Run: `mcp__abap__SAP` action="analyze" params="type=atc,package=$ZINV"`
 
 Expected: 0 Priority-1 findings
 
