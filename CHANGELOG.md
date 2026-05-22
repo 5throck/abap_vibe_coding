@@ -9,6 +9,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (2026-05-23 Project Structure Compliance)
+- `SECURITY.md`: Security vulnerability reporting policy (CONSTITUTION §1 required file)
+- `.github/pull_request_template.md`: Standard PR body template (CONSTITUTION §1 required file)
+
 ### Fixed (2026-05-22 Windows MCP Config)
 - `.mcp.json`: `"./vsp"` → `"./vsp.exe"` so Claude Code CLI resolves the binary on Windows
 - `.claude/settings.json`: PostToolUse hook matcher extended to `Write|Edit|mcp__abap__WriteSource|mcp__abap__EditSource` — ABAP MCP write calls now trigger the sync-md audit script
