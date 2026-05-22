@@ -9,6 +9,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed (2026-05-22)
+- `scripts/audit.sh` / `audit.ps1`: New standard audit entry point (replaces vsp-audit as primary)
+- `scripts/vsp-audit.sh` / `vsp-audit.ps1`: Now legacy wrappers delegating to audit.sh/ps1
+- `scripts/sync-md.sh` / `sync-md.ps1`: Updated to call audit.sh/ps1 directly
+
 ### Added (2026-05-22 Inventory Management Design)
 - `docs/superpowers/specs/2026-05-22-inventory-management-design.md`: Design document for custom inventory management system with Z tables (ZTINV_REQ, ZTINV_REQ_IT, ZTINV_STOCK) handling Goods Receipt and Goods Issue
 

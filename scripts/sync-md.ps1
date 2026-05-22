@@ -1,6 +1,6 @@
 # scripts/sync-md.ps1
 # PostToolUse hook wrapper for Windows PowerShell.
-# Delegates to vsp-audit.ps1 for documentation audit.
+# Delegates to audit.ps1 for documentation audit.
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
@@ -20,5 +20,5 @@ if ($writtenFile) {
 
 Write-Host "--- Post-Edit Audit Hook ---"
 
-& "$ScriptDir\vsp-audit.ps1"
+& "$ScriptDir\audit.ps1"
 exit $LASTEXITCODE

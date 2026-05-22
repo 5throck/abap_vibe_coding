@@ -1,6 +1,6 @@
 #!/bin/bash
 # scripts/sync-md.sh
-# PostToolUse hook wrapper — runs vsp-audit.sh.
+# PostToolUse hook wrapper — runs audit.sh.
 # Works on Windows (Git Bash / MSYS2), macOS, and Linux.
 # The .sh script is always executed inside a bash context, so
 # there is no need to call powershell.exe from here.
@@ -22,5 +22,5 @@ fi
 
 echo "--- Post-Edit Audit Hook ---"
 
-bash "$SCRIPT_DIR/vsp-audit.sh"
+bash "$SCRIPT_DIR/audit.sh"
 exit $?
