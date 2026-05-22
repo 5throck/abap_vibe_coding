@@ -9,6 +9,21 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (2026-05-23 Project Structure Compliance)
+- `SECURITY.md`: Security vulnerability reporting policy (CONSTITUTION §1 required file)
+- `.github/pull_request_template.md`: Standard PR body template (CONSTITUTION §1 required file)
+
+### Fixed (2026-05-22 Windows MCP Config)
+- `.mcp.json`: `"./vsp"` → `"./vsp.exe"` so Claude Code CLI resolves the binary on Windows
+- `.claude/settings.json`: PostToolUse hook matcher extended to `Write|Edit|mcp__abap__WriteSource|mcp__abap__EditSource` — ABAP MCP write calls now trigger the sync-md audit script
+- `.claude/settings.local.json`: Added `enableAllProjectMcpServers: true` alongside existing `enabledMcpjsonServers` list for full compatibility
+
+### Changed
+- Add ## Architecture, ## Development Workflow, ## Key Files, ## Environment Setup sections to docs/context.md
+
+### Changed
+- Add standard slash commands, smart pre-commit hook (memory/ exclusion), and Coding Guidelines section to docs/context.md
+
 ### Fixed (2026-05-22 Skill Command Wrappers)
 - `.claude/commands/abap-dev.md`: New wrapper — registers `abap-dev` skill for Skill tool invocation
 - `.claude/commands/sap-sd/mm/fi/co/le/pp.md`: Six new wrappers — all SAP module skills now invocable via `Skill("sap-*")`

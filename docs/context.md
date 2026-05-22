@@ -30,6 +30,95 @@ SAP ABAP Harness Engineering framework — a PM-led, multi-agent development har
 
 ---
 
+## Environment Setup
+
+```bash
+# 1. Place the vsp binary in the project root
+#    Download from: https://github.com/5throck/vsp/releases
+cp /path/to/vsp ./vsp
+chmod +x ./vsp          # macOS/Linux
+# Windows: copy vsp.exe to project root
+
+# 2. Configure SAP credentials
+cp .env.sample .env
+# Edit .env — fill in SAP_URL, SAP_USER, SAP_PASSWORD
+
+# 3. Activate git hooks
+git config core.hooksPath .githooks
+
+# 4. Verify connection
+./vsp health
+```
+
+Required env keys (see `.env.sample`):
+- `SAP_URL` — SAP system base URL (e.g. `https://my-sap-host:44300`)
+- `SAP_USER` — SAP username
+- `SAP_PASSWORD` — SAP password
+- `SAP_MODE` — MCP mode (default: `hyperfocused`)
+
+---
+
+## Architecture
+
+> Full codebase map: [§ Upstream VSP Codebase Structure](#upstream-vsp-codebase-structure) below.
+> ABAP object layout: [§ ABAP Development](#abap-development) below.
+
+Key directories:
+```
+abap_vibe_coding/
+├── agents/          # 19 AI agent role definitions
+├── skills/          # 8 skill files (abap-dev, post-write-chain, sap-*)
+├── scripts/         # dev-sync, audit, vsp-sync automation
+├── memory/          # session logs (YYYY-MM-DD.md)
+├── scratch/tasks/   # per-task work files (task-YYYY-MM-DD-NNN.md)
+├── docs/            # context.md, ADRs, tooling-matrix
+├── vsp             # vsp binary (gitignored — install via scripts/install-vsp.sh)
+└── .mcp.json        # MCP server config (gitignored — from .env)
+```
+
+---
+
+## Development Workflow
+
+```bash
+# 1. Start a task
+/triage <request>          # PM classifies → creates task file → parallel research
+
+# 2. After implementation
+/post-write                # SyntaxCheck → RunUnitTests → RunATCCheck
+/transport                 # Create/release CTS transport
+
+# 3. Sync to Git
+/sync "feat: description"  # memlog → changelog → audit → commit → PR
+
+# Manual equivalents (bash)
+bash scripts/dev-sync.sh "feat: description"
+```
+
+> Full 6-phase workflow: [§ Developer Quick Start](#developer-quick-start-task-lifecycle) in ABAP Development below.
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `docs/context.md` | Single source of truth for all AI tools |
+| `AGENTS.md` | Canonical agent index — auto-loaded by Claude Code |
+| `CLAUDE.md` | Claude Code-specific configuration |
+| `GEMINI.md` | Gemini CLI-specific configuration |
+| `agents/pm.md` | PM orchestrator — 6-phase workflow owner |
+| `agents/architect.md` | Technical Execution Lead |
+| `agents/code-writer.md` | ABAP implementation agent |
+| `agents/test-runner.md` | QA agent — SyntaxCheck/RunUnitTests/RunATCCheck |
+| `scripts/dev-sync.sh/.ps1` | Full sync pipeline |
+| `scripts/audit.sh/.ps1` | Documentation integrity audit |
+| `memory/MEMORY.md` | Session log index |
+| `CHANGELOG.md` | User-visible change history |
+| `.env.sample` | Required environment variable template |
+
+---
+
 ## Agents
 
 Full behavioral rules in each `agents/*.md` file. Summary:
@@ -249,6 +338,38 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 ---
 
 ## Task Handoffs: `scratch/tasks/task-YYYY-MM-DD-NNN.md`. Memory Logs: `memory/YYYY-MM-DD.md`. SAP objects: `ZADT_<nn>_<name>`, `ZCL_ADT_<name>`, packages `$ZADT*`.
+
+---
+
+## Coding Guidelines
+
+> These rules apply to every AI tool working in this project.
+> Full rationale: [CONSTITUTION.md §8](../../CONSTITUTION.md#8-coding-behavior-guidelines)
+
+### 1. Think Before Coding
+- State assumptions explicitly before implementing. If uncertain, ask — don't guess silently.
+- **Secrets**: Never hardcode passwords, API tokens, or keys. Always use env vars / `.env.sample`.
+
+### 2. Simplicity First
+- Write the minimum code that solves the problem. Nothing speculative.
+
+### 3. Surgical Changes
+- Touch only what is necessary. Don't "improve" adjacent code.
+
+### 4. Goal-Driven Execution
+- Convert every task into a verifiable goal before starting.
+
+### 5. Response Language
+- All **conversational** replies → **Korean (한국어)** by default.
+- All code, config, commit messages, PR titles, branch names → **English only**.
+
+---
+
+## Session Start Skills
+<!-- Skills listed here are loaded at the start of EVERY session by ALL AI tools. -->
+<!-- Format: `skills/<name>/SKILL.md` — reason / trigger                          -->
+- `skills/abap-dev/SKILL.md` — always load for SAP ABAP development tasks
+- `skills/post-write-chain/SKILL.md` — always load; mandatory QA after any write
 
 ---
 
