@@ -1,10 +1,9 @@
 # Antigravity MCP Setup Guide
 
-Antigravity is an AI coding assistant that runs as a VS Code extension. Because it does not support project-level configuration files, MCP servers must be registered manually at the **user level** in VS Code settings.
+Antigravity 2.0 (and the Antigravity CLI) now supports project-level configurations through the `.gemini/settings.json` file. This means the MCP servers and tools can be configured for the entire project and shared among the team. For legacy versions or user-specific overrides, MCP servers can still be registered manually at the **user level** in VS Code settings.
 
 > **Important**:
 > - Antigravity does **not** support `PostToolUse` hooks. You must run the Post-Write chain (`/post-write`) manually after every ABAP code change.
-> - This setup must be performed by each developer individually in their own VS Code environment (not shareable via the repository).
 
 ---
 
@@ -125,7 +124,7 @@ bash scripts/vsp-sync.sh "feat: summary of change"
 | PostToolUse hook | ✅ | ❌ | ❌ | ❌ |
 | Post-Write chain | Automatic | Manual (`/post-write`) | Manual | Manual |
 | Git commit | `/sync` | `/sync` | Manual | Manual |
-| Project-level config | ✅ `.mcp.json` | ✅ `.mcp.json` | ✅ `.gemini/settings.json` | ❌ user-level only |
+| Project-level config | ✅ `.mcp.json` | ✅ `.mcp.json` | ✅ `.gemini/settings.json` | ✅ `.gemini/settings.json` |
 
 ---
 

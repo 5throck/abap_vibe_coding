@@ -282,7 +282,7 @@ git config core.hooksPath .githooks
 └── vsp.exe                    ← Download separately (gitignored)
 ```
 
-> **Antigravity MCP config** is stored in the user-level VS Code settings — not in this repo.
+> **Antigravity MCP config** is stored in the project-level `.gemini/settings.json` file.
 > See [Section 7](#7-configure-antigravity-optional) for details.
 
 **macOS/Linux** (`~/abap/`):
@@ -749,7 +749,7 @@ The Desktop App shares all configuration with the CLI — `.mcp.json` and `.clau
 
 ## 7. Configure Antigravity (Optional)
 
-Antigravity is a VS Code-based editor that can connect to the same abap MCP server as Claude Code CLI. Because it does not support project-level configuration files, MCP servers must be registered manually at the **user level** in VS Code settings.
+Antigravity is a VS Code-based editor that can connect to the same abap MCP server as Claude Code CLI. Antigravity 2.0 (and the Antigravity CLI) now supports project-level configurations through the `.gemini/settings.json` file.
 
 For complete, step-by-step instructions, including absolute path configurations for Windows, macOS, and Linux, and recommended role usage splits, see the dedicated setup guide:
 
@@ -1282,8 +1282,7 @@ Use this list when onboarding a new team member.
 | `.mcp.json` | ❌ | MCP server config for Claude Code CLI (abap + abap-docs + sap-docs) | Each developer |
 | `.claude/settings.json` | ✅ | Shared permissions + hooks | Repo (already exists) |
 | `.claude/settings.local.json` | ❌ | Local extended permissions | Each developer |
-| `.gemini/settings.json` | ❌ | Gemini CLI config (abap + abap-docs + sap-docs) | Each developer (optional) |
-| `%APPDATA%\Antigravity\User\settings.json` | ❌ (outside repo) | Antigravity MCP config (abap + abap-docs + sap-docs) | Each developer (optional) |
+| `.gemini/settings.json` | ❌ | Antigravity & Gemini CLI config (abap + abap-docs + sap-docs) | Each developer (optional) |
 | `vsp` / `vsp.exe` | ❌ | MCP server binary | Download from releases |
 | `docs/context.md` | ✅ | Shared project context for all AI tools | Repo (already exists) |
 | `CLAUDE.md` | ✅ | Claude Code CLI-specific config | Repo (already exists) |
