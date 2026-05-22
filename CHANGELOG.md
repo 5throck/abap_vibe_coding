@@ -9,6 +9,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (2026-05-23 Antigravity Project Configuration Support)
+- `.gemini.settings.json.sample`: Created a template for Antigravity 2.0 and Gemini CLI project-level configuration to streamline setup for new workspaces.
+
+### Changed (2026-05-23 Antigravity Project Configuration Support)
+- `docs/antigravity-setup.md`: Updated to state that Antigravity 2.0 (and CLI) now supports project-level configs via `.gemini/settings.json`, no longer strictly requiring user-level VS Code settings.
+- `docs/setup-guide.md`: Updated Appendix A and cross-references to point Antigravity configurations to `.gemini/settings.json`.
+
 ### Fixed (2026-05-23 MD Consistency Audit)
 - `CLAUDE.md`: Removed outdated legacy `commands/` folder reference; corrected script delegation path to `audit.ps1`/`audit.sh`
 - Agent & CLI documents (`AGENTS.md`, `GEMINI.md`, `docs/context.md`, `CLAUDE.md`): Integrated Optimal Interaction Guidelines and Universal Baseline Behaviors for agent workflow consistency
