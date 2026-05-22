@@ -9,6 +9,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Add standard slash commands, smart pre-commit hook (memory/ exclusion), and Coding Guidelines section to docs/context.md
+
 ### Fixed (2026-05-22 Skill Command Wrappers)
 - `.claude/commands/abap-dev.md`: New wrapper — registers `abap-dev` skill for Skill tool invocation
 - `.claude/commands/sap-sd/mm/fi/co/le/pp.md`: Six new wrappers — all SAP module skills now invocable via `Skill("sap-*")`

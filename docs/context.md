@@ -252,6 +252,38 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 
 ---
 
+## Coding Guidelines
+
+> These rules apply to every AI tool working in this project.
+> Full rationale: [CONSTITUTION.md §8](../../CONSTITUTION.md#8-coding-behavior-guidelines)
+
+### 1. Think Before Coding
+- State assumptions explicitly before implementing. If uncertain, ask — don't guess silently.
+- **Secrets**: Never hardcode passwords, API tokens, or keys. Always use env vars / `.env.sample`.
+
+### 2. Simplicity First
+- Write the minimum code that solves the problem. Nothing speculative.
+
+### 3. Surgical Changes
+- Touch only what is necessary. Don't "improve" adjacent code.
+
+### 4. Goal-Driven Execution
+- Convert every task into a verifiable goal before starting.
+
+### 5. Response Language
+- All **conversational** replies → **Korean (한국어)** by default.
+- All code, config, commit messages, PR titles, branch names → **English only**.
+
+---
+
+## Session Start Skills
+<!-- Skills listed here are loaded at the start of EVERY session by ALL AI tools. -->
+<!-- Format: `skills/<name>/SKILL.md` — reason / trigger                          -->
+- `skills/abap-dev/SKILL.md` — always load for SAP ABAP development tasks
+- `skills/post-write-chain/SKILL.md` — always load; mandatory QA after any write
+
+---
+
 ## Project-Wide Rules (All Tools)
 
 > These rules apply equally to Claude Code, Gemini CLI, Codex, Antigravity, and any other AI tool operating in this project. Tool-specific overrides live in `CLAUDE.md`, `GEMINI.md`, and `.codex/`.
