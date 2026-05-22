@@ -9,6 +9,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed (2026-05-23 MD Consistency Audit)
+- `CLAUDE.md`: Removed outdated legacy `commands/` folder reference; corrected script delegation path to `audit.ps1`/`audit.sh`
+- Agent & CLI documents (`AGENTS.md`, `GEMINI.md`, `docs/context.md`, `CLAUDE.md`): Integrated Optimal Interaction Guidelines and Universal Baseline Behaviors for agent workflow consistency
+
 ### Fixed (2026-05-23 Audit Script — Relative Link Filter)
 - `scripts/audit.sh` / `audit.ps1`: Add `../../` relative-path exclusion to markdown link checker — GitHub Security Advisory links (`../../security/advisories/new`) are cross-repo relative URLs, not local file paths, and must be excluded from broken-link validation
 

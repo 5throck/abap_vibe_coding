@@ -67,7 +67,6 @@ The relative path `./vsp` works because Claude Code CLI resolves it against the 
 
 Both files are loaded automatically. `enableAllProjectMcpServers: true` is set in the local file to activate the abap MCP server.
 
-> **Note**: The project root also contains a `commands/` folder (legacy location). The active slash commands used by Claude Code are in `.claude/commands/` — do not edit the root `commands/` folder.
 
 ---
 
@@ -82,9 +81,14 @@ A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scr
 | Gemini CLI | ❌ | Automated hooks disabled — run Post-Write chain manually |
 | Antigravity | ❌ | No hook support in VS Code extension |
 
-`sync-md.sh` detects the platform (Windows vs Unix) and delegates to `vsp-audit.ps1` or `vsp-audit.sh` to perform an immediate documentation and path audit after every edit. This ensures cross-platform integrity is maintained in real-time.
+`sync-md.sh` detects the platform (Windows vs Unix) and delegates to `audit.ps1` or `audit.sh` to perform an immediate documentation and path audit after every edit. This ensures cross-platform integrity is maintained in real-time.
 
 
 ---
 
 *Last Updated: 2026-05-21*
+
+
+### Optimal Interaction Guidelines
+- **XML Tagging**: Utilize XML tags like `<thought>`, `<plan>`, and `<execution>` to structure complex reasoning and plans before generating final responses.
+- **Tone**: Maintain an objective, highly analytical tone. Focus on systematic execution.
