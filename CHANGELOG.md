@@ -9,6 +9,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed (2026-05-22 Windows MCP Config)
+- `.mcp.json`: `"./vsp"` → `"./vsp.exe"` so Claude Code CLI resolves the binary on Windows
+- `.claude/settings.json`: PostToolUse hook matcher extended to `Write|Edit|mcp__abap__WriteSource|mcp__abap__EditSource` — ABAP MCP write calls now trigger the sync-md audit script
+- `.claude/settings.local.json`: Added `enableAllProjectMcpServers: true` alongside existing `enabledMcpjsonServers` list for full compatibility
+
 ### Changed
 - Add ## Architecture, ## Development Workflow, ## Key Files, ## Environment Setup sections to docs/context.md
 

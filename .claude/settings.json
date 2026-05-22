@@ -61,7 +61,7 @@
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Write|Edit",
+        "matcher": "Write|Edit|mcp__abap__WriteSource|mcp__abap__EditSource",
         "hooks": [
           {
             "type": "command",
