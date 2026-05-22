@@ -9,6 +9,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed (2026-05-22 Skill Command Wrappers)
+- `.claude/commands/abap-dev.md`: New wrapper — registers `abap-dev` skill for Skill tool invocation
+- `.claude/commands/sap-sd/mm/fi/co/le/pp.md`: Six new wrappers — all SAP module skills now invocable via `Skill("sap-*")`
+- `.claude/commands/post-write.md`: Converted from standalone duplicate to thin wrapper delegating to `skills/post-write-chain/SKILL.md` (single source of truth)
+
 ### Changed (2026-05-22)
 - `scripts/audit.sh` / `audit.ps1`: New standard audit entry point (replaces vsp-audit as primary)
 - `scripts/vsp-audit.sh` / `vsp-audit.ps1`: Now legacy wrappers delegating to audit.sh/ps1
