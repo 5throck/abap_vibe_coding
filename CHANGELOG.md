@@ -9,6 +9,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed (2026-05-23 Audit Script — Relative Link Filter)
+- `scripts/audit.sh` / `audit.ps1`: Add `../../` relative-path exclusion to markdown link checker — GitHub Security Advisory links (`../../security/advisories/new`) are cross-repo relative URLs, not local file paths, and must be excluded from broken-link validation
+
+
 ### Added (2026-05-23 Project Structure Compliance)
 - `SECURITY.md`: Security vulnerability reporting policy (CONSTITUTION §1 required file)
 - `.github/pull_request_template.md`: Standard PR body template (CONSTITUTION §1 required file)
