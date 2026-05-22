@@ -10,6 +10,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Changed
+- Add ## Architecture, ## Development Workflow, ## Key Files, ## Environment Setup sections to docs/context.md
+
+### Changed
 - Add standard slash commands, smart pre-commit hook (memory/ exclusion), and Coding Guidelines section to docs/context.md
 
 ### Fixed (2026-05-22 Skill Command Wrappers)
