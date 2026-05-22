@@ -32,7 +32,7 @@ foreach ($f in $docFiles) {
     $ms = [regex]::Matches($txt, "\[.*?\]\(([^#\)\s]+)\)")
     foreach ($m in $ms) {
         $l = $m.Groups[1].Value
-        if ($l -match "^http" -or $l -match "^mailto:" -or $l -match "^#" -or $l -match "YYYY-MM-DD") { continue }
+        if ($l -match "^http" -or $l -match "^mailto:" -or $l -match "^#" -or $l -match "YYYY-MM-DD" -or $l -match "^\.\./\.\.") { continue }
         $dl = $l.Replace("%20", " ")
         $tp = Join-Path -Path (Split-Path -Path $f.FullName) -ChildPath $dl
         if (-not (Test-Path $tp)) {
