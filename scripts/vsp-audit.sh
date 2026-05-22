@@ -6,8 +6,11 @@
 FAILED=0
 echo "--- Documentation Audit (Unix) ---"
 
+# Paths excluded from all audit checks (temporary/generated files)
+AUDIT_EXCLUDE="node_modules|\.git|\.claude|\.gemini|scratch/temp|scratch/tasks|memory/|docs/superpowers/"
+
 # 1. Absolute Path Check
-ABS_PATHS=$(grep -rEi "[A-Z]:\\\\|/Users/|/home/" . --include="*.md" | grep -vE "node_modules|\.git|\.claude|\.gemini|setup-guide.md|antigravity-setup.md|plugin-setup.md")
+ABS_PATHS=$(grep -rEi "[A-Z]:\\\\|/Users/|/home/" . --include="*.md" | grep -vE "$AUDIT_EXCLUDE|setup-guide.md|antigravity-setup.md|plugin-setup.md")
 if [ -n "$ABS_PATHS" ]; then
     echo "  [!] Absolute paths detected!"
     echo "$ABS_PATHS" | head -n 5
@@ -32,7 +35,15 @@ while read -r file; do
             FAILED=1
         fi
     done
-done < <(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/.claude/*" -not -path "*/.gemini/*")
+done < <(find . -name "*.md" \
+  -not -path "*/node_modules/*" \
+  -not -path "*/.git/*" \
+  -not -path "*/.claude/*" \
+  -not -path "*/.gemini/*" \
+  -not -path "*/scratch/temp/*" \
+  -not -path "*/scratch/tasks/*" \
+  -not -path "*/memory/*" \
+  -not -path "*/docs/superpowers/*")
 
 # 3. Script Pairing Check (all scripts must have both .ps1 and .sh)
 for script in scripts/*; do

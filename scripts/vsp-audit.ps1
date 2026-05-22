@@ -5,15 +5,18 @@ param()
 $failed = $false
 Write-Host "--- Documentation Audit (Windows) ---" -ForegroundColor Cyan
 
+# Paths excluded from all audit checks (temporary/generated files)
+$auditExclude = "node_modules|\.git|\.claude|\.gemini|scratch.temp|scratch.tasks|\\memory\\|docs.superpowers"
+
 # 1. Absolute Path Check
-$abs = Get-ChildItem -Path . -Filter *.md -Recurse | Where-Object { $_.FullName -notmatch "node_modules|\.git|\.claude|\.gemini|setup-guide.md|antigravity-setup.md|plugin-setup.md" } | Select-String -Pattern "[A-Z]:\\", "/Users/", "/home/"
+$abs = Get-ChildItem -Path . -Filter *.md -Recurse | Where-Object { $_.FullName -notmatch "$auditExclude|setup-guide.md|antigravity-setup.md|plugin-setup.md" } | Select-String -Pattern "[A-Z]:\\", "/Users/", "/home/"
 if ($abs) {
     Write-Host "  [!] Absolute paths detected!" -ForegroundColor Red
     $failed = $true
 }
 
 # 2. Link Integrity & Path Style Check
-$docFiles = Get-ChildItem -Path . -Filter *.md -Recurse | Where-Object { $_.FullName -notmatch "node_modules|\.git|\.claude|\.gemini" }
+$docFiles = Get-ChildItem -Path . -Filter *.md -Recurse | Where-Object { $_.FullName -notmatch $auditExclude }
 foreach ($f in $docFiles) {
     $txt = Get-Content $f.FullName -Raw
     if ($null -eq $txt) { continue }
