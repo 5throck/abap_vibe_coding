@@ -440,3 +440,8 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 
 ---
 *Last Updated: 2026-05-20*
+
+
+### Auto-Updating & Context Maintenance
+- **Trigger**: Agents MUST automatically append a summary to the `memory/MEMORY.md` or update architecture sections in `docs/context.md` whenever a significant architectural decision or multi-file feature is completed.
+- **Archiving**: If `docs/context.md` or logs become too unwieldy, older decisions should be archived to `docs/history.md`.

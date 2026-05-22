@@ -90,3 +90,8 @@ This project contains a `.claude/` directory. To prevent configuration drift and
 
 ---
 *Last Updated: 2026-05-21*
+
+
+### Optimal Interaction Guidelines
+- **Context Management**: Leverage your massive context window by cross-referencing multiple files simultaneously (e.g., when debugging, review log files along with related code).
+- **Tool Usage**: Actively use tools like `search_web` for real-time package version verification or resolving external dependencies.
