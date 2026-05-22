@@ -9,6 +9,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Standardize session start checklist in CLAUDE.md to 6-step format (git config, CONSTITUTION, context, AGENTS, memory, skills)
+- Add `## Session Start Skills` section to docs/context.md for all-tool auto-discovery
+- Expand GEMINI.md with tool safeguards, Planning Mode artifacts, and Subagent orchestration
+
 ### Added (2026-05-23 Antigravity Project Configuration Support)
 - `.gemini.settings.json.sample`: Created a template for Antigravity 2.0 and Gemini CLI project-level configuration to streamline setup for new workspaces.
 

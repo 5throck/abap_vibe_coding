@@ -159,6 +159,14 @@ Auto-discovered from `skills/` directory. Each skill is `skills/<name>/SKILL.md`
 
 ---
 
+## Session Start Skills
+<!-- Skills listed here are loaded at the start of EVERY session by ALL AI tools. -->
+<!-- Format: `skills/<name>/SKILL.md` — reason / trigger                          -->
+- `skills/abap-dev/SKILL.md` — always load; MCP tool optimization and ABAP write workflows
+- `skills/post-write-chain/SKILL.md` — always load; mandatory QA chain after any WriteSource / EditSource
+
+---
+
 ## Deployed vsp Binary
 
 | Item | Value |

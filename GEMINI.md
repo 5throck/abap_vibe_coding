@@ -9,6 +9,20 @@
 
 ---
 
+## Context Loading
+
+Load project files at session start using the `@` syntax:
+```
+@../CONSTITUTION.md      # workspace design standard
+@docs/context.md         # project knowledge (ABAP rules, build, codebase map)
+@AGENTS.md               # canonical agent roster
+@memory/MEMORY.md        # recent changes (skip if file does not exist)
+@skills/abap-dev/SKILL.md        # SAP development workflows
+@skills/post-write-chain/SKILL.md  # mandatory QA chain after any write
+```
+
+---
+
 ## Gemini-Specific Configuration
 
 ### Recommended Mode
@@ -66,14 +80,42 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 
 **Auto-commits and hooks are disabled** in Gemini CLI sessions. The PM agent must run `git add -A && git commit` manually at the end of each task. Use Bash git commands directly for commits.
 
+## Gemini Tool Safeguards
+
+#### ⚠️ Surgical Multi-Replace Offset Safeguard
+When calling `multi_replace_file_content` with multiple `ReplacementChunks`, the line numbers of subsequent target blocks will shift if previous edits change the line count.
+- **Rule**: Sort and process `ReplacementChunks` from the **bottom of the file to the top** (descending order of line numbers: largest `StartLine` first).
+
+#### ⚠️ Grep Search 50-Match Cap Safeguard
+The `grep_search` tool silently truncates results at exactly **50 matches**.
+- **Rule**: If a search yields 50 results, do **NOT** assume you have all occurrences.
+- **Remediation**: Partition the search by targeting specific subdirectories or applying restrictive file glob filters via the `Includes` parameter (e.g., `["*.go"]`).
+
+---
+
 ## Gemini-Specific Workflows
 
-### 1. Planning Mode & Architecture Changes
-For complex tasks or architectural modifications, Gemini must enter **Planning Mode**:
-1. Create a detailed technical design using the **Implementation Plan** artifact.
-2. Obtain explicit user approval before modifying code.
-3. Track tasks using `task.md` and document changes in `walkthrough.md`.
-4. Ensure that after changes are verified, the outcomes are summarized in the project's `memory/YYYY-MM-DD.md` log.
+### 1. Planning Mode & Artifact Specifications
+For complex tasks or architectural modifications, Gemini must enter **Planning Mode**. Leverage these three Markdown artifacts (set `IsArtifact: true` with accurate metadata):
+
+#### 1a. `implementation_plan.md`
+*Path: `<appDataDir>\brain\<session-id>\implementation_plan.md`*
+- **Purpose**: Detailed technical design document presented to the user for feedback and approval.
+- **Metadata**: `ArtifactType: "implementation_plan"`, `RequestFeedback: true`.
+- **Governance**: Stop and wait for explicit user approval before modifying any code.
+
+#### 1b. `task.md`
+*Path: `<appDataDir>\brain\<session-id>\task.md`*
+- **Purpose**: Running TODO list to track development progress dynamically.
+- **Metadata**: `ArtifactType: "task"`.
+- **Syntax**: `- [ ]` uncompleted · `- [/]` in progress · `- [x]` completed.
+
+#### 1c. `walkthrough.md`
+*Path: `<appDataDir>\brain\<session-id>\walkthrough.md`*
+- **Purpose**: Post-implementation document summarizing changes, test logs, and manual validation details.
+- **Metadata**: `ArtifactType: "walkthrough"`.
+
+After changes are verified, summarize outcomes in `memory/YYYY-MM-DD.md`.
 
 ### 2. Executing Custom Commands
 Unlike Claude Code, Gemini does not natively register local custom slash commands from `.gemini/commands/` or `.claude/commands/`. Instead:
@@ -86,12 +128,42 @@ This project contains a `.claude/` directory. To prevent configuration drift and
 - **Fallback (Coexistence Phase)**: If a project lacks a `.gemini/` directory but contains `.claude/`, Gemini will temporarily read and respect `.claude/settings.json`, `.claude/settings.local.json`, and `.claude/commands/` as the fallback source of truth.
 - **Graceful Migration**: If the project transitions fully away from Claude Code, or if Gemini needs to write new project-level settings/commands, Gemini should proactively offer to migrate the `.claude/` configuration to `.gemini/` (copying and adapting files) rather than leaving legacy files orphaned.
 - **Command Emulation**: Custom slash commands defined as markdown files in `.claude/commands/` must be emulated by Gemini. Read the `.md` file to understand the underlying script execution and run those commands directly via terminal tools.
-- **Gemini Integration Rule**: Gemini can dynamically instantiate roles defined in `AGENTS.md` using the `define_subagent` and `invoke_subagent` tools.
+- **Gemini Integration Rule**: Gemini can dynamically instantiate roles defined in `AGENTS.md` using `define_subagent` and `invoke_subagent`.
+
+#### Define Subagent (`define_subagent`)
+```json
+{
+  "name": "abap-analyst",
+  "description": "Read-only ABAP code analysis and dependency mapping",
+  "system_prompt": "You are an ABAP code analyst...",
+  "enable_write_tools": false,
+  "enable_subagent_tools": false
+}
+```
+
+#### Invoke Subagent (`invoke_subagent`)
+```json
+{
+  "Subagents": [
+    {
+      "TypeName": "abap-analyst",
+      "Role": "ABAP Analyst",
+      "Prompt": "Analyze dependencies of ZPROG_SBOOK_QUERY in package $TMP"
+    }
+  ]
+}
+```
+
+#### Communication (`send_message`)
+Interact with spawned agents via their unique `conversationID`.
+**Reactive Wakeup**: Do not poll in a loop — simply yield execution and the platform wakes you automatically when an agent replies or a background task completes.
 
 ---
-*Last Updated: 2026-05-21*
-
 
 ### Optimal Interaction Guidelines
 - **Context Management**: Leverage your massive context window by cross-referencing multiple files simultaneously (e.g., when debugging, review log files along with related code).
 - **Tool Usage**: Actively use tools like `search_web` for real-time package version verification or resolving external dependencies.
+
+---
+
+*Last Updated: 2026-05-23*
