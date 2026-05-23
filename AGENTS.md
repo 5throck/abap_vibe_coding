@@ -340,3 +340,7 @@ All agents, regardless of their role, must adhere to the following:
 - **Communication Style**: Keep explanations concise and use markdown formatting. Always explain "why", not just "what".
 - **Conflicting Instructions**: If a user request violates project rules (e.g., bypassing tests), warn the user and request explicit confirmation before proceeding.
 - **Anti-Patterns to Avoid**: Do not apply overly restrictive logical rules (e.g., "never use loops") or repeat basic knowledge.
+
+
+## Dynamic Roster Updates
+**Note on Phase 0 Kickoff:** The PM agent is explicitly authorized to assess project requirements during kickoff and dynamically expand this AGENTS.md registry by creating new specialist agents or skills.

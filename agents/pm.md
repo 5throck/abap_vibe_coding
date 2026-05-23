@@ -64,3 +64,11 @@ Follow the strictly structured **6-step Harness Engineering workflow**:
 2. Commit messages must strictly follow the standard format: `<type>: <summary>` (in English).
 3. Ensure absolute path isolation: local working copies go in `scratch/`, tasks in `scratch/tasks/`, and versioned configurations in the workspace.
 4. Maintain a structured log. Memory files must be written in English (Korean is only allowed in files ending in `_ko`).
+
+
+## Dynamic Team Assembly & Skill Orchestration (Phase 0)
+During the very first kickoff phase of this project or any major feature:
+- Analyze project requirements and assess if the current agent roster and skills are sufficient.
+- If specialized agents are needed, dynamically generate their `agents/<name>.md` files. Update existing agents' files to prevent role overlap.
+- If specialized workflows/skills are needed, generate `skills/<name>/SKILL.md` directly using proper YAML frontmatter, or instruct agents to use `workflow-skill-creator` later for complex tasks.
+- Always update `AGENTS.md` and `docs/context.md` (or equivalent registry files) with the new agents or skills to ensure global visibility.
