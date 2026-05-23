@@ -66,7 +66,4 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 *Harness Engineering 팀이 유지 관리 | 최종 업데이트: 2026-05-19*
 
 
-## 🤖 Multi-Agent Kickoff (Recommended)
-Before writing any code or beginning a new major feature, ask the AI to start a PM-led kickoff meeting:
-> *"Let's start the PM agent kickoff meeting for this project."*
 This will trigger the Phase 0 Dynamic Team Assembly process to align roles and skills.
