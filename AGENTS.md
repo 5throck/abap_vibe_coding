@@ -140,6 +140,14 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
 
 ---
 
+### 11. 🛡️ Security Monitor
+- **When to dispatch**: Phase 1 triage or prior to writes; enforces security policies and safe dependencies.
+- **Key Tools**: `GrepObjects`, `GetSource`
+- **Output**: Security assessment
+- **Subagent prompt**: [`agents/security-monitor.md`](agents/security-monitor.md)
+
+---
+
 ### 10. 🤖 SAP GUI Scripting Expert
 - **When to dispatch**: ⚠️ LAST RESORT — only when no BAPI/OData/RFC alternative exists; BDC or VBS automation required
 - **Key Tools**: `GetSource`, `GrepObjects`, `SearchObject`, `RunQuery`
@@ -209,6 +217,7 @@ These subagents can be run simultaneously during initial triage and design phase
 | `sap-investigator` | `agents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
 | `read-only-analyst` | `agents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
 | `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
+| `security-monitor` | `agents/security-monitor.md` | ✅ Always | `GrepObjects`, `GetSource` (read) |
 | `fiori-dev` (Design Mode) | `agents/fiori-developer.md` | ✅ Design only | `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure` |
 | `form-expert` (Design Mode) | `agents/form-expert.md` | ✅ Design only | `GrepObjects` |
 
