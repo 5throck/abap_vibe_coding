@@ -1,0 +1,22 @@
+# gitleaks configuration — abap_vibe_coding
+title = "abap_vibe_coding gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for known false positives"
+regexes = [
+  'your[_-]?(api[_-]?)?key[_-]?here',
+  'your[_-]?secret[_-]?here',
+  'replace[_-]?with[_-]?actual',
+  'example[_\-.]com',
+  'gitleaks:allow',
+]
+paths = [
+  '\.env\.sample',
+  'CHANGELOG\.md',
+  '.*_test\.(js|ts|py|go|rs)$',
+  '.*\.test\.(js|ts)$',
+  'memory/.*',
+]

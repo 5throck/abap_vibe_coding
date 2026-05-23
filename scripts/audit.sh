@@ -93,6 +93,20 @@ else
     FAILED=1
 fi
 
+# 9. Active CRITICAL security advisories (warn only — does not fail audit)
+if [ -d "security" ] && ls security/*.md 2>/dev/null | grep -q .; then
+  _critical=0
+  for _f in security/*.md; do
+    [ -f "$_f" ] || continue
+    if grep -q "^severity: CRITICAL" "$_f" && grep -q "^status: active" "$_f"; then
+      _critical=$((_critical + 1))
+    fi
+  done
+  if [ "$_critical" -gt 0 ]; then
+    echo -e "\033[33m[WARN]\033[0m security/: $_critical active CRITICAL advisory/advisories — run /security-check to review"
+  fi
+fi
+
 if [ $FAILED -ne 0 ]; then
     echo "Audit FAILED."
     exit 1

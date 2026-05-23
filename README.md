@@ -4,7 +4,7 @@
 [![Contributing](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ## Project Mission
-This project aims to revolutionize SAP ABAP development by establishing a robust **Harness Engineering** framework. It leverages AI agents to automate, standardize, and optimize the entire development lifecycle - from business requirements analysis to system deployment.
+This project is the core **Reference Implementation** of Harness Engineering. It aims to revolutionize SAP ABAP development by establishing a robust **Harness Engineering** framework. It leverages AI agents to automate, standardize, and optimize the entire development lifecycle - from business requirements analysis to system deployment.
 
 ## Harness Engineering Concept
 

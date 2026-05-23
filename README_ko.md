@@ -5,7 +5,7 @@
 
 ## 프로젝트 미션
 
-이 프로젝트는 강력한 **Harness Engineering** 프레임워크를 구축하여 SAP ABAP 개발 방식을 혁신하는 것을 목표로 합니다. AI 에이전트를 활용해 비즈니스 요구사항 분석부터 시스템 배포까지 전체 개발 라이프사이클을 자동화, 표준화, 최적화합니다.
+이 프로젝트는 Harness Engineering의 **핵심 참조 구현체(Reference Implementation)**입니다. 강력한 **Harness Engineering** 프레임워크를 구축하여 SAP ABAP 개발 방식을 혁신하는 것을 목표로 합니다. AI 에이전트를 활용해 비즈니스 요구사항 분석부터 시스템 배포까지 전체 개발 라이프사이클을 자동화, 표준화, 최적화합니다.
 
 ## Harness Engineering 개념
 
