@@ -1,10 +1,10 @@
-# context.md
+﻿# context.md
 
-**vsp** — Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
+**vsp** ??Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
 > **Shared reference for all AI tools**: Claude Code CLI, Claude Code Desktop App, Codex, Gemini CLI, and Antigravity.
-> Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `../GEMINI.md` (Gemini CLI).
-> Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire — run Post-Write chain manually.
+> Tool-specific overrides live in `https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/GEMINI.md` (Gemini CLI).
+> Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire ??run Post-Write chain manually.
 > Agent roles and orchestration rules live in `../AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `docs/skill.md` (legacy entry point; current skills are auto-discovered from the `skills/` directory).
 > ABAP development history (date-archived) lives in `../memory/`.
@@ -14,7 +14,7 @@
 
 ## Project Overview
 
-SAP ABAP Harness Engineering framework — a PM-led, multi-agent development harness for SAP ABAP projects using the **vsp** MCP server. Provides governance workflows, role-based agents, reusable skills, and automated QA chains for ABAP development.
+SAP ABAP Harness Engineering framework ??a PM-led, multi-agent development harness for SAP ABAP projects using the **vsp** MCP server. Provides governance workflows, role-based agents, reusable skills, and automated QA chains for ABAP development.
 
 ---
 
@@ -22,11 +22,11 @@ SAP ABAP Harness Engineering framework — a PM-led, multi-agent development har
 
 | Layer | Technology |
 |-------|-----------|
-| MCP Server | `vsp` Go binary v2.38.1 — connects to SAP via ADT (ABAP Development Tools REST API) |
+| MCP Server | `vsp` Go binary v2.38.1 ??connects to SAP via ADT (ABAP Development Tools REST API) |
 | AI Orchestration | Claude Code CLI / Desktop App, Gemini CLI, Antigravity (VS Code extension) |
 | SAP Connection | HTTP/HTTPS to SAP NetWeaver AS ABAP; configured via `.env` (`SAP_*` prefix) |
 | Scripting | Bash (`.sh`) + PowerShell (`.ps1`) pairs for all automation |
-| Documentation | Markdown — `docs/`, `agents/`, `skills/`, `memory/` |
+| Documentation | Markdown ??`docs/`, `agents/`, `skills/`, `memory/` |
 
 ---
 
@@ -41,7 +41,7 @@ chmod +x ./vsp          # macOS/Linux
 
 # 2. Configure SAP credentials
 cp .env.sample .env
-# Edit .env — fill in SAP_URL, SAP_USER, SAP_PASSWORD
+# Edit .env ??fill in SAP_URL, SAP_USER, SAP_PASSWORD
 
 # 3. Activate git hooks
 git config core.hooksPath .githooks
@@ -51,29 +51,29 @@ git config core.hooksPath .githooks
 ```
 
 Required env keys (see `.env.sample`):
-- `SAP_URL` — SAP system base URL (e.g. `https://my-sap-host:44300`)
-- `SAP_USER` — SAP username
-- `SAP_PASSWORD` — SAP password
-- `SAP_MODE` — MCP mode (default: `hyperfocused`)
+- `SAP_URL` ??SAP system base URL (e.g. `https://my-sap-host:44300`)
+- `SAP_USER` ??SAP username
+- `SAP_PASSWORD` ??SAP password
+- `SAP_MODE` ??MCP mode (default: `hyperfocused`)
 
 ---
 
 ## Architecture
 
-> Full codebase map: [§ Upstream VSP Codebase Structure](#upstream-vsp-codebase-structure) below.
-> ABAP object layout: [§ ABAP Development](#abap-development) below.
+> Full codebase map: [짠 Upstream VSP Codebase Structure](#upstream-vsp-codebase-structure) below.
+> ABAP object layout: [짠 ABAP Development](#abap-development) below.
 
 Key directories:
 ```
 abap_vibe_coding/
-├── agents/          # 19 AI agent role definitions
-├── skills/          # 8 skill files (abap-dev, post-write-chain, sap-*)
-├── scripts/         # dev-sync, audit, vsp-sync automation
-├── memory/          # session logs (YYYY-MM-DD.md)
-├── scratch/tasks/   # per-task work files (task-YYYY-MM-DD-NNN.md)
-├── docs/            # context.md, ADRs, tooling-matrix
-├── vsp             # vsp binary (gitignored — install via scripts/install-vsp.sh)
-└── .mcp.json        # MCP server config (gitignored — from .env)
+?쒋?? agents/          # 19 AI agent role definitions
+?쒋?? skills/          # 8 skill files (abap-dev, post-write-chain, sap-*)
+?쒋?? scripts/         # dev-sync, audit, vsp-sync automation
+?쒋?? memory/          # session logs (YYYY-MM-DD.md)
+?쒋?? scratch/tasks/   # per-task work files (task-YYYY-MM-DD-NNN.md)
+?쒋?? docs/            # context.md, ADRs, tooling-matrix
+?쒋?? vsp             # vsp binary (gitignored ??install via scripts/install-vsp.sh)
+?붴?? .mcp.json        # MCP server config (gitignored ??from .env)
 ```
 
 ---
@@ -82,20 +82,20 @@ abap_vibe_coding/
 
 ```bash
 # 1. Start a task
-/triage <request>          # PM classifies → creates task file → parallel research
+/triage <request>          # PM classifies ??creates task file ??parallel research
 
 # 2. After implementation
-/post-write                # SyntaxCheck → RunUnitTests → RunATCCheck
+/post-write                # SyntaxCheck ??RunUnitTests ??RunATCCheck
 /transport                 # Create/release CTS transport
 
 # 3. Sync to Git
-/sync "feat: description"  # memlog → changelog → audit → commit → PR
+/sync "feat: description"  # memlog ??changelog ??audit ??commit ??PR
 
 # Manual equivalents (bash)
 bash scripts/dev-sync.sh "feat: description"
 ```
 
-> Full 6-phase workflow: [§ Developer Quick Start](#developer-quick-start-task-lifecycle) in ABAP Development below.
+> Full 6-phase workflow: [짠 Developer Quick Start](#developer-quick-start-task-lifecycle) in ABAP Development below.
 
 ---
 
@@ -104,13 +104,13 @@ bash scripts/dev-sync.sh "feat: description"
 | File | Purpose |
 |------|---------|
 | `docs/context.md` | Single source of truth for all AI tools |
-| `AGENTS.md` | Canonical agent index — auto-loaded by Claude Code |
+| `AGENTS.md` | Canonical agent index ??auto-loaded by Claude Code |
 | `CLAUDE.md` | Claude Code-specific configuration |
 | `GEMINI.md` | Gemini CLI-specific configuration |
-| `agents/pm.md` | PM orchestrator — 6-phase workflow owner |
+| `agents/pm.md` | PM orchestrator ??6-phase workflow owner |
 | `agents/architect.md` | Technical Execution Lead |
 | `agents/code-writer.md` | ABAP implementation agent |
-| `agents/test-runner.md` | QA agent — SyntaxCheck/RunUnitTests/RunATCCheck |
+| `agents/test-runner.md` | QA agent ??SyntaxCheck/RunUnitTests/RunATCCheck |
 | `scripts/dev-sync.sh/.ps1` | Full sync pipeline |
 | `scripts/audit.sh/.ps1` | Documentation integrity audit |
 | `memory/MEMORY.md` | Session log index |
@@ -125,10 +125,10 @@ Full behavioral rules in each `agents/*.md` file. Summary:
 
 | Agent | Role |
 |-------|------|
-| `pm` | Orchestrator — governs 6-phase workflow (Triage → Finalization) |
-| `architect` | Technical Execution Lead — pattern selection (A/B/C), execution plan |
-| `code-writer` | ABAP implementation — WriteSource / EditSource |
-| `test-runner` | QA — SyntaxCheck → RunUnitTests → RunATCCheck |
+| `pm` | Orchestrator ??governs 6-phase workflow (Triage ??Finalization) |
+| `architect` | Technical Execution Lead ??pattern selection (A/B/C), execution plan |
+| `code-writer` | ABAP implementation ??WriteSource / EditSource |
+| `test-runner` | QA ??SyntaxCheck ??RunUnitTests ??RunATCCheck |
 | `dba` | Database / CDS / table design |
 | `devops-admin` | Transports, system config, abapGit |
 | `sap-investigator` | Cross-system read-only investigation |
@@ -148,8 +148,8 @@ Auto-discovered from `skills/` directory. Each skill is `skills/<name>/SKILL.md`
 
 | Skill | Trigger |
 |-------|---------|
-| `abap-dev` | Any ABAP development session — MCP tool optimization, write workflows |
-| `post-write-chain` | After any WriteSource / EditSource — mandatory QA chain |
+| `abap-dev` | Any ABAP development session ??MCP tool optimization, write workflows |
+| `post-write-chain` | After any WriteSource / EditSource ??mandatory QA chain |
 | `sap-sd` | SD module tasks (sales orders, deliveries, billing) |
 | `sap-mm` | MM module tasks (purchasing, goods receipt, inventory) |
 | `sap-fi` | FI module tasks (journal entries, account determination) |
@@ -162,9 +162,9 @@ Auto-discovered from `skills/` directory. Each skill is `skills/<name>/SKILL.md`
 ## Session Start Skills
 <!-- Skills listed here are loaded at the start of EVERY session by ALL AI tools. -->
 <!-- NOTE: This list may be dynamically expanded by the PM during the Kickoff Phase.-->
-<!-- Format: `skills/<name>/SKILL.md` — reason / trigger                          -->
-- `skills/abap-dev/SKILL.md` — always load; MCP tool optimization and ABAP write workflows
-- `skills/post-write-chain/SKILL.md` — always load; mandatory QA chain after any WriteSource / EditSource
+<!-- Format: `skills/<name>/SKILL.md` ??reason / trigger                          -->
+- `skills/abap-dev/SKILL.md` ??always load; MCP tool optimization and ABAP write workflows
+- `skills/post-write-chain/SKILL.md` ??always load; mandatory QA chain after any WriteSource / EditSource
 
 ---
 
@@ -194,7 +194,7 @@ make build-all                          # 9 platforms
 
 Key flags: `--mode hyperfocused|focused|expert` (Note: `hyperfocused` is the standard mode for all AI agents), `--read-only`, `--allowed-packages "Z*"`, `--disabled-groups 5THD`
 
-> **Note on hyperfocused mode**: Despite the name, `hyperfocused` mode registers all 101 individual MCP tools (GetSource, GetODataMetadata, RunQuery, etc.) — not a single unified tool. The mode restricts which SAP **packages** and **features** are accessible, not which MCP tools are registered. Agent files may reference all their tools normally when `SAP_MODE=hyperfocused`.
+> **Note on hyperfocused mode**: Despite the name, `hyperfocused` mode registers all 101 individual MCP tools (GetSource, GetODataMetadata, RunQuery, etc.) ??not a single unified tool. The mode restricts which SAP **packages** and **features** are accessible, not which MCP tools are registered. Agent files may reference all their tools normally when `SAP_MODE=hyperfocused`.
 
 ---
 
@@ -217,8 +217,8 @@ pkg/
   dsl/                Fluent API, YAML workflows, batch ops
   cache/              In-memory + SQLite
   scripting/          Lua engine
-  llvm2abap/          LLVM→ABAP (research)
-  wasmcomp/           WASM→ABAP (research)
+  llvm2abap/          LLVM?묨BAP (research)
+  wasmcomp/           WASM?묨BAP (research)
 ```
 
 ### Upstream VSP Modification Map
@@ -238,7 +238,7 @@ pkg/
 |------|---------------------------------------------|
 | Fix MCP/docs/config | `../README.md`, `../agents/*` |
 | Add/update analyst context | `../agents/<module>-analyst.md` |
-| New task handoff | copy `task-template.md` → `../scratch/tasks/task-YYYY-MM-DD-NNN.md` |
+| New task handoff | copy `task-template.md` ??`../scratch/tasks/task-YYYY-MM-DD-NNN.md` |
 | Add/update subagent prompt | `../agents/<role>.md` |
 
 ---
@@ -265,11 +265,11 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 
 ## Upstream VSP / SAP Runtime Common Issues
 
-1. **CSRF errors** — auto-refreshed in `http.go`
-2. **Lock conflicts** — edit handler does auto lock/unlock
-3. **Session issues** — some CRUD/debugger flows are session-sensitive; verify stateful/stateless before changing transport or auth logic
-4. **Auth** — use basic OR cookies, not both
-5. **ZADT_VSP** — WebSocket debug/RFC/RunReport require it installed on SAP
+1. **CSRF errors** ??auto-refreshed in `http.go`
+2. **Lock conflicts** ??edit handler does auto lock/unlock
+3. **Session issues** ??some CRUD/debugger flows are session-sensitive; verify stateful/stateless before changing transport or auth logic
+4. **Auth** ??use basic OR cookies, not both
+5. **ZADT_VSP** ??WebSocket debug/RFC/RunReport require it installed on SAP
 
 > Security and sanitization rules are in [security.md](security.md).
 
@@ -287,21 +287,21 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 
 | Directory | Purpose | Git-tracked? |
 |-----------|---------|:---:|
-| `agents/` | Agent role definitions (`.md` files) for all AI tools | ✅ |
-| `skills/` | Skill definitions (`SKILL.md`) loaded per-session | ✅ |
-| `docs/` | Shared engineering documentation | ✅ |
-| `memory/` | Date-stamped development logs (`YYYY-MM-DD.md`) | ✅ |
-| `scratch/tasks/` | Active task handoff files (created by `/new-task`) | ✅ |
-| `scratch/stable/` | Exported ABAP sources kept for reference (read-only snapshots) | ✅ |
-| `scratch/temp/` | Throwaway work files — not committed | ❌ |
-| `.agents/` | Claude Code plugin runtime cache (auto-generated by Desktop App) | ❌ |
-| `.claude/worktrees/` | Parallel session worktrees (auto-managed by Desktop App) | ❌ |
+| `agents/` | Agent role definitions (`.md` files) for all AI tools | ??|
+| `skills/` | Skill definitions (`SKILL.md`) loaded per-session | ??|
+| `docs/` | Shared engineering documentation | ??|
+| `memory/` | Date-stamped development logs (`YYYY-MM-DD.md`) | ??|
+| `scratch/tasks/` | Active task handoff files (created by `/new-task`) | ??|
+| `scratch/stable/` | Exported ABAP sources kept for reference (read-only snapshots) | ??|
+| `scratch/temp/` | Throwaway work files ??not committed | ??|
+| `.agents/` | Claude Code plugin runtime cache (auto-generated by Desktop App) | ??|
+| `.claude/worktrees/` | Parallel session worktrees (auto-managed by Desktop App) | ??|
 
 ### ABAP Development Rules
 - **Naming**: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program).
 - **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 - **Write Operations**: Use `EditSource` for small changes. Always run `SyntaxCheck` before `WriteSource`.
-- **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` → `RunUnitTests` → `RunATCCheck`). Priority 1 findings block deployment. See [skills/post-write-chain/SKILL.md § Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details.
+- **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` ??`RunUnitTests` ??`RunATCCheck`). Priority 1 findings block deployment. See [skills/post-write-chain/SKILL.md 짠 Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details.
 - **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
 
 ### ABAP SQL Reference (All Agents)
@@ -309,29 +309,29 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 > All agents that run `RunQuery` MUST follow these rules.
 
 ```sql
--- ✅ Correct ordering
+-- ??Correct ordering
 ORDER BY field DESCENDING        -- NOT: ORDER BY field DESC
 
--- ✅ Row limiting (use max_rows parameter, not SQL LIMIT)
+-- ??Row limiting (use max_rows parameter, not SQL LIMIT)
 RunQuery(sql=..., max_rows=50)   -- NOT: LIMIT 50 in SQL string
 
--- ✅ Date format
+-- ??Date format
 WHERE erdat >= '20260501'        -- YYYYMMDD string, no separators
 
--- ✅ Table aliasing in JOINs
+-- ??Table aliasing in JOINs
 FROM vbak AS a JOIN vbap AS b ON a~vbeln = b~vbeln
 
--- ✅ Field references with tilde
+-- ??Field references with tilde
 b~matnr    -- NOT: b.matnr
 
--- ❌ Anti-patterns to avoid
+-- ??Anti-patterns to avoid
 SELECT *                         -- always list explicit fields
 MANDT = '001'                    -- never hardcode client
 ```
 
 ### Developer Quick Start (Task Lifecycle)
 
-For full project governance and role-based orchestration, refer to [AGENTS.md § Collaborative Workflow](../AGENTS.md#agent-coordination-workflow-harness-advanced).
+For full project governance and role-based orchestration, refer to [AGENTS.md 짠 Collaborative Workflow](../AGENTS.md#agent-coordination-workflow-harness-advanced).
 
 ```powershell
 # 1. Initialize Task
@@ -353,10 +353,10 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 ## Coding Guidelines
 
 > These rules apply to every AI tool working in this project.
-> Full rationale: [CONSTITUTION.md §8](../../CONSTITUTION.md#8-coding-behavior-guidelines)
+> Full rationale: [CONSTITUTION.md 짠8](../https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md#8-coding-behavior-guidelines)
 
 ### 1. Think Before Coding
-- State assumptions explicitly before implementing. If uncertain, ask — don't guess silently.
+- State assumptions explicitly before implementing. If uncertain, ask ??don't guess silently.
 - **Secrets**: Never hardcode passwords, API tokens, or keys. Always use env vars / `.env.sample`.
 
 ### 2. Simplicity First
@@ -369,17 +369,17 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 - Convert every task into a verifiable goal before starting.
 
 ### 5. Response Language
-- All **conversational** replies → **Korean (한국어)** by default.
-- All code, config, commit messages, PR titles, branch names, **CHANGELOG.md**, and **memory/ logs** → **English only**.
+- All **conversational** replies ??**Korean (?쒓뎅??** by default.
+- All code, config, commit messages, PR titles, branch names, **CHANGELOG.md**, and **memory/ logs** ??**English only**.
 
 ---
 
 ## Session Start Skills
 <!-- Skills listed here are loaded at the start of EVERY session by ALL AI tools. -->
 <!-- NOTE: This list may be dynamically expanded by the PM during the Kickoff Phase.-->
-<!-- Format: `skills/<name>/SKILL.md` — reason / trigger                          -->
-- `skills/abap-dev/SKILL.md` — always load for SAP ABAP development tasks
-- `skills/post-write-chain/SKILL.md` — always load; mandatory QA after any write
+<!-- Format: `skills/<name>/SKILL.md` ??reason / trigger                          -->
+- `skills/abap-dev/SKILL.md` ??always load for SAP ABAP development tasks
+- `skills/post-write-chain/SKILL.md` ??always load; mandatory QA after any write
 
 ---
 
@@ -395,17 +395,17 @@ Required fields per entry:
 - **Object name, type, package, and ADT URL**
 - **Purpose summary** (what it does, what it queries, how it outputs)
 - **Key technical decisions** (design choices, reasons, alternatives considered)
-- **Issue history** (symptom → root cause → resolution)
+- **Issue history** (symptom ??root cause ??resolution)
 - **MCP / config changes** (`.mcp.json`, `.gemini/settings.json`, etc.)
 
 **When to read**: Only when a recurring error occurs or when uncertain about a past design decision. Do **not** read memory files on every session start. All entries must be written in **English**.
 
-**Scope boundary** — `memory/` and `CHANGELOG.md` serve different purposes and must not be conflated:
+**Scope boundary** ??`memory/` and `CHANGELOG.md` serve different purposes and must not be conflated:
 
 | Change type | Record in |
 |-------------|-----------|
 | ABAP object created or significantly modified | `memory/YYYY-MM-DD.md` |
-| Harness infrastructure changed (agents, skills, scripts, docs, config) | `CHANGELOG.md` — `[Unreleased]` section |
+| Harness infrastructure changed (agents, skills, scripts, docs, config) | `CHANGELOG.md` ??`[Unreleased]` section |
 
 ### Documentation Language
 
@@ -463,3 +463,4 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 
 ## Dynamic Roster & Skills Note
 **Note:** The agent and skills lists in this project may be dynamically expanded by the PM orchestrator during the Kickoff Phase based on emerging requirements.
+
