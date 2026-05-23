@@ -25,3 +25,18 @@ The script will:
 4. Commit all staged changes with the provided message
 
 Report the result clearly (success or failure with reason).
+
+## Pre-PR Security Gate (public repos only)
+
+Before pushing/creating PR, check if the repo is public:
+
+```bash
+gh repo view --json isPrivate -q '.isPrivate' 2>/dev/null
+```
+
+If the result is `false` (public repo): run `/security-check --pr` (read-only advisory check).
+
+- If CRITICAL advisories are found: show the warning and **pause** — let the user decide whether to proceed or stop.
+- If no CRITICAL advisories: continue with push and PR.
+
+For private repos: skip this gate entirely.

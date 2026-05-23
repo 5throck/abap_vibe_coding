@@ -32,3 +32,26 @@ vsp
 vsp.exe
 build/
 dist/
+
+# Crypto / certificates — never commit private key material
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+*.der
+*.jks
+*.keystore
+
+# Temp / build artifacts
+*.log
+*.bak
+*.tmp
+
+# Databases
+*.sqlite
+*.db
+
+# Local MCP overrides
+.mcp.local.json
