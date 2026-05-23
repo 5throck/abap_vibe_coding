@@ -449,8 +449,12 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
-*Last Updated: 2026-05-20*
+*Last Updated: 2026-05-23*
 
+
+### Tracking Management: CHANGELOG vs. Memory
+- **`CHANGELOG.md`**: For end-users and release notes. Record *what* changed (features, fixes) using structured categories.
+- **`memory/` logs**: For developers and AI agents. Record *how* and *why* changes were made, including architectural decisions and debugging context.
 
 ### Auto-Updating & Context Maintenance
 - **Trigger**: Agents MUST automatically append a summary to the `memory/MEMORY.md` or update architecture sections in `docs/context.md` whenever a significant architectural decision or multi-file feature is completed.
