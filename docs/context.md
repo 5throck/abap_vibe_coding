@@ -161,6 +161,7 @@ Auto-discovered from `skills/` directory. Each skill is `skills/<name>/SKILL.md`
 
 ## Session Start Skills
 <!-- Skills listed here are loaded at the start of EVERY session by ALL AI tools. -->
+<!-- NOTE: This list may be dynamically expanded by the PM during the Kickoff Phase.-->
 <!-- Format: `skills/<name>/SKILL.md` — reason / trigger                          -->
 - `skills/abap-dev/SKILL.md` — always load; MCP tool optimization and ABAP write workflows
 - `skills/post-write-chain/SKILL.md` — always load; mandatory QA chain after any WriteSource / EditSource
@@ -375,6 +376,7 @@ For full project governance and role-based orchestration, refer to [AGENTS.md §
 
 ## Session Start Skills
 <!-- Skills listed here are loaded at the start of EVERY session by ALL AI tools. -->
+<!-- NOTE: This list may be dynamically expanded by the PM during the Kickoff Phase.-->
 <!-- Format: `skills/<name>/SKILL.md` — reason / trigger                          -->
 - `skills/abap-dev/SKILL.md` — always load for SAP ABAP development tasks
 - `skills/post-write-chain/SKILL.md` — always load; mandatory QA after any write
@@ -453,3 +455,7 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 ### Auto-Updating & Context Maintenance
 - **Trigger**: Agents MUST automatically append a summary to the `memory/MEMORY.md` or update architecture sections in `docs/context.md` whenever a significant architectural decision or multi-file feature is completed.
 - **Archiving**: If `docs/context.md` or logs become too unwieldy, older decisions should be archived to `docs/history.md`.
+
+
+## Dynamic Roster & Skills Note
+**Note:** The agent and skills lists in this project may be dynamically expanded by the PM orchestrator during the Kickoff Phase based on emerging requirements.
