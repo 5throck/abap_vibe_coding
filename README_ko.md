@@ -63,7 +63,4 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 
 ---
 
-*Harness Engineering 팀이 유지 관리 | 최종 업데이트: 2026-05-19*
-
-
-This will trigger the Phase 0 Dynamic Team Assembly process to align roles and skills.
+*Harness Engineering 팀이 유지 관리 | 최종 업데이트: 2026-05-23*
