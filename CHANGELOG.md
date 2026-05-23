@@ -9,124 +9,133 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **[2026-05-23]**: `.githooks/pre-commit`: Markdown date auto-bumper 및 CHANGELOG auto-dating 로직 추가. 커밋 시 스테이징된 `.md` 파일의 `Last Updated:` 날짜를 자동으로 갱신하며, `CHANGELOG.md`의 미기재 항목에 날짜를 주입.
+- **[2026-05-23]**: `docs/context.md`: Agents 테이블에 `security-monitor` (Security group) 추가.
+- **[2026-05-23]**: `AGENTS.md`: 전체 Agent Roster에 `security-monitor` 요원 정식 등록.
+
+### Removed
+- **[2026-05-23]**: `README.md` / `README_ko.md`: 더 이상 필요 없는 수동 킥오프 안내 문구 일괄 제거.
+
+
 ### Changed
-- Standardize session start checklist in CLAUDE.md to 6-step format (git config, CONSTITUTION, context, AGENTS, memory, skills)
-- Add `## Session Start Skills` section to docs/context.md for all-tool auto-discovery
-- Expand GEMINI.md with tool safeguards, Planning Mode artifacts, and Subagent orchestration
+- **[2026-05-23]**: Standardize session start checklist in CLAUDE.md to 6-step format (git config, CONSTITUTION, context, AGENTS, memory, skills)
+- **[2026-05-23]**: Add `## Session Start Skills` section to docs/context.md for all-tool auto-discovery
+- **[2026-05-23]**: Expand GEMINI.md with tool safeguards, Planning Mode artifacts, and Subagent orchestration
 
 ### Added (2026-05-23 Antigravity Project Configuration Support)
-- `.gemini.settings.json.sample`: Created a template for Antigravity 2.0 and Gemini CLI project-level configuration to streamline setup for new workspaces.
+- **[2026-05-23]**: `.gemini.settings.json.sample`: Created a template for Antigravity 2.0 and Gemini CLI project-level configuration to streamline setup for new workspaces.
 
 ### Changed (2026-05-23 Antigravity Project Configuration Support)
-- `docs/antigravity-setup.md`: Updated to state that Antigravity 2.0 (and CLI) now supports project-level configs via `.gemini/settings.json`, no longer strictly requiring user-level VS Code settings.
-- `docs/setup-guide.md`: Updated Appendix A and cross-references to point Antigravity configurations to `.gemini/settings.json`.
+- **[2026-05-23]**: `docs/antigravity-setup.md`: Updated to state that Antigravity 2.0 (and CLI) now supports project-level configs via `.gemini/settings.json`, no longer strictly requiring user-level VS Code settings.
+- **[2026-05-23]**: `docs/setup-guide.md`: Updated Appendix A and cross-references to point Antigravity configurations to `.gemini/settings.json`.
 
 ### Fixed (2026-05-23 MD Consistency Audit)
-- `CLAUDE.md`: Removed outdated legacy `commands/` folder reference; corrected script delegation path to `audit.ps1`/`audit.sh`
-- Agent & CLI documents (`AGENTS.md`, `GEMINI.md`, `docs/context.md`, `CLAUDE.md`): Integrated Optimal Interaction Guidelines and Universal Baseline Behaviors for agent workflow consistency
+- **[2026-05-23]**: `CLAUDE.md`: Removed outdated legacy `commands/` folder reference; corrected script delegation path to `audit.ps1`/`audit.sh`
+- **[2026-05-23]**: Agent & CLI documents (`AGENTS.md`, `GEMINI.md`, `docs/context.md`, `CLAUDE.md`): Integrated Optimal Interaction Guidelines and Universal Baseline Behaviors for agent workflow consistency
 
 ### Fixed (2026-05-23 Audit Script — Relative Link Filter)
-- `scripts/audit.sh` / `audit.ps1`: Add `../../` relative-path exclusion to markdown link checker — GitHub Security Advisory links (`../../security/advisories/new`) are cross-repo relative URLs, not local file paths, and must be excluded from broken-link validation
+- **[2026-05-23]**: `scripts/audit.sh` / `audit.ps1`: Add `../../` relative-path exclusion to markdown link checker — GitHub Security Advisory links (`../../security/advisories/new`) are cross-repo relative URLs, not local file paths, and must be excluded from broken-link validation
 
 
 ### Added (2026-05-23 Project Structure Compliance)
-- `SECURITY.md`: Security vulnerability reporting policy (CONSTITUTION §1 required file)
-- `.github/pull_request_template.md`: Standard PR body template (CONSTITUTION §1 required file)
+- **[2026-05-23]**: `SECURITY.md`: Security vulnerability reporting policy (CONSTITUTION §1 required file)
+- **[2026-05-23]**: `.github/pull_request_template.md`: Standard PR body template (CONSTITUTION §1 required file)
 
 ### Fixed (2026-05-22 Windows MCP Config)
-- `.mcp.json`: `"./vsp"` → `"./vsp.exe"` so Claude Code CLI resolves the binary on Windows
-- `.claude/settings.json`: PostToolUse hook matcher extended to `Write|Edit|mcp__abap__WriteSource|mcp__abap__EditSource` — ABAP MCP write calls now trigger the sync-md audit script
-- `.claude/settings.local.json`: Added `enableAllProjectMcpServers: true` alongside existing `enabledMcpjsonServers` list for full compatibility
+- **[2026-05-23]**: `.mcp.json`: `"./vsp"` → `"./vsp.exe"` so Claude Code CLI resolves the binary on Windows
+- **[2026-05-23]**: `.claude/settings.json`: PostToolUse hook matcher extended to `Write|Edit|mcp__abap__WriteSource|mcp__abap__EditSource` — ABAP MCP write calls now trigger the sync-md audit script
+- **[2026-05-23]**: `.claude/settings.local.json`: Added `enableAllProjectMcpServers: true` alongside existing `enabledMcpjsonServers` list for full compatibility
 
 ### Changed
-- Add ## Architecture, ## Development Workflow, ## Key Files, ## Environment Setup sections to docs/context.md
+- **[2026-05-23]**: Add ## Architecture, ## Development Workflow, ## Key Files, ## Environment Setup sections to docs/context.md
 
 ### Changed
-- Add standard slash commands, smart pre-commit hook (memory/ exclusion), and Coding Guidelines section to docs/context.md
+- **[2026-05-23]**: Add standard slash commands, smart pre-commit hook (memory/ exclusion), and Coding Guidelines section to docs/context.md
 
 ### Fixed (2026-05-22 Skill Command Wrappers)
-- `.claude/commands/abap-dev.md`: New wrapper — registers `abap-dev` skill for Skill tool invocation
-- `.claude/commands/sap-sd/mm/fi/co/le/pp.md`: Six new wrappers — all SAP module skills now invocable via `Skill("sap-*")`
-- `.claude/commands/post-write.md`: Converted from standalone duplicate to thin wrapper delegating to `skills/post-write-chain/SKILL.md` (single source of truth)
+- **[2026-05-23]**: `.claude/commands/abap-dev.md`: New wrapper — registers `abap-dev` skill for Skill tool invocation
+- **[2026-05-23]**: `.claude/commands/sap-sd/mm/fi/co/le/pp.md`: Six new wrappers — all SAP module skills now invocable via `Skill("sap-*")`
+- **[2026-05-23]**: `.claude/commands/post-write.md`: Converted from standalone duplicate to thin wrapper delegating to `skills/post-write-chain/SKILL.md` (single source of truth)
 
 ### Changed (2026-05-22)
-- `scripts/audit.sh` / `audit.ps1`: New standard audit entry point (replaces vsp-audit as primary)
-- `scripts/vsp-audit.sh` / `vsp-audit.ps1`: Now legacy wrappers delegating to audit.sh/ps1
-- `scripts/sync-md.sh` / `sync-md.ps1`: Updated to call audit.sh/ps1 directly
+- **[2026-05-23]**: `scripts/audit.sh` / `audit.ps1`: New standard audit entry point (replaces vsp-audit as primary)
+- **[2026-05-23]**: `scripts/vsp-audit.sh` / `vsp-audit.ps1`: Now legacy wrappers delegating to audit.sh/ps1
+- **[2026-05-23]**: `scripts/sync-md.sh` / `sync-md.ps1`: Updated to call audit.sh/ps1 directly
 
 ### Added (2026-05-22 Inventory Management Design)
-- `docs/superpowers/specs/2026-05-22-inventory-management-design.md`: Design document for custom inventory management system with Z tables (ZTINV_REQ, ZTINV_REQ_IT, ZTINV_STOCK) handling Goods Receipt and Goods Issue
+- **[2026-05-23]**: `docs/superpowers/specs/2026-05-22-inventory-management-design.md`: Design document for custom inventory management system with Z tables (ZTINV_REQ, ZTINV_REQ_IT, ZTINV_STOCK) handling Goods Receipt and Goods Issue
 
 ### Added (2026-05-21 Memory Log)
-- `memory/2026-05-21.md`: Session log for 2026-05-21 — consistency audit, dispatch-card refactor, BAPI lifecycle expansion, Project Constitution compliance
-- `memory/MEMORY.md`: Updated index with 2026-05-21 entry; Last Updated bumped
+- **[2026-05-23]**: `memory/2026-05-21.md`: Session log for 2026-05-21 — consistency audit, dispatch-card refactor, BAPI lifecycle expansion, Project Constitution compliance
+- **[2026-05-23]**: `memory/MEMORY.md`: Updated index with 2026-05-21 entry; Last Updated bumped
 
 ### Added (2026-05-21 Git Hook Configuration)
-- `.githooks/pre-commit`: Added Git hook to enforce `CHANGELOG.md` updates on every commit.
-- `.githooks/pre-push`: Added Git hook to block direct pushes to `main` branch; enforces PR-based workflow.
-- `.github/workflows/auto-merge.yml`: Added GitHub Actions workflow that automatically Squash & Merges a PR when it receives an "Approved" review.
+- **[2026-05-23]**: `.githooks/pre-commit`: Added Git hook to enforce `CHANGELOG.md` updates on every commit.
+- **[2026-05-23]**: `.githooks/pre-push`: Added Git hook to block direct pushes to `main` branch; enforces PR-based workflow.
+- **[2026-05-23]**: `.github/workflows/auto-merge.yml`: Added GitHub Actions workflow that automatically Squash & Merges a PR when it receives an "Approved" review.
 
 ### Added (2026-05-21 Project Constitution Compliance)
-- `scripts/dev-sync.sh` / `dev-sync.ps1`: Added Project Constitution §3 standard entry-point wrappers delegating to `vsp-sync.sh` / `vsp-sync.ps1`
-- `docs/context.md`: Added `Project Overview`, `Tech Stack`, `Agents`, and `Skills` summary sections per Project Constitution §7 required sections
-- `CLAUDE.md`: Added `.claude/commands/` listing with slash command inventory; added note clarifying root `commands/` folder is legacy; updated Last Updated to 2026-05-21
+- **[2026-05-23]**: `scripts/dev-sync.sh` / `dev-sync.ps1`: Added Project Constitution §3 standard entry-point wrappers delegating to `vsp-sync.sh` / `vsp-sync.ps1`
+- **[2026-05-23]**: `docs/context.md`: Added `Project Overview`, `Tech Stack`, `Agents`, and `Skills` summary sections per Project Constitution §7 required sections
+- **[2026-05-23]**: `CLAUDE.md`: Added `.claude/commands/` listing with slash command inventory; added note clarifying root `commands/` folder is legacy; updated Last Updated to 2026-05-21
 
 ### Changed (2026-05-21 Project Constitution Compliance)
-- `.claude/commands/sync.md`: Updated script invocation from `vsp-sync.sh` → `dev-sync.sh` to align with Project Constitution §3 standard
+- **[2026-05-23]**: `.claude/commands/sync.md`: Updated script invocation from `vsp-sync.sh` → `dev-sync.sh` to align with Project Constitution §3 standard
 
 ### Added (2026-05-21 BAPI Coverage Expansion)
-- `skills/sap-sd/SKILL.md`: Added `BAPI_SALESORDER_CHANGE` (Sales Order Change) and `BAPI_BILLINGDOC_CREATEMULTIPLE` (Billing Document Creation); expanded `BAPI_OUTB_DELIVERY_CREATE_SLS` stub to full parameter documentation; fixed typo `TARGET_QUY` → `TARGET_QTY` in `BAPI_SALESORDER_CREATEFROMDAT2`
-- `skills/sap-mm/SKILL.md`: Added `BAPI_PO_CHANGE` (Purchase Order Change) and `BAPI_MATERIAL_SAVEDATA` (Material Master Save); expanded existing BAPIs with additional parameter detail
-- `skills/sap-fi/SKILL.md`: Added `BAPI_ACC_DOCUMENT_REV_POST` (Document Reversal) and `BAPI_INCOMINGINVOICE_CREATE` (Incoming Invoice / MIRO equivalent); expanded `BAPI_ACC_DOCUMENT_POST` with full parameter detail
-- `skills/sap-co/SKILL.md`: Added `BAPI_COSTCENTER_CHANGE` (Cost Center Change) and `BAPI_INTERNALORDER_CREATE` (Internal Order Create); expanded existing BAPIs with additional parameter detail
-- `skills/sap-pp/SKILL.md`: Added `BAPI_PRODORD_RELEASE` (Production Order Release) and `BAPI_PRODORD_COMPLETE_CONF` (Production Order Confirmation)
-- `skills/sap-le/SKILL.md`: Added `BAPI_OUTB_DELIVERY_CONFIRM_DEC` (Delivery Goods Issue Confirmation/Cancellation) and `BAPI_WHSE_TO_CONFIRM` (WM Transfer Order Confirmation)
+- **[2026-05-23]**: `skills/sap-sd/SKILL.md`: Added `BAPI_SALESORDER_CHANGE` (Sales Order Change) and `BAPI_BILLINGDOC_CREATEMULTIPLE` (Billing Document Creation); expanded `BAPI_OUTB_DELIVERY_CREATE_SLS` stub to full parameter documentation; fixed typo `TARGET_QUY` → `TARGET_QTY` in `BAPI_SALESORDER_CREATEFROMDAT2`
+- **[2026-05-23]**: `skills/sap-mm/SKILL.md`: Added `BAPI_PO_CHANGE` (Purchase Order Change) and `BAPI_MATERIAL_SAVEDATA` (Material Master Save); expanded existing BAPIs with additional parameter detail
+- **[2026-05-23]**: `skills/sap-fi/SKILL.md`: Added `BAPI_ACC_DOCUMENT_REV_POST` (Document Reversal) and `BAPI_INCOMINGINVOICE_CREATE` (Incoming Invoice / MIRO equivalent); expanded `BAPI_ACC_DOCUMENT_POST` with full parameter detail
+- **[2026-05-23]**: `skills/sap-co/SKILL.md`: Added `BAPI_COSTCENTER_CHANGE` (Cost Center Change) and `BAPI_INTERNALORDER_CREATE` (Internal Order Create); expanded existing BAPIs with additional parameter detail
+- **[2026-05-23]**: `skills/sap-pp/SKILL.md`: Added `BAPI_PRODORD_RELEASE` (Production Order Release) and `BAPI_PRODORD_COMPLETE_CONF` (Production Order Confirmation)
+- **[2026-05-23]**: `skills/sap-le/SKILL.md`: Added `BAPI_OUTB_DELIVERY_CONFIRM_DEC` (Delivery Goods Issue Confirmation/Cancellation) and `BAPI_WHSE_TO_CONFIRM` (WM Transfer Order Confirmation)
 
 ### Changed (2026-05-21 PM card + Architect Technical Lead)
-- `AGENTS.md`: PM entry converted to dispatch-card format — removed redundant §5 Finalization steps and Responsibilities bullets (detail lives in `agents/pm.md`); added `Entry point` and `Subagent prompt` fields
-- `AGENTS.md`: Architect designated as **Technical Execution Lead** — role explicitly stated in Technical Group intro and Architect card; added `Technical Lead responsibilities` field
-- `agents/architect.md`: Opening statement updated to reflect Technical Execution Lead role — single point of contact between PM and Technical Group
+- **[2026-05-23]**: `AGENTS.md`: PM entry converted to dispatch-card format — removed redundant §5 Finalization steps and Responsibilities bullets (detail lives in `agents/pm.md`); added `Entry point` and `Subagent prompt` fields
+- **[2026-05-23]**: `AGENTS.md`: Architect designated as **Technical Execution Lead** — role explicitly stated in Technical Group intro and Architect card; added `Technical Lead responsibilities` field
+- **[2026-05-23]**: `agents/architect.md`: Opening statement updated to reflect Technical Execution Lead role — single point of contact between PM and Technical Group
 
 ### Changed (2026-05-21 AGENTS.md Refactoring)
-- `AGENTS.md`: Refactored Business Group analyst entries (SD/LE/PP/MM/FI/CO) to dispatch-card format — removed redundant `Allowed Tools` and `Output Format` skeleton blocks; renamed `Context file` → `Subagent prompt`; deduplicated trigger keyword lists
-- `AGENTS.md`: Refactored Technical Group entries (Architect/ABAP Developer/QA Engineer/DBA/DevOps/Intelligence Investigator/Interface Expert/Fiori Developer/Form Expert/GUI Scripter) to dispatch-card format — replaced `Responsibilities` detail bullets with `When to dispatch` + `Output` summary; added missing `Subagent prompt` links to all agents (`code-writer.md`, `test-runner.md`, `dba.md`, `devops-admin.md`, `sap-investigator.md`, `interface-expert.md`, `fiori-developer.md`, `form-expert.md`, `gui-scripter.md`)
-- `AGENTS.md`: Added Technical Group intro note directing readers to `agents/*.md` for full behavioral rules
-- `AGENTS.md`: Updated Last Updated to 2026-05-21
+- **[2026-05-23]**: `AGENTS.md`: Refactored Business Group analyst entries (SD/LE/PP/MM/FI/CO) to dispatch-card format — removed redundant `Allowed Tools` and `Output Format` skeleton blocks; renamed `Context file` → `Subagent prompt`; deduplicated trigger keyword lists
+- **[2026-05-23]**: `AGENTS.md`: Refactored Technical Group entries (Architect/ABAP Developer/QA Engineer/DBA/DevOps/Intelligence Investigator/Interface Expert/Fiori Developer/Form Expert/GUI Scripter) to dispatch-card format — replaced `Responsibilities` detail bullets with `When to dispatch` + `Output` summary; added missing `Subagent prompt` links to all agents (`code-writer.md`, `test-runner.md`, `dba.md`, `devops-admin.md`, `sap-investigator.md`, `interface-expert.md`, `fiori-developer.md`, `form-expert.md`, `gui-scripter.md`)
+- **[2026-05-23]**: `AGENTS.md`: Added Technical Group intro note directing readers to `agents/*.md` for full behavioral rules
+- **[2026-05-23]**: `AGENTS.md`: Updated Last Updated to 2026-05-21
 
 ### Fixed (2026-05-21 Consistency Audit)
-- `GEMINI.md`: Removed `browser_subagent` reference from Multi-Agent Coordination section; corrected "single tool" description — hyperfocused mode exposes all 101 operations via `sap_execute`
-- `docs/tooling-matrix.md`: Removed `browser_subagent` from PM dispatch cell and Default Rule note; renamed "Web research / browser subagent" row to "Web research"; updated Last Updated to 2026-05-20
-- `docs/setup-guide.md`: Removed `browser_subagent` from §8-C; corrected Appendix B mode table (hyperfocused = "101 ops via sap_execute", not "1 tool"); fixed `VSP_MODE` → `SAP_MODE` in Appendix B; clarified §5-D note; updated to version 1.7 / 2026-05-20
-- `docs/plugin-setup.md`: Fixed `VSP_MODE` → `SAP_MODE` and `VSP_ALLOWED_PACKAGES` → `SAP_ALLOWED_PACKAGES` in §3 `.env` template
-- `docs/mcp_usage.md`: Fixed `VSP_FEATURE_TRANSPORT/RAP/UI5` → `SAP_FEATURE_*` throughout Specialized Tools section; corrected Mode Selection Guide to accurately describe hyperfocused as 101-op routing
-- `AGENTS.md`: Removed non-existent `harness:memory-intelligence` skill reference from Intelligence Investigator; fixed CO trigger keyword `CSKP` → `CSKB`; corrected Role Boundary Matrix: "Analyse ABAP source logic" now maps to `architect` (not `sap-investigator`)
-- `agents/sap-investigator.md`: Fixed CO pattern `CSKP` → `CSKB`; added `GetSource` to tools list for pattern-context verification
-- `docs/testing-guidelines.md`: Fixed §Logging ATC Results to reference "active task file" not "task-template.md"; updated Last Updated to 2026-05-20
-- **C-08 verified non-issue**: `agents/architect.md` already contained `GetCDSImpactAnalysis` — no change needed
+- **[2026-05-23]**: `GEMINI.md`: Removed `browser_subagent` reference from Multi-Agent Coordination section; corrected "single tool" description — hyperfocused mode exposes all 101 operations via `sap_execute`
+- **[2026-05-23]**: `docs/tooling-matrix.md`: Removed `browser_subagent` from PM dispatch cell and Default Rule note; renamed "Web research / browser subagent" row to "Web research"; updated Last Updated to 2026-05-20
+- **[2026-05-23]**: `docs/setup-guide.md`: Removed `browser_subagent` from §8-C; corrected Appendix B mode table (hyperfocused = "101 ops via sap_execute", not "1 tool"); fixed `VSP_MODE` → `SAP_MODE` in Appendix B; clarified §5-D note; updated to version 1.7 / 2026-05-20
+- **[2026-05-23]**: `docs/plugin-setup.md`: Fixed `VSP_MODE` → `SAP_MODE` and `VSP_ALLOWED_PACKAGES` → `SAP_ALLOWED_PACKAGES` in §3 `.env` template
+- **[2026-05-23]**: `docs/mcp_usage.md`: Fixed `VSP_FEATURE_TRANSPORT/RAP/UI5` → `SAP_FEATURE_*` throughout Specialized Tools section; corrected Mode Selection Guide to accurately describe hyperfocused as 101-op routing
+- **[2026-05-23]**: `AGENTS.md`: Removed non-existent `harness:memory-intelligence` skill reference from Intelligence Investigator; fixed CO trigger keyword `CSKP` → `CSKB`; corrected Role Boundary Matrix: "Analyse ABAP source logic" now maps to `architect` (not `sap-investigator`)
+- **[2026-05-23]**: `agents/sap-investigator.md`: Fixed CO pattern `CSKP` → `CSKB`; added `GetSource` to tools list for pattern-context verification
+- **[2026-05-23]**: `docs/testing-guidelines.md`: Fixed §Logging ATC Results to reference "active task file" not "task-template.md"; updated Last Updated to 2026-05-20
+- **[2026-05-23]**: **C-08 verified non-issue**: `agents/architect.md` already contained `GetCDSImpactAnalysis` — no change needed
 
 ### Fixed
-- `AGENTS.md`: Removed 5 incorrect `browser_subagent` references from Form Expert, GUI Scripter, Fiori Dev (Design Mode), and Dispatch Sequences table — tool does not exist in vsp MCP server (IMP-01)
-- `docs/context.md`: Clarified that `hyperfocused` mode registers all 101 individual MCP tools, not a single unified tool — addresses Interface Expert tool availability concern (IMP-02)
+- **[2026-05-23]**: `AGENTS.md`: Removed 5 incorrect `browser_subagent` references from Form Expert, GUI Scripter, Fiori Dev (Design Mode), and Dispatch Sequences table — tool does not exist in vsp MCP server (IMP-01)
+- **[2026-05-23]**: `docs/context.md`: Clarified that `hyperfocused` mode registers all 101 individual MCP tools, not a single unified tool — addresses Interface Expert tool availability concern (IMP-02)
 
 ### Added
-- `AGENTS.md`: Cross-Module Integration Orchestration section — parallel activation rule, PRD ownership policy, primary analyst designation, and 4 standard scenario templates (SD-FI, MM-FI, SD-LE, PP-MM) (IMP-09)
-- `docs/context.md`: Deployed vsp Binary version table (`v2.38.1`, built 2026-04-07) (IMP-05)
-- `docs/context.md`: Canonical ABAP SQL Reference section for all agents (DESCENDING, max_rows, tilde notation, anti-patterns) (IMP-08)
-- `scripts/vsp-audit.ps1` / `vsp-audit.sh`: Check 6 — reports vsp binary version on each audit run (IMP-05)
-- `agents/architect.md`: Pattern C partial-failure rollback procedure — 5-step recovery process when multi-object refactor aborts mid-sequence (IMP-04)
-- `docs/testing-guidelines.md`: ATC Priority-2 Escalation Workflow — three disposition options (Fix / Suppress-with-justification / Defer) with recording location and decision criteria (IMP-03)
-- `docs/testing-guidelines.md`: ABAP Unit Test Skeleton section with method naming convention and AAA pattern reference (IMP-10)
-- `scratch/stable/z_unit_test_skeleton.clas.abap`: Reference ABAP Unit test skeleton with TEST-SEAM injection pattern (IMP-10)
-- `agents/sap-investigator.md`: 6 cross-module pattern groups — SD-FI, MM-FI, SD-LE, PP-MM, LE extended, PP extended (IMP-06)
-- `skills/sap-co/SKILL.md`, `sap-pp/SKILL.md`, `sap-le/SKILL.md`: Strategic BAPIs & APIs section added to complete all 8 required skill sections (IMP-07)
-- `scratch/tasks/task-2026-05-20-001` through `-010`: Task handoff files for all 10 improvement items from 2026-05-20 all-hands review meeting
+- **[2026-05-23]**: `AGENTS.md`: Cross-Module Integration Orchestration section — parallel activation rule, PRD ownership policy, primary analyst designation, and 4 standard scenario templates (SD-FI, MM-FI, SD-LE, PP-MM) (IMP-09)
+- **[2026-05-23]**: `docs/context.md`: Deployed vsp Binary version table (`v2.38.1`, built 2026-04-07) (IMP-05)
+- **[2026-05-23]**: `docs/context.md`: Canonical ABAP SQL Reference section for all agents (DESCENDING, max_rows, tilde notation, anti-patterns) (IMP-08)
+- **[2026-05-23]**: `scripts/vsp-audit.ps1` / `vsp-audit.sh`: Check 6 — reports vsp binary version on each audit run (IMP-05)
+- **[2026-05-23]**: `agents/architect.md`: Pattern C partial-failure rollback procedure — 5-step recovery process when multi-object refactor aborts mid-sequence (IMP-04)
+- **[2026-05-23]**: `docs/testing-guidelines.md`: ATC Priority-2 Escalation Workflow — three disposition options (Fix / Suppress-with-justification / Defer) with recording location and decision criteria (IMP-03)
+- **[2026-05-23]**: `docs/testing-guidelines.md`: ABAP Unit Test Skeleton section with method naming convention and AAA pattern reference (IMP-10)
+- **[2026-05-23]**: `scratch/stable/z_unit_test_skeleton.clas.abap`: Reference ABAP Unit test skeleton with TEST-SEAM injection pattern (IMP-10)
+- **[2026-05-23]**: `agents/sap-investigator.md`: 6 cross-module pattern groups — SD-FI, MM-FI, SD-LE, PP-MM, LE extended, PP extended (IMP-06)
+- **[2026-05-23]**: `skills/sap-co/SKILL.md`, `sap-pp/SKILL.md`, `sap-le/SKILL.md`: Strategic BAPIs & APIs section added to complete all 8 required skill sections (IMP-07)
+- **[2026-05-23]**: `scratch/tasks/task-2026-05-20-001` through `-010`: Task handoff files for all 10 improvement items from 2026-05-20 all-hands review meeting
 
 ### Changed
-- `agents/test-runner.md`: ATC P2 standard updated to reference new escalation workflow (IMP-03)
-- `docs/task-template.md`: Rollback Plan table added to §2 Technical Design; P2 Disposition field added to §4.2 ATC Check Results (IMP-03, IMP-04)
-- `agents/read-only-analyst.md`: Inline ABAP SQL Quick Reference replaced with canonical reference pointer to `docs/context.md` (IMP-08)
-- `agents/dba.md`: SQL syntax rule reference added to behavior rules (IMP-08)
-- `agents/interface-expert.md`: Confirmed tool availability note added to `## Your Tools` section (IMP-02)
+- **[2026-05-23]**: `agents/test-runner.md`: ATC P2 standard updated to reference new escalation workflow (IMP-03)
+- **[2026-05-23]**: `docs/task-template.md`: Rollback Plan table added to §2 Technical Design; P2 Disposition field added to §4.2 ATC Check Results (IMP-03, IMP-04)
+- **[2026-05-23]**: `agents/read-only-analyst.md`: Inline ABAP SQL Quick Reference replaced with canonical reference pointer to `docs/context.md` (IMP-08)
+- **[2026-05-23]**: `agents/dba.md`: SQL syntax rule reference added to behavior rules (IMP-08)
+- **[2026-05-23]**: `agents/interface-expert.md`: Confirmed tool availability note added to `## Your Tools` section (IMP-02)
 
 ---
 
