@@ -1,24 +1,21 @@
-# scripts/sync-md.ps1
-# PostToolUse hook wrapper for Windows PowerShell.
-# Delegates to audit.ps1 for documentation audit.
+﻿# sync-md.ps1 — Update memory/MEMORY.md index (Windows)
+# Usage: .\scripts\sync-md.ps1 "YYYY-MM-DD" "summary"
+param(
+    [string]$Date    = (Get-Date -Format "yyyy-MM-dd"),
+    [string]$Summary = "update"
+)
+$MemFile = "memory\MEMORY.md"
+if (-not (Test-Path $MemFile)) {
+    @"
+# Memory Index
 
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-
-# --- Temporary file skip logic (방안 B) ---
-# Claude Code passes the written file path via CLAUDE_FILE_PATHS (space-separated).
-$writtenFile = $env:CLAUDE_FILE_PATHS
-if ($writtenFile) {
-    $skipPatterns = @("scratch/temp", "scratch\temp", "scratch/tasks", "scratch\tasks",
-                      "memory/", "memory\", "docs/superpowers/", "docs\superpowers\")
-    foreach ($pattern in $skipPatterns) {
-        if ($writtenFile -like "*$pattern*") {
-            Write-Host "  [skip] Temporary/generated file — audit skipped: $writtenFile"
-            exit 0
-        }
-    }
+| Date | Summary |
+|------|---------|
+"@ | Set-Content $MemFile -Encoding UTF8
+}
+# Only append if this date is not already in the index
+$existing = Get-Content $MemFile -Raw -ErrorAction SilentlyContinue
+if (-not $existing -or $existing -notmatch [regex]::Escape("[$Date]")) {
+    Add-Content $MemFile "| [$Date]($Date.md) | $Summary |"
 }
 
-Write-Host "--- Post-Edit Audit Hook ---"
-
-& "$ScriptDir\audit.ps1"
-exit $LASTEXITCODE

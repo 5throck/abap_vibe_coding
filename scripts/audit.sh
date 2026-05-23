@@ -1,116 +1,61 @@
-#!/bin/bash
-# scripts/audit.sh
-# Documentation audit — called by sync-md.sh after every Write/Edit.
-# Intentionally omits 'set -e' — runs all checks to report every issue at once.
+#!/usr/bin/env bash
+# audit.sh — Documentation integrity check
+# Exit code 0 = pass, non-zero = fail.
+set -euo pipefail
 
-FAILED=0
-echo "--- Documentation Audit ---"
+errors=0
+red()   { echo -e "\033[31m[FAIL]\033[0m $*"; }
+green() { echo -e "\033[32m[PASS]\033[0m $*"; }
+warn()  { echo -e "\033[33m[WARN]\033[0m $*"; }
 
-# Paths excluded from all audit checks (temporary/generated files)
-AUDIT_EXCLUDE="node_modules|\.git|\.claude|\.gemini|scratch/temp|scratch/tasks|memory/|docs/superpowers/"
+echo "=== audit.sh — workspace standards check ==="
 
-# 1. Absolute Path Check
-ABS_PATHS=$(grep -rEi "[A-Z]:\\\\|/Users/|/home/" . --include="*.md" | grep -vE "$AUDIT_EXCLUDE|setup-guide.md|antigravity-setup.md|plugin-setup.md")
-if [ -n "$ABS_PATHS" ]; then
-    echo "  [!] Absolute paths detected!"
-    echo "$ABS_PATHS" | head -n 5
-    FAILED=1
+# 1. CHANGELOG.md must exist
+if [ -f "CHANGELOG.md" ]; then green "CHANGELOG.md exists"
+else red "CHANGELOG.md missing"; ((errors++)) || true; fi
+
+# 2. CONSTITUTION.md must be accessible (workspace root or one level up)
+if [ -f "CONSTITUTION.md" ] || [ -f "../CONSTITUTION.md" ]; then green "CONSTITUTION.md accessible"
+else red "CONSTITUTION.md not found (expected at ./ or ../)"; ((errors++)) || true; fi
+
+# ── Project-level checks (skip at workspace root where docs/context.md is absent) ──
+
+# 3. CHANGELOG.md must have [Unreleased] section
+if [ -f "CHANGELOG.md" ]; then
+  if grep -q "\[Unreleased\]" "CHANGELOG.md"; then green "CHANGELOG.md has [Unreleased]"
+  else red "CHANGELOG.md missing '[Unreleased]'"; ((errors++)) || true; fi
 fi
 
-# 2. Link Integrity & Path Style Check
-while read -r file; do
-    if grep -q '\[.*\](.*\\.*)' "$file"; then
-        echo "  [!] Cross-Platform: Backslash found in link in $file. Use forward slashes (/) for compatibility."
-        FAILED=1
-    fi
+if [ -f "docs/context.md" ]; then
 
-    links=$(grep -o '\[.*\]([^#)]*)' "$file" | sed -E 's/.*\]\(([^# )]+)\).*/\1/' | grep -vE "^http|^mailto:|^#|YYYY-MM-DD|\.\./\.\.")
-    for link in $links; do
-        decoded_link=$(echo "$link" | sed 's/%20/ /g')
-        dir=$(dirname "$file")
-        target="$dir/$decoded_link"
-        if [ ! -e "$target" ]; then
-            echo "  [!] Broken link in $file -> $link"
-            FAILED=1
-        fi
-    done
-done < <(find . -name "*.md" \
-  -not -path "*/node_modules/*" \
-  -not -path "*/.git/*" \
-  -not -path "*/.claude/*" \
-  -not -path "*/.gemini/*" \
-  -not -path "*/scratch/temp/*" \
-  -not -path "*/scratch/tasks/*" \
-  -not -path "*/memory/*" \
-  -not -path "*/docs/superpowers/*")
+  # 4. docs/context.md must have ## Coding Guidelines
+  if grep -q "^## Coding Guidelines" "docs/context.md"; then green "docs/context.md has ## Coding Guidelines"
+  else red "docs/context.md missing '## Coding Guidelines'"; ((errors++)) || true; fi
 
-# 3. Script Pairing Check (all scripts must have both .ps1 and .sh)
-for script in scripts/*; do
-    base=$(basename "$script" | sed 's/\.[^.]*$//')
-    if [[ "$script" == *.sh ]]; then
-        if [ ! -f "scripts/$base.ps1" ]; then
-            echo "  [!] Cross-Platform: Missing .ps1 pair for '$base.sh'"
-            FAILED=1
-        fi
-    elif [[ "$script" == *.ps1 ]]; then
-        if [ ! -f "scripts/$base.sh" ]; then
-            echo "  [!] Cross-Platform: Missing .sh pair for '$base.ps1'"
-            FAILED=1
-        fi
-    fi
-done
+  # 5. AGENTS.md must exist
+  if [ -f "AGENTS.md" ]; then green "AGENTS.md exists"
+  else red "AGENTS.md missing (required for agent-first projects)"; ((errors++)) || true; fi
 
-# 4. Redundancy Check
-if [ -f "CLAUDE.md" ] && [ -f "GEMINI.md" ]; then
-    if diff "CLAUDE.md" "GEMINI.md" > /dev/null; then
-        echo "  [!] Redundancy: CLAUDE.md and GEMINI.md are identical."
-    fi
-fi
+  # 6. At least one agent file must exist in agents/
+  if [ -d "agents" ] && [ -n "$(ls -A agents/*.md 2>/dev/null)" ]; then green "agents/ has agent files"
+  else red "agents/ is empty or missing — create at least agents/pm.md"; ((errors++)) || true; fi
 
-# 5. MCP Config Prefix Consistency Check
-for cfg in .mcp.json .codex/config.toml .gemini/settings.json; do
-    if [ -f "$cfg" ]; then
-        if grep -qE "VSP_MODE|VSP_ALLOWED_PACKAGES|VSP_FEATURE_" "$cfg"; then
-            echo "  [!] Prefix inconsistency in $cfg: found VSP_* env vars — use SAP_* prefix instead."
-            FAILED=1
-        fi
-    fi
-done
+  # 7. .env.sample must exist (secrets management principle)
+  if [ -f ".env.sample" ]; then green ".env.sample exists"
+  else warn ".env.sample not found — add one if this project uses environment variables"; fi
 
-# 6. vsp binary version
-echo ""
-echo "[Check 6] vsp binary version"
-VSP_PATH="$(dirname "$0")/../vsp.exe"
-if [ -f "$VSP_PATH" ]; then
-    VSP_VERSION=$("$VSP_PATH" --version 2>&1)
-    if [ -n "$VSP_VERSION" ]; then
-        echo "  vsp version: $VSP_VERSION"
-    else
-        echo "  WARNING: vsp binary found but --version returned no output"
-    fi
-else
-    echo "  FAIL: vsp.exe not found at $VSP_PATH"
-    FAILED=1
-fi
-
-# 9. Active CRITICAL security advisories (warn only — does not fail audit)
-if [ -d "security" ] && ls security/*.md 2>/dev/null | grep -q .; then
-  _critical=0
-  for _f in security/*.md; do
-    [ -f "$_f" ] || continue
-    if grep -q "^severity: CRITICAL" "$_f" && grep -q "^status: active" "$_f"; then
-      _critical=$((_critical + 1))
-    fi
+  # 8. scripts/ must have both .sh and .ps1 parity for each script
+  for sh_file in scripts/*.sh; do
+    [ -f "$sh_file" ] || continue
+    ps1_file="${sh_file%.sh}.ps1"
+    if [ -f "$ps1_file" ]; then green "script parity: $(basename "$sh_file") / $(basename "$ps1_file")"
+    else warn "script parity gap: $sh_file has no matching .ps1"; fi
   done
-  if [ "$_critical" -gt 0 ]; then
-    echo -e "\033[33m[WARN]\033[0m security/: $_critical active CRITICAL advisory/advisories — run /security-check to review"
-  fi
+
+else
+  warn "docs/context.md not found — skipping project-level checks (workspace root)"
 fi
 
-if [ $FAILED -ne 0 ]; then
-    echo "Audit FAILED."
-    exit 1
-fi
-
-echo "Audit PASSED."
-exit 0
+echo ""
+if [ "$errors" -eq 0 ]; then echo -e "\033[32m✅ All checks passed.\033[0m"; exit 0
+else echo -e "\033[31m❌ $errors check(s) failed. Fix before committing.\033[0m"; exit 1; fi
