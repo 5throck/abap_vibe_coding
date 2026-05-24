@@ -1,49 +1,76 @@
 # VSP Scripts
 
-## Shell Automation
+## Bun-based Automation
 
-All scripts are written in both **PowerShell** (`.ps1`) and **Bash** (`.sh`) to ensure cross-platform compatibility.
-According to the project rules, any modification, creation, or deletion of a script must be done to both its `.ps1` and `.sh` counterparts simultaneously.
+All scripts are written in **TypeScript** and run via **Bun** for cross-platform compatibility.
+
+## Prerequisites
+
+```bash
+# Install Bun (one-time)
+bash scripts/install-bun.sh       # Unix/macOS
+powershell -c "irm bun.sh/install.ps1"    # Windows
+```
 
 ## Usage
 
-### Windows (PowerShell)
-```powershell
-# Run the development sync pipeline
-.\scripts\dev-sync.ps1 "feat: add feature"
-
-# Run project audit
-.\scripts\audit.ps1
+### Direct Bun execution
+```bash
+bun scripts/dev-sync.ts "feat: add feature"
+bun scripts/audit.ts
+bun scripts/health-check.ts
 ```
 
-### macOS / Linux (Bash)
+### Via npm scripts
 ```bash
-# Run the development sync pipeline
-bash scripts/dev-sync.sh "feat: add feature"
+bun run dev-sync "feat: add feature"
+bun run audit
+bun run health
+```
 
-# Run project audit
+### Legacy wrappers (backward compatible)
+**Windows:**
+```powershell
+powershell -f scripts/dev-sync.ps1 "feat: add feature"
+powershell -f scripts/audit.ps1
+```
+**macOS / Linux:**
+```bash
+bash scripts/dev-sync.sh "feat: add feature"
 bash scripts/audit.sh
 ```
 
 ## Available Scripts
 
-| Script Base | Purpose | Priority |
-|-------------|---------|:--------:|
-| `dev-sync` | Full dev sync pipeline (changelog -> audit -> commit) | P0 |
-| `gen-pr-body` | Generates a structured PR body incorporating changelog & memory | P0 |
-| `audit` | Documentation and path integrity audit | P0 |
-| `sync-md` | Markdown synchronization and linting | P1 |
-| `setup` | Project environment bootstrap | P1 |
+| Script | Purpose | Priority |
+|--------|---------|:--------:|
+| `dev-sync.ts` | Full dev sync pipeline (changelog -> audit -> commit) | P0 |
+| `audit.ts` | Documentation and path integrity audit | P0 |
+| `sync-mcp.ts` | Synchronize .mcp.json to tool-specific settings | P0 |
+| `health-check.ts` | System health (SAP, MCP, git, memory) | P2 |
+| `post-write.ts` | Post-write QA chain (SyntaxCheck -> UnitTests -> ATC) | P1 |
+| `verify-skills.ts` | Verify all skills are loadable | P1 |
+| `update-memory-index.ts` | Auto-update memory/MEMORY.md index | P1 |
+
+## Migration from .sh/.ps1
+
+Legacy `.sh` wrappers are provided at `scripts/` root for backward compatibility.
+These delegate to the Bun-based `.ts` implementations.
+New development should use `.ts` files directly via `bun scripts/<name>.ts`.
 
 ## Troubleshooting
 
-### Permission denied on .sh files
+### Bun not found
 ```bash
-chmod +x scripts/*.sh
+bash scripts/install-bun.sh
 ```
 
-### Script Execution Policies (Windows)
-If PowerShell blocks script execution, you may need to bypass the execution policy for the current session:
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+### Permission denied on .ts files
+```bash
+chmod +x scripts/*.ts
 ```
+
+### Script fails to run
+1. Check Bun is installed: `bun --version`
+2. Check file permissions: `ls -la scripts/*.ts`
+3. Run with verbose output: `bun --verbose scripts/script.ts`

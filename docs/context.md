@@ -354,6 +354,7 @@ At the start of every AI session, load the following files to establish project 
 ### MCP Configuration
 
 MCP servers are configured in `.mcp.json` (Single Source of Truth).
+Use `bun scripts/sync-mcp.ts` to synchronize changes to tool-specific settings.
 
 See `.mcp.json` for the complete server list.
 
@@ -401,7 +402,7 @@ Do **not** copy shared sections from `docs/context.md` into tool-specific files.
 
 All development artifacts (ABAP sources, docs, research reports) and memory logs must be committed to the local Git repository. The PM agent verifies repository status and memory file existence at the end of each major task.
 
-**Manual Commit Rule**: Because auto-commits and hooks are disabled or unsupported in many AI CLI sessions (like Gemini or Claude Desktop), you must run `git add -A && git commit` manually or use the project synchronization script (`.\scripts\dev-sync.ps1`) at the end of each task.
+**Manual Commit Rule**: Because auto-commits and hooks are disabled or unsupported in many AI CLI sessions (like Gemini or Claude Desktop), you must run `git add -A && git commit` manually or use the project synchronization script (`bun run dev-sync`) at the end of each task.
 
 ### Tooling Matrix
 

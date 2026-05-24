@@ -106,7 +106,34 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 > [!TIP]
 > **이 프로젝트가 처음이신가요?** [docs/setup-guide.md](docs/setup-guide.md)에서 시작하세요 — MCP 연결, abapGit, AI 에이전트 설정을 포함한 단계별 환경 구성 가이드입니다.
 
+---
 
+## Bun 스크립트 (2026-05-24)
+
+모든 핵심 스크립트가 크로스 플랫폼 호환성을 위해 **Bun 기반의 TypeScript**로 마이그레이션되었습니다. 자세한 내용은 `scripts/README.md`를 참조하세요.
+
+### Bun 설치
+
+**Windows:**
+```powershell
+powershell -c "irm bun.sh/install.ps1"
+```
+
+**macOS / Linux:**
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+### 사용법 (크로스 플랫폼)
+```bash
+# npm 단축어를 통한 스크립트 실행
+bun run dev-sync "feat: description"
+bun run audit
+```
+
+**13개의 TypeScript 스크립트**: `dev-sync.ts`, `audit.ts`, `sync-mcp.ts`, `health-check.ts`, `post-write.ts`, `verify-skills.ts`, `qa-full.ts`, `qa-quick.ts`, `dispatch-parallel.ts`, `dispatch-serial.ts`, `retry-handler.ts`, `update-memory-index.ts`, `gen-pr-body.ts`
+
+이전 버전과의 호환성을 위해 레거시 `.sh`/`.ps1` 스크립트도 유지됩니다.
 
 ---
 
