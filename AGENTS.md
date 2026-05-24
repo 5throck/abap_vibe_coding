@@ -351,5 +351,16 @@ All agents, regardless of their role, must adhere to the following:
 - **Anti-Patterns to Avoid**: Do not apply overly restrictive logical rules (e.g., "never use loops") or repeat basic knowledge.
 
 
+## Error Recovery
+
+When a subagent fails or returns unexpected results:
+
+1. **Analyze the error**: Check if it's a tool error, context issue, or logic problem
+2. **Retry with clarification**: Provide more specific instructions
+3. **Escalate to human**: If 3 retries fail, surface the issue to the user
+4. **Document the pattern**: Add to memory/ for future reference
+
+---
+
 ## Dynamic Roster Updates
 **Note on Phase 0 Kickoff:** The PM agent is explicitly authorized to assess project requirements during kickoff and dynamically expand this AGENTS.md registry by creating new specialist agents or skills.

@@ -38,29 +38,14 @@ Both the CLI and the Desktop App share the same configuration files and MCP serv
 
 ---
 
-## MCP Configuration (Claude Code CLI & Desktop App)
+## MCP Configuration
 
-Config file: `.mcp.json` (project root) —auto-loaded by both the CLI and the Desktop App.
+MCP servers are configured in `.mcp.json` (Single Source of Truth).
+Use `bun scripts/sync-mcp.ts` to synchronize changes to tool-specific settings.
 
-```json
-{
-  "mcpServers": {
-    "abap": {
-      "command": "./vsp",
-      "args": ["--mode", "hyperfocused"],
-      "env": {
-        "SAP_MODE": "hyperfocused",
-        "SAP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
-        "SAP_FEATURE_ABAPGIT": "on"
-      }
-    }
-  }
-}
-```
+See `.mcp.json` for the complete server list.
 
 > **Note**: This project uses the standard `SAP_*` prefix format for connection and feature flags (e.g. `SAP_MODE`, `SAP_ALLOWED_PACKAGES`), ensuring 100% compatibility with the upstream `vsp` engine.
-
-The relative path `./vsp` works because Claude Code CLI resolves it against the project root.
 
 ---
 
