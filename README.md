@@ -54,11 +54,15 @@ For the detailed execution sequence, see [AGENTS.md § Collaborative Workflow](A
 > **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) - step-by-step environment setup (includes MCP connectivity, abapGit, and AI agent configuration).
 
 ---
-## Bun Scripts (2026-05-24)
+## Hybrid Scripting (Bun & Shell)
 
-All core scripts have been migrated to **Bun-based TypeScript** for cross-platform compatibility. See `scripts/README.md` for details.
+This project uses a **hybrid scripting approach**:
+1. **Utility Scripts**: Everyday development utilities (like `dev-sync`, `audit`) are implemented in pure **PowerShell (`.ps1`)** and **Bash (`.sh`)** for cross-platform ease of use without external dependencies.
+2. **Agent Orchestration**: Complex multi-agent workflow coordination and orchestration logic are implemented in **TypeScript (`.ts`)** and executed via **Bun**.
 
-### Installation
+See `scripts/README.md` for complete documentation.
+
+### Prerequisites for Agent Orchestration
 
 **Windows:**
 ```powershell
@@ -70,16 +74,17 @@ powershell -c "irm bun.sh/install.ps1"
 curl -fsSL https://bun.sh/install | bash
 ```
 
-### Usage (Cross-Platform)
+### Usage
+
 ```bash
-# Run scripts via npm shortcuts
-bun run dev-sync "feat: description"
-bun run audit
+# Everyday Utility Scripts (No dependencies)
+.\scripts\dev-sync.ps1 "feat: description"   # Windows
+bash scripts/dev-sync.sh "feat: description" # macOS/Linux
+
+# Agent Orchestration Scripts (Requires Bun)
+bun scripts/dispatch.ts parallel
+bun scripts/verify-skills.ts
 ```
-
-**13 TypeScript Scripts**: `dev-sync.ts`, `audit.ts`, `sync-mcp.ts`, `health-check.ts`, `post-write.ts`, `verify-skills.ts`, `qa-full.ts`, `qa-quick.ts`, `dispatch-parallel.ts`, `dispatch-serial.ts`, `retry-handler.ts`, `update-memory-index.ts`, `gen-pr-body.ts`
-
-Legacy `.sh`/`.ps1` scripts are retained for backward compatibility.
 
 ---
 ## License
@@ -89,4 +94,4 @@ See [LICENSE](LICENSE) for details. Commercial licensing is available - see [CON
 
 ---
 
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-24*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-25*

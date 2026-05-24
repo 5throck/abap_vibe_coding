@@ -108,11 +108,15 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 
 ---
 
-## Bun 스크립트 (2026-05-24)
+## 하이브리드 스크립팅 (Bun & Shell)
 
-모든 핵심 스크립트가 크로스 플랫폼 호환성을 위해 **Bun 기반의 TypeScript**로 마이그레이션되었습니다. 자세한 내용은 `scripts/README.md`를 참조하세요.
+이 프로젝트는 **하이브리드 스크립팅 방식**을 사용합니다:
+1. **유틸리티 스크립트**: 일상적인 개발 워크플로우(동기화, 코드 감사 등)는 외부 의존성 없이 교차 플랫폼에서 쉽게 사용할 수 있도록 **PowerShell(`.ps1`)** 및 **Bash(`.sh`)**로 구현됩니다.
+2. **에이전트 오케스트레이션**: 복잡한 다중 에이전트 워크플로우 조정 및 오케스트레이션 로직은 **TypeScript(`.ts`)**로 구현되며 **Bun**을 통해 실행됩니다.
 
-### Bun 설치
+자세한 내용은 `scripts/README.md`를 참조하세요.
+
+### 에이전트 오케스트레이션을 위한 사전 요구사항
 
 **Windows:**
 ```powershell
@@ -124,16 +128,17 @@ powershell -c "irm bun.sh/install.ps1"
 curl -fsSL https://bun.sh/install | bash
 ```
 
-### 사용법 (크로스 플랫폼)
+### 사용법
+
 ```bash
-# npm 단축어를 통한 스크립트 실행
-bun run dev-sync "feat: description"
-bun run audit
+# 일상적인 유틸리티 스크립트 (의존성 없음)
+.\scripts\dev-sync.ps1 "feat: description"   # Windows
+bash scripts/dev-sync.sh "feat: description" # macOS/Linux
+
+# 에이전트 오케스트레이션 스크립트 (Bun 필요)
+bun scripts/dispatch.ts parallel
+bun scripts/verify-skills.ts
 ```
-
-**13개의 TypeScript 스크립트**: `dev-sync.ts`, `audit.ts`, `sync-mcp.ts`, `health-check.ts`, `post-write.ts`, `verify-skills.ts`, `qa-full.ts`, `qa-quick.ts`, `dispatch-parallel.ts`, `dispatch-serial.ts`, `retry-handler.ts`, `update-memory-index.ts`, `gen-pr-body.ts`
-
-이전 버전과의 호환성을 위해 레거시 `.sh`/`.ps1` 스크립트도 유지됩니다.
 
 ---
 
