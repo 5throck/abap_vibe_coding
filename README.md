@@ -58,14 +58,23 @@ For the detailed execution sequence, see [AGENTS.md § Collaborative Workflow](A
 
 All core scripts have been migrated to **Bun-based TypeScript** for cross-platform compatibility. See `scripts/README.md` for details.
 
-```bash
-# Install Bun (one-time)
-powershell -c "irm bun.sh/install.ps1"  # Windows
-curl -fsSL https://bun.sh/install | bash  # Unix/macOS
+### Installation
 
-# Run scripts
-bun scripts/dev-sync.ts "feat: description"
-bun scripts/audit.ts
+**Windows:**
+```powershell
+powershell -c "irm bun.sh/install.ps1"
+```
+
+**macOS / Linux:**
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+### Usage (Cross-Platform)
+```bash
+# Run scripts via npm shortcuts
+bun run dev-sync "feat: description"
+bun run audit
 ```
 
 **13 TypeScript Scripts**: `dev-sync.ts`, `audit.ts`, `sync-mcp.ts`, `health-check.ts`, `post-write.ts`, `verify-skills.ts`, `qa-full.ts`, `qa-quick.ts`, `dispatch-parallel.ts`, `dispatch-serial.ts`, `retry-handler.ts`, `update-memory-index.ts`, `gen-pr-body.ts`
