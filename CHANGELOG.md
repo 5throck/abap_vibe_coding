@@ -9,6 +9,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Removed
+- **[2026-05-25]**: Bun-based scripts (`.ts` files), `package.json`, and related configurations removed to simplify project architecture; reverting to `.ps1` and `.sh` legacy scripts as the single source of truth.
+
 ### Added
 - **[2026-05-24]**: Bun-based single-source scripts (.ts) replacing dual .sh/.ps1 maintenance — health-check.ts, audit.ts, sync-mcp.ts, memory-index.ts
 - **[2026-05-24]**: `.mcp.json` as Single Source of Truth for MCP configuration across all platforms (Claude Code, Gemini, Antigravity)
