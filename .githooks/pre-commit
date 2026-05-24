@@ -96,3 +96,51 @@ else
     exit 1
   fi
 fi
+
+# ── 5. MCP configuration drift check ────────────────────────────────────────────
+echo ""
+echo "=== MCP configuration drift check ==="
+
+# Check if jq is available
+if ! command -v jq &>/dev/null; then
+  echo -e "\033[33m[WARN]\033[0m jq not found — skipping MCP drift check"
+  echo "       Install jq for MCP config validation: https://stedolan.github.io/jq/"
+else
+  DRIFT_DETECTED=0
+
+  # Check .mcp.json vs .claude/settings.json
+  if [ -f ".mcp.json" ] && [ -f ".claude/settings.json" ]; then
+    MCP_DIFF=$(diff <(jq -S .mcpServers .mcp.json 2>/dev/null) <(jq -S .mcpServers .claude/settings.json 2>/dev/null) 2>/dev/null || true)
+    if [ -n "$MCP_DIFF" ]; then
+      echo -e "\033[31m[FAIL]\033[0m MCP config drift detected between .mcp.json and .claude/settings.json"
+      echo "       Run: bun scripts/sync-mcp.ts"
+      DRIFT_DETECTED=1
+    fi
+  fi
+
+  # Check .mcp.json vs .gemini/settings.json
+  if [ -f ".mcp.json" ] && [ -f ".gemini/settings.json" ]; then
+    MCP_DIFF=$(diff <(jq -S .mcpServers .mcp.json 2>/dev/null) <(jq -S .mcpServers .gemini/settings.json 2>/dev/null) 2>/dev/null || true)
+    if [ -n "$MCP_DIFF" ]; then
+      echo -e "\033[31m[FAIL]\033[0m MCP config drift detected between .mcp.json and .gemini/settings.json"
+      echo "       Run: bun scripts/sync-mcp.ts"
+      DRIFT_DETECTED=1
+    fi
+  fi
+
+  if [ "$DRIFT_DETECTED" -eq 0 ]; then
+    echo -e "\033[32m[PASS]\033[0m MCP configuration in sync"
+  else
+    exit 1
+  fi
+fi
+
+# ── 6. Optional QA check (commented out by default - uncomment to enable) ────────
+# QA_CHECK=$(git diff --cached --name-only | grep -E "\.(abap|xml)$" || true)
+# if [ -n "$QA_CHECK" ]; then
+#     echo "🔍 Running QA on changed ABAP objects..."
+#     for object in $(git diff --cached --name-only | grep -E "\.(abap)$"); do
+#         bun scripts/qa-quick.ts "$object" || exit 1
+#     done
+#     echo "✅ QA passed"
+# fi

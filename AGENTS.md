@@ -351,5 +351,119 @@ All agents, regardless of their role, must adhere to the following:
 - **Anti-Patterns to Avoid**: Do not apply overly restrictive logical rules (e.g., "never use loops") or repeat basic knowledge.
 
 
+## Error Recovery
+
+When a subagent fails or returns unexpected results:
+
+1. **Analyze the error**: Check if it's a tool error, context issue, or logic problem
+2. **Retry with clarification**: Provide more specific instructions
+3. **Escalate to human**: If 3 retries fail, surface the issue to the user
+4. **Document the pattern**: Add to memory/ for future reference
+
+### Error Recovery Implementation
+
+The project includes `scripts/retry-handler.ts` which provides:
+
+- **3-retry limit** with exponential backoff
+- **Error classification** (tool, context, logic, external)
+- **Recovery suggestions** based on error type
+- **Human escalation** after retries exhausted
+
+**Usage in dispatch scripts:**
+
+```typescript
+import { withRetry, escalateToHuman } from "./retry-handler";
+
+const result = await withRetry(
+  () => dispatchSubagent(task),
+  { maxRetries: 3, initialDelay: 1000, backoffMultiplier: 2, maxDelay: 10000 },
+  "Task Description"
+);
+
+if (!result.success) {
+  escalateToHuman("Task Description", result.lastError!, result.attempts);
+  process.exit(1);
+}
+```
+
+---
+
 ## Dynamic Roster Updates
 **Note on Phase 0 Kickoff:** The PM agent is explicitly authorized to assess project requirements during kickoff and dynamically expand this AGENTS.md registry by creating new specialist agents or skills.
+
+---
+
+## Phase 2: Orchestration Layer
+
+### Dispatch Automation
+
+The project includes automated dispatch scripts for coordinating multi-agent workflows:
+
+- `scripts/dispatch.ts` - Main CLI dispatcher with parallel/serial modes
+- `scripts/dispatch-parallel.ts` - Parallel agent dispatcher for read-only tasks
+- `scripts/dispatch-serial.ts` - Serial pipeline executor for write operations
+
+**Usage:**
+```bash
+bun scripts/dispatch.ts parallel   # Multiple read-only agents
+bun scripts/dispatch.ts serial     # Sequential workflow
+```
+
+### Error Recovery Protocol
+
+The orchestration layer includes automated error recovery:
+
+1. **Automatic retry** - Up to 3 attempts with exponential backoff
+2. **Error classification** - Tool, context, logic, or external errors
+3. **Recovery suggestions** - Targeted guidance per error type
+4. **Human escalation** - Formatted output after retries exhausted
+
+See `scripts/retry-handler.ts` for implementation details.
+
+**Integration with dispatch:**
+```typescript
+import { withRetry, escalateToHuman } from "./retry-handler";
+
+const result = await withRetry(
+  () => dispatchSubagent(task),
+  { maxRetries: 3, initialDelay: 1000, backoffMultiplier: 2, maxDelay: 10000 },
+  "Task Description"
+);
+
+if (!result.success) {
+  escalateToHuman("Task Description", result.lastError!, result.attempts);
+  process.exit(1);
+}
+```
+
+### Skill Auto-Discovery
+
+Skills are automatically discovered from `skills/` directory with metadata extraction:
+
+- **Frontmatter extraction** - Parses name, description, and metadata.type
+- **Trigger detection** - Extracts trigger phrases from skill content
+- **Auto-generated index** - Creates `skills/SKILLS.md` with catalog
+
+Run `bun scripts/verify-skills.ts` to verify all skills and regenerate the index.
+
+**Metadata structure:**
+```typescript
+interface SkillMetadata {
+  name: string;
+  description: string;
+  type: string;
+  triggers: string[];
+}
+```
+
+### Orchestration Patterns
+
+**Parallel Dispatch (Read-Only):**
+- Use for: Initial research, schema inspection, business analysis
+- Agents: `sap-investigator`, `read-only-analyst`, `schema-inspector`
+- Command: `bun scripts/dispatch.ts parallel`
+
+**Serial Execution (Write):**
+- Use for: Code implementation, testing, transport management
+- Agents: `code-writer` → `test-runner` (ordered sequence)
+- Command: `bun scripts/dispatch.ts serial`

@@ -23,6 +23,17 @@ Load project files at session start using the `@` syntax:
 
 ---
 
+## MCP Configuration
+
+MCP servers are configured in `.mcp.json` (Single Source of Truth).
+Use `bun scripts/sync-mcp.ts` to synchronize changes to tool-specific settings.
+
+See `.mcp.json` for the complete server list.
+
+> **Note**: This project uses the standard `SAP_*` prefix format for connection and feature flags (e.g. `SAP_MODE`, `SAP_ALLOWED_PACKAGES`), ensuring 100% compatibility with the upstream `vsp` engine.
+
+---
+
 ## Gemini-Specific Configuration
 
 ### Recommended Mode

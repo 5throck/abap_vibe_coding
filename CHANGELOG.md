@@ -10,15 +10,29 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **[2026-05-24]**: Bun-based single-source scripts (.ts) replacing dual .sh/.ps1 maintenance — health-check.ts, audit.ts, sync-mcp.ts, memory-index.ts
+- **[2026-05-24]**: `.mcp.json` as Single Source of Truth for MCP configuration across all platforms (Claude Code, Gemini, Antigravity)
+- **[2026-05-24]**: MCP sync script (sync-mcp.ts) for automatic settings synchronization from .mcp.json to platform-specific configs
+- **[2026-05-24]**: Health check script (health-check.ts) for system monitoring and version verification
+- **[2026-05-24]**: Memory index auto-updater (memory-index.ts) for maintaining memory/MEMORY.md index
+- **[2026-05-24]**: Desktop App fallback skill for manual QA when PostToolUse hooks don't fire
+- **[2026-05-24]**: Agent dispatch templates and handoff specification for standardized subagent coordination
+- **[2026-05-24]**: Skills index (SKILLS.md) documenting all available skills and their entry points
 - **[2026-05-23]**: `.githooks/pre-commit`: Add Markdown date auto-bumper and CHANGELOG auto-dating logic. Automatically updates `Last Updated:` date in staged `.md` files upon commit, and injects date into undated `CHANGELOG.md` entries.
 - **[2026-05-23]**: `docs/context.md`: Add `security-monitor` (Security group) to Agents table.
 - **[2026-05-23]**: `AGENTS.md`: Register `security-monitor` agent formally in the global Agent Roster.
+
+### Deprecated
+- **[2026-05-24]**: Dual .sh/.ps1 script maintenance — use .ts scripts with Bun runtime instead (legacy wrappers retained for compatibility)
 
 ### Removed
 - **[2026-05-23]**: `README.md` / `README_ko.md`: Remove obsolete manual kickoff instruction text.
 
 
 ### Changed
+- **[2026-05-24]**: Documentation reorganized: agent workflows moved from docs/context.md to AGENTS.md for single source of truth
+- **[2026-05-24]**: MCP workflow references updated in CLAUDE.md and GEMINI.md to reflect .mcp.json SSoT approach
+- **[2026-05-24]**: Pre-commit hook now checks MCP configuration drift between .mcp.json and platform-specific configs
 - **[2026-05-23]**: Standardize session start checklist in CLAUDE.md to 6-step format (git config, CONSTITUTION, context, AGENTS, memory, skills)
 - **[2026-05-23]**: Add `## Session Start Skills` section to docs/context.md for all-tool auto-discovery
 - **[2026-05-23]**: Expand GEMINI.md with tool safeguards, Planning Mode artifacts, and Subagent orchestration
