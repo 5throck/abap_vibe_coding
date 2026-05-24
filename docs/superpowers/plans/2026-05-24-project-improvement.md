@@ -1356,12 +1356,25 @@ async function main(): Promise<void> {
 async function scanSkills(): Promise<SkillCheck[]> {
   const checks: SkillCheck[] = [];
 
-  // List all skill directories
-  const proc = Bun.spawn(["find", "skills", "-name", "SKILL.md", "-type", "f"], {
-    stdout: "pipe"
-  });
-  const output = await proc.stdout.text();
-  const skillFiles = output.trim().split("\n").filter(f => f);
+  // Use native filesystem API for cross-platform compatibility
+  async function scanDirectory(dir: string): Promise<string[]> {
+    const files: string[] = [];
+    const entries = await Array.fromAsync(await Bun.dir(dir));
+
+    for (const entry of entries) {
+      const fullPath = `${dir}/${entry.name}`;
+      if (entry.isDirectory && !entry.name.startsWith(".")) {
+        // Recurse into subdirectories
+        const subFiles = await scanDirectory(fullPath);
+        files.push(...subFiles);
+      } else if (entry.isFile && entry.name === "SKILL.md") {
+        files.push(fullPath);
+      }
+    }
+    return files;
+  }
+
+  const skillFiles = await scanDirectory("skills");
 
   for (const skillFile of skillFiles) {
     const check = await verifySkill(skillFile);
@@ -1599,13 +1612,20 @@ async function main(): Promise<void> {
 async function scanMemoryFiles(): Promise<MemoryEntry[]> {
   const entries: MemoryEntry[] = [];
 
-  // List all .md files in memory/
-  const proc = Bun.spawn(["find", "memory", "-name", "*.md", "-type", "f"], {
-    stdout: "pipe"
-  });
+  // Use native filesystem API for cross-platform compatibility
+  async function scanDirectory(dir: string): Promise<string[]> {
+    const files: string[] = [];
+    const entries = await Array.fromAsync(await Bun.dir(dir));
 
-  const output = await proc.stdout.text();
-  const files = output.trim().split("\n").filter(f => f);
+    for (const entry of entries) {
+      if (entry.isFile && entry.name.endsWith(".md")) {
+        files.push(`${dir}/${entry.name}`);
+      }
+    }
+    return files;
+  }
+
+  const files = await scanDirectory("memory");
 
   for (const file of files) {
     if (file.endsWith("MEMORY.md")) continue;
@@ -2225,16 +2245,16 @@ Co-Authored-By: Gemini <noreply@google.com>"
 
 Phase 1 is complete when:
 
-- [x] `.mcp.json` created and synced to both tool settings
-- [x] Bun runtime installed and verified
-- [x] Core .ts scripts implemented (dev-sync, audit, sync-mcp, health-check, post-write, verify-skills)
-- [x] Legacy wrappers created for backward compatibility (at scripts/ root)
-- [x] .gitignore updated to prevent .cmd files
-- [x] Documentation reorganization completed
-- [x] Agent dispatch templates created
-- [x] Skill index generated
-- [x] Desktop App fallback skill created
-- [x] Pre-commit hook updated with drift check
+- [ ] `.mcp.json` created and synced to both tool settings
+- [ ] Bun runtime installed and verified
+- [ ] Core .ts scripts implemented (dev-sync, audit, sync-mcp, health-check, post-write, verify-skills)
+- [ ] Legacy wrappers created for backward compatibility (at scripts/ root)
+- [ ] .gitignore updated to prevent .cmd files
+- [ ] Documentation reorganization completed
+- [ ] Agent dispatch templates created
+- [ ] Skill index generated
+- [ ] Desktop App fallback skill created
+- [ ] Pre-commit hook updated with drift check
 
 ---
 
@@ -2256,7 +2276,7 @@ After Phase 1 completion:
 
 ---
 
-*Plan Version: 1.1*
+*Plan Version: 1.2*
 *Created: 2026-05-24*
-*Revised: 2026-05-24 (Fixed critical issues from review)*
+*Revised: 2026-05-24 (Round 2: Fixed cross-platform violations)*
 *Based on: docs/superpowers/specs/2026-05-24-project-improvement-design.md*
