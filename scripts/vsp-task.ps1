@@ -34,7 +34,7 @@ $targetFilePath = Join-Path $scratchDir $targetFileName
 if (-not (Test-Path $templateFile)) {
     Write-Warning "task-template.md not found. Using minimal template."
     $content = @"
-# Task — $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+# Task —$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
 
 ## 0. Request
 
@@ -55,14 +55,14 @@ if (-not (Test-Path $templateFile)) {
 
 ## 5. Finalization
 "@
-    Set-Content -Path $targetFilePath -Value $content
+    Set-Content -Path $targetFilePath -Value $content -Encoding UTF8
 } else {
     $content = Get-Content $templateFile -Raw
     $content = $content -replace "<!-- date and time -->", (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
     $content = $content -replace "<!-- paste original user request verbatim -->", "Request for: $Name"
     # Adjust relative paths since task is created in scratch/tasks/ (two levels deep) instead of docs/ (one level deep)
     $content = $content -replace "\]\(\.\./skills/", "](../../skills/"
-    Set-Content -Path $targetFilePath -Value $content
+    Set-Content -Path $targetFilePath -Value $content -Encoding UTF8
 }
 
 Write-Host "Created new task: $targetFileName" -ForegroundColor Green

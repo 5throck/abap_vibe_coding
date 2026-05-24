@@ -20,7 +20,7 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# 1. Check for today's memory log — auto-create if missing
+# 1. Check for today's memory log —auto-create if missing
 if (-not (Test-Path $memoryFile)) {
     Write-Host "Memory log for today not found. Auto-creating $date.md..." -ForegroundColor Yellow
     New-Item -ItemType Directory -Path $memoryDir -Force | Out-Null
@@ -30,11 +30,11 @@ if (-not (Test-Path $memoryFile)) {
         "",
         "<!-- Auto-created by vsp-sync.ps1. Add entries below. -->",
         "",
-        "## $time — Session",
+        "## $time —Session",
         "",
         "<!-- Describe what was done today -->"
     )
-    Set-Content -Path $memoryFile -Value $header
+    Set-Content -Path $memoryFile -Value $header -Encoding UTF8
     Write-Host "Created: $memoryFile" -ForegroundColor Green
 }
 
@@ -61,7 +61,7 @@ if (Test-Path $indexFile) {
                 $inserted = $true
             }
         }
-        Set-Content -Path $indexFile -Value $newContent
+        Set-Content -Path $indexFile -Value $newContent -Encoding UTF8
     }
 }
 
