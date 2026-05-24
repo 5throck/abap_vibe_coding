@@ -16,8 +16,8 @@ At the start of every Claude Code session, run this checklist:
 1. Read docs/context.md                        # full architecture map, ABAP rules, workflow
 2. Read AGENTS.md                              # canonical agent roster
 3. Read memory/MEMORY.md                       # recent session history (skip if absent)
-4. Load skills/abap-dev/SKILL.md               # SAP dev workflows
-5. Load skills/post-write-chain/SKILL.md       # mandatory QA chain after any write
+4. Read skills/abap-dev/SKILL.md               # SAP development workflows
+5. Read skills/post-write-chain/SKILL.md       # mandatory QA chain after any write
 ```
 
 ---
