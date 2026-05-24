@@ -39,12 +39,14 @@ scripts/dev-sync.ts                 # Dev sync pipeline
 scripts/audit.ts                    # Documentation audit
 scripts/sync-mcp.ts                 # MCP config sync
 scripts/health-check.ts             # System health check
+scripts/post-write.ts               # Post-write QA chain (P1)
+scripts/verify-skills.ts            # Skill verification (P1)
 scripts/install-bun.sh              # Bun installer (Unix)
 scripts/install-bun.ps1             # Bun installer (Windows)
-scripts/legacy/dev-sync.sh          # Legacy wrapper (backward compat)
-scripts/legacy/audit.sh             # Legacy wrapper
-scripts/legacy/sync-mcp.sh          # Legacy wrapper
-scripts/legacy/health-check.sh      # Legacy wrapper
+scripts/dev-sync.sh                 # Legacy wrapper (backward compat)
+scripts/audit.sh                    # Legacy wrapper
+scripts/sync-mcp.sh                 # Legacy wrapper
+scripts/health-check.sh             # Legacy wrapper
 scripts/README.md                   # Scripts documentation
 templates/dispatch-parallel.md      # Parallel dispatch template
 templates/dispatch-serial.md        # Serial dispatch template
@@ -58,6 +60,7 @@ docs/superpowers/specs/2026-05-24-project-improvement-design.md # Already create
 ### Files to Modify
 
 ```
+.gitignore                         # Add *.cmd rule
 docs/context.md                     # Remove agent workflow sections
 AGENTS.md                           # Add error recovery section
 CLAUDE.md                           # Update MCP workflow
@@ -128,6 +131,47 @@ Co-Authored-By: Gemini <noreply@google.com>"
 
 ---
 
+## Task 1A: Update .gitignore
+
+**Files:**
+- Modify: `.gitignore`
+
+**Purpose:** Prevent creation of .cmd files (deprecated format)
+
+- [ ] **Step 1: Check if .gitignore exists**
+
+Run: `ls -la .gitignore`
+
+- [ ] **Step 2: Add *.cmd rule to .gitignore**
+
+Run: `echo "*.cmd" >> .gitignore`
+
+Or edit `.gitignore` and add:
+```gitignore
+# Prevent .cmd files (use .sh/.ts or .ps1 instead)
+*.cmd
+```
+
+- [ ] **Step 3: Verify .gitignore was updated**
+
+Run: `tail -5 .gitignore`
+Expected: Should show `*.cmd` rule
+
+- [ ] **Step 4: Commit .gitignore update**
+
+```bash
+git add .gitignore
+git commit -m "chore: prevent .cmd files via .gitignore
+
+Add *.cmd rule to prevent creation of deprecated batch files.
+Projects should use .sh/.ts (Unix) or .ps1 (Windows) instead.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Co-Authored-By: Gemini <noreply@google.com>"
+```
+
+---
+
 ## Task 2: Create Bun Package Configuration
 
 **Files:**
@@ -179,7 +223,7 @@ Co-Authored-By: Gemini <noreply@google.com>"
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["*.ts"],
+  "include": ["scripts/*.ts"],
   "exclude": ["node_modules"]
 }
 ```
@@ -430,7 +474,8 @@ async function checkChangelog(): Promise<boolean> {
 
 async function runAudit(): Promise<boolean> {
   try {
-    const proc = Bun.spawn(["bash", "scripts/audit.sh"], {
+    // Call the TypeScript audit script directly
+    const proc = Bun.spawn(["bun", "scripts/audit.ts"], {
       stdout: "inherit",
       stderr: "inherit"
     });
@@ -972,102 +1017,444 @@ Co-Authored-By: Gemini <noreply@google.com>"
 
 ---
 
+## Task 7A: Create Post-Write QA Script
+
+**Files:**
+- Create: `scripts/post-write.ts`
+
+**Purpose:** Automated Post-Write QA chain (SyntaxCheck → RunUnitTests → RunATCCheck)
+
+- [ ] **Step 1: Create scripts/post-write.ts**
+
+```typescript
+#!/usr/bin/env bun
+
+/**
+ * Post-Write QA Chain
+ * Runs SyntaxCheck → RunUnitTests → RunATCCheck for a given ABAP object
+ *
+ * Usage: bun scripts/post-write.ts "<object_url>"
+ */
+
+interface QAResult {
+  step: string;
+  status: "PASS" | "FAIL" | "WARN";
+  exitCode: number;
+  output?: string;
+}
+
+async function main(): Promise<void> {
+  const objectUrl = process.argv[2];
+
+  if (!objectUrl) {
+    console.error("❌ Error: Object URL required");
+    console.error("Usage: bun scripts/post-write.ts \"<object_url>\"");
+    process.exit(1);
+  }
+
+  console.log("🔍 Post-Write QA Chain");
+  console.log(`Object: ${objectUrl}\n`);
+
+  const results: QAResult[] = [];
+
+  // Step 1: Syntax Check
+  console.log("1️⃣  Syntax Check");
+  const syntaxResult = await runSyntaxCheck(objectUrl);
+  results.push(syntaxResult);
+
+  if (syntaxResult.status !== "PASS") {
+    console.log(`   ❌ Syntax check failed - aborting QA chain`);
+    printResults(results);
+    process.exit(1);
+  }
+
+  // Step 2: Unit Tests
+  console.log("\n2️⃣  Unit Tests");
+  const testResult = await runUnitTests(objectUrl);
+  results.push(testResult);
+
+  // Step 3: ATC Check
+  console.log("\n3️⃣  ATC Check");
+  const atcResult = await runATCCheck(objectUrl);
+  results.push(atcResult);
+
+  // Print summary
+  printResults(results);
+
+  // Exit with appropriate code
+  const hasP1Failures = atcResult.output?.includes("P1") || atcResult.exitCode !== 0;
+  process.exit(hasP1Failures ? 1 : 0);
+}
+
+async function runSyntaxCheck(objectUrl: string): Promise<QAResult> {
+  try {
+    const proc = Bun.spawn(["vsp", "syntax", "check", "--object", objectUrl], {
+      stdout: "pipe",
+      stderr: "pipe"
+    });
+    await proc.exited;
+
+    return {
+      step: "Syntax Check",
+      status: proc.exitCode === 0 ? "PASS" : "FAIL",
+      exitCode: proc.exitCode
+    };
+  } catch (error) {
+    return {
+      step: "Syntax Check",
+      status: "FAIL",
+      exitCode: 1,
+      output: String(error)
+    };
+  }
+}
+
+async function runUnitTests(objectUrl: string): Promise<QAResult> {
+  try {
+    const proc = Bun.spawn(["vsp", "test", "run", "--object", objectUrl], {
+      stdout: "pipe",
+      stderr: "pipe"
+    });
+    const output = await proc.stdout.text();
+    await proc.exited;
+
+    return {
+      step: "Unit Tests",
+      status: proc.exitCode === 0 ? "PASS" : "WARN",
+      exitCode: proc.exitCode,
+      output: output.substring(0, 200)
+    };
+  } catch (error) {
+    return {
+      step: "Unit Tests",
+      status: "WARN",
+      exitCode: 1,
+      output: String(error)
+    };
+  }
+}
+
+async function runATCCheck(objectUrl: string): Promise<QAResult> {
+  try {
+    const proc = Bun.spawn(["vsp", "atc", "run", "--object", objectUrl], {
+      stdout: "pipe",
+      stderr: "pipe"
+    });
+    const output = await proc.stdout.text();
+    await proc.exited;
+
+    // Check for P1 findings
+    const hasP1 = output.includes("P1");
+
+    return {
+      step: "ATC Check",
+      status: hasP1 ? "FAIL" : proc.exitCode === 0 ? "PASS" : "WARN",
+      exitCode: proc.exitCode,
+      output: hasP1 ? "P1 findings detected" : output.substring(0, 200)
+    };
+  } catch (error) {
+    return {
+      step: "ATC Check",
+      status: "FAIL",
+      exitCode: 1,
+      output: String(error)
+    };
+  }
+}
+
+function printResults(results: QAResult[]): void {
+  console.log("\n" + "=".repeat(50));
+  console.log("QA Results:");
+
+  for (const result of results) {
+    const icon = result.status === "PASS" ? "✅" : result.status === "WARN" ? "⚠️" : "❌";
+    console.log(`${icon} ${result.step}: ${result.status}`);
+    if (result.output) {
+      console.log(`   ${result.output}`);
+    }
+  }
+
+  const failed = results.filter(r => r.status === "FAIL").length;
+  if (failed > 0) {
+    console.log(`\n❌ ${failed} critical failure(s) - must fix before committing`);
+  } else {
+    console.log("\n✅ QA passed - safe to commit");
+  }
+}
+
+main();
+```
+
+- [ ] **Step 2: Make script executable**
+
+Run: `chmod +x scripts/post-write.ts` (Unix only)
+
+- [ ] **Step 3: Test post-write.ts**
+
+Run: `bun scripts/post-write.ts "/sap/bc/adt/vit/test/object"`
+Expected: QA chain executes through all steps
+
+- [ ] **Step 4: Commit post-write script**
+
+```bash
+git add scripts/post-write.ts
+git commit -m "feat: add Post-Write QA automation script
+
+Implement automated QA chain (SyntaxCheck → UnitTests → ATC).
+Blocks commit on P1 findings or syntax errors.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Co-Authored-By: Gemini <noreply@google.com>"
+```
+
+---
+
 ## Task 8: Create Legacy Wrapper Scripts
 
 **Files:**
-- Create: `scripts/legacy/dev-sync.sh`
-- Create: `scripts/legacy/audit.sh`
-- Create: `scripts/legacy/sync-mcp.sh`
-- Create: `scripts/legacy/health-check.sh`
+- Create: `scripts/dev-sync.sh`
+- Create: `scripts/audit.sh`
+- Create: `scripts/sync-mcp.sh`
+- Create: `scripts/health-check.sh`
 
 **Purpose:** Provide backward compatibility for existing workflows
 
-- [ ] **Step 1: Create scripts/legacy directory**
+**Note:** Wrappers are created at `scripts/` root level (not `scripts/legacy/`) to maintain existing workflow compatibility.
 
-Run: `mkdir -p scripts/legacy`
+- [ ] **Step 1: Create legacy wrapper template (same for all)**
 
-- [ ] **Step 2: Create legacy wrapper template (same for all)**
-
-For `scripts/legacy/dev-sync.sh`:
+For `scripts/dev-sync.sh`:
 ```bash
 #!/usr/bin/env bash
 # Legacy wrapper for backward compatibility
 # Delegates to Bun-based implementation
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Check if bun is available
 if command -v bun &> /dev/null; then
-    exec bun "$SCRIPT_DIR/../dev-sync.ts" "$@"
+    exec bun scripts/dev-sync.ts "$@"
 else
     echo "❌ Bun is required. Run: bash scripts/install-bun.sh"
     exit 1
 fi
 ```
 
-For `scripts/legacy/audit.sh`:
+For `scripts/audit.sh`:
 ```bash
 #!/usr/bin/env bash
 # Legacy wrapper for backward compatibility
 # Delegates to Bun-based implementation
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 if command -v bun &> /dev/null; then
-    exec bun "$SCRIPT_DIR/../audit.ts" "$@"
+    exec bun scripts/audit.ts "$@"
 else
     echo "❌ Bun is required. Run: bash scripts/install-bun.sh"
     exit 1
 fi
 ```
 
-For `scripts/legacy/sync-mcp.sh`:
+For `scripts/sync-mcp.sh`:
 ```bash
 #!/usr/bin/env bash
 # Legacy wrapper for backward compatibility
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 if command -v bun &> /dev/null; then
-    exec bun "$SCRIPT_DIR/../sync-mcp.ts" "$@"
+    exec bun scripts/sync-mcp.ts "$@"
 else
     echo "❌ Bun is required. Run: bash scripts/install-bun.sh"
     exit 1
 fi
 ```
 
-For `scripts/legacy/health-check.sh`:
+For `scripts/health-check.sh`:
 ```bash
 #!/usr/bin/env bash
 # Legacy wrapper for backward compatibility
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 if command -v bun &> /dev/null; then
-    exec bun "$SCRIPT_DIR/../health-check.ts" "$@"
+    exec bun scripts/health-check.ts "$@"
 else
     echo "❌ Bun is required. Run: bash scripts/install-bun.sh"
     exit 1
 fi
 ```
 
-- [ ] **Step 3: Make all wrappers executable**
+- [ ] **Step 2: Make all wrappers executable**
 
-Run: `chmod +x scripts/legacy/*.sh`
+Run: `chmod +x scripts/*.sh`
 
-- [ ] **Step 4: Test wrappers**
+- [ ] **Step 3: Test wrappers**
 
-Run: `bash scripts/legacy/dev-sync.sh "test: wrapper validation"`
+Run: `bash scripts/dev-sync.sh "test: wrapper validation"`
 Expected: Executes via Bun successfully
 
-- [ ] **Step 5: Commit legacy wrappers**
+- [ ] **Step 4: Commit legacy wrappers**
 
 ```bash
-git add scripts/legacy/
+git add scripts/dev-sync.sh scripts/audit.sh scripts/sync-mcp.sh scripts/health-check.sh
 git commit -m "feat: add legacy wrapper scripts for backward compatibility
 
-Provide .sh wrappers that delegate to Bun-based .ts scripts.
+Provide .sh wrappers at scripts/ root that delegate to Bun-based .ts scripts.
 Ensures existing workflows continue to work during migration.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Co-Authored-By: Gemini <noreply@google.com>"
+```
+
+---
+
+## Task 8A: Create Verify Skills Script
+
+**Files:**
+- Create: `scripts/verify-skills.ts`
+
+**Purpose:** Verify all skills are loadable and properly formatted
+
+- [ ] **Step 1: Create scripts/verify-skills.ts**
+
+```typescript
+#!/usr/bin/env bun
+
+/**
+ * Skill Verification Script
+ * Verifies all skills in skills/ directory are loadable and properly formatted
+ */
+
+interface SkillCheck {
+  name: string;
+  path: string;
+  status: "PASS" | "FAIL" | "WARN";
+  issues: string[];
+}
+
+async function main(): Promise<void> {
+  console.log("🔍 Verifying Skills\n");
+
+  const checks = await scanSkills();
+
+  for (const check of checks) {
+    const icon = check.status === "PASS" ? "✅" : check.status === "WARN" ? "⚠️" : "❌";
+    console.log(`${icon} ${check.name}`);
+    for (const issue of check.issues) {
+      console.log(`   ${issue}`);
+    }
+  }
+
+  const failed = checks.filter(c => c.status === "FAIL").length;
+  const warned = checks.filter(c => c.status === "WARN").length;
+
+  console.log(`\n${checks.length} skills checked`);
+  if (failed > 0) {
+    console.log(`❌ ${failed} failed`);
+    process.exit(1);
+  } else if (warned > 0) {
+    console.log(`⚠️  ${warned} warnings`);
+  } else {
+    console.log("✅ All skills verified");
+  }
+}
+
+async function scanSkills(): Promise<SkillCheck[]> {
+  const checks: SkillCheck[] = [];
+
+  // List all skill directories
+  const proc = Bun.spawn(["find", "skills", "-name", "SKILL.md", "-type", "f"], {
+    stdout: "pipe"
+  });
+  const output = await proc.stdout.text();
+  const skillFiles = output.trim().split("\n").filter(f => f);
+
+  for (const skillFile of skillFiles) {
+    const check = await verifySkill(skillFile);
+    checks.push(check);
+  }
+
+  return checks;
+}
+
+async function verifySkill(skillFile: string): Promise<SkillCheck> {
+  const issues: string[] = [];
+  let status: "PASS" | "FAIL" | "WARN" = "PASS";
+
+  try {
+    const content = await Bun.file(skillFile).text();
+
+    // Check for frontmatter
+    if (!content.startsWith("---")) {
+      issues.push("Missing frontmatter");
+      status = "FAIL";
+    } else {
+      // Extract frontmatter
+      const frontmatterEnd = content.indexOf("---", 3);
+      if (frontmatterEnd === -1) {
+        issues.push("Invalid frontmatter (missing closing ---)");
+        status = "FAIL";
+      } else {
+        const frontmatter = content.substring(3, frontmatterEnd);
+
+        // Check required fields
+        if (!frontmatter.includes("name:")) {
+          issues.push("Missing 'name' field");
+          status = "FAIL";
+        }
+        if (!frontmatter.includes("description:")) {
+          issues.push("Missing 'description' field");
+          status = "WARN";
+        }
+        if (!frontmatter.includes("metadata:")) {
+          issues.push("Missing 'metadata' section");
+          status = "WARN";
+        }
+      }
+    }
+
+    // Check for content after frontmatter
+    const contentStart = content.indexOf("---", 3);
+    if (contentStart !== -1) {
+      const bodyContent = content.substring(contentStart + 3).trim();
+      if (bodyContent.length < 50) {
+        issues.push("Skill content seems too short");
+        status = "WARN";
+      }
+    }
+
+    const skillName = skillFile.match(/skills\/([^/]+)\//)?.[1] || skillFile;
+
+    return {
+      name: skillName,
+      path: skillFile,
+      status,
+      issues
+    };
+  } catch (error) {
+    return {
+      name: skillFile,
+      path: skillFile,
+      status: "FAIL",
+      issues: [`Failed to read: ${error}`]
+    };
+  }
+}
+
+main();
+```
+
+- [ ] **Step 2: Make script executable**
+
+Run: `chmod +x scripts/verify-skills.ts` (Unix only)
+
+- [ ] **Step 3: Test verify-skills.ts**
+
+Run: `bun scripts/verify-skills.ts`
+Expected: All skills verified
+
+- [ ] **Step 4: Commit verify-skills script**
+
+```bash
+git add scripts/verify-skills.ts
+git commit -m "feat: add skill verification script
+
+Implement automated skill verification.
+Checks frontmatter, required fields, and content for all skills.
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 Co-Authored-By: Gemini <noreply@google.com>"
@@ -1117,8 +1504,8 @@ bun run health
 
 ### Legacy wrappers (backward compatible)
 ```bash
-bash scripts/legacy/dev-sync.sh "feat: add feature"
-bash scripts/legacy/audit.sh
+bash scripts/dev-sync.sh "feat: add feature"
+bash scripts/audit.sh
 ```
 
 ## Available Scripts
@@ -1134,8 +1521,9 @@ bash scripts/legacy/audit.sh
 
 ## Migration from .sh/.ps1
 
-Old scripts are deprecated but kept for backward compatibility in `scripts/legacy/`.
-New development should use `.ts` files.
+Legacy `.sh` wrappers are provided at `scripts/` root for backward compatibility.
+These delegate to the Bun-based `.ts` implementations.
+New development should use `.ts` files directly via `bun scripts/<name>.ts`.
 
 ## Troubleshooting
 
@@ -1783,7 +2171,7 @@ Expected: Version 1.0.0+ displayed
 
 - [ ] **Step 5: Test legacy wrappers**
 
-Run: `bash scripts/legacy/dev-sync.sh "test: final verification"`
+Run: `bash scripts/dev-sync.sh "test: final verification"`
 Expected: Executes successfully
 
 - [ ] **Step 6: Update CHANGELOG.md**
@@ -1839,11 +2227,13 @@ Phase 1 is complete when:
 
 - [x] `.mcp.json` created and synced to both tool settings
 - [x] Bun runtime installed and verified
-- [x] Core .ts scripts implemented (dev-sync, audit, sync-mcp, health-check)
-- [x] Legacy wrappers created for backward compatibility
+- [x] Core .ts scripts implemented (dev-sync, audit, sync-mcp, health-check, post-write, verify-skills)
+- [x] Legacy wrappers created for backward compatibility (at scripts/ root)
+- [x] .gitignore updated to prevent .cmd files
 - [x] Documentation reorganization completed
 - [x] Agent dispatch templates created
 - [x] Skill index generated
+- [x] Desktop App fallback skill created
 - [x] Pre-commit hook updated with drift check
 
 ---
@@ -1857,8 +2247,8 @@ After Phase 1 completion:
    - Add error recovery mechanisms
 
 2. **Skill System Enhancement** (P1)
-   - Create post-write.ts automation
-   - Implement verify-skills.ts
+   - Phase 2 skills as needed
+   - Enhanced skill auto-discovery
 
 3. **Documentation Updates**
    - Update AGENTS.md with Phase 2 patterns
@@ -1866,6 +2256,7 @@ After Phase 1 completion:
 
 ---
 
-*Plan Version: 1.0*
+*Plan Version: 1.1*
 *Created: 2026-05-24*
+*Revised: 2026-05-24 (Fixed critical issues from review)*
 *Based on: docs/superpowers/specs/2026-05-24-project-improvement-design.md*
