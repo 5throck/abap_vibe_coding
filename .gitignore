@@ -1,34 +1,33 @@
-# Secrets and local config
+# Secrets — never commit
 .env
-.env.*
-!.env.sample
-cookies.txt
-.mcp.json
-*.mcp.json
-.vsp.json
-*.vsp.json
-.claude/settings.local.json
-.claude/worktrees/
-.gemini/
 
-# Runtime / auto-generated plugin assets
-.agents/
-
-# Local scratch
-.local/
-scratch/temp/
-scratch/tasks/*.md
-!scratch/tasks/.gitkeep
-
-# Generated specs and plans (brainstorming/planning artifacts)
-docs/superpowers/specs/
-docs/superpowers/plans/
-
-# Build output
-vsp
-vsp.exe
-build/
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
 dist/
+*.egg-info/
+
+# Node.js
+node_modules/
+.next/
+dist/
+build/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Local AI settings (personal overrides — never shared)
+.claude/settings.local.json
+.gemini/settings.local.json
+.mcp.local.json
 
 # Crypto / certificates — never commit private key material
 *.pem
@@ -50,5 +49,5 @@ dist/
 *.sqlite
 *.db
 
-# Local MCP overrides
-.mcp.local.json
+# CodeGraph Index
+.codegraph/
