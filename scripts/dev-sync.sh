@@ -51,9 +51,15 @@ git add -A
 # NOTE: This is a template script. Update the commit message or AI Co-Author below as needed for your specific project.
 git commit -m "$MSG"
 git push -u origin "$BRANCH"
-# Use PR template if present; fall back to --fill
-if [ -f ".github/pull_request_template.md" ]; then
-  gh pr create --title "$MSG" --body "$(cat .github/pull_request_template.md)"
+# ── Generate PR body and open PR ─────────────────────────────────────────────
+if [ -f "scripts/gen-pr-body.sh" ]; then
+  PR_BODY=$(bash scripts/gen-pr-body.sh "$MSG" 2>/dev/null || true)
+fi
+
+if [ -n "${PR_BODY:-}" ]; then
+  gh pr create --title "$MSG" --body "$PR_BODY"
+elif [ -f ".github/pull_request_template.md" ]; then
+  gh pr create --title "$MSG" --body-file .github/pull_request_template.md
 else
   gh pr create --fill
 fi
