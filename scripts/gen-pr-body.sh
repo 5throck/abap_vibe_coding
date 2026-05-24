@@ -27,6 +27,17 @@ FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
 FILE_LIST=$(echo "$FILES" | head -30 | sed 's/^/- /' || true)
 DIFF_STAT=$(git diff --stat HEAD~1 HEAD 2>/dev/null || git diff --cached --stat 2>/dev/null || true)
 
+# ── Collect Memory and Changelog ──────────────────────────────────────────────
+MEMORY_CONTENT=""
+if [ -f "memory/${TODAY}.md" ]; then
+  MEMORY_CONTENT=$(cat "memory/${TODAY}.md")
+fi
+
+CHANGELOG_CONTENT=""
+if [ -f "CHANGELOG.md" ]; then
+  CHANGELOG_CONTENT=$(awk '/^## \[Unreleased\]/{flag=1; next} /^## \[/{flag=0} flag' CHANGELOG.md | sed '/^[[:space:]]*$/d' || true)
+fi
+
 # ── AI mode: generate body via Claude CLI ─────────────────────────────────────
 if command -v claude &>/dev/null; then
   PROMPT="Generate a GitHub Pull Request body for the following change.
@@ -40,6 +51,12 @@ $FILES
 
 Diff summary   :
 $DIFF_STAT
+
+Session Memory :
+$MEMORY_CONTENT
+
+Changelog      :
+$CHANGELOG_CONTENT
 
 Use EXACTLY this structure (keep all section headers, fill placeholders):
 

@@ -19,6 +19,20 @@ $FileList = ($Files | Select-Object -First 30 | ForEach-Object { "- $_" }) -join
 $DiffStat = (git diff --stat HEAD~1 HEAD 2>$null) -join "`n"
 if (-not $DiffStat) { $DiffStat = (git diff --cached --stat 2>$null) -join "`n" }
 
+# ── Collect Memory and Changelog ──────────────────────────────────────────────
+$MemoryContent = ""
+if (Test-Path "memory\$Today.md") {
+    $MemoryContent = Get-Content "memory\$Today.md" -Raw
+}
+
+$ChangelogContent = ""
+if (Test-Path "CHANGELOG.md") {
+    $cl = Get-Content "CHANGELOG.md" -Raw
+    if ($cl -match '(?m)^## \[Unreleased\]\r?\n([\s\S]*?)(?=\r?\n## |\z)') {
+        $ChangelogContent = $Matches[1].Trim()
+    }
+}
+
 # ── AI mode: generate body via Claude CLI ─────────────────────────────────────
 $ClaudePath = Get-Command claude -ErrorAction SilentlyContinue
 if ($ClaudePath) {
@@ -34,6 +48,12 @@ $($Files -join "`n")
 
 Diff summary   :
 $DiffStat
+
+Session Memory :
+$MemoryContent
+
+Changelog      :
+$ChangelogContent
 
 Use EXACTLY this structure (keep all section headers, fill placeholders):
 
