@@ -360,6 +360,32 @@ When a subagent fails or returns unexpected results:
 3. **Escalate to human**: If 3 retries fail, surface the issue to the user
 4. **Document the pattern**: Add to memory/ for future reference
 
+### Error Recovery Implementation
+
+The project includes `scripts/retry-handler.ts` which provides:
+
+- **3-retry limit** with exponential backoff
+- **Error classification** (tool, context, logic, external)
+- **Recovery suggestions** based on error type
+- **Human escalation** after retries exhausted
+
+**Usage in dispatch scripts:**
+
+```typescript
+import { withRetry, escalateToHuman } from "./retry-handler";
+
+const result = await withRetry(
+  () => dispatchSubagent(task),
+  { maxRetries: 3, initialDelay: 1000, backoffMultiplier: 2, maxDelay: 10000 },
+  "Task Description"
+);
+
+if (!result.success) {
+  escalateToHuman("Task Description", result.lastError!, result.attempts);
+  process.exit(1);
+}
+```
+
 ---
 
 ## Dynamic Roster Updates
