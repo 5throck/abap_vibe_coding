@@ -443,3 +443,8 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 ### 8. File Encoding Rule (Markdown & Scripts)
 - All text files, including Markdown (.md) and scripts (.ps1, .sh, .py, .js, etc.), must be saved as **UTF-8 (without BOM)**.
 - Script outputs (Add-Content, Set-Content) must explicitly specify -Encoding UTF8.
+
+### 9. Cross-Platform Script Pairing Rule
+- All automation scripts must be cross-platform compatible.
+- Any creation, modification, or deletion of a PowerShell script (`.ps1`) MUST be accompanied by the exact same operation on its corresponding Bash script counterpart (`.sh`), and vice versa.
+- They must always be maintained and kept in sync as a pair (e.g., `dev-sync.ps1` and `dev-sync.sh`).
