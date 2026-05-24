@@ -1,15 +1,9 @@
 {
   "name": "vsp-scripts",
   "version": "1.0.0",
-  "description": "VSP Harness Engineering Scripts - Bun-based single-source",
+  "description": "VSP Harness Engineering Scripts - Hybrid Orchestration",
   "scripts": {
-    "dev-sync": "bun scripts/dev-sync.ts",
-    "audit": "bun scripts/audit.ts",
-    "sync-mcp": "bun scripts/sync-mcp.ts",
-    "health": "bun scripts/health-check.ts",
-    "post-write": "bun scripts/post-write.ts",
-    "verify-skills": "bun scripts/verify-skills.ts",
-    "update-memory-index": "bun scripts/update-memory-index.ts"
+    "verify-skills": "bun scripts/verify-skills.ts"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

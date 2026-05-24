@@ -30,7 +30,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 
 ### Changed
-- **[2026-05-24]**: Documentation reorganized: agent workflows moved from docs/context.md to AGENTS.md for single source of truth
+- **[2026-05-25]**: Established **Hybrid Scripting Automation** model. Utility scripts (`dev-sync`, `audit`) reverted to native PowerShell/Bash for simplicity, while agent orchestration (`dispatch`, `retry-handler`, `verify-skills`) remains in Bun (.ts) for complex async handling.
+
+### Added
 - **[2026-05-24]**: MCP workflow references updated in CLAUDE.md and GEMINI.md to reflect .mcp.json SSoT approach
 - **[2026-05-24]**: Pre-commit hook now checks MCP configuration drift between .mcp.json and platform-specific configs
 - **[2026-05-23]**: Standardize session start checklist in CLAUDE.md to 6-step format (git config, CONSTITUTION, context, AGENTS, memory, skills)

@@ -1,38 +1,19 @@
 # VSP Scripts
 
-## Bun-based Automation
+## Hybrid Scripting Automation
 
-All scripts are written in **TypeScript** and run via **Bun** for cross-platform compatibility.
+This project uses a **hybrid scripting approach**:
+1. **Utility Scripts**: Everyday development utilities (like syncing, auditing) are implemented in pure **PowerShell (`.ps1`)** and **Bash (`.sh`)** for cross-platform ease of use without external dependencies.
+2. **Agent Orchestration**: Complex multi-agent workflow coordination and orchestration logic are implemented in **TypeScript (`.ts`)** and executed via **Bun**.
 
-## Prerequisites
+## Everyday Usage (Utility Scripts)
 
-```bash
-# Install Bun (one-time)
-bash scripts/install-bun.sh       # Unix/macOS
-powershell -c "irm bun.sh/install.ps1"    # Windows
-```
+Run these directly from your terminal depending on your OS.
 
-## Usage
-
-### Direct Bun execution
-```bash
-bun scripts/dev-sync.ts "feat: add feature"
-bun scripts/audit.ts
-bun scripts/health-check.ts
-```
-
-### Via npm scripts
-```bash
-bun run dev-sync "feat: add feature"
-bun run audit
-bun run health
-```
-
-### Legacy wrappers (backward compatible)
 **Windows:**
 ```powershell
-powershell -f scripts/dev-sync.ps1 "feat: add feature"
-powershell -f scripts/audit.ps1
+.\scripts\dev-sync.ps1 "feat: add feature"
+.\scripts\audit.ps1
 ```
 **macOS / Linux:**
 ```bash
@@ -40,37 +21,50 @@ bash scripts/dev-sync.sh "feat: add feature"
 bash scripts/audit.sh
 ```
 
-## Available Scripts
+### Available Utility Scripts
 
 | Script | Purpose | Priority |
 |--------|---------|:--------:|
-| `dev-sync.ts` | Full dev sync pipeline (changelog -> audit -> commit) | P0 |
-| `audit.ts` | Documentation and path integrity audit | P0 |
-| `sync-mcp.ts` | Synchronize .mcp.json to tool-specific settings | P0 |
-| `health-check.ts` | System health (SAP, MCP, git, memory) | P2 |
-| `post-write.ts` | Post-write QA chain (SyntaxCheck -> UnitTests -> ATC) | P1 |
-| `verify-skills.ts` | Verify all skills are loadable | P1 |
-| `update-memory-index.ts` | Auto-update memory/MEMORY.md index | P1 |
+| `dev-sync` | Full dev sync pipeline (changelog -> audit -> commit) | P0 |
+| `audit` | Documentation and path integrity audit | P0 |
+| `vsp-sync` | Legacy sync wrapper | P2 |
 
-## Migration from .sh/.ps1
+## Agent Orchestration (Bun)
 
-Legacy `.sh` wrappers are provided at `scripts/` root for backward compatibility.
-These delegate to the Bun-based `.ts` implementations.
-New development should use `.ts` files directly via `bun scripts/<name>.ts`.
+For advanced agent logic, the project requires Bun.
+
+### Prerequisites
+
+```bash
+# Install Bun (one-time)
+bash scripts/install-bun.sh               # Unix/macOS
+powershell -c "irm bun.sh/install.ps1"    # Windows
+```
+
+### Executing Agent Scripts
+```bash
+bun scripts/dispatch.ts parallel
+bun scripts/verify-skills.ts
+```
+
+### Available Agent Scripts
+
+| Script | Purpose | Priority |
+|--------|---------|:--------:|
+| `dispatch.ts` | Main CLI dispatcher with parallel/serial modes | P0 |
+| `dispatch-parallel.ts` | Parallel agent dispatcher for read-only tasks | P0 |
+| `dispatch-serial.ts` | Serial pipeline executor for write operations | P0 |
+| `retry-handler.ts` | Automated error recovery and retries | P0 |
+| `verify-skills.ts` | Verify all skills and generate SKILLS.md | P1 |
 
 ## Troubleshooting
 
 ### Bun not found
+Ensure Bun is installed and in your PATH. If the install script failed, you can manually run:
 ```bash
-bash scripts/install-bun.sh
-```
-
-### Permission denied on .ts files
-```bash
-chmod +x scripts/*.ts
+curl -fsSL https://bun.sh/install | bash
 ```
 
 ### Script fails to run
-1. Check Bun is installed: `bun --version`
-2. Check file permissions: `ls -la scripts/*.ts`
-3. Run with verbose output: `bun --verbose scripts/script.ts`
+1. Check file permissions on `.sh` files: `chmod +x scripts/*.sh`
+2. Ensure you have the `.ps1` and `.sh` pair implemented if you are modifying a utility script.
