@@ -29,6 +29,12 @@ bun run health
 ```
 
 ### Legacy wrappers (backward compatible)
+**Windows:**
+```powershell
+powershell -f scripts/dev-sync.ps1 "feat: add feature"
+powershell -f scripts/audit.ps1
+```
+**macOS / Linux:**
 ```bash
 bash scripts/dev-sync.sh "feat: add feature"
 bash scripts/audit.sh
