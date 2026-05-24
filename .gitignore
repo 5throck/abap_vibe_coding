@@ -51,3 +51,6 @@ Thumbs.db
 
 # CodeGraph Index
 .codegraph/
+
+# Prevent .cmd files (use .sh/.ts or .ps1 instead)
+*.cmd
