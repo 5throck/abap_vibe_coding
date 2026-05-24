@@ -1,74 +1,12 @@
 {
-  "permissions": {
-    "allow": [
-      "mcp__Claude_Preview__preview_console_logs",
-      "mcp__Claude_Preview__preview_screenshot",
-      "mcp__Claude_Preview__preview_snapshot",
-      "mcp__Claude_Preview__preview_logs",
-      "mcp__Claude_Preview__preview_list",
-
-      "mcp__abap__GetSource",
-      "mcp__abap__SearchObject",
-      "mcp__abap__GrepObjects",
-      "mcp__abap__GrepPackages",
-      "mcp__abap__FindDefinition",
-      "mcp__abap__FindReferences",
-      "mcp__abap__GetTableContents",
-      "mcp__abap__RunQuery",
-      "mcp__abap__GetCDSDependencies",
-      "mcp__abap__GetCDSElementInfo",
-      "mcp__abap__GetCDSImpactAnalysis",
-      "mcp__abap__GetCDSExposure",
-      "mcp__abap__GetClassInfo",
-      "mcp__abap__GetFunctionGroup",
-
-      "mcp__abap__SyntaxCheck",
-      "mcp__abap__RunUnitTests",
-      "mcp__abap__RunATCCheck",
-
-      "mcp__abap__WriteSource",
-      "mcp__abap__EditSource",
-      "mcp__abap__Activate",
-      "mcp__abap__ActivatePackage",
-
-      "mcp__abap__GetTable",
-      "mcp__abap__GetConnectionInfo",
-      "mcp__abap__GetSystemInfo",
-      "mcp__abap__GetPackage",
-      "mcp__abap__GetInactiveObjects",
-      "mcp__abap__RunReport",
-
-      "mcp__abap__ListTransports",
-      "mcp__abap__GetTransport",
-      "mcp__abap__CreateTransport",
-      "mcp__abap__AddToTransport",
-      "mcp__abap__ReleaseTransport",
-
-      "mcp__abap__GetODataMetadata",
-      "mcp__abap__TestODataService",
-
-      "mcp__abap__UI5ListApps",
-      "mcp__abap__UI5GetApp",
-      "mcp__abap__UI5GetFileContent",
-
-      "mcp__abap__InstallZADTVSP",
-      "mcp__abap__InstallAbapGit",
-
-      "mcp__abap-docs__*",
-      "mcp__sap-docs__*"
-    ]
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|mcp__abap__WriteSource|mcp__abap__EditSource",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash scripts/sync-md.sh 2>/dev/null || pwsh -NonInteractive -File scripts/sync-md.ps1 2>/dev/null || powershell -NonInteractive -File scripts/sync-md.ps1"
-          }
-        ]
-      }
-    ]
+  "mcpServers": {
+    "codegraph": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@colbymchenry/codegraph",
+        "serve"
+      ]
+    }
   }
 }
