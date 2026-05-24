@@ -264,7 +264,7 @@ func (s *Server) handleX(ctx context.Context, req mcp.CallToolRequest) (*mcp.Cal
 - **Naming**: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program).
 - **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 - **Write Operations**: Use `EditSource` for small changes. Always run `SyntaxCheck` before `WriteSource`.
-- **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` --`RunUnitTests` --`RunATCCheck`). Priority 1 findings block deployment. See [skills/post-write-chain/SKILL.md --Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details.
+- **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` --`RunUnitTests` --`RunATCCheck`). Priority 1 findings block deployment. See [skills/post-write-chain/SKILL.md --Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details. **Note**: If your environment (e.g., Gemini CLI, Claude Desktop App) does not support automatic PostToolUse hooks, you MUST execute this chain manually.
 - **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
 
 ### ABAP SQL Reference (All Agents)
@@ -341,6 +341,25 @@ For full project governance and role-based orchestration, refer to [AGENTS.md --
 
 > These rules apply equally to Claude Code, Gemini CLI, Codex, Antigravity, and any other AI tool operating in this project. Tool-specific overrides live in `CLAUDE.md`, `GEMINI.md`, and `.codex/`.
 
+### Session Start / Context Loading
+
+At the start of every AI session, load the following files to establish project context. (Use your tool's native loading mechanism, e.g., `@` for Gemini, `/read` for Claude):
+1. `https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md` - workspace design standard
+2. `docs/context.md` - project knowledge (ABAP rules, build, codebase map)
+3. `AGENTS.md` - canonical agent roster
+4. `memory/MEMORY.md` - recent changes (skip if file does not exist)
+5. `skills/abap-dev/SKILL.md` - SAP development workflows
+6. `skills/post-write-chain/SKILL.md` - mandatory QA chain after any write
+
+### MCP Configuration
+
+MCP servers are configured in `.mcp.json` (Single Source of Truth).
+Use `bun scripts/sync-mcp.ts` to synchronize changes to tool-specific settings.
+
+See `.mcp.json` for the complete server list.
+
+> **Note**: This project uses the standard `SAP_*` prefix format for connection and feature flags (e.g. `SAP_MODE`, `SAP_ALLOWED_PACKAGES`), ensuring 100% compatibility with the upstream `vsp` engine.
+
 ### Memory Logging
 
 Whenever an ABAP program, class, interface, or other object is **created or significantly changed**, append an entry to `memory/YYYY-MM-DD.md`.
@@ -379,9 +398,11 @@ All `.md` files must be written in **English**. **Exception**: files whose name 
 
 Do **not** copy shared sections from `docs/context.md` into tool-specific files.
 
-### Git Reflection
+### Git Commit Policy & Reflection
 
 All development artifacts (ABAP sources, docs, research reports) and memory logs must be committed to the local Git repository. The PM agent verifies repository status and memory file existence at the end of each major task.
+
+**Manual Commit Rule**: Because auto-commits and hooks are disabled or unsupported in many AI CLI sessions (like Gemini or Claude Desktop), you must run `git add -A && git commit` manually or use the project synchronization script (`bun run dev-sync`) at the end of each task.
 
 ### Tooling Matrix
 

@@ -1,4 +1,4 @@
-﻿# CLAUDE.md
+# CLAUDE.md
 
 **Claude Code (CLI & Desktop App)** configuration for the vsp/SAP ABAP Harness Engineering project.
 
@@ -8,21 +8,9 @@
 
 ## Session Start
 
-At the start of every Claude Code session, run this checklist:
-
-```
-0. git config core.hooksPath .githooks   # activate hooks (run once per clone)
-1. Read https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md               # workspace design standard
-2. Read docs/context.md                  # project knowledge ??build, codebase map, ABAP rules
-3. Read AGENTS.md                        # canonical agent roster
-4. Read memory/MEMORY.md                 # recent session history (skip if absent)
-5. Load skills/abap-dev/SKILL.md         # SAP development workflows and optimization settings
-6. Load skills/post-write-chain/SKILL.md # mandatory QA chain after any write
-```
+At the start of every Claude Code session, load `docs/context.md` (e.g., using `/read docs/context.md`) and follow the **Session Start / Context Loading** checklist defined there.
 
 ---
-
-> **Common engineering rules** (memory logging, language, file isolation, post-write chain, git): [docs/context.md 짠 Project-Wide Rules](docs/context.md#project-wide-rules-all-tools).
 
 ---
 
@@ -38,16 +26,7 @@ Both the CLI and the Desktop App share the same configuration files and MCP serv
 
 ---
 
-## MCP Configuration
 
-MCP servers are configured in `.mcp.json` (Single Source of Truth).
-Use `bun scripts/sync-mcp.ts` to synchronize changes to tool-specific settings.
-
-See `.mcp.json` for the complete server list.
-
-> **Note**: This project uses the standard `SAP_*` prefix format for connection and feature flags (e.g. `SAP_MODE`, `SAP_ALLOWED_PACKAGES`), ensuring 100% compatibility with the upstream `vsp` engine.
-
----
 
 ## Claude Code Settings
 

@@ -1,4 +1,4 @@
-﻿# GEMINI.md
+# GEMINI.md
 
 **vsp** —Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
@@ -11,28 +11,14 @@
 
 ## Context Loading
 
-Load project files at session start using the `@` syntax:
+At the start of every Gemini CLI session, load `docs/context.md` using the `@` syntax and follow the **Session Start / Context Loading** checklist defined there.
 ```
-@https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md      # workspace design standard
-@docs/context.md         # project knowledge (ABAP rules, build, codebase map)
-@AGENTS.md               # canonical agent roster
-@memory/MEMORY.md        # recent changes (skip if file does not exist)
-@skills/abap-dev/SKILL.md        # SAP development workflows
-@skills/post-write-chain/SKILL.md  # mandatory QA chain after any write
+@docs/context.md
 ```
 
 ---
 
-## MCP Configuration
 
-MCP servers are configured in `.mcp.json` (Single Source of Truth).
-Use `bun scripts/sync-mcp.ts` to synchronize changes to tool-specific settings.
-
-See `.mcp.json` for the complete server list.
-
-> **Note**: This project uses the standard `SAP_*` prefix format for connection and feature flags (e.g. `SAP_MODE`, `SAP_ALLOWED_PACKAGES`), ensuring 100% compatibility with the upstream `vsp` engine.
-
----
 
 ## Gemini-Specific Configuration
 
@@ -73,10 +59,7 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
   keep write operations (EditSource, WriteSource) in the primary session.
 - **Advanced Diagnostics**: Use `vsp health` to validate architecture and
   `vsp slim` for context optimization before large read sessions.
-- **Post-Write Test Chain**: After any write operation, execute the mandatory chain
-  defined in [skills/post-write-chain/SKILL.md](skills/post-write-chain/SKILL.md):
-  `SyntaxCheck` —`RunUnitTests` —`RunATCCheck`.
-  All three steps apply identically in Gemini sessions via `sap_execute`:
+- **Post-Write Test Chain**: Hooks are not supported. After any write operation, execute the mandatory chain manually via `sap_execute` as defined in `docs/context.md`.
   ```json
   { "action": "SyntaxCheck",   "object_url": "/sap/bc/adt/..." }
   { "action": "RunUnitTests",  "object_url": "/sap/bc/adt/..." }
@@ -89,7 +72,7 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 
 ## Git Commit Policy
 
-**Auto-commits and hooks are disabled** in Gemini CLI sessions. The PM agent must run `git add -A && git commit` manually at the end of each task. Use Bash git commands directly for commits.
+**Auto-commits and hooks are disabled** in Gemini CLI sessions. Follow the **Git Commit Policy & Reflection** rules defined in `docs/context.md`. You must run `git add -A && git commit` manually or use `bun run dev-sync` at the end of each task.
 
 ## Gemini Tool Safeguards
 
