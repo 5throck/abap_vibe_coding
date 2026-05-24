@@ -77,9 +77,6 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 
 ---
 
-## Git Commit Policy
-
-**Auto-commits and hooks are disabled** in Gemini CLI sessions. Follow the **Git Commit Policy & Reflection** rules defined in `docs/context.md`. You must run `git add -A && git commit` manually or use `.\scripts\dev-sync.ps1` at the end of each task.
 
 ## Gemini Tool Safeguards
 
