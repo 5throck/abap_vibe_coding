@@ -54,6 +54,25 @@ For the detailed execution sequence, see [AGENTS.md § Collaborative Workflow](A
 > **New to this project?** Start with [docs/setup-guide.md](docs/setup-guide.md) - step-by-step environment setup (includes MCP connectivity, abapGit, and AI agent configuration).
 
 ---
+## Bun Scripts (2026-05-24)
+
+All core scripts have been migrated to **Bun-based TypeScript** for cross-platform compatibility. See `scripts/README.md` for details.
+
+```bash
+# Install Bun (one-time)
+powershell -c "irm bun.sh/install.ps1"  # Windows
+curl -fsSL https://bun.sh/install | bash  # Unix/macOS
+
+# Run scripts
+bun scripts/dev-sync.ts "feat: description"
+bun scripts/audit.ts
+```
+
+**13 TypeScript Scripts**: `dev-sync.ts`, `audit.ts`, `sync-mcp.ts`, `health-check.ts`, `post-write.ts`, `verify-skills.ts`, `qa-full.ts`, `qa-quick.ts`, `dispatch-parallel.ts`, `dispatch-serial.ts`, `retry-handler.ts`, `update-memory-index.ts`, `gen-pr-body.ts`
+
+Legacy `.sh`/`.ps1` scripts are retained for backward compatibility.
+
+---
 ## License
 
 This project is licensed under the **GNU Affero General Public License v3.0 (AGPL v3)**.
@@ -61,4 +80,4 @@ See [LICENSE](LICENSE) for details. Commercial licensing is available - see [CON
 
 ---
 
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-23*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-05-24*
