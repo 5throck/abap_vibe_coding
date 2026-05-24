@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 All notable changes to **abap-harness-engineering** (main project harness) are documented here.
 
@@ -8,6 +8,12 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+
+### Added
+- **[2026-05-25]**: docs\:\ comprehensive\ documentation\ improvement\ and\ synchronization
+
+### Fixed
+- **[2026-05-25]**: fix: test changelog and memory automation
 
 ### Added
 - **[2026-05-24]**: Bun-based single-source scripts (.ts) replacing dual .sh/.ps1 maintenance — health-check.ts, audit.ts, sync-mcp.ts, memory-index.ts
@@ -257,3 +263,4 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - `memory/`: Date-stamped development log directory
 - `scratch/`: Working directory for ABAP sources and task files
 - `LICENSE`: AGPL-3.0-only
+

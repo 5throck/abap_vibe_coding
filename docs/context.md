@@ -353,7 +353,7 @@ For full project governance and role-based orchestration, refer to [AGENTS.md --
 ### MCP Configuration
 
 MCP servers are configured in `.mcp.json` (Single Source of Truth).
-Use `bun scripts/sync-mcp.ts` to synchronize changes to tool-specific settings.
+Use `.\scripts\sync-mcp.ps1` or `bash scripts/sync-mcp.sh` to synchronize changes to tool-specific settings.
 
 See `.mcp.json` for the complete server list.
 
@@ -423,7 +423,7 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
-*Last Updated: 2026-05-24*
+*Last Updated: 2026-05-25*
 
 <!-- AUTO-APPENDED FOR DEPLOYMENT -->
 ### Tracking Management: CHANGELOG vs. Memory

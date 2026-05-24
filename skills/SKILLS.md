@@ -9,6 +9,7 @@ Auto-generated index of all available skills in the `skills/` directory.
 | `abap-dev` | SAP ABAP development workflows and MCP tool optimization | Session start |
 | `post-write-chain` | Mandatory QA chain after any WriteSource/EditSource | After write operations |
 | `desktop-app-fallback` | Manual Post-Write QA for Desktop App | Desktop App usage |
+| `source-command-celebrate` | Celebration for successful task completion | After task completion |
 
 ## Module-Specific Skills
 

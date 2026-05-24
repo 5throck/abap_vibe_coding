@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gen-pr-body.sh — Generate a structured PR body from commit message + diff
+# gen-pr-body.sh - Generate a structured PR body from commit message + diff
 # Usage: bash scripts/gen-pr-body.sh "commit message"
 # Output: PR body markdown (stdout)
 #
@@ -27,21 +27,10 @@ FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
 FILE_LIST=$(echo "$FILES" | head -30 | sed 's/^/- /' || true)
 DIFF_STAT=$(git diff --stat HEAD~1 HEAD 2>/dev/null || git diff --cached --stat 2>/dev/null || true)
 
-# ── Collect Memory and Changelog ──────────────────────────────────────────────
-MEMORY_CONTENT=""
-if [ -f "memory/${TODAY}.md" ]; then
-  MEMORY_CONTENT=$(cat "memory/${TODAY}.md")
-fi
-
-CHANGELOG_CONTENT=""
-if [ -f "CHANGELOG.md" ]; then
-  CHANGELOG_CONTENT=$(awk '/^## \[Unreleased\]/{flag=1; next} /^## \[/{flag=0} flag' CHANGELOG.md | sed '/^[[:space:]]*$/d' || true)
-fi
-
 # ── AI mode: generate body via Claude CLI ─────────────────────────────────────
 if command -v claude &>/dev/null; then
   PROMPT="Generate a GitHub Pull Request body for the following change.
-Output ONLY the PR body in markdown — no explanation, no code fences around the whole output.
+Output ONLY the PR body in markdown - no explanation, no code fences around the whole output.
 
 Commit message : $COMMIT_MSG
 Date           : $TODAY
@@ -52,19 +41,13 @@ $FILES
 Diff summary   :
 $DIFF_STAT
 
-Session Memory :
-$MEMORY_CONTENT
-
-Changelog      :
-$CHANGELOG_CONTENT
-
 Use EXACTLY this structure (keep all section headers, fill placeholders):
 
 ## Why
 [1-3 sentences: what problem does this solve and why now?]
 
 ## What Changed
-[concise bullet list of actual changes — be specific, not generic]
+[concise bullet list of actual changes - be specific, not generic]
 
 ## Test Plan
 - [ ] \`bash scripts/audit.sh\` passes
