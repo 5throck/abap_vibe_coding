@@ -14,17 +14,17 @@ Agents must choose the appropriate tool for each task type. All tools share the 
 
 | Task type | Claude Code CLI | Claude Code App | Antigravity | Gemini CLI |
 |-----------|:--------------:|:--------------:|:-----------:|:----------:|
-| PM multi-agent dispatch | ??Plan mode + subagents | ??Plan mode + subagents | ??| ??Native sub-task delegation |
-| Serial write chain (SyntaxCheck ??RunUnitTests ??RunATCCheck) | ??Hook fires automatically | ?좑툘 Hook does NOT fire ??run manually | ?좑툘 Hook unverified | ??Supported |
-| ATC code quality check (RunATCCheck) | ??| ??| ??| ??Identical result |
-| ABAP object browse / edit | ?좑툘 Terminal only | ??Visual diff + inline review | ??File explorer + diff view | ?좑툘 Terminal only |
-| MCP read/query (GetSource, RunQuery, GrepObjects) | ??| ??Identical result | ??Identical result | ??Identical result |
-| Git commit / PR | ??`commit-commands` skills | ??PR monitoring + CI status | ?좑툘 Extension terminal only | ??Bash tools |
-| Web research | ??| ??| ??| ??Native capability |
-| Parallel sessions (visual worktrees) | ??| ??Automatic | ??| ??|
-| Computer use (GUI automation) | ??| ??Win/macOS | ??| ??|
-| Linux support | ??| ??| ??| ??|
-| Quick lookup / search | ??| ??| ??Native search preferred | ??|
+| PM multi-agent dispatch | —Plan mode + subagents | —Plan mode + subagents | —| —Native sub-task delegation |
+| Serial write chain (SyntaxCheck —RunUnitTests —RunATCCheck) | —Hook fires automatically | 🚨 Hook does NOT fire —run manually | 🚨 Hook unverified | —Supported |
+| ATC code quality check (RunATCCheck) | —| —| —| —Identical result |
+| ABAP object browse / edit | 🚨 Terminal only | —Visual diff + inline review | —File explorer + diff view | 🚨 Terminal only |
+| MCP read/query (GetSource, RunQuery, GrepObjects) | —| —Identical result | —Identical result | —Identical result |
+| Git commit / PR | —`commit-commands` skills | —PR monitoring + CI status | 🚨 Extension terminal only | —Bash tools |
+| Web research | —| —| —| —Native capability |
+| Parallel sessions (visual worktrees) | —| —Automatic | —| —|
+| Computer use (GUI automation) | —| —Win/macOS | —| —|
+| Linux support | —| —| —| —|
+| Quick lookup / search | —| —| —Native search preferred | —|
 
 **Default rule**: Use Claude Code CLI or App for orchestration. Prefer CLI on Linux or when hook automation is required. Use Desktop App for visual diff review, PR monitoring, and parallel sessions. Use Antigravity for file-centric editing. Use Gemini CLI when web research or background research delegation is needed.
 
@@ -34,13 +34,14 @@ Agents must choose the appropriate tool for each task type. All tools share the 
 
 | Environment | PostToolUse hook fires? | Notes |
 |-------------|:-----------------------:|-------|
-| Claude Code CLI | ??| Automatic on every Write/Edit |
-| Claude Code Desktop App | ??| Known issue ??run Post-Write chain manually |
-| Gemini CLI | ??| Disabled ??run Post-Write chain manually |
-| Antigravity | ??| No hook support in VS Code extension |
-| Codex | ??| Via `.codex/hooks.json` |
+| Claude Code CLI | —| Automatic on every Write/Edit |
+| Claude Code Desktop App | —| Known issue —run Post-Write chain manually |
+| Gemini CLI | —| Disabled —run Post-Write chain manually |
+| Antigravity | —| No hook support in VS Code extension |
+| Codex | —| Via `.codex/hooks.json` |
 
 ---
 
-*Last Updated: 2026-05-23*
+*Last Updated: 2026-05-24*
+
 

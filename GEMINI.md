@@ -1,6 +1,6 @@
 ﻿# GEMINI.md
 
-**vsp** ??Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
+**vsp** —Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
 > This file contains **Gemini-specific overrides only**.
 > All shared dev context (build commands, codebase map, current priorities, common issues,
@@ -64,7 +64,7 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
   `vsp slim` for context optimization before large read sessions.
 - **Post-Write Test Chain**: After any write operation, execute the mandatory chain
   defined in [skills/post-write-chain/SKILL.md](skills/post-write-chain/SKILL.md):
-  `SyntaxCheck` ??`RunUnitTests` ??`RunATCCheck`.
+  `SyntaxCheck` —`RunUnitTests` —`RunATCCheck`.
   All three steps apply identically in Gemini sessions via `sap_execute`:
   ```json
   { "action": "SyntaxCheck",   "object_url": "/sap/bc/adt/..." }
@@ -82,11 +82,11 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
 
 ## Gemini Tool Safeguards
 
-#### ?좑툘 Surgical Multi-Replace Offset Safeguard
+#### 🚨 Surgical Multi-Replace Offset Safeguard
 When calling `multi_replace_file_content` with multiple `ReplacementChunks`, the line numbers of subsequent target blocks will shift if previous edits change the line count.
 - **Rule**: Sort and process `ReplacementChunks` from the **bottom of the file to the top** (descending order of line numbers: largest `StartLine` first).
 
-#### ?좑툘 Grep Search 50-Match Cap Safeguard
+#### 🚨 Grep Search 50-Match Cap Safeguard
 The `grep_search` tool silently truncates results at exactly **50 matches**.
 - **Rule**: If a search yields 50 results, do **NOT** assume you have all occurrences.
 - **Remediation**: Partition the search by targeting specific subdirectories or applying restrictive file glob filters via the `Includes` parameter (e.g., `["*.go"]`).
@@ -156,7 +156,7 @@ This project contains a `.claude/` directory. To prevent configuration drift and
 
 #### Communication (`send_message`)
 Interact with spawned agents via their unique `conversationID`.
-**Reactive Wakeup**: Do not poll in a loop ??simply yield execution and the platform wakes you automatically when an agent replies or a background task completes.
+**Reactive Wakeup**: Do not poll in a loop —simply yield execution and the platform wakes you automatically when an agent replies or a background task completes.
 
 ---
 
@@ -166,5 +166,6 @@ Interact with spawned agents via their unique `conversationID`.
 
 ---
 
-*Last Updated: 2026-05-23*
+*Last Updated: 2026-05-24*
+
 
