@@ -134,3 +134,13 @@ else
     exit 1
   fi
 fi
+
+# ── 6. Optional QA check (commented out by default - uncomment to enable) ────────
+# QA_CHECK=$(git diff --cached --name-only | grep -E "\.(abap|xml)$" || true)
+# if [ -n "$QA_CHECK" ]; then
+#     echo "🔍 Running QA on changed ABAP objects..."
+#     for object in $(git diff --cached --name-only | grep -E "\.(abap)$"); do
+#         bun scripts/qa-quick.ts "$object" || exit 1
+#     done
+#     echo "✅ QA passed"
+# fi
