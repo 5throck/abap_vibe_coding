@@ -11,16 +11,15 @@
 
 ## Context Loading
 
-> **Ref: docs/context.md -> Session Start / Context Loading**
-
 Load project files at session start using the `@` syntax:
+*(Ref: `docs/context.md` -> `Initial Context Files`)*
+
 ```
-@https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md      # workspace design standard
-@docs/context.md         # project knowledge (ABAP rules, build, codebase map)
-@AGENTS.md               # canonical agent roster
-@memory/MEMORY.md        # recent changes (skip if file does not exist)
-@skills/abap-dev/SKILL.md        # SAP development workflows
-@skills/post-write-chain/SKILL.md  # mandatory QA chain after any write
+@docs/context.md                            # full project knowledge (ABAP rules, build, codebase map)
+@AGENTS.md                                  # canonical agent roster
+@memory/MEMORY.md                           # recent changes (skip if file does not exist)
+@skills/abap-dev/SKILL.md                   # SAP development workflows
+@skills/post-write-chain/SKILL.md           # mandatory QA chain after any write
 ```
 
 ---

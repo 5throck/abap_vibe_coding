@@ -341,15 +341,14 @@ For full project governance and role-based orchestration, refer to [AGENTS.md --
 
 > These rules apply equally to Claude Code, Gemini CLI, Codex, Antigravity, and any other AI tool operating in this project. Tool-specific overrides live in `CLAUDE.md`, `GEMINI.md`, and `.codex/`.
 
-### Session Start / Context Loading
-
-At the start of every AI session, load the following files to establish project context. (Use your tool's native loading mechanism, e.g., `@` for Gemini, `/read` for Claude):
-1. `https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md` - workspace design standard
-2. `docs/context.md` - project knowledge (ABAP rules, build, codebase map)
-3. `AGENTS.md` - canonical agent roster
-4. `memory/MEMORY.md` - recent changes (skip if file does not exist)
-5. `skills/abap-dev/SKILL.md` - SAP development workflows
-6. `skills/post-write-chain/SKILL.md` - mandatory QA chain after any write
+## Initial Context Files
+<!-- Files listed here MUST be loaded at the start of EVERY session by ALL AI tools. -->
+<!-- The exact loading mechanism (e.g., '@' syntax or 'Read' commands) is tool-specific and defined in CLAUDE.md / GEMINI.md. -->
+- `docs/context.md` - Full architecture map, ABAP rules, workflow
+- `AGENTS.md` - Canonical agent roster
+- `memory/MEMORY.md` - Recent session history (if exists)
+- `skills/abap-dev/SKILL.md` - Always load for SAP ABAP development tasks
+- `skills/post-write-chain/SKILL.md` - Always load; mandatory QA chain after any WriteSource/EditSource
 
 ### MCP Configuration
 
