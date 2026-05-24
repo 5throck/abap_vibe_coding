@@ -8,7 +8,19 @@
 
 ## Session Start
 
-At the start of every Claude Code session, load `docs/context.md` (e.g., using `/read docs/context.md`) and follow the **Session Start / Context Loading** checklist defined there.
+> **Ref: docs/context.md -> Session Start / Context Loading**
+
+At the start of every Claude Code session, run this checklist:
+
+```
+0. git config core.hooksPath .githooks   # activate hooks (run once per clone)
+1. Read https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md               # workspace design standard
+2. Read docs/context.md                  # project knowledge (build, codebase map, ABAP rules)
+3. Read AGENTS.md                        # canonical agent roster
+4. Read memory/MEMORY.md                 # recent session history (skip if absent)
+5. Load skills/abap-dev/SKILL.md         # SAP development workflows and optimization settings
+6. Load skills/post-write-chain/SKILL.md # mandatory QA chain after any write
+```
 
 ---
 

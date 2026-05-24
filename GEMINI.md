@@ -11,9 +11,16 @@
 
 ## Context Loading
 
-At the start of every Gemini CLI session, load `docs/context.md` using the `@` syntax and follow the **Session Start / Context Loading** checklist defined there.
+> **Ref: docs/context.md -> Session Start / Context Loading**
+
+Load project files at session start using the `@` syntax:
 ```
-@docs/context.md
+@https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md      # workspace design standard
+@docs/context.md         # project knowledge (ABAP rules, build, codebase map)
+@AGENTS.md               # canonical agent roster
+@memory/MEMORY.md        # recent changes (skip if file does not exist)
+@skills/abap-dev/SKILL.md        # SAP development workflows
+@skills/post-write-chain/SKILL.md  # mandatory QA chain after any write
 ```
 
 ---
