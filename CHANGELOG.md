@@ -9,6 +9,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **[2026-05-25]**: docs\:\ comprehensive\ documentation\ improvement\ and\ synchronization
+
 ### Fixed
 - **[2026-05-25]**: fix: test changelog and memory automation
 
