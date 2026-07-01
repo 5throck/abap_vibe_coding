@@ -1,3 +1,4 @@
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 Get-ChildItem -Filter *.md -Recurse | ForEach-Object {
     $path = $_.FullName
     $bytes = [System.IO.File]::ReadAllBytes($path)

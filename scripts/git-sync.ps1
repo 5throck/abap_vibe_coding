@@ -1,3 +1,4 @@
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # scripts/git-sync.ps1
 # Usage: .\scripts\git-sync.ps1 [-Message "..."]
 # Commits and pushes all changes to the current branch.

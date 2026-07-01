@@ -1,3 +1,4 @@
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # vsp-task.ps1
 # Usage: .\scripts\vsp-task.ps1 [-Name "task-name"]
 # Creates a new task file in scratch/tasks/ from the template.

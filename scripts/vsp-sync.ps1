@@ -1,3 +1,4 @@
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # scripts/vsp-sync.ps1
 # Usage: .\scripts\vsp-sync.ps1 -Message "type: summary"
 # Syncs memory logs, updates index, and commits to Git.

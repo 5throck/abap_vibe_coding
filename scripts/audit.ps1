@@ -1,3 +1,4 @@
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # audit.ps1 - Documentation integrity check (Windows PowerShell)
 # Mirrors audit.sh exactly. Exit code 0 = pass, non-zero = fail.
 
@@ -17,9 +18,11 @@ Write-Host "=== audit.ps1 - workspace standards check ===" -ForegroundColor Cyan
 if (Test-Path "CHANGELOG.md") { Pass "CHANGELOG.md exists" }
 else                           { Fail "CHANGELOG.md missing" }
 
-# 2. CONSTITUTION.md must be accessible (workspace root OR one level up for project dirs)
-if ((Test-Path "CONSTITUTION.md") -or (Test-Path "..\CONSTITUTION.md")) { Pass "CONSTITUTION.md accessible" }
-else { Fail "CONSTITUTION.md not found (expected at ./ or ../)" }
+# 2. CONSTITUTION.md must be accessible
+# Workspace root: ./CONSTITUTION.md
+# Project under <workspace>/Projects/<name>/: ../../CONSTITUTION.md
+if ((Test-Path "CONSTITUTION.md") -or (Test-Path "..\CONSTITUTION.md") -or (Test-Path "..\..\CONSTITUTION.md")) { Pass "CONSTITUTION.md accessible" }
+else { Fail "CONSTITUTION.md not found (expected at ./, ../, or ../../)" }
 
 # 3. CHANGELOG.md must have [Unreleased] section
 if (Test-Path "CHANGELOG.md") {

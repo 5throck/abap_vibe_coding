@@ -72,7 +72,7 @@ The following capabilities extend those in [skills/abap-dev/SKILL.md](skills/aba
   { "action": "RunATCCheck",   "object_url": "/sap/bc/adt/..." }
   ```
 
-> **Common engineering rules** (memory logging, language, file isolation, post-write chain, git): [docs/context.md 짠 Project-Wide Rules](docs/context.md#project-wide-rules-all-tools).
+> **Common engineering rules** (memory logging, language, file isolation, post-write chain, git): [docs/context.md § Project-Wide Rules](docs/context.md#project-wide-rules-all-tools).
 
 ---
 
@@ -105,7 +105,7 @@ For complex tasks or architectural modifications, Gemini must enter **Planning M
 *Path: `<appDataDir>\brain\<session-id>\task.md`*
 - **Purpose**: Running TODO list to track development progress dynamically.
 - **Metadata**: `ArtifactType: "task"`.
-- **Syntax**: `- [ ]` uncompleted 쨌 `- [/]` in progress 쨌 `- [x]` completed.
+- **Syntax**: `- [ ]` uncompleted · `- [/]` in progress · `- [x]` completed.
 
 #### 1c. `walkthrough.md`
 *Path: `<appDataDir>\brain\<session-id>\walkthrough.md`*
@@ -171,6 +171,7 @@ The PM agent MUST leverage the **`superpowers`** plugin (e.g., `subagent-driven-
 
 ---
 
-*Last Updated: 2026-05-24*
+*Last Updated: 2026-07-01*
+
 
 
