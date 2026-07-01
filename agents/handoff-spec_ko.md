@@ -1,12 +1,12 @@
-# Agent Handoff Specification
+# 에이전트 핸드오프 명세서
 
-This document defines the JSON-based handoff format between agents in the multi-agent workflow.
+이 문서는 멀티 에이전트 워크플로우에서 에이전트 간 JSON 기반 핸드오프 형식을 정의합니다.
 
-## Handoff Format
+## 핸드오프 형식
 
-All agent handoffs use a structured JSON format to ensure clear communication and traceability.
+모든 에이전트 핸드오프는 명확한 통신과 추적 가능성을 보장하기 위해 구조화된 JSON 형식을 사용합니다.
 
-### Basic Structure
+### 기본 구조
 
 ```json
 {
@@ -18,27 +18,27 @@ All agent handoffs use a structured JSON format to ensure clear communication an
   "phase": "phase-name",
   "status": "in_progress | completed | blocked | failed",
   "data": {
-    // Agent-specific data
+    // 에이전트별 데이터
   }
 }
 ```
 
-### Standard Fields
+### 표준 필드
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `handoff_version` | string | Yes | Format version (default: "1.0") |
-| `task_id` | string | Yes | Unique task identifier |
-| `from_agent` | string | Yes | Name of the sending agent |
-| `to_agent` | string | Yes | Name of the receiving agent |
-| `timestamp` | string | Yes | ISO-8601 timestamp |
-| `phase` | string | Yes | Current workflow phase |
-| `status` | string | Yes | Task status |
-| `data` | object | Yes | Agent-specific payload |
+| 필드 | 타입 | 필수 | 설명 |
+|-------|------|------|------|
+| `handoff_version` | string | 예 | 형식 버전 (기본값: "1.0") |
+| `task_id` | string | 예 | 고유 작업 식별자 |
+| `from_agent` | string | 예 | 보내는 에이전트 이름 |
+| `to_agent` | string | 예 | 받는 에이전트 이름 |
+| `timestamp` | string | 예 | ISO-8601 타임스탬프 |
+| `phase` | string | 예 | 현재 워크플로우 단계 |
+| `status` | string | 예 | 작업 상태 |
+| `data` | object | 예 | 에이전트별 페이로드 |
 
-## Agent-Specific Handoff Formats
+## 에이전트별 핸드오프 형식
 
-### PM → Business Analyst
+### PM → 비즈니스 분석가
 
 ```json
 {
@@ -50,7 +50,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
   "phase": "business-analysis",
   "status": "in_progress",
   "data": {
-    "request": "User request description",
+    "request": "사용자 요청 설명",
     "trigger_keywords": ["Sales Order", "Billing"],
     "context": {
       "user": "username",
@@ -64,7 +64,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
 }
 ```
 
-### Business Analyst → Architect
+### 비즈니스 분석가 → 아키텍트
 
 ```json
 {
@@ -77,12 +77,12 @@ All agent handoffs use a structured JSON format to ensure clear communication an
   "status": "in_progress",
   "data": {
     "prd": {
-      "title": "Feature title",
-      "requirements": ["Requirement 1", "Requirement 2"],
+      "title": "기능 제목",
+      "requirements": ["요구사항 1", "요구사항 2"],
       "acceptance_criteria": [
         {
           "id": "AC-001",
-          "description": "Criteria description",
+          "description": "인수 기준 설명",
           "priority": "must-have"
         }
       ]
@@ -96,7 +96,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
 }
 ```
 
-### Architect → Code Writer
+### 아키텍트 → 코드 작성자
 
 ```json
 {
@@ -115,7 +115,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
           "type": "PROG | CLASS | TABLE | CDS",
           "name": "object_name",
           "action": "create | modify | delete",
-          "description": "Object description"
+          "description": "오브젝트 설명"
         }
       ],
       "dependencies": []
@@ -129,7 +129,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
 }
 ```
 
-### Code Writer → Test Runner
+### 코드 작성자 → 테스트 실행자
 
 ```json
 {
@@ -151,7 +151,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
     "acceptance_criteria": [
       {
         "id": "AC-001",
-        "description": "Criteria description",
+        "description": "인수 기준 설명",
         "verification_method": "unit_test | manual | atc_check"
       }
     ],
@@ -163,7 +163,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
 }
 ```
 
-### Test Runner → PM
+### 테스트 실행자 → PM
 
 ```json
 {
@@ -190,13 +190,13 @@ All agent handoffs use a structured JSON format to ensure clear communication an
     "acceptance_criteria_met": true,
     "blockers": [],
     "recommendations": [
-      "Address P2 findings before merge"
+      "병합 전 P2 문제 해결"
     ]
   }
 }
 ```
 
-## Error Status Handoff
+## 오류 상태 핸드오프
 
 ```json
 {
@@ -210,7 +210,7 @@ All agent handoffs use a structured JSON format to ensure clear communication an
   "data": {
     "error": {
       "type": "syntax_error | compilation_error | runtime_error | dependency_error",
-      "message": "Error description",
+      "message": "오류 설명",
       "object": "object_name",
       "line_number": 123
     },
@@ -220,25 +220,25 @@ All agent handoffs use a structured JSON format to ensure clear communication an
 }
 ```
 
-## Handoff Rules
+## 핸드오프 규칙
 
-1. **Version Control**: Always include `handoff_version`
-2. **Task Continuity**: Use the same `task_id` throughout the workflow
-3. **Timestamp**: Use ISO-8601 format for all timestamps
-4. **Status Updates**: Update `status` field at each handoff
-5. **Error Handling**: Use `status: blocked` for issues requiring escalation
-6. **Completion**: Final handoff to PM should have `status: completed`
+1. **버전 관리**: 항상 `handoff_version`을 포함하세요
+2. **작업 연속성**: 전체 워크플로우에서 동일한 `task_id`를 사용하세요
+3. **타임스탬프**: 모든 타임스탬프에 ISO-8601 형식을 사용하세요
+4. **상태 업데이트**: 각 핸드오프 시 `status` 필드를 업데이트하세요
+5. **오류 처리**: 에스컬레이션이 필요한 문제의 경우 `status: blocked`를 사용하세요
+6. **완료**: PM에 대한 최종 핸드오프는 `status: completed`여야 합니다
 
-## Validation
+## 검증
 
-When receiving a handoff, agents should:
+핸드오프를 받을 때 에이전트는 다음을 수행해야 합니다:
 
-1. Verify `handoff_version` is supported
-2. Check `task_id` matches expected workflow
-3. Validate required fields are present
-4. Log the handoff for traceability
-5. Return acknowledgment on successful receipt
+1. 지원되는 `handoff_version`인지 확인
+2. `task_id`가 예상된 워크플로우와 일치하는지 확인
+3. 필수 필드가 있는지 검증
+4. 추적 가능성을 위해 핸드오프 기록
+5. 성공적인 수신 시 승인 반환
 
 ---
 
-*Handoff specification v1.0 - subject to change as workflow evolves*
+*핸드오프 명세서 v1.0 - 워크플로우 발전에 따라 변경될 수 있음*

@@ -1,3 +1,4 @@
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # scripts/vsp-publish.ps1
 # Usage: .\scripts\vsp-publish.ps1 -CommitMessage "feat: align with main reference implementation"
 # Standardized packaging script to sanitize and copy core framework assets to the plugin repository.

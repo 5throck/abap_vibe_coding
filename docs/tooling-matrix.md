@@ -1,4 +1,4 @@
-﻿# Tooling Matrix
+# Tooling Matrix
 
 Cross-tool capability reference for the vsp/SAP ABAP Harness Engineering project.
 
@@ -42,6 +42,6 @@ Agents must choose the appropriate tool for each task type. All tools share the 
 
 ---
 
-*Last Updated: 2026-05-24*
+*Last Updated: 2026-07-01*
 
 

@@ -1,3 +1,4 @@
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # scripts/install-vsp.ps1
 # Downloads and installs the vsp binary from GitHub Releases.
 # Source: https://github.com/oisee/vibing-steampunk

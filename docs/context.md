@@ -3,7 +3,7 @@
 **vsp** --Go-native MCP server and CLI for SAP ABAP Development Tools (ADT).
 
 > **Shared reference for all AI tools**: Claude Code CLI, Claude Code Desktop App, Codex, Gemini CLI, and Antigravity.
-> Tool-specific overrides live in `https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/GEMINI.md` (Gemini CLI).
+> Tool-specific overrides live in `../CLAUDE.md` (Claude Code CLI + Desktop App), `../.codex/config.toml` and `../.codex/hooks.json` (Codex), `../GEMINI.md` (Gemini CLI).
 > Claude Code Desktop App shares all config with CLI but PostToolUse hooks do not fire --run Post-Write chain manually.
 > Agent roles and orchestration rules live in `../AGENTS.md`.
 > Per-session technical guidelines and custom skills live in `docs/skill.md` (legacy entry point; current skills are auto-discovered from the `skills/` directory).
@@ -316,7 +316,7 @@ For full project governance and role-based orchestration, refer to [AGENTS.md --
 ## Coding Guidelines
 
 > These rules apply to every AI tool working in this project.
-> Full rationale: [CONSTITUTION.md #8](https://raw.githubusercontent.com/5throck/ai-workspace-standards/main/CONSTITUTION.md#8-coding-behavior-guidelines)
+> Full rationale: [CONSTITUTION.md §8](../docs/constitution/08-coding-guidelines.md)
 
 ### 1. Think Before Coding
 - State assumptions explicitly before implementing. If uncertain, ask --don't guess silently.
@@ -423,7 +423,7 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
-*Last Updated: 2026-05-25*
+*Last Updated: 2026-07-01*
 
 <!-- AUTO-APPENDED FOR DEPLOYMENT -->
 ### Tracking Management: CHANGELOG vs. Memory

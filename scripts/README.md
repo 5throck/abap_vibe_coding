@@ -1,70 +1,77 @@
-# VSP Scripts
+# Project Scripts
 
-## Hybrid Scripting Automation
+Utility scripts for project operations.
 
-This project uses a **hybrid scripting approach**:
-1. **Utility Scripts**: Everyday development utilities (like syncing, auditing) are implemented in pure **PowerShell (`.ps1`)** and **Bash (`.sh`)** for cross-platform ease of use without external dependencies.
-2. **Agent Orchestration**: Complex multi-agent workflow coordination and orchestration logic are implemented in **TypeScript (`.ts`)** and executed via **Bun**.
+## Available Scripts
 
-## Everyday Usage (Utility Scripts)
+### Shell Scripts (Bash + PowerShell)
 
-Run these directly from your terminal depending on your OS.
+All utility scripts have both `.sh` and `.ps1` versions for cross-platform compatibility:
 
-**Windows:**
+| Script | Purpose |
+|--------|---------|
+| `setup.sh` / `setup.ps1` | Initial project setup (env, deps, first commit) |
+| `audit.sh` / `audit.ps1` | Documentation and file integrity audit |
+| `dev-sync.sh` / `dev-sync.ps1` | Full sync pipeline (memlog → changelog → audit → commit → PR) |
+| `sync-md.sh` / `sync-md.ps1` | Update memory/MEMORY.md index |
+| `gen-pr-body.sh` / `gen-pr-body.ps1` | Generate PR body from changes |
+
+### TypeScript (Bun) Scripts
+
+Complex orchestration and automation scripts:
+
+| Script | Purpose |
+|--------|---------|
+| `verify-skills.ts` | Verify all skills in `skills/` are loadable |
+| `agent-create.ts` | Create new agent definition files |
+| `agent-list.ts` | List all agents with metadata |
+| `agent-delete.ts` | Delete agent files |
+| `agent-verify.ts` | Verify agent/documentation synchronization |
+| `dispatch.ts` | Main entry point for agent dispatch |
+| `dispatch-parallel.ts` | Parallel agent dispatcher |
+| `dispatch-serial.ts` | Serial agent dispatcher with dependencies |
+| `retry-handler.ts` | Retry logic with exponential backoff |
+
+## NPM Scripts
+
+Convenience shortcuts defined in `package.json`:
+
+```bash
+bun run verify-skills     # Verify skills
+bun run agent:create      # Create new agent
+bun run agent:list        # List agents
+bun run agent:delete      # Delete agent
+bun run agent:verify      # Verify agent/documentation sync
+bun run dispatch:parallel # Run parallel dispatch
+bun run dispatch:serial   # Run serial dispatch
+```
+
+## Hybrid Scripting Model
+
+This project follows a hybrid scripting approach:
+
+- **TypeScript (Bun)** for complex orchestration, multi-agent dispatch, automation pipelines
+- **Shell Scripts** for everyday utilities and cross-platform compatibility
+
+### Script Pairing Rule
+
+Any creation, modification, or deletion of a shell script MUST maintain both versions:
+
+| Operation | Requirement |
+|-----------|-------------|
+| Create `.sh` | MUST also create `.ps1` |
+| Edit `.sh` | MUST also edit `.ps1` |
+| Delete `.sh` | MUST also delete `.ps1` |
+
+## File Encoding
+
+All scripts MUST be saved as **UTF-8 (without BOM)**.
+
+PowerShell scripts must explicitly specify encoding:
 ```powershell
-.\scripts\dev-sync.ps1 "feat: add feature"
-.\scripts\audit.ps1
-```
-**macOS / Linux:**
-```bash
-bash scripts/dev-sync.sh "feat: add feature"
-bash scripts/audit.sh
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 ```
 
-### Available Utility Scripts
+---
 
-| Script | Purpose | Priority |
-|--------|---------|:--------:|
-| `dev-sync` | Full dev sync pipeline (changelog -> audit -> commit) | P0 |
-| `audit` | Documentation and path integrity audit | P0 |
-| `vsp-sync` | Legacy sync wrapper | P2 |
-
-## Agent Orchestration (Bun)
-
-For advanced agent logic, the project requires Bun.
-
-### Prerequisites
-
-```bash
-# Install Bun (one-time)
-bash scripts/install-bun.sh               # Unix/macOS
-powershell -c "irm bun.sh/install.ps1"    # Windows
-```
-
-### Executing Agent Scripts
-```bash
-bun scripts/dispatch.ts parallel
-bun scripts/verify-skills.ts
-```
-
-### Available Agent Scripts
-
-| Script | Purpose | Priority |
-|--------|---------|:--------:|
-| `dispatch.ts` | Main CLI dispatcher with parallel/serial modes | P0 |
-| `dispatch-parallel.ts` | Parallel agent dispatcher for read-only tasks | P0 |
-| `dispatch-serial.ts` | Serial pipeline executor for write operations | P0 |
-| `retry-handler.ts` | Automated error recovery and retries | P0 |
-| `verify-skills.ts` | Verify all skills and generate SKILLS.md | P1 |
-
-## Troubleshooting
-
-### Bun not found
-Ensure Bun is installed and in your PATH. If the install script failed, you can manually run:
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
-
-### Script fails to run
-1. Check file permissions on `.sh` files: `chmod +x scripts/*.sh`
-2. Ensure you have the `.ps1` and `.sh` pair implemented if you are modifying a utility script.
+*Project template - customize as needed*

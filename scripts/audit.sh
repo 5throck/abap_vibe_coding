@@ -20,11 +20,13 @@ else
   ((errors++)) || true
 fi
 
-# 2. CONSTITUTION.md must be accessible (workspace root OR one level up for project dirs)
-if [ -f "CONSTITUTION.md" ] || [ -f "../CONSTITUTION.md" ]; then
+# 2. CONSTITUTION.md must be accessible
+# Workspace root: ./CONSTITUTION.md
+# Project under <workspace>/Projects/<name>/: ../../CONSTITUTION.md
+if [ -f "CONSTITUTION.md" ] || [ -f "../CONSTITUTION.md" ] || [ -f "../../CONSTITUTION.md" ]; then
   green "CONSTITUTION.md accessible"
 else
-  red  "CONSTITUTION.md not found (expected at ./ or ../)"
+  red  "CONSTITUTION.md not found (expected at ./, ../, or ../../)"
   ((errors++)) || true
 fi
 

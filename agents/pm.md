@@ -72,3 +72,4 @@ During the very first kickoff phase of this project or any major feature:
 - If specialized agents are needed, dynamically generate their `agents/<name>.md` files. Update existing agents' files to prevent role overlap.
 - If specialized workflows/skills are needed, generate `skills/<name>/SKILL.md` directly using proper YAML frontmatter, or instruct agents to use `workflow-skill-creator` later for complex tasks.
 - Always update `AGENTS.md` and `docs/context.md` (or equivalent registry files) with the new agents or skills to ensure global visibility.
+

@@ -1,4 +1,4 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to **abap-harness-engineering** (main project harness) are documented here.
 
@@ -10,9 +10,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **[2026-07-01]**: docs\:\ port\ mig\ improvements\ and\ fix\ encoding\ regressions
+
+### Added
+- **[2026-07-01]**: Ported agent lifecycle CLI scripts (`scripts/agent-create.ts`, `scripts/agent-delete.ts`, `scripts/agent-list.ts`, `scripts/agent-verify.ts`), docs/skills README indexes with Korean translations, and root `package.json`/`bun.lock` from the `abap_vibe_coding_mig` sibling project.
 - **[2026-05-25]**: docs\:\ comprehensive\ documentation\ improvement\ and\ synchronization
 
 ### Fixed
+- **[2026-07-01]**: Restored UTF-8 encoding corruption (stray BOM + mangled em-dash/arrow/section-sign characters) in `agents/pm.md`, `CLAUDE.md`, `GEMINI.md` introduced by a prior partial migration pass.
+- **[2026-07-01]**: Fixed a literal `\n` regression duplicating two table rows in `scripts/README.md`.
+- **[2026-07-01]**: Fixed a pre-existing typo in the `scripts/setup.ps1` header comment.
 - **[2026-05-25]**: fix: test changelog and memory automation
 
 ### Added
