@@ -63,9 +63,24 @@ A `PostToolUse` hook fires after every `Write` or `Edit` tool call and runs `scr
 `sync-md.sh` detects the platform (Windows vs Unix) and delegates to `audit.ps1` or `audit.sh` to perform an immediate documentation and path audit after every edit. This ensures cross-platform integrity is maintained in real-time.
 
 
+### Desktop App Manual Post-Write Chain
+
+When using Claude Code Desktop App, PostToolUse hooks do not fire. After any `WriteSource` or `EditSource`, run this chain manually:
+
+```
+1. bash scripts/sync-md.sh          # documentation audit
+2. SyntaxCheck(<object_url>)        # verify ABAP syntax
+3. RunUnitTests(<object_url>)       # run unit tests
+4. RunATCCheck(<object_url>)        # ATC quality check
+5. bash scripts/vsp-sync.sh -m "fix: description"  # sync & commit
+```
+
+See `skills/desktop-app-fallback/SKILL.md` for the complete fallback workflow.
+
+
 ---
 
-*Last Updated: 2026-07-01*
+*Last Updated: 2026-07-03*
 
 
 ### Optimal Interaction Guidelines

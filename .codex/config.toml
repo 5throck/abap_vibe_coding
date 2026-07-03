@@ -24,4 +24,4 @@ url = "https://mcp-sap-docs.marianzeis.de/mcp"
 
 [[skills.config]]
 enabled = true
-path = "docs"
+path = "skills"

@@ -1,6 +1,8 @@
 ---
 name: SAP FI Module — Financial Accounting
 description: Use when working on FI module tasks — journal entries, account determination, G/L, accounts payable/receivable, or financial reporting. Provides process flows, key table relationships, common query patterns, field notes, SAP quirks, and standard BAPIs for the FI module.
+metadata:
+  type: module
 version: 1.0.0
 ---
 

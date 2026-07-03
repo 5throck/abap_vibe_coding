@@ -4,15 +4,18 @@ $OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # can also be re-run manually at any time.
 #
 # Supported stacks:
-#   Node.js    package.json          ??npm install  ??license-checker audit
-#   Python     requirements.txt /    ??.venv (mandatory) + pip install ??pip-licenses audit
+#   Node.js    package.json          -> npm install  -> license-checker audit
+#   Python     requirements.txt /    -> .venv (mandatory) + pip install -> pip-licenses audit
 #              pyproject.toml
-#   Ruby       Gemfile               ??bundle install
-#   .NET       *.csproj / *.sln      ??dotnet restore
-#   Java       pom.xml (Maven)       ??mvn dependency:resolve
-#              build.gradle (Gradle) ??gradlew dependencies
-#   C/C++      CMakeLists.txt        ??cmake -B build (configure only)
-#              Makefile              ??info only (not run automatically)
+#   Ruby       Gemfile               -> bundle install
+#   .NET       *.csproj / *.sln      -> dotnet restore
+#   Java       pom.xml (Maven)       -> mvn dependency:resolve
+#              build.gradle (Gradle) -> gradlew dependencies
+#   Go         go.mod                -> go mod download
+#   Rust       Cargo.toml            -> cargo fetch
+#   Elixir     mix.exs               -> mix deps.get
+#   C/C++      CMakeLists.txt        -> cmake -B build (configure only)
+#              Makefile              -> info only (not run automatically)
 #
 # Usage: .\scripts\setup.ps1 [-SkipInstall] [-SkipLicenseCheck] [-SkipCommit]
 param(

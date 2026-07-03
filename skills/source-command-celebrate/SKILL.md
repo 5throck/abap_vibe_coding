@@ -1,6 +1,8 @@
 ---
 name: "source-command-celebrate"
 description: "Celebrate the successful completion of a task to boost team morale."
+metadata:
+  type: core
 ---
 
 # source-command-celebrate
