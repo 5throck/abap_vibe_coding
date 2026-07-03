@@ -249,9 +249,9 @@ async function main() {
   }
 
   try {
-    await dispatchSerial(pipeline, options);
+    const results = await dispatchSerial(pipeline, options);
 
-    const hasFailures = (await dispatchSerial(pipeline, options))
+    const hasFailures = results
       .some(r => r.status === 'failed');
 
     process.exit(hasFailures ? 1 : 0);
