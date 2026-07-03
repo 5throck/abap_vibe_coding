@@ -57,6 +57,7 @@ Thumbs.db
 
 # vsp MCP server binary (downloaded, not source)
 /vsp
+vsp.exe
 
 # Prevent .cmd files (use .sh/.ts or .ps1 instead)
 *.cmd

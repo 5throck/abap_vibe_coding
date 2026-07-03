@@ -10,6 +10,7 @@ Auto-generated index of all available skills in the `skills/` directory.
 | `post-write-chain` | Mandatory QA chain after any WriteSource/EditSource | After write operations |
 | `desktop-app-fallback` | Manual Post-Write QA for Desktop App | Desktop App usage |
 | `source-command-celebrate` | Celebration for successful task completion | After task completion |
+| `meeting-facilitation` | Structured multi-agent meeting facilitation via /meeting command | Meeting start |
 
 ## Module-Specific Skills
 
@@ -22,19 +23,19 @@ Auto-generated index of all available skills in the `skills/` directory.
 | `sap-pp` | Production Planning module context | PP tasks (BOM, routing) |
 | `sap-le` | Logistics Execution module context | LE tasks (shipping, warehouse) |
 
-## Utility Skills
+## Slash Commands (Claude Code)
 
-| Skill | Description | Trigger |
-|-------|-------------|---------|
-| `changelog` | Add entry to CHANGELOG.md [Unreleased] | After completing changes |
-| `memlog` | Append session entry to memory/YYYY-MM-DD.md | During/after session |
-| `new-task` | Create task file from template | New task start |
-| `new-project` | Scaffold new project structure | New project start |
-| `post-write` | Run Post-Write QA chain | After ABAP writes |
-| `sync` | Full sync pipeline (memlog → changelog → audit → commit) | Session end |
-| `transport` | Manage SAP Transport Requests | Transport operations |
-| `triage` | Auto-classify and dispatch for SAP requests | New SAP task |
-| `verify` | Verify code changes by running the app | Testing changes |
+The following workflows are available as Claude Code slash commands (`.claude/commands/*.md`), not as discoverable skills:
+
+| Command | File | Purpose |
+|---------|------|---------|
+| `/triage` | `.claude/commands/triage.md` | Auto-classify and dispatch for SAP requests |
+| `/sync` | `.claude/commands/sync.md` | Full sync pipeline (memlog → changelog → audit → commit) |
+| `/memlog` | `.claude/commands/memlog.md` | Append session entry to memory/YYYY-MM-DD.md |
+| `/changelog` | `.claude/commands/changelog.md` | Add entry to CHANGELOG.md [Unreleased] |
+| `/transport` | `.claude/commands/transport.md` | Manage SAP Transport Requests |
+| `/post-write` | `.claude/commands/post-write.md` | Run Post-Write QA chain |
+| `/new-task` | `.claude/commands/new-task.md` | Create task file from template |
 
 ## Skill Loading
 
@@ -47,5 +48,5 @@ To add a new skill:
 
 ---
 
-*Generated: 2026-05-24*
+*Generated: 2026-07-03*
 *Source: `skills/` directory scan*
