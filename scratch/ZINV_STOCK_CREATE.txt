@@ -1,0 +1,29 @@
+* SAP Table Creation Script for ZINV_STOCK
+* Execute this in SE11 (ABAP Dictionary) or SE14
+
+TABLE: ZINV_STOCK
+
+* Fields:
+MANDT        CLNT    3     0 Client
+MATERIAL_ID  CHAR    20    0 Material ID
+PLANT        CHAR    10    0 Plant
+STORAGE_LOC  CHAR    10    0 Storage Location
+DESCRIPTION  CHAR    40    0 Description
+QUANTITY     QUAN    13    3 Quantity
+UNIT         UNIT    3     0 Unit
+CATEGORY     CHAR    10    0 Category
+MIN_STOCK    QUAN    13    3 Minimum Stock
+MAX_STOCK    QUAN    13    3 Maximum Stock
+CREATED_BY   CHAR    12    0 Created By
+CREATED_AT   UTCLONG 8     0 Created At (UTCLONG = UTC timestamp with microsec precision)
+CHANGED_BY   CHAR    12    0 Changed By
+CHANGED_AT   UTCLONG 8     0 Changed At
+STATUS       CHAR    1     0 Status (A=Active, I=Inactive, D=Deleted)
+
+* Primary Key:
+MANDT, MATERIAL_ID, PLANT, STORAGE_LOC
+
+* Delivery Class: A
+* Data Browser/Table View Maint.: Display/Maintenance Allowed with Restrictions
+
+* Alternative: Use SE11 to create table manually with these fields
