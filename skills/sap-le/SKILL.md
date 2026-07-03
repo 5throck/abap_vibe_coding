@@ -1,6 +1,8 @@
 ---
 name: SAP LE Module — Logistics Execution
 description: Use when working on LE module tasks — shipping, transport, warehouse management, delivery processing, or handling units. Provides process flows, key table relationships, common query patterns, field notes, SAP quirks, and customizing tables for the LE module.
+metadata:
+  type: module
 version: 1.0.0
 ---
 

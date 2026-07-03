@@ -70,6 +70,6 @@ Follow the strictly structured **6-step Harness Engineering workflow**:
 During the very first kickoff phase of this project or any major feature:
 - Analyze project requirements and assess if the current agent roster and skills are sufficient.
 - If specialized agents are needed, dynamically generate their `agents/<name>.md` files. Update existing agents' files to prevent role overlap.
-- If specialized workflows/skills are needed, generate `skills/<name>/SKILL.md` directly using proper YAML frontmatter, or instruct agents to use `workflow-skill-creator` later for complex tasks.
+- If specialized workflows/skills are needed, generate `skills/<name>/SKILL.md` directly using proper YAML frontmatter (see `skills/README.md` for the skill creation guide).
 - Always update `AGENTS.md` and `docs/context.md` (or equivalent registry files) with the new agents or skills to ensure global visibility.
 

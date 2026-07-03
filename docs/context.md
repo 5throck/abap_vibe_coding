@@ -353,7 +353,8 @@ For full project governance and role-based orchestration, refer to [AGENTS.md --
 ### MCP Configuration
 
 MCP servers are configured in `.mcp.json` (Single Source of Truth).
-Use `.\scripts\sync-mcp.ps1` or `bash scripts/sync-mcp.sh` to synchronize changes to tool-specific settings.
+
+> **Policy**: `.mcp.json` is tracked in git as a shared configuration template. It must NEVER contain credentials. All secrets must be stored in `.env` (gitignored). This is enforced by the pre-commit hook.
 
 See `.mcp.json` for the complete server list.
 
