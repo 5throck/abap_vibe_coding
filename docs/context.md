@@ -66,14 +66,14 @@ Required env keys (see `.env.sample`):
 Key directories:
 ```
 abap_vibe_coding/
-├── agents/          # 19 AI agent role definitions
-├── skills/          # 8 skill files (abap-dev, post-write-chain, sap-*)
+├── agents/          # 20 AI agent role definitions (+ 2 handoff-spec docs)
+├── skills/          # 11 skill files (abap-dev, post-write-chain, meeting-facilitation, sap-*)
 ├── scripts/         # dev-sync, audit, vsp-sync automation
 ├── memory/          # session logs (YYYY-MM-DD.md)
 ├── scratch/tasks/   # per-task work files (task-YYYY-MM-DD-NNN.md)
 ├── docs/            # context.md, ADRs, tooling-matrix
 ├── vsp             # vsp binary (gitignored --install via scripts/install-vsp.sh)
-└── .mcp.json        # MCP server config (gitignored --from .env)
+└── .mcp.json        # MCP server config (tracked — shared template; secrets via .env)
 ```
 
 ---
@@ -423,7 +423,7 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
-*Last Updated: 2026-07-01*
+*Last Updated: 2026-07-03*
 
 <!-- AUTO-APPENDED FOR DEPLOYMENT -->
 ### Tracking Management: CHANGELOG vs. Memory

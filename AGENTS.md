@@ -140,7 +140,7 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
 
 ---
 
-### 11. 🛡️ Security Monitor
+### 10. 🛡️ Security Monitor
 - **When to dispatch**: Phase 1 triage or prior to writes; enforces security policies and safe dependencies.
 - **Key Tools**: `GrepObjects`, `GetSource`
 - **Output**: Security assessment
@@ -148,7 +148,7 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
 
 ---
 
-### 10. 🤖 SAP GUI Scripting Expert
+### 11. 🤖 SAP GUI Scripting Expert
 - **When to dispatch**: ⚠️ LAST RESORT — only when no BAPI/OData/RFC alternative exists; BDC or VBS automation required
 - **Key Tools**: `GetSource`, `GrepObjects`, `SearchObject`, `RunQuery`
 - **Output**: BDC program + screen flow documentation (DYNPRO numbers, field IDs)
@@ -338,7 +338,7 @@ If the cross-module analysis reveals conflicting ACs (e.g., SD wants field X, FI
 
 ---
 
-*Last Updated: 2026-05-21 (rev 2)*
+*Last Updated: 2026-07-03 (rev 2)*
 
 
 ## Universal Baseline Behaviors
