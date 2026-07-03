@@ -12,6 +12,26 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### Added
 - **[2026-07-03]**: chore\:\ sync\ ABAP\ inventory\ scratch\ work\,\ meeting\ command\,\ and\ repo\ housekeeping
 
+### Fixed
+- **[2026-07-03]**: Remove broken wrapper scripts (`health-check.sh`, `sync-mcp.sh`) that referenced non-existent TypeScript targets
+- **[2026-07-03]**: Fix `dispatch-serial.ts` double-execution bug (pipeline ran twice per invocation)
+- **[2026-07-03]**: Add CI status check and 2-approval minimum to `auto-merge.yml` workflow
+- **[2026-07-03]**: Add `vsp.exe` to `.gitignore` and remove from git tracking
+- **[2026-07-03]**: Update `SKILLS.md` index — remove 9 phantom skills, add `meeting-facilitation`, document slash commands
+- **[2026-07-03]**: Fix Codex skill path from `docs/` to `skills/` in `.codex/config.toml`
+- **[2026-07-03]**: Add `PostToolUse` hook to `.claude/settings.json` for automated post-write audit
+- **[2026-07-03]**: Fix agent count (`19` -> `20`) and skill count (`8` -> `11`) in `docs/context.md`
+- **[2026-07-03]**: Rewrite `security-monitor.md` for SAP/ABAP domain with proper YAML frontmatter
+- **[2026-07-03]**: Fix AGENTS.md section numbering gap (Security Monitor #10, GUI Scripter #11)
+- **[2026-07-03]**: Fix Unicode encoding in `setup.ps1` header stack table, add Go/Rust/Elixir documentation
+- **[2026-07-03]**: Replace realistic password example with placeholder in `.env.sample`
+- **[2026-07-03]**: Populate `SECURITY.md` version support table with vsp >= 2.38
+
+### Changed
+- **[2026-07-03]**: Add Desktop App manual post-write chain guide to `CLAUDE.md`
+- **[2026-07-03]**: Add `metadata.type` to all 9 skill frontmatters (core/module)
+- **[2026-07-03]**: Document `.mcp.json` tracking policy in `docs/context.md`
+
 ### Added
 - **[2026-07-01]**: docs\:\ port\ mig\ improvements\ and\ fix\ encoding\ regressions
 
