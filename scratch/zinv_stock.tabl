@@ -1,0 +1,26 @@
+@AbapCatalog.sqlViewName: 'ZINV_STOCK_V'
+@AbapCatalog.buffering.type: #SINGLE
+@AbapCatalog.buffering.numberOfKeyFields: 1
+@AbapCatalog.deliveryClass: #A
+@AbapCatalog.dataMaintenance : #LIMITED
+@EndUserText.label: 'Inventory Stock Table'
+define table zinv_stock {
+  key client      : abap.clnt not null;
+  key material_id : abap.char(20) not null;
+  key plant       : abap.char(10) not null;
+  key storage_loc : abap.char(10) not null;
+
+  description     : abap.char(40);
+  quantity        : abap.quan(13,3);
+  unit            : abap.unit(3);
+  category        : abap.char(10);
+  min_stock       : abap.quan(13,3);
+  max_stock       : abap.quan(13,3);
+
+  created_by      : abap.char(12);
+  created_at      : abap.utclong;
+  changed_by      : abap.char(12);
+  changed_at      : abap.utclong;
+
+  status          : abap.char(1); // 'A' = Active, 'I' = Inactive, 'D' = Deleted
+}

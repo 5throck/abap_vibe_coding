@@ -52,5 +52,11 @@ Thumbs.db
 # CodeGraph Index
 .codegraph/
 
+# OpenChrome MCP local cache
+.openchrome/
+
+# vsp MCP server binary (downloaded, not source)
+/vsp
+
 # Prevent .cmd files (use .sh/.ts or .ps1 instead)
 *.cmd
