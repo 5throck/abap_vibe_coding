@@ -10,3 +10,4 @@
 | [2026-05-25](2026-05-25.md) | feat: align docs with hybrid scripting principles |
 | [2026-07-01](2026-07-01.md) | docs: port mig improvements and fix encoding regressions |
 | [2026-07-03](2026-07-03.md) | chore: sync ABAP inventory scratch work, meeting command, and repo housekeeping |
+| [2026-07-05](2026-07-05.md) | feat: expose skills to gemini and fix verify-skills.ts |

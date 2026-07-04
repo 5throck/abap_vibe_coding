@@ -1,9 +1,8 @@
 param(
     [string]$Date    = (Get-Date -Format "yyyy-MM-dd"),
-$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
     [string]$Summary = "update"
 )
-
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 # UTF-8 encoding enforcement
 $PSDefaultParameterValues['*:Encoding'] = 'utf8'
 $ErrorActionPreference = 'Stop'
