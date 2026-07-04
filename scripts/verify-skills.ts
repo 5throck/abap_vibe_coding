@@ -66,9 +66,10 @@ async function scanSkills(): Promise<SkillCheck[]> {
     const files: string[] = [];
     const skillsPath = path.isAbsolute(dir) ? dir : path.join(projectRoot, dir);
 
-    for await (const entry of Bun.glob(`${skillsPath}/**/*`)) {
+    const glob = new Bun.Glob("**/*");
+    for await (const entry of glob.scan(skillsPath)) {
       if (entry.endsWith("SKILL.md")) {
-        files.push(entry);
+        files.push(path.join(skillsPath, entry));
       }
     }
     return files;

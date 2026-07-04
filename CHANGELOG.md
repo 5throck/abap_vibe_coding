@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 All notable changes to **abap-harness-engineering** (main project harness) are documented here.
 
@@ -8,6 +8,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+
+### Added
+- **[2026-07-05]**: feat: expose skills to gemini and fix verify-skills.ts
 
 ### Added
 - **[2026-07-03]**: chore\:\ sync\ ABAP\ inventory\ scratch\ work\,\ meeting\ command\,\ and\ repo\ housekeeping
@@ -293,4 +296,5 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - `memory/`: Date-stamped development log directory
 - `scratch/`: Working directory for ABAP sources and task files
 - `LICENSE`: AGPL-3.0-only
+
 
