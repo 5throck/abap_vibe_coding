@@ -14,11 +14,11 @@ Use this template when dispatching subagents that must run sequentially.
 # Step 1: [Agent 1 task]
 Agent(
   description = "Brief description",
+  model = "haiku", // Use short alias: opus, sonnet, or haiku
   prompt = """You are a [role]. Task: [specific task].
 
 Output: [what to produce]
-""",
-  subagent_type = "claude"
+"""
 )
 
 # Wait for result, then...
@@ -26,13 +26,13 @@ Output: [what to produce]
 # Step 2: [Agent 2 task - depends on Step 1]
 Agent(
   description = "Brief description",
+  model = "haiku", // Use short alias: opus, sonnet, or haiku
   prompt = """You are a [role]. Task: [specific task].
 
 Previous output: [paste result from Step 1]
 
 Output: [what to produce]
-""",
-  subagent_type = "claude"
+"""
 )
 ```
 

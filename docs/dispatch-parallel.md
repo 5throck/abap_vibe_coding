@@ -13,24 +13,24 @@ Use this template when dispatching multiple read-only subagents simultaneously.
 ```
 Agent(
   description = "Brief description of subagent 1",
+  model = "haiku", // Use short alias: opus, sonnet, or haiku
   prompt = """You are a [role]. Your task is to [specific task].
 
 Context: [relevant context, file paths, expectations]
 
 Output format: [expected output format]
-""",
-  subagent_type = "claude"
+"""
 )
 
 Agent(
   description = "Brief description of subagent 2",
+  model = "haiku", // Use short alias: opus, sonnet, or haiku
   prompt = """You are a [role]. Your task is to [specific task].
 
 Context: [relevant context, file paths, expectations]
 
 Output format: [expected output format]
-""",
-  subagent_type = "claude"
+"""
 )
 ```
 
