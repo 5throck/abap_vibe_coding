@@ -185,6 +185,41 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
     *   **Git Sync**: Execute `vsp-sync` to commit artifacts and update index.
     *   **Final Report**: PM summarizes the outcome and test results for the user.
 
+### 📦 Requirements-Driven Deliverables Workflow (Stage 1 to 5)
+
+All software requirements and implementation logs must be structured and stored under the `/deliverables/` folder, managed by a central index `deliverables/index.md` (Traceability Matrix). The pipeline operates in 5 consecutive stages, each owned by designated specialist agents:
+
+#### **Stage 1: Requirements Definition (`01_srs.md`)**
+*   **Responsible Agent**: **Module Analyst (SD/MM/FI/CO/PP/LE Analyst)** or **PM** (if cross-module/integration task).
+*   **Deliverable**: `/deliverables/REQ-NNN-[slug]/01_srs.md`.
+*   **Scope**: Collect user requests, identify primary and supporting analysts, document metadata, functional scopes, and testable Given/When/Then scenarios.
+*   **Transition**: Approved by PM and signed off by Technical Lead.
+
+#### **Stage 2: Technical Design (`02_technical_design.md` or domain-specific templates)**
+*   **Responsible Agent**: **Architect** (Control flows, architecture) & **DBA** (Database schema & index design).
+*   **Deliverables**: `/deliverables/REQ-NNN-[slug]/02_technical_design.md`.
+    *   *Fiori/UI5*: `/deliverables/templates/fiori_technical_design.md`
+    *   *API/Interface*: `/deliverables/templates/api_technical_design.md`
+    *   *SAP Forms*: `/deliverables/templates/forms_technical_design.md`
+*   **Scope**: Define system patterns (A/B/C), construct Mermaid ERDs and flowcharts, define database schemas and data types.
+
+#### **Stage 3: Coding & Implementation (`03_implementation_report.md` or domain-specific templates)**
+*   **Responsible Agent**: **ABAP Developer** (`code-writer`) or specialist developers: **Fiori Developer** (`fiori-developer`), **Form Expert** (`form-expert`), **GUI Scripter** (`gui-scripter`), **Interface Expert** (`interface-expert`).
+*   **Deliverables**: `/deliverables/REQ-NNN-[slug]/03_implementation_report.md`.
+    *   *Fiori/UI5*: `/deliverables/templates/fiori_implementation_report.md`
+    *   *API/Interface*: `/deliverables/templates/api_implementation_report.md`
+    *   *SAP Forms*: `/deliverables/templates/forms_implementation_report.md`
+*   **Scope**: Implement code in the SAP system, log modified objects (ADT URLs), store local copies in `scratch/`, and execute local compilation syntax checks.
+
+#### **Stage 4: Quality Gate Verification (`04_qa_report.md`)**
+*   **Responsible Agent**: **QA Engineer** (`test-runner`).
+*   **Deliverable**: `/deliverables/REQ-NNN-[slug]/04_qa_report.md`.
+*   **Scope**: Run the mandatory QA chain (`SyntaxCheck` -> `RunUnitTests` -> `RunATCCheck`). Record raw logs, code coverage percentages, and enforce zero Priority-1 findings. Mark as **[QUALITY GATE STATUS: PASSED]**.
+
+#### **Stage 5: Governance & Release**
+*   **Responsible Agent**: **PM** & **DevOps/Admin**.
+*   **Scope**: PM reviews QA report and releases the transport. DevOps Admin audits the deliverables folder, updates the global matrix in `deliverables/index.md`, and runs the repository sync.
+
 ### 🤖 PM Subagent Dispatch Protocol
 
 This protocol defines **when and how** PM dispatches parallel subagents.
@@ -338,7 +373,7 @@ If the cross-module analysis reveals conflicting ACs (e.g., SD wants field X, FI
 
 ---
 
-*Last Updated: 2026-07-03 (rev 2)*
+*Last Updated: 2026-07-05 (rev 2)*
 
 
 ## Universal Baseline Behaviors
