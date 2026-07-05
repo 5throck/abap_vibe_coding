@@ -19,7 +19,7 @@ This index serves as the single source of truth for tracking software requiremen
    - **Primary Owner**: Architect & DBA
    - **Output**: Mermaid system architecture diagram, Mermaid ERD schema, Mermaid program control flow, objects change list.
 3. **Stage 3: Coding & Implementation** (`03_implementation_report.md`)
-   - **Primary Owner**: ABAP Developer (code-writer)
+   - **Primary Owner**: ABAP Developer (code-writer) or specialist agents: Fiori Developer (fiori-developer), Form Expert (form-expert), GUI Scripter (gui-scripter), Interface Expert (interface-expert)
    - **Output**: Source code edits on SAP system, compilation checks, links to implemented objects.
 4. **Stage 4: Quality Gate Verification** (`04_qa_report.md`)
    - **Primary Owner**: QA Engineer (test-runner)

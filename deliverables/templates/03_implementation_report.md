@@ -3,10 +3,11 @@
 
 > [!NOTE]
 > This document summarizes the code modifications and implementation details.
-> **Stage 3 Owner**: ABAP Developer (code-writer)
+> **Stage 3 Owner**: ABAP Developer (code-writer) or specialist developer agents (fiori-developer, form-expert, gui-scripter, interface-expert).
 
 ### Document Metadata
-- **Developer**: [ABAP Developer]
+- **Assigned Developer(s)**: [e.g., ABAP Developer, Fiori Developer, Form Expert, GUI Scripter, Interface Expert]
+- **Tech Stack / Domain**: [e.g., ABAP OO, UI5/Fiori, Smart Forms, BDC Scripting, OData Service]
 - **Associated Technical Design**: [REQ-NNN: 02_technical_design.md](../02_technical_design.md)
 - **Status**: DRAFT | COMPLETED
 - **Last Updated**: YYYY-MM-DD
