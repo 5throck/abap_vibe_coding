@@ -67,6 +67,7 @@ Key directories:
 ```
 abap_vibe_coding/
 ├── agents/          # 20 AI agent role definitions (+ 2 handoff-spec docs)
+├── deliverables/    # Global index & per-requirement folder logs (srs, design, implementation, QA)
 ├── skills/          # 11 skill files (abap-dev, post-write-chain, meeting-facilitation, sap-*)
 ├── scripts/         # dev-sync, audit, vsp-sync automation
 ├── memory/          # session logs (YYYY-MM-DD.md)
@@ -95,6 +96,14 @@ abap_vibe_coding/
 bash scripts/dev-sync.sh "feat: description"
 ```
 
+> **Requirements-Driven Deliverables Workflow (Stage 1 to 5)**:
+> All requirements are organized inside `/deliverables/REQ-NNN-[slug]/` using numbered prefixes:
+> - `01_srs.md` (Stage 1: Requirements Definition - Owner: Module Analyst / PM)
+> - `02_technical_design.md` (Stage 2: Technical Design - Owner: Architect & DBA)
+> - `03_implementation_report.md` (Stage 3: Implementation Summary - Owner: Specialist Developers)
+> - `04_qa_report.md` (Stage 4: QA & Verification - Owner: QA Engineer)
+> - Release & sync (Stage 5 - Owner: PM & DevOps/Admin)
+
 > Full 6-phase workflow: [Developer Quick Start (Task Lifecycle)](#developer-quick-start-task-lifecycle) in ABAP Development below.
 
 ---
@@ -105,6 +114,7 @@ bash scripts/dev-sync.sh "feat: description"
 |------|---------|
 | `docs/context.md` | Single source of truth for all AI tools |
 | `AGENTS.md` | Canonical agent index --auto-loaded by Claude Code |
+| `deliverables/index.md` | Global Requirements Traceability Matrix and stage tracking |
 | `CLAUDE.md` | Claude Code-specific configuration |
 | `GEMINI.md` | Gemini CLI-specific configuration |
 | `agents/pm.md` | PM orchestrator --6-phase workflow owner |
@@ -424,7 +434,7 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 | `.codex/config.toml` | Tool parity | Keep MCP servers, hook enablement, and `skills/abap-dev/SKILL.md` skill loading aligned with Claude/Gemini settings |
 
 ---
-*Last Updated: 2026-07-03*
+*Last Updated: 2026-07-05*
 
 <!-- AUTO-APPENDED FOR DEPLOYMENT -->
 ### Tracking Management: CHANGELOG vs. Memory
