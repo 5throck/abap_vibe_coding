@@ -10,6 +10,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **[2026-07-05]**: docs\:\ update\ memory\ log\ and\ skills\ index
+
+### Added
 - **[2026-07-05]**: feat: implement deliverables workflow and templates
 
 ### Changed
