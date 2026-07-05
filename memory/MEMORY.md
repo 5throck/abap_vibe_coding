@@ -12,3 +12,4 @@
 | [2026-07-03](2026-07-03.md) | chore: sync ABAP inventory scratch work, meeting command, and repo housekeeping |
 | [2026-07-05](2026-07-05.md) | feat: expose skills to gemini and fix verify-skills.ts |
 | [2026-07-05-meeting](meeting-2026-07-05-project-review-audit.md) | Project Review and Health Audit |
+| [2026-07-05-workflow](meeting-2026-07-05-requirements-workflow-design.md) | Requirements Workflow Design |
