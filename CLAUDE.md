@@ -80,11 +80,28 @@ See `skills/desktop-app-fallback/SKILL.md` for the complete fallback workflow.
 
 ---
 
-*Last Updated: 2026-07-03*
+*Last Updated: 2026-07-05*
 
 
 ### Optimal Interaction Guidelines
 - **XML Tagging**: Utilize XML tags like `<thought>`, `<plan>`, and `<execution>` to structure complex reasoning and plans before generating final responses.
 - **Tone**: Maintain an objective, highly analytical tone. Focus on systematic execution.
 
+## Subagent Dispatch & 3-Tier Model Mapping
 
+To fully leverage the 3-tier cost optimization strategy during execution plan creation and subagent dispatch, you must explicitly set the `model` parameter in `Agent()` calls using the correct short alias. 
+
+**Registry Model ID to Short Alias Translation:**
+- **High-tier (Design/Planning)**: Registry ID `claude-opus-*` → `model = "opus"`
+- **Medium-tier (Review/QA)**: Registry ID `claude-sonnet-*` → `model = "sonnet"`
+- **Low-tier (Execution/Coding)**: Registry ID `claude-haiku-*` → `model = "haiku"`
+
+**Example `Agent()` Call:**
+```javascript
+Agent(
+  model = "haiku", // Use short alias: opus, sonnet, or haiku
+  description = "Code-writer for serial implementation",
+  prompt = "..."
+)
+```
+When dispatching subagents defined in `agents/*.md`, translate their configured tier into the corresponding short alias above.
