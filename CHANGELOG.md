@@ -10,6 +10,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **[2026-07-08]**: chore\:\ bump\ devDependencies\ \(\@types\/node\,\ typescript\)
+
+### Added
 - **[2026-07-05]**: docs\:\ update\ memory\ log\ and\ skills\ index
 
 ### Added
