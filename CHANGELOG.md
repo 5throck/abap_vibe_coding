@@ -10,6 +10,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **[2026-07-08]**: fix\:\ pre\-push\ hook\ checks\ destination\ ref\ instead\ of\ current\ branch
+
+### Added
 - **[2026-07-08]**: chore\:\ bump\ devDependencies\ \(\@types\/node\,\ typescript\)
 
 ### Added
