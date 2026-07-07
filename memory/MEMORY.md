@@ -14,3 +14,4 @@
 | [2026-07-05-meeting](meeting-2026-07-05-project-review-audit.md) | Project Review and Health Audit |
 | [2026-07-05-workflow](meeting-2026-07-05-requirements-workflow-design.md) | Requirements Workflow Design |
 | [2026-07-05-deliverables](meeting-2026-07-05-deliverables-workflow-alignment.md) | Deliverables Workflow Alignment |
+| [2026-07-08](2026-07-08.md) | chore: bump devDependencies (@types/node, typescript) |
