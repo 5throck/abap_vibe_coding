@@ -8,6 +8,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+### Added
+- **[2026-07-08]**: feat: add .agents/skills/ and sync-skills.ts for 3-platform skill distribution
+
 
 ### Added
 - **[2026-07-08]**: fix\:\ pre\-push\ hook\ checks\ destination\ ref\ instead\ of\ current\ branch
