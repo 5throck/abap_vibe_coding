@@ -14,7 +14,6 @@ All utility scripts have both `.sh` and `.ps1` versions for cross-platform compa
 | `audit.sh` / `audit.ps1` | Documentation and file integrity audit |
 | `dev-sync.sh` / `dev-sync.ps1` | Full sync pipeline (memlog → changelog → audit → commit → PR) |
 | `sync-md.sh` / `sync-md.ps1` | Update memory/MEMORY.md index |
-| `gen-pr-body.sh` / `gen-pr-body.ps1` | Generate PR body from changes |
 
 ### TypeScript (Bun) Scripts
 
