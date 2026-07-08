@@ -75,26 +75,33 @@ if ($CurrentBranch -eq "main" -or $CurrentBranch -eq "master") {
     $Slug = ($Msg -replace '[^a-z0-9]', '-' -replace '-+', '-').ToLower().TrimEnd('-')
     $Slug = $Slug.Substring(0, [Math]::Min(40, $Slug.Length))
     $Branch = "pr/$(Get-Date -Format 'yyyyMMdd-HHmmss')-$Slug"
-git checkout -b $Branch
-    } else {
-        $Branch = $CurrentBranch
-        Write-Host "ℹ️  Already on branch '$Branch' - committing here without creating a new branch." -ForegroundColor Cyan
-    }
+    git checkout -b $Branch
+} else {
+    $Branch = $CurrentBranch
+    Write-Host "ℹ️  Already on branch '$Branch' - committing here without creating a new branch." -ForegroundColor Cyan
+}
 
 git add -A
-git commit -m "$Msg`n`nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
-git push -u origin $Branch
 
-# ── 7. Create PR ──────────────────────────────────────────────────────────────
-# Skip if a PR already exists for this branch
-$existingPr = gh pr view $Branch --json number -q '.number' 2>$null
-if ($existingPr) {
-    Write-Host "ℹ️  PR already exists for branch '$Branch' — skipping PR creation." -ForegroundColor Cyan
-} elseif (Test-Path ".github\pull_request_template.md") {
-    $prBody = Get-Content ".github\pull_request_template.md" -Raw -Encoding UTF8
-    gh pr create --title $Msg --body $prBody --base main
+# Check if there is anything to commit
+$staged = git diff --cached --name-only 2>$null
+if ($staged) {
+    git commit -m "$Msg`n`nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+    git push -u origin $Branch
+
+    # ── 7. Create PR ──────────────────────────────────────────────────────────────
+    # Skip if a PR already exists for this branch
+    $existingPr = gh pr view $Branch --json number -q '.number' 2>$null
+    if ($existingPr) {
+        Write-Host "ℹ️  PR already exists for branch '$Branch' — skipping PR creation." -ForegroundColor Cyan
+    } elseif (Test-Path ".github\pull_request_template.md") {
+        $prBody = Get-Content ".github\pull_request_template.md" -Raw -Encoding UTF8
+        gh pr create --title $Msg --body $prBody --base main
+    } else {
+        gh pr create --title $Msg --fill --base main
+    }
 } else {
-    gh pr create --title $Msg --fill --base main
+    Write-Host "ℹ️  No changes to commit — skipping commit, push, and PR." -ForegroundColor Cyan
 }
 
 

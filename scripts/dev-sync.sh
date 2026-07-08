@@ -77,19 +77,25 @@ else
 fi
 
 git add -A
-git commit -m "$MSG
+
+# Check if there is anything to commit
+if ! git diff --cached --quiet 2>/dev/null; then
+  git commit -m "$MSG
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
-git push -u origin "$BRANCH"
+  git push -u origin "$BRANCH"
 
-# ── 7. Create PR ──────────────────────────────────────────────────────────────
-# Skip if a PR already exists for this branch
-if gh pr view "$BRANCH" --json number -q '.number' 2>/dev/null; then
-  echo "ℹ️  PR already exists for branch '$BRANCH' — skipping PR creation."
-else
-  if [ -f ".github/pull_request_template.md" ]; then
-    gh pr create --title "$MSG" --body-file .github/pull_request_template.md --base main
+  # ── 7. Create PR ──────────────────────────────────────────────────────────────
+  # Skip if a PR already exists for this branch
+  if gh pr view "$BRANCH" --json number -q '.number' 2>/dev/null; then
+    echo "ℹ️  PR already exists for branch '$BRANCH' — skipping PR creation."
   else
-    gh pr create --title "$MSG" --fill --base main
+    if [ -f ".github/pull_request_template.md" ]; then
+      gh pr create --title "$MSG" --body-file .github/pull_request_template.md --base main
+    else
+      gh pr create --title "$MSG" --fill --base main
+    fi
   fi
+else
+  echo "ℹ️  No changes to commit — skipping commit, push, and PR."
 fi
