@@ -12,6 +12,7 @@
     "install:vsp": "bun scripts/install-vsp.ts",
     "setup": "bun scripts/setup.ts",
     "verify-skills": "bun scripts/verify-skills.ts",
+    "sync-skills": "bun scripts/sync-skills.ts",
     "agent:create": "bun scripts/agent-create.ts",
     "agent:list": "bun scripts/agent-list.ts",
     "agent:delete": "bun scripts/agent-delete.ts",
