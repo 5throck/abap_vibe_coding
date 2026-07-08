@@ -15,3 +15,4 @@
 | [2026-07-05-workflow](meeting-2026-07-05-requirements-workflow-design.md) | Requirements Workflow Design |
 | [2026-07-05-deliverables](meeting-2026-07-05-deliverables-workflow-alignment.md) | Deliverables Workflow Alignment |
 | [2026-07-08](2026-07-08.md) | chore: bump devDependencies (@types/node, typescript) |
+| [2026-07-09](2026-07-09.md) | feat: add .agents/skills/ and sync-skills.ts for 3-platform skill distribution |
