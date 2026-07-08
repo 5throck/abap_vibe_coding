@@ -102,11 +102,9 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 
 ---
 
-## 하이브리드 스크립팅 (Bun & Shell)
+## 스크립팅 (Bun / TypeScript)
 
-이 프로젝트는 **하이브리드 스크립팅 방식**을 사용합니다:
-1. **유틸리티 스크립트**: 일상적인 개발 유틸리티(`dev-sync`, `audit` 등)는 외부 의존성 없이 교차 플랫폼에서 쉽게 사용할 수 있도록 **PowerShell(`.ps1`)** 및 **Bash(`.sh`)**로 구현됩니다.
-2. **에이전트 오케스트레이션**: 복잡한 다중 에이전트 워크플로우 조정 및 오케스트레이션 로직은 **TypeScript(`.ts`)**로 구현되며 **Bun**을 통해 실행됩니다.
+모든 프로젝트 스크립트는 **TypeScript(`.ts`)**로 구현되며 **Bun**을 통해 실행됩니다 — 셸 스크립트 페어링이나 크로스 플랫폼 래퍼가 필요하지 않습니다.
 
 자세한 내용은 `scripts/README.md`를 참조하세요.
 
@@ -125,11 +123,9 @@ curl -fsSL https://bun.sh/install | bash
 ### 사용법
 
 ```bash
-# 일상적인 유틸리티 스크립트 (의존성 없음)
-.\scripts\dev-sync.ps1 "feat: description"   # Windows
-bash scripts/dev-sync.sh "feat: description" # macOS/Linux
-
-# 에이전트 오케스트레이션 스크립트 (Bun 필요)
+# 프로젝트 스크립트 (Bun 필요)
+bun scripts/dev-sync.ts "feat: description"
+bun scripts/audit.ts
 bun scripts/dispatch.ts parallel
 bun scripts/verify-skills.ts
 ```

@@ -55,9 +55,9 @@ Follow the strictly structured **6-step Harness Engineering workflow**:
 - Enforce the mandatory post-write chain: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck`.
 
 ### 6. Finalization (PM Final Step)
-- Execute `scripts/vsp-audit.ps1` (Windows) or `scripts/vsp-audit.sh` (Unix) to audit documentation.
+- Execute `bun scripts/vsp-audit.ts` to audit documentation.
 - Copy the §5 Finalization block into `memory/YYYY-MM-DD.md`.
-- Synchronize and commit via `bash scripts/dev-sync.sh` or `powershell scripts/dev-sync.ps1`.
+- Synchronize and commit via `bun scripts/dev-sync.ts`.
 
 ## Behavior rules
 1. **Never allow bypasses of the Quality Gate.** All unit tests must pass, and Priority-1 ATC findings must be zero before activation.

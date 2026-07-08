@@ -47,7 +47,7 @@ Standard directory layout for all projects in this workspace:
 ├── memory/          # session logs (YYYY-MM-DD.md)
 ├── scratch/tasks/   # per-task work files (task-YYYY-MM-DD-NNN.md)
 ├── docs/            # context.md (this file) + co-abap.context.md + ADRs
-├── vsp             # vsp binary (gitignored — install via scripts/install-vsp.sh)
+├── vsp             # vsp binary (gitignored — install via scripts/install-vsp.ts)
 └── .mcp.json        # MCP server config (tracked — shared template; secrets via .env)
 ```
 
@@ -64,8 +64,8 @@ Standard directory layout for all projects in this workspace:
 | `CLAUDE.md` | Claude Code-specific configuration |
 | `GEMINI.md` | Gemini CLI-specific configuration |
 | `CHANGELOG.md` | User-visible change history |
-| `scripts/dev-sync.sh/.ps1` | Full sync pipeline |
-| `scripts/audit.sh/.ps1` | Documentation integrity audit |
+| `scripts/dev-sync.ts` | Full sync pipeline |
+| `scripts/audit.ts` | Documentation integrity audit |
 | `memory/MEMORY.md` | Session log index |
 | `.env.sample` | Required environment variable template |
 

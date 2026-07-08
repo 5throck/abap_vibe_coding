@@ -1,23 +1,29 @@
 # 프로젝트 스크립트 (Project Scripts)
 
-프로젝트 운영을 위한 유틸리티 스크립트입니다.
+모든 프로젝트 자동화 스크립트는 **TypeScript**로 구현되며 **Bun** 런타임에서 실행됩니다.
 
 ## 사용 가능한 스크립트
 
-### 셸 스크립트 (Bash + PowerShell)
-
-모든 유틸리티 스크립트는 크로스 플랫폼 호환성을 위해 `.sh`와 `.ps1` 버전을 모두 제공합니다:
+### 핵심 파이프라인 스크립트
 
 | 스크립트 | 목적 |
 |---------|------|
-| `setup.sh` / `setup.ps1` | 초기 프로젝트 설정 (env, 의존성, 첫 커밋) |
-| `audit.sh` / `audit.ps1` | 문서 및 파일 무결성 감사 |
-| `dev-sync.sh` / `dev-sync.ps1` | 전체 동기화 파이프라인 (memlog → changelog → audit → commit → PR) |
-| `sync-md.sh` / `sync-md.ps1` | memory/MEMORY.md 인덱스 업데이트 |
+| `dev-sync.ts` | 전체 동기화 파이프라인 (memlog → changelog → audit → commit → PR) |
+| `audit.ts` | 문서 및 파일 무결성 감사 |
+| `sync-md.ts` | memory/MEMORY.md 인덱스 업데이트 |
+| `vsp-audit.ts` | 레거시 감사 래퍼 (audit.ts에 위임) |
 
-### TypeScript (Bun) 스크립트
+### 유틸리티 스크립트
 
-복잡한 오케스트레이션 및 자동화 스크립트:
+| 스크립트 | 목적 |
+|---------|------|
+| `git-sync.ts` | 전체 변경사항 커밋 및 푸시 |
+| `vsp-task.ts` | 템플릿에서 태스크 파일 생성 |
+| `install-bun.ts` | Bun 런타임 설치 |
+| `install-vsp.ts` | GitHub Releases에서 VSP 바이너리 설치 |
+| `setup.ts` | 스캐폴드 후 환경 설정 (OS/스택 감지, 의존성, 라이선스 감사) |
+
+### 에이전트 오케스트레이션 스크립트
 
 | 스크립트 | 목적 |
 |---------|------|
@@ -31,45 +37,52 @@
 | `dispatch-serial.ts` | 종속성이 있는 직렬 에이전트 디스패처 |
 | `retry-handler.ts` | 지수 백오프가 포함된 재시도 로직 |
 
+### 레거시 (셸)
+
+| 스크립트 | 목적 |
+|---------|------|
+| `vsp-publish.sh` / `vsp-publish.ps1` | 플러그인 에셋 패키징 (향후 이터레이션에서 변환 예정) |
+
 ## NPM 스크립트
 
 `package.json`에 정의된 편의 단축키:
 
 ```bash
-bun run verify-skills     # 스킬 확인
-bun run agent:create      # 새 에이전트 생성
-bun run agent:list        # 에이전트 목록
-bun run agent:delete      # 에이전트 삭제
-bun run agent:verify      # 에이전트/문서 동기화 확인
-bun run dispatch:parallel # 병렬 디스패치 실행
-bun run dispatch:serial   # 직렬 디스패치 실행
+bun run audit            # 워크스페이스 표준 감사 실행
+bun run dev-sync         # 전체 동기화 파이프라인
+bun run sync-md          # 메모리 인덱스 업데이트
+bun run vsp-audit        # 레거시 감사 래퍼
+bun run git-sync         # 전체 변경사항 커밋 및 푸시
+bun run vsp-task         # 새 태스크 파일 생성
+bun run install:vsp      # VSP 바이너리 설치
+bun run setup            # 스캐폴드 후 환경 설정
+bun run verify-skills    # 스킬 확인
+bun run agent:create     # 새 에이전트 생성
+bun run agent:list       # 에이전트 목록
+bun run agent:delete     # 에이전트 삭제
+bun run agent:verify     # 에이전트/문서 동기화 확인
+bun run dispatch:parallel  # 병렬 디스패치 실행
+bun run dispatch:serial    # 직렬 디스패치 실행
 ```
 
-## 하이브리드 스크립팅 모델
+## 런타임 요구사항
 
-이 프로젝트는 하이브리드 스크립팅 접근 방식을 따릅니다:
-
-- **TypeScript (Bun)** - 복잡한 오케스트레이션, 멀티 에이전트 디스패치, 자동화 파이프라인
-- **셸 스크립트** - 일상적인 유틸리티 및 크로스 플랫폼 호환성
-
-### 스크립트 페어링 규칙
-
-셸 스크립트의 생성, 수정, 삭제는 항상 두 버전을 모두 유지해야 합니다:
-
-| 작업 | 요구사항 |
-|------|----------|
-| `.sh` 생성 | `.ps1`도 반드시 생성 |
-| `.sh` 수정 | `.ps1`도 반드시 수정 |
-| `.sh` 삭제 | `.ps1`도 반드시 삭제 |
+- **Bun >= 1.0.0** — 모든 스크립트는 `#!/usr/bin/env bun`과 Bun 전용 API(`Bun.$`, `Bun.file`, `Bun.write`, `import.meta.path`)를 사용합니다
+- **Git** — dev-sync, git-sync, setup에서 사용
+- **GitHub CLI (`gh`)** — dev-sync에서 PR 생성에 사용
 
 ## 파일 인코딩
 
-모든 스크립트는 **UTF-8 (BOM 없음)**으로 저장해야 합니다.
+모든 스크립트는 **UTF-8 (BOM 없음)**으로 저장됩니다.
 
-PowerShell 스크립트는 인코딩을 명시적으로 지정해야 합니다:
-```powershell
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-```
+## 스크립트 규칙
+
+- 셰뱅: `#!/usr/bin/env bun`
+- 경로 해석: `const scriptDir = path.dirname(import.meta.path); const projectRoot = path.resolve(scriptDir, "..");`
+- 셸 실행: git/gh 명령어에 `import { $ } from 'bun'` 사용
+- 파일 I/O: `Bun.file()` / `Bun.write()` 또는 `node:fs` API
+- CLI 패턴: 수동 `process.argv` 파싱, `import.meta.main` 가드
+- 이중 사용: 모든 스크립트는 CLI 실행과 `export { main }` 모듈 사용을 모두 지원합니다
 
 ---
 

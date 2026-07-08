@@ -102,11 +102,9 @@ For the detailed execution sequence, see [AGENTS.md § Collaborative Workflow](A
 
 ---
 
-## Hybrid Scripting (Bun & Shell)
+## Scripting (Bun / TypeScript)
 
-This project uses a **hybrid scripting approach**:
-1. **Utility Scripts**: Everyday development utilities (like `dev-sync`, `audit`) are implemented in pure **PowerShell (`.ps1`)** and **Bash (`.sh`)** for cross-platform ease of use without external dependencies.
-2. **Agent Orchestration**: Complex multi-agent workflow coordination and orchestration logic are implemented in **TypeScript (`.ts`)** and executed via **Bun**.
+All project scripts are implemented in **TypeScript (`.ts`)** and executed via **Bun** — no shell script pairing or cross-platform wrappers needed.
 
 See `scripts/README.md` for complete documentation.
 
@@ -125,11 +123,9 @@ curl -fsSL https://bun.sh/install | bash
 ### Usage
 
 ```bash
-# Everyday Utility Scripts (No dependencies)
-.\scripts\dev-sync.ps1 "feat: description"   # Windows
-bash scripts/dev-sync.sh "feat: description" # macOS/Linux
-
-# Agent Orchestration Scripts (Requires Bun)
+# Project Scripts (Requires Bun)
+bun scripts/dev-sync.ts "feat: description"
+bun scripts/audit.ts
 bun scripts/dispatch.ts parallel
 bun scripts/verify-skills.ts
 ```
@@ -160,4 +156,4 @@ See [LICENSE](LICENSE) for details. Commercial licensing is available - see [CON
 
 ---
 
-*Maintained by the Harness Engineering Team | Last Updated: 2026-05-25*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-07-08*

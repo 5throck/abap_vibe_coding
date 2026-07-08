@@ -42,7 +42,7 @@ If no module matches, assign `CROSS` and note it.
 Run the task creation script:
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT:-.}/scripts/vsp-task.sh" "$ARGUMENTS"
+bun "${CLAUDE_PLUGIN_ROOT:-.}/scripts/vsp-task.ts" "$ARGUMENTS"
 ```
 
 Note the generated filename (e.g., `scratch/tasks/task-2026-05-05-001.md`).
@@ -122,4 +122,4 @@ Replace `<MODULE_TABLE_N>` with the module's standard tables from `schema-inspec
 
 ---
 
-*Last Updated: 2026-05-19*
+*Last Updated: 2026-07-08*

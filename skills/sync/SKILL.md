@@ -32,7 +32,7 @@ This skill delegates to the platform-specific command files:
 ## Pipeline Steps
 
 1. Write a daily session log entry to `memory/YYYY-MM-DD.md`
-2. Update `memory/MEMORY.md` index via `sync-md.sh` / `sync-md.ps1`
+2. Update `memory/MEMORY.md` index via `bun scripts/sync-md.ts`
 3. Auto-add entry to `CHANGELOG.md [Unreleased]` if missing
 4. Run the documentation audit — aborts if audit fails
 5. Guard against committing sensitive files

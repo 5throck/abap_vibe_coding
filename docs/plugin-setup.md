@@ -62,7 +62,7 @@ Create a `.claude/settings.json` file in the root of your consumer repository to
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PLUGIN_ROOT/scripts/sync-md.sh\" 2>/dev/null || pwsh -NonInteractive -File \"$CLAUDE_PLUGIN_ROOT/scripts/sync-md.ps1\" 2>/dev/null || powershell -NonInteractive -File \"$CLAUDE_PLUGIN_ROOT/scripts/sync-md.ps1\"",
+            "command": "bun \"$CLAUDE_PLUGIN_ROOT/scripts/sync-md.ts\"",
             "timeout": 30
           }
         ]
@@ -74,7 +74,7 @@ Create a `.claude/settings.json` file in the root of your consumer repository to
 
 > [!NOTE]
 > `CLAUDE_PLUGIN_ROOT` is an environment variable automatically populated by the Claude Code plugin runtime pointing to the active plugin folder. 
-> If you are performing manual testing or executing the scripts directly outside of the automatic hook lifecycle, please run the script (e.g. `scripts/sync-md.sh` or `scripts/sync-md.ps1`) directly from your workspace root.
+> If you are performing manual testing or executing the scripts directly outside of the automatic hook lifecycle, please run the script (e.g. `bun scripts/sync-md.ts`) directly from your workspace root.
 
 ---
 

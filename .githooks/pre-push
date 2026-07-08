@@ -2,7 +2,7 @@
 # pre-push: run audit gate + block direct push to main/master.
 
 echo "=== pre-push audit ==="
-bash scripts/audit.sh || {
+bun scripts/audit.ts || {
   echo ""
   echo -e "\033[31m❌ Audit failed — push blocked. Fix issues above before pushing.\033[0m"
   exit 1
@@ -25,6 +25,6 @@ done
 if [ "$BLOCKED" = "1" ]; then
   echo ""
   echo -e "\033[31m❌ Direct push to '$BLOCKED_REF' is blocked. Use a PR branch.\033[0m"
-  echo "   Create a PR with: /sync \"feat: ...\"  or  bash scripts/dev-sync.sh \"feat: ...\""
+  echo "   Create a PR with: /sync \"feat: ...\"  or  bun scripts/dev-sync.ts \"feat: ...\""
   exit 1
 fi

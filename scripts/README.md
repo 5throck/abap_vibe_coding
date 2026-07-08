@@ -1,23 +1,29 @@
 # Project Scripts
 
-Utility scripts for project operations.
+All project automation scripts, implemented in **TypeScript** and running on the **Bun** runtime.
 
 ## Available Scripts
 
-### Shell Scripts (Bash + PowerShell)
-
-All utility scripts have both `.sh` and `.ps1` versions for cross-platform compatibility:
+### Core Pipeline Scripts
 
 | Script | Purpose |
 |--------|---------|
-| `setup.sh` / `setup.ps1` | Initial project setup (env, deps, first commit) |
-| `audit.sh` / `audit.ps1` | Documentation and file integrity audit |
-| `dev-sync.sh` / `dev-sync.ps1` | Full sync pipeline (memlog → changelog → audit → commit → PR) |
-| `sync-md.sh` / `sync-md.ps1` | Update memory/MEMORY.md index |
+| `dev-sync.ts` | Full sync pipeline (memlog → changelog → audit → commit → PR) |
+| `audit.ts` | Documentation and file integrity audit |
+| `sync-md.ts` | Update memory/MEMORY.md index |
+| `vsp-audit.ts` | Legacy audit wrapper (delegates to audit.ts) |
 
-### TypeScript (Bun) Scripts
+### Utility Scripts
 
-Complex orchestration and automation scripts:
+| Script | Purpose |
+|--------|---------|
+| `git-sync.ts` | Simple commit-and-push all changes |
+| `vsp-task.ts` | Create task files in scratch/tasks/ from template |
+| `install-bun.ts` | Bun runtime installer |
+| `install-vsp.ts` | VSP binary installer from GitHub Releases |
+| `setup.ts` | Post-scaffold environment setup (OS/stack detection, deps, licenses) |
+
+### Agent Orchestration Scripts
 
 | Script | Purpose |
 |--------|---------|
@@ -28,48 +34,55 @@ Complex orchestration and automation scripts:
 | `agent-verify.ts` | Verify agent/documentation synchronization |
 | `dispatch.ts` | Main entry point for agent dispatch |
 | `dispatch-parallel.ts` | Parallel agent dispatcher |
-| `dispatch-serial.ts` | Serial agent dispatcher with dependencies |
+| `dispatch-serial.ts` | Serial pipeline executor with dependencies |
 | `retry-handler.ts` | Retry logic with exponential backoff |
+
+### Legacy (Shell)
+
+| Script | Purpose |
+|--------|---------|
+| `vsp-publish.sh` / `vsp-publish.ps1` | Plugin asset packaging (to be converted in future iteration) |
 
 ## NPM Scripts
 
 Convenience shortcuts defined in `package.json`:
 
 ```bash
-bun run verify-skills     # Verify skills
-bun run agent:create      # Create new agent
-bun run agent:list        # List agents
-bun run agent:delete      # Delete agent
-bun run agent:verify      # Verify agent/documentation sync
-bun run dispatch:parallel # Run parallel dispatch
-bun run dispatch:serial   # Run serial dispatch
+bun run audit            # Run workspace standards audit
+bun run dev-sync         # Full sync pipeline
+bun run sync-md          # Update memory index
+bun run vsp-audit        # Legacy audit wrapper
+bun run git-sync         # Commit and push all changes
+bun run vsp-task         # Create a new task file
+bun run install:vsp      # Install VSP binary
+bun run setup            # Post-scaffold environment setup
+bun run verify-skills    # Verify skills
+bun run agent:create     # Create new agent
+bun run agent:list       # List agents
+bun run agent:delete     # Delete agent
+bun run agent:verify     # Verify agent/documentation sync
+bun run dispatch:parallel  # Run parallel dispatch
+bun run dispatch:serial    # Run serial dispatch
 ```
 
-## Hybrid Scripting Model
+## Runtime Requirements
 
-This project follows a hybrid scripting approach:
-
-- **TypeScript (Bun)** for complex orchestration, multi-agent dispatch, automation pipelines
-- **Shell Scripts** for everyday utilities and cross-platform compatibility
-
-### Script Pairing Rule
-
-Any creation, modification, or deletion of a shell script MUST maintain both versions:
-
-| Operation | Requirement |
-|-----------|-------------|
-| Create `.sh` | MUST also create `.ps1` |
-| Edit `.sh` | MUST also edit `.ps1` |
-| Delete `.sh` | MUST also delete `.ps1` |
+- **Bun >= 1.0.0** — all scripts use `#!/usr/bin/env bun` and Bun-specific APIs (`Bun.$`, `Bun.file`, `Bun.write`, `import.meta.path`)
+- **Git** — used by dev-sync, git-sync, setup
+- **GitHub CLI (`gh`)** — used by dev-sync for PR creation
 
 ## File Encoding
 
-All scripts MUST be saved as **UTF-8 (without BOM)**.
+All scripts are **UTF-8 (without BOM)**.
 
-PowerShell scripts must explicitly specify encoding:
-```powershell
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-```
+## Script Conventions
+
+- Shebang: `#!/usr/bin/env bun`
+- Path resolution: `const scriptDir = path.dirname(import.meta.path); const projectRoot = path.resolve(scriptDir, "..");`
+- Shell execution: `import { $ } from 'bun'` for git/gh commands
+- File I/O: `Bun.file()` / `Bun.write()` or `node:fs` APIs
+- CLI pattern: Manual `process.argv` parsing, `import.meta.main` guard
+- Dual usage: Every script supports both CLI execution and `export { main }` for module use
 
 ---
 
