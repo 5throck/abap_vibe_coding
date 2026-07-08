@@ -28,7 +28,7 @@ At the start of every Claude Code session, run this checklist:
 
 Both the CLI and the Desktop App share the same configuration files and MCP server setup. Key differences, especially regarding hook behavior and UI features, are detailed in [docs/tooling-matrix.md](docs/tooling-matrix.md).
 
-> **Hook limitation**: `PostToolUse` hooks configured in `.claude/settings.json` do **not** fire in the Desktop App. After any `WriteSource` / `EditSource`, run the Post-Write Mandatory Chain manually (see [skills/post-write-chain/SKILL.md](skills/post-write-chain/SKILL.md)) and sync via `scripts/vsp-sync.sh` or `scripts/vsp-sync.ps1`.
+> **Hook limitation**: `PostToolUse` hooks configured in `.claude/settings.json` do **not** fire in the Desktop App. After any `WriteSource` / `EditSource`, run the Post-Write Mandatory Chain manually (see [skills/post-write-chain/SKILL.md](skills/post-write-chain/SKILL.md)) and sync via `bash scripts/dev-sync.sh` or `powershell scripts/dev-sync.ps1`.
 
 > **Linux developers**: Use CLI only —the Desktop App is not available on Linux.
 
@@ -72,7 +72,7 @@ When using Claude Code Desktop App, PostToolUse hooks do not fire. After any `Wr
 2. SyntaxCheck(<object_url>)        # verify ABAP syntax
 3. RunUnitTests(<object_url>)       # run unit tests
 4. RunATCCheck(<object_url>)        # ATC quality check
-5. bash scripts/vsp-sync.sh -m "fix: description"  # sync & commit
+5. bash scripts/dev-sync.sh "fix: description"  # sync & commit
 ```
 
 See `skills/desktop-app-fallback/SKILL.md` for the complete fallback workflow.
@@ -80,7 +80,7 @@ See `skills/desktop-app-fallback/SKILL.md` for the complete fallback workflow.
 
 ---
 
-*Last Updated: 2026-07-05*
+*Last Updated: 2026-07-08*
 
 
 ### Optimal Interaction Guidelines

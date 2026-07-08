@@ -37,8 +37,6 @@ $Assets = @(
     @{ Source = "scripts\sync-md.sh"; Target = "scripts\sync-md.sh"; IsFolder = $false },
     @{ Source = "scripts\vsp-audit.ps1"; Target = "scripts\vsp-audit.ps1"; IsFolder = $false },
     @{ Source = "scripts\vsp-audit.sh"; Target = "scripts\vsp-audit.sh"; IsFolder = $false },
-    @{ Source = "scripts\vsp-sync.ps1"; Target = "scripts\vsp-sync.ps1"; IsFolder = $false },
-    @{ Source = "scripts\vsp-sync.sh"; Target = "scripts\vsp-sync.sh"; IsFolder = $false },
     @{ Source = "scripts\vsp-task.ps1"; Target = "scripts\vsp-task.ps1"; IsFolder = $false },
     @{ Source = "scripts\vsp-task.sh"; Target = "scripts\vsp-task.sh"; IsFolder = $false },
     @{ Source = ".mcp.json.sample"; Target = ".mcp.json.sample"; IsFolder = $false }
