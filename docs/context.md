@@ -43,7 +43,7 @@ Standard directory layout for all projects in this workspace:
 ├── agents/          # 20 AI agent role definitions (+ 2 handoff-spec docs)
 ├── deliverables/    # Global index & per-requirement folder logs (srs, design, implementation, QA)
 ├── skills/          # 11 skill files (abap-dev, post-write-chain, meeting-facilitation, sap-*)
-├── scripts/         # dev-sync, audit, vsp-sync automation
+├── scripts/         # dev-sync, audit, vsp-task automation
 ├── memory/          # session logs (YYYY-MM-DD.md)
 ├── scratch/tasks/   # per-task work files (task-YYYY-MM-DD-NNN.md)
 ├── docs/            # context.md (this file) + co-abap.context.md + ADRs

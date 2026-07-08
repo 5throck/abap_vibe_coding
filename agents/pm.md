@@ -57,7 +57,7 @@ Follow the strictly structured **6-step Harness Engineering workflow**:
 ### 6. Finalization (PM Final Step)
 - Execute `scripts/vsp-audit.ps1` (Windows) or `scripts/vsp-audit.sh` (Unix) to audit documentation.
 - Copy the §5 Finalization block into `memory/YYYY-MM-DD.md`.
-- Synchronize and commit via `vsp-sync.ps1` or `vsp-sync.sh`.
+- Synchronize and commit via `bash scripts/dev-sync.sh` or `powershell scripts/dev-sync.ps1`.
 
 ## Behavior rules
 1. **Never allow bypasses of the Quality Gate.** All unit tests must pass, and Priority-1 ATC findings must be zero before activation.

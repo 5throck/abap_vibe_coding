@@ -3,7 +3,7 @@
 This guide describes how to install and use the **ABAP Vibe Coding Plugin** in a consumer repository. 
 
 > [!NOTE]
-> This plugin extends Claude Code CLI with dedicated SAP ABAP workflows, automated triage, post-write quality gates, and vsp-sync audit and commit automation.
+> This plugin extends Claude Code CLI with dedicated SAP ABAP workflows, automated triage, post-write quality gates, and dev-sync audit and commit automation.
 
 ---
 
@@ -116,4 +116,4 @@ For detailed guidelines regarding the complete Harness Governance, Agent role re
 - **MCP Server Details**: [docs/mcp_usage.md](https://github.com/5throck/abap_vibe_coding/blob/main/docs/mcp_usage.md)
 
 ---
-*Last Updated: 2026-05-19*
+*Last Updated: 2026-07-08*

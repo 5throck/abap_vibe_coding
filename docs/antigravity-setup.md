@@ -108,10 +108,10 @@ For Git commit and memory sync, use the terminal manually:
 
 ```bash
 # Unix / Git Bash
-bash scripts/vsp-sync.sh "feat: summary of change"
+bash scripts/dev-sync.sh "feat: summary of change"
 
 # Windows PowerShell
-.\scripts\vsp-sync.ps1 -Message "feat: summary of change"
+powershell scripts/dev-sync.ps1 "feat: summary of change"
 ```
 
 ---
@@ -128,4 +128,4 @@ bash scripts/vsp-sync.sh "feat: summary of change"
 
 ---
 
-*Last Updated: 2026-05-19*
+*Last Updated: 2026-07-08*

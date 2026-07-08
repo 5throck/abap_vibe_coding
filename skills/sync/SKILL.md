@@ -31,11 +31,12 @@ This skill delegates to the platform-specific command files:
 
 ## Pipeline Steps
 
-1. Append a session entry to `memory/YYYY-MM-DD.md`
+1. Write a daily session log entry to `memory/YYYY-MM-DD.md`
 2. Update `memory/MEMORY.md` index via `sync-md.sh` / `sync-md.ps1`
-3. Run the documentation audit (`vsp-sync.sh` / `vsp-sync.ps1`) — aborts if audit fails
-4. Commit all staged changes with the provided conventional commit message
-5. (Optional) Push and create a GitHub PR
+3. Auto-add entry to `CHANGELOG.md [Unreleased]` if missing
+4. Run the documentation audit — aborts if audit fails
+5. Guard against committing sensitive files
+6. Create a PR branch (if on main), commit, push, and open a GitHub PR
 
 If audit fails, fix the reported issue before re-running `/sync`.
 

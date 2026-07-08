@@ -4,22 +4,24 @@ Arguments: $ARGUMENTS
 
 Run the sync script:
 ```bash
-bash scripts/vsp-sync.sh "$ARGUMENTS"
+bash scripts/dev-sync.sh "$ARGUMENTS"
 ```
 
 Or on PowerShell:
 ```powershell
-powershell scripts/vsp-sync.ps1 "$ARGUMENTS"
+powershell scripts/dev-sync.ps1 "$ARGUMENTS"
 ```
 
 $ARGUMENTS should be a conventional commit message (e.g. `feat: add ZCL_MY_CLASS`).
 If $ARGUMENTS is empty, prompt the user for a commit message before running.
 
 The script will:
-1. Run the documentation audit (vsp-audit) — aborts if audit fails
-2. Verify today's memory log exists in memory/YYYY-MM-DD.md
-3. Update the MEMORY.md index
-4. Commit all staged changes with the provided message
+1. Write a daily session log entry to `memory/YYYY-MM-DD.md`
+2. Update the `memory/MEMORY.md` index
+3. Auto-add entry to `CHANGELOG.md [Unreleased]` if missing
+4. Run the documentation audit — aborts if audit fails
+5. Guard against committing sensitive files
+6. Create a PR branch (if on main), commit, push, and open a GitHub PR
 
 Report the result clearly (success or failure with reason).
 

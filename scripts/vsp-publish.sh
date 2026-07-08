@@ -39,8 +39,6 @@ SYNC_FILES=(
     "scripts/sync-md.sh"
     "scripts/vsp-audit.ps1"
     "scripts/vsp-audit.sh"
-    "scripts/vsp-sync.ps1"
-    "scripts/vsp-sync.sh"
     "scripts/vsp-task.ps1"
     "scripts/vsp-task.sh"
     ".mcp.json.sample"

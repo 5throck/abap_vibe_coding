@@ -114,7 +114,6 @@ Required env keys (see `.env.sample`):
 |--------|---------|--------|
 | `dev-sync.sh` / `dev-sync.ps1` | Full sync pipeline (memlog → audit → commit → PR) | active |
 | `audit.sh` / `audit.ps1` | Documentation integrity audit | active |
-| `vsp-sync.sh` / `vsp-sync.ps1` | VSP-specific sync | active |
 | `dispatch.ts` | Main CLI dispatcher with parallel/serial modes | active |
 | `dispatch-parallel.ts` | Parallel agent dispatcher for read-only tasks | active |
 | `dispatch-serial.ts` | Serial pipeline executor for write operations | active |
@@ -243,7 +242,7 @@ For full project governance and role-based orchestration, refer to [AGENTS.md �
 # Use specialized skills from skills/abap-dev/SKILL.md
 
 # 3. Synchronize & Commit
-..\scripts\vsp-sync.ps1 -Message "feat: implementation summary"
+powershell scripts/dev-sync.ps1 "feat: implementation summary"
 ```
 
 ---
