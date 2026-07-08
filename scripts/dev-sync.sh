@@ -29,10 +29,23 @@ if [ -f "CHANGELOG.md" ]; then
   SECTION=$(awk '/\[Unreleased\]/{f=1;next} f && /^## /{exit} f{print}' CHANGELOG.md)
   if ! echo "$SECTION" | grep -Fq "$MSG"; then
     TODAY=$(date +%Y-%m-%d)
+    CATEGORY="### Changed"
+    case "$MSG" in
+      feat:*)   CATEGORY="### Added"   ;;
+      fix:*)    CATEGORY="### Fixed"   ;;
+      revert:*) CATEGORY="### Removed" ;;
+      docs:*)   CATEGORY="### Changed" ;;
+      style:*)  CATEGORY="### Changed" ;;
+      refactor:*) CATEGORY="### Changed" ;;
+      perf:*)   CATEGORY="### Changed" ;;
+      test:*)   CATEGORY="### Changed" ;;
+      chore:*)  CATEGORY="### Changed" ;;
+      ci:*)     CATEGORY="### Changed" ;;
+    esac
     # \Q$m\E prevents Perl metachar expansion in the replacement string
-    perl -i -pe 'BEGIN{$m=shift; $d=shift}
-      if (/^## \[Unreleased\]/) { $_ .= "\n### Added\n- **[$d]**: \Q$m\E\n" }
-    ' "$MSG" "$TODAY" CHANGELOG.md
+    perl -i -pe 'BEGIN{$m=shift; $d=shift; $c=shift}
+      if (/^## \[Unreleased\]/) { $_ .= "\n$c\n- **[$d]**: \Q$m\E\n" }
+    ' "$MSG" "$TODAY" "$CATEGORY" CHANGELOG.md
     echo "📝 Auto-added changelog entry: $MSG"
   fi
 fi
@@ -70,8 +83,13 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 git push -u origin "$BRANCH"
 
 # ── 7. Create PR ──────────────────────────────────────────────────────────────
-if [ -f ".github/pull_request_template.md" ]; then
-  gh pr create --title "$MSG" --body-file .github/pull_request_template.md
+# Skip if a PR already exists for this branch
+if gh pr view "$BRANCH" --json number -q '.number' 2>/dev/null; then
+  echo "ℹ️  PR already exists for branch '$BRANCH' — skipping PR creation."
 else
-  gh pr create --fill
+  if [ -f ".github/pull_request_template.md" ]; then
+    gh pr create --title "$MSG" --body-file .github/pull_request_template.md --base main
+  else
+    gh pr create --title "$MSG" --fill --base main
+  fi
 fi
