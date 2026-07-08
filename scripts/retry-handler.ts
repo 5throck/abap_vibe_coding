@@ -14,6 +14,7 @@ interface RetryConfig {
   initialDelay: number; // milliseconds
   backoffMultiplier: number;
   maxDelay: number; // milliseconds
+  isSuccess?: (result: unknown) => boolean; // optional predicate; when omitted, throw = failure, return = success
 }
 
 interface RetryResult {
@@ -47,6 +48,11 @@ async function withRetry<T>(
       console.log(`${context ? `[${context}] ` : ''}Attempt ${attempt}/${config.maxRetries}`);
 
       const result = await fn();
+
+      // If isSuccess predicate is provided, use it to determine success
+      if (config.isSuccess && !config.isSuccess(result)) {
+        throw new Error(`isSuccess predicate returned false for attempt ${attempt}`);
+      }
 
       const totalTime = Date.now() - startTime;
       console.log(`${context ? `[${context}] ` : ''} Success on attempt ${attempt}`);

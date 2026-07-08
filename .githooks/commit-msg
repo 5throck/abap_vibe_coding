@@ -79,9 +79,7 @@ EOF
 fi
 
 # ── Auto-update MEMORY.md index ───────────────────────────────────────────────
-if [ -f "scripts/sync-md.sh" ]; then
-  bash scripts/sync-md.sh "$TODAY" "$COMMIT_MSG" 2>/dev/null || true
-fi
+bun scripts/sync-md.ts "$TODAY" "$COMMIT_MSG" 2>/dev/null || true
 
 # ── Auto-add CHANGELOG entry if [Unreleased] section has no entries yet ───────
 if [ -f "CHANGELOG.md" ] && ! echo "$STAGED" | grep -q "CHANGELOG.md"; then

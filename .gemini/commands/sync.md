@@ -4,12 +4,7 @@ Arguments: $ARGUMENTS
 
 Run the sync script:
 ```bash
-bash scripts/dev-sync.sh "$ARGUMENTS"
-```
-
-Or on PowerShell:
-```powershell
-powershell scripts/dev-sync.ps1 "$ARGUMENTS"
+bun scripts/dev-sync.ts "$ARGUMENTS"
 ```
 
 $ARGUMENTS should be a conventional commit message (e.g. `feat: add ZCL_MY_CLASS`).

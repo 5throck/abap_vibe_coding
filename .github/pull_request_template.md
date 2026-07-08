@@ -6,7 +6,7 @@
 -
 
 ## Test Plan
-- [ ] `bash scripts/audit.sh` passes
+- [ ] `bun scripts/audit.ts` passes
 - [ ] CHANGELOG.md updated under `[Unreleased]`
 - [ ] <!-- add project-specific test steps -->
 

@@ -23,7 +23,7 @@
 | MCP Server | `vsp` Go binary v2.38.1 — connects to SAP via ADT (ABAP Development Tools REST API) |
 | AI Orchestration | Claude Code CLI / Desktop App, Gemini CLI, Antigravity (VS Code extension) |
 | SAP Connection | HTTP/HTTPS to SAP NetWeaver AS ABAP; configured via `.env` (`SAP_*` prefix) |
-| Scripting | Bash (`.sh`) + PowerShell (`.ps1`) pairs for all automation |
+| Scripting | TypeScript (`.ts`) via Bun for all automation |
 | Documentation | Markdown — `docs/`, `agents/`, `skills/`, `memory/` |
 
 ---
@@ -112,15 +112,19 @@ Required env keys (see `.env.sample`):
 
 | Script | Purpose | Status |
 |--------|---------|--------|
-| `dev-sync.sh` / `dev-sync.ps1` | Full sync pipeline (memlog → audit → commit → PR) | active |
-| `audit.sh` / `audit.ps1` | Documentation integrity audit | active |
+| `dev-sync.ts` | Full sync pipeline (memlog → changelog → audit → commit → PR) | active |
+| `audit.ts` | Documentation integrity audit | active |
+| `sync-md.ts` | Update memory/MEMORY.md index | active |
+| `vsp-audit.ts` | Legacy audit wrapper (delegates to audit.ts) | active |
+| `git-sync.ts` | Simple commit-and-push utility | active |
+| `vsp-task.ts` | Create task files from template | active |
 | `dispatch.ts` | Main CLI dispatcher with parallel/serial modes | active |
 | `dispatch-parallel.ts` | Parallel agent dispatcher for read-only tasks | active |
 | `dispatch-serial.ts` | Serial pipeline executor for write operations | active |
 | `retry-handler.ts` | Error recovery with 3-retry limit and exponential backoff | active |
 | `verify-skills.ts` | Skill auto-discovery and index generation | active |
 
-> **Hybrid Scripting Note**: Complex multi-agent orchestration (dispatch, retry-handler, verify-skills) uses TypeScript (.ts) via Bun. Everyday development utilities use native shell scripts (.sh + .ps1 pairs).
+> **Scripting**: All project scripts are TypeScript (`.ts`) running on Bun. See `scripts/README.md` for the complete script catalog.
 
 ---
 
@@ -137,8 +141,8 @@ Required env keys (see `.env.sample`):
 # 3. Sync to Git
 /sync "feat: description"  # memlog → changelog → audit → commit → PR
 
-# Manual equivalents (bash)
-bash scripts/dev-sync.sh "feat: description"
+# Manual equivalent
+bun scripts/dev-sync.ts "feat: description"
 ```
 
 > **Requirements-Driven Deliverables Workflow (Stage 1 to 5)**:
@@ -236,13 +240,13 @@ For full project governance and role-based orchestration, refer to [AGENTS.md �
 
 ```powershell
 # 1. Initialize Task
-..\scripts\vsp-task.ps1 -Name "Task Description"
+bun scripts/vsp-task.ts "Task Description"
 
 # 2. Execution (Research -> Implementation -> Verification)
 # Use specialized skills from skills/abap-dev/SKILL.md
 
 # 3. Synchronize & Commit
-powershell scripts/dev-sync.ps1 "feat: implementation summary"
+bun scripts/dev-sync.ts "feat: implementation summary"
 ```
 
 ---
@@ -396,7 +400,7 @@ Do **not** copy shared sections from `docs/context.md` into tool-specific files.
 
 All development artifacts (ABAP sources, docs, research reports) and memory logs must be committed to the local Git repository. The PM agent verifies repository status and memory file existence at the end of each major task.
 
-**Manual Commit Rule**: Because auto-commits and hooks are disabled or unsupported in many AI CLI sessions (like Gemini or Claude Desktop), you must run `git add -A && git commit` manually or use the project synchronization script (`.\scripts\dev-sync.ps1`) at the end of each task.
+**Manual Commit Rule**: Because auto-commits and hooks are disabled or unsupported in many AI CLI sessions (like Gemini or Claude Desktop), you must run `git add -A && git commit` manually or use the project synchronization script (`bun scripts/dev-sync.ts`) at the end of each task.
 
 ### Tooling Matrix
 
@@ -465,9 +469,9 @@ For a full comparison of tool capabilities (Claude Code CLI vs Desktop App vs An
 - All text files, including Markdown (.md) and scripts (.ps1, .sh, .py, .js, etc.), must be saved as **UTF-8 (without BOM)**.
 - Script outputs (Add-Content, Set-Content) must explicitly specify -Encoding UTF8.
 
-## Hybrid Scripting & Cross-Platform Rule
-- **Hybrid Approach**: The project uses a hybrid scripting model. Complex multi-agent orchestration (e.g., `dispatch.ts`, `retry-handler.ts`, `verify-skills.ts`) is implemented in **Bun (.ts)**. Everyday development utilities (e.g., `dev-sync`, `audit`) use native shell scripts.
-- **Utility Script Pairing**: All utility shell scripts must be cross-platform compatible. Any creation, modification, or deletion of a PowerShell utility script (`.ps1`) MUST be accompanied by the exact same operation on its corresponding Bash script counterpart (`.sh`), and vice versa. They must always be kept in sync as a pair (e.g., `dev-sync.ps1` and `dev-sync.sh`).
+## Scripting Model
+- **All scripts are TypeScript (Bun)**: Both orchestration scripts (e.g., `dispatch.ts`, `retry-handler.ts`, `verify-skills.ts`) and development utilities (e.g., `dev-sync.ts`, `audit.ts`, `sync-md.ts`) are implemented as `.ts` files running on the Bun runtime.
+- **No cross-platform pairing needed**: Since all scripts are TypeScript, there is no need for separate `.sh`/`.ps1` pairs.
 
 ---
 *co-abap.context.md version: 1.0 — migrated from legacy context.md on 2026-07-05*

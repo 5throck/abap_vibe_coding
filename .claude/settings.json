@@ -35,7 +35,7 @@
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "command": "bash scripts/sync-md.sh"
+        "command": "bun scripts/sync-md.ts"
       }
     ]
   },

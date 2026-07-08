@@ -185,17 +185,13 @@ ENDCLASS.
 **Trigger**: Before finalization/sync, or before running `/sync` command.
 
 **Workflow**:
-1. Run the audit script — it works on all platforms since `sync-md.sh` calls `vsp-audit.sh` directly:
+1. Run the audit script:
    ```bash
-   bash scripts/vsp-audit.sh
-   ```
-   On Windows from PowerShell:
-   ```powershell
-   .\scripts\vsp-audit.ps1
+   bun scripts/vsp-audit.ts
    ```
 2. **Analyze Results**:
    - If audit passes: proceed to `/sync`.
-   - If audit fails: identify the specific issue (Broken link, Absolute path, Missing `.ps1`/`.sh` pair) and fix it in the source `.md` or script.
+   - If audit fails: identify the specific issue and fix it in the source `.md` or script.
 3. **Re-run**: Repeat until the audit returns 0 errors.
 
 **Gate**: A passing audit is required before running the final `/sync` command.

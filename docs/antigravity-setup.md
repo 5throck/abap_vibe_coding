@@ -107,11 +107,7 @@ You can trigger these by asking Antigravity directly, or by switching to Claude 
 For Git commit and memory sync, use the terminal manually:
 
 ```bash
-# Unix / Git Bash
-bash scripts/dev-sync.sh "feat: summary of change"
-
-# Windows PowerShell
-powershell scripts/dev-sync.ps1 "feat: summary of change"
+bun scripts/dev-sync.ts "feat: summary of change"
 ```
 
 ---
