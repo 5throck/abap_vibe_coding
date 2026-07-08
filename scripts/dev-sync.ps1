@@ -84,15 +84,8 @@ git add -A
 git commit -m "$Msg`n`nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 git push -u origin $Branch
 
-# ── 7. Generate PR body and open PR ───────────────────────────────────────────
-$PrBody = ""
-if (Test-Path "scripts\gen-pr-body.ps1") {
-    try { $PrBody = & .\scripts\gen-pr-body.ps1 $Msg 2>$null } catch {}
-}
-
-if ($PrBody) {
-    gh pr create --title $Msg --body $PrBody
-} elseif (Test-Path ".github\pull_request_template.md") {
+# ── 7. Create PR ──────────────────────────────────────────────────────────────
+if (Test-Path ".github\pull_request_template.md") {
     $prBody = Get-Content ".github\pull_request_template.md" -Raw -Encoding UTF8
     gh pr create --title $Msg --body $prBody
 } else {
