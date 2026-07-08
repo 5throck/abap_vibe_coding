@@ -112,7 +112,56 @@ bun scripts/dev-sync.ts "feat: summary of change"
 
 ---
 
-## 6. Platform Comparison
+## 6. Custom Commands & Skills
+
+Antigravity shares `.gemini/commands/` for slash command definitions and discovers skills from `.agents/skills/` (shortcut skills) and `skills/` (L0 SSOT). The three core process skills are:
+
+### `/sync` — Full Project Sync Pipeline
+
+```bash
+bun scripts/dev-sync.ts "feat: summary of change"
+```
+
+The script handles: memory log → CHANGELOG → audit → sensitive guard → commit/push/PR.
+
+> Antigravity does not auto-register slash commands. Ask Antigravity to run the above script, or paste the command directly.
+
+### `/project-review` — Comprehensive Project Review
+
+Read `skills/project-review/SKILL.md` and follow the 5-step procedure:
+1. Detect project context (scan `agents/` for available agents)
+2. Generate execution plan (map agents to review domains)
+3. **Antigravity uses `/meeting` dialogue mode** — agents speak in turn sequentially (no parallel dispatch)
+4. Synthesize results into prioritized tables (Critical/High/Moderate/Low)
+5. Generate action items with owner, deliverable, priority
+
+> **Antigravity limitation**: Cannot dispatch agents in parallel like Claude Code. Uses inline sequential dialogue via `/meeting` instead.
+
+### `/meeting` — Multi-Agent Meeting Facilitation
+
+```bash
+/meeting "meeting topic" --agents agent1,agent2 --rounds 2 --language ko --dialogue
+```
+
+Full 8-step framework: define parameters → detect agents → open structure → conduct rounds → synthesize → archive transcript → close meeting → optional task conversion.
+
+Read the complete procedure in `.gemini/commands/meeting.md` (351 lines).
+
+### Skill Distribution
+
+Skills are distributed from `skills/` (L0 SSOT) to all platform directories by `scripts/sync-skills.ts`:
+
+```
+skills/ (L0) ──► .claude/skills/   (Claude Code)
+              ──► .gemini/skills/   (Gemini CLI / Antigravity)
+              ──► .agents/skills/   (Antigravity shortcuts)
+```
+
+After editing any skill in `skills/`, run `bun scripts/sync-skills.ts` to propagate changes.
+
+---
+
+## 7. Platform Comparison
 
 | Capability | Claude Code CLI | Claude Code App | Gemini CLI | Antigravity |
 |------------|:---------------:|:---------------:|:----------:|:-----------:|
@@ -120,8 +169,10 @@ bun scripts/dev-sync.ts "feat: summary of change"
 | PostToolUse hook | ✅ | ❌ | ❌ | ❌ |
 | Post-Write chain | Automatic | Manual (`/post-write`) | Manual | Manual |
 | Git commit | `/sync` | `/sync` | Manual | Manual |
+| Custom commands | ✅ (19 commands) | ✅ (19 commands) | ⚠️ Emulated | ⚠️ Emulated |
+| Parallel agent dispatch | ✅ `Agent` tool | ✅ `Agent` tool | ❌ Sequential | ❌ Sequential |
 | Project-level config | ✅ `.mcp.json` | ✅ `.mcp.json` | ✅ `.gemini/settings.json` | ✅ `.gemini/settings.json` |
 
 ---
 
-*Last Updated: 2026-07-08*
+*Last Updated: 2026-07-09*
