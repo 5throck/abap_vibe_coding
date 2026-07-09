@@ -112,6 +112,12 @@ Possible actions:
 
 /**
  * Classify error type for appropriate response
+ *
+ * TODO(Task 26): Expand error classification with more granular categories:
+ * - HTTP status codes (404, 429, 500, 503)
+ * - SAP-specific errors (RFC_EXCEPTION, SYSTEM_FAILURE)
+ * - Timeout subtypes (connect, read, write)
+ * Consider extracting patterns into a configurable rule set.
  */
 function classifyError(error: Error): 'tool' | 'context' | 'logic' | 'external' {
   const message = error.message.toLowerCase();

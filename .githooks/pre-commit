@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 # pre-commit: documentation audit + secret scan on structural file changes.
 # memory/ session logs are exempt from all checks.
+#
+# Steps:
+#   1. Auto-update "Last Updated: YYYY-MM-DD" dates in staged .md files
+#   1-A. Auto-date CHANGELOG.md [Unreleased] entries (injects **[today]**)
+#   2. Block staged .env files (use .env.sample + .gitignore)
+#   3. Run `bun scripts/audit.ts` (workspace integrity check)
+#   4. Secret scan (gitleaks if available, else regex fallback)
+#   5. MCP configuration drift check (.mcp.json ↔ .claude/settings.json ↔ .gemini/settings.json)
+#
+# Limitations:
+#   - Step 1 uses sed with `eval` (required for cross-platform -i) — do NOT stage untrusted files
+#   - Step 1-A perl injection may conflict with existing `**[date]**` prefixes — manual review advised
+#   - Step 5 references `sync-mcp.ts` which may not exist in all projects
+#
+# Activation: git config core.hooksPath .githooks (run once per clone, or via setup.ts)
 
 STAGED=$(git diff --cached --name-only)
 [ -z "$STAGED" ] && exit 0

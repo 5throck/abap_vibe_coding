@@ -373,7 +373,7 @@ If the cross-module analysis reveals conflicting ACs (e.g., SD wants field X, FI
 
 ---
 
-*Last Updated: 2026-07-08 (rev 2)*
+*Last Updated: 2026-07-09 (rev 3)*
 
 
 ## Universal Baseline Behaviors

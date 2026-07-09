@@ -45,6 +45,9 @@ Thumbs.db
 *.bak
 *.tmp
 
+# Scratch workspace — temp/ is throwaway (not committed)
+scratch/temp/
+
 # Databases
 *.sqlite
 *.db

@@ -94,17 +94,27 @@ Required env keys (see `.env.sample`):
 
 ## Skills
 
-<!-- Add/remove rows as skills are introduced or retired via lifecycle management. -->
+<!-- Auto-discovered from .agents/skills/ — synced to .claude/skills/ and .gemini/skills/ via sync-skills.ts -->
 <!-- Status: active | deprecated | experimental -->
 
 | Skill | Directory | Purpose | Status |
 |-------|-----------|---------|--------|
-| ABAP Development | `skills/abap-dev/` | Core SAP ABAP development workflow | active |
-| Post-Write Chain | `skills/post-write-chain/` | Mandatory QA chain after WriteSource/EditSource | active |
-| SAP Tools | `skills/sap-tools/` | SAP utility skills | active |
-| Meeting Facilitation | `skills/meeting-facilitation/` | Meeting notes and action items | active |
+| ABAP Development | `.agents/skills/abap-dev/` | Core SAP ABAP development workflow | active |
+| Desktop App Fallback | `.agents/skills/desktop-app-fallback/` | Manual post-write QA for Claude Code Desktop App | active |
+| Meeting | `.agents/skills/meeting/` | Shortcut alias for meeting-facilitation | active |
+| Meeting Facilitation | `.agents/skills/meeting-facilitation/` | Structured multi-agent meetings for decisions | active |
+| Post-Write Chain | `.agents/skills/post-write-chain/` | Mandatory QA chain after WriteSource/EditSource | active |
+| Project Review | `.agents/skills/project-review/` | Comprehensive parallel review using specialist agents | active |
+| SAP CO — Controlling | `.agents/skills/sap-co/` | CO module: cost centers, internal orders, CO-PA | active |
+| SAP FI — Financial Accounting | `.agents/skills/sap-fi/` | FI module: journal entries, GL, AR/AP, fixed assets | active |
+| SAP LE — Logistics Execution | `.agents/skills/sap-le/` | LE module: shipping, transport, warehouse management | active |
+| SAP MM — Materials Management | `.agents/skills/sap-mm/` | MM module: purchasing, goods receipt, material master | active |
+| SAP PP — Production Planning | `.agents/skills/sap-pp/` | PP module: BOM, routing, production orders, MRP | active |
+| SAP SD — Sales & Distribution | `.agents/skills/sap-sd/` | SD module: sales orders, deliveries, billing, pricing | active |
+| Source Command: Celebrate | `.agents/skills/source-command-celebrate/` | Celebrate task completion for team morale | active |
+| Sync | `.agents/skills/sync/` | Full project sync pipeline (memlog → changelog → audit → commit → push → PR) | active |
 
-> Lifecycle management: `bun scripts/skill-lifecycle-audit.ts`
+> **SSOT**: Skills live in `.agents/skills/` and are synced to `.claude/skills/` and `.gemini/skills/` via `bun scripts/sync-skills.ts`.
 
 ---
 
@@ -113,18 +123,25 @@ Required env keys (see `.env.sample`):
 | Script | Purpose | Status |
 |--------|---------|--------|
 | `dev-sync.ts` | Full sync pipeline (memlog → changelog → audit → commit → PR) | active |
+| `sync-skills.ts` | 3-platform skill distribution (.agents → .claude/.gemini) | active |
 | `audit.ts` | Documentation integrity audit | active |
 | `sync-md.ts` | Update memory/MEMORY.md index | active |
-| `vsp-audit.ts` | Legacy audit wrapper (delegates to audit.ts) | active |
-| `git-sync.ts` | Simple commit-and-push utility | active |
-| `vsp-task.ts` | Create task files from template | active |
+| `verify-skills.ts` | Skill auto-discovery and index generation | active |
+| `agent-verify.ts` | Agent file ↔ documentation synchronization check | active |
+| `agent-create.ts` | Create new agent files from template | active |
+| `agent-list.ts` | List all agents with metadata | active |
+| `agent-delete.ts` | Delete agent files | active |
 | `dispatch.ts` | Main CLI dispatcher with parallel/serial modes | active |
 | `dispatch-parallel.ts` | Parallel agent dispatcher for read-only tasks | active |
 | `dispatch-serial.ts` | Serial pipeline executor for write operations | active |
 | `retry-handler.ts` | Error recovery with 3-retry limit and exponential backoff | active |
-| `verify-skills.ts` | Skill auto-discovery and index generation | active |
-
-> **Scripting**: All project scripts are TypeScript (`.ts`) running on Bun. See `scripts/README.md` for the complete script catalog.
+| `vsp-audit.ts` | Legacy audit wrapper (delegates to audit.ts) | active |
+| `vsp-task.ts` | Create task files from template | active |
+| `setup.ts` | Project environment setup | active |
+| `scratch-cleanup.ts` | Scratch workspace hygiene (temp purge, task archival, status) | active |
+| `install-vsp.ts` | VSP (VS Code extension) installation | active |
+| `install-bun.ts` | Bun runtime installation | active |
+| `git-sync.ts` | ~~Simple commit-and-push utility~~ Superseded by `dev-sync.ts` | **deprecated** |
 
 ---
 
@@ -173,6 +190,8 @@ bun scripts/dev-sync.ts "feat: description"
 MCP servers are configured in `.mcp.json` (Single Source of Truth).
 
 > **Policy**: `.mcp.json` is tracked in git as a shared configuration template. It must NEVER contain credentials. All secrets must be stored in `.env` (gitignored). This is enforced by the pre-commit hook.
+
+> **Duplication Note**: MCP server definitions exist in 3 locations — `.mcp.json` (SSOT), `.claude/settings.json` (Claude Code), and `.gemini/settings.json` (Gemini CLI). The pre-commit hook (Step 5) detects drift between these files. Currently there is no automated sync script — changes to `.mcp.json` must be manually propagated to the other two files.
 
 See `.mcp.json` for the complete server list.
 

@@ -431,6 +431,19 @@ async function main() {
     warn("npx not found - skipping CodeGraph initialization");
   }
 
+  // ── 5b. Install githooks ─────────────────────────────────────────────────────
+  const githooksDir = path.join(projectRoot, ".githooks");
+  if (fs.existsSync(githooksDir)) {
+    const { exitCode: hookDir } = await $`git config core.hooksPath .githooks`.quiet().nothrow();
+    if (hookDir === 0) {
+      pass("Githooks configured (core.hooksPath → .githooks/)");
+    } else {
+      warn("Failed to set core.hooksPath — configure manually: git config core.hooksPath .githooks");
+    }
+  } else {
+    info("No .githooks/ directory found — skipping githooks setup");
+  }
+
   // ── 6. Initialize memory log ────────────────────────────────────────────────
   const dateStr = new Date().toISOString().split("T")[0];
   const memoryDir = path.join(projectRoot, "memory");

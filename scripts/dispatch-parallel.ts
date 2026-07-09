@@ -172,7 +172,7 @@ async function main() {
           description: parts[0],
           role: parts[1],
           task: parts[2],
-          priority: (parts[3] as any) || 'medium'
+          priority: (parts[3] as 'high' | 'medium' | 'low') || 'medium'
         });
       }
       i++;
