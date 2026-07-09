@@ -39,7 +39,7 @@ async function main() {
     fail("CHANGELOG.md missing");
   }
 
-  // 2. CONSTITUTION.md must be accessible
+  // 2. CONSTITUTION.md (workspace-level — warn if absent, not a project blocker)
   if (
     fs.existsSync(path.join(projectRoot, "CONSTITUTION.md")) ||
     fs.existsSync(path.join(projectRoot, "..", "CONSTITUTION.md")) ||
@@ -47,7 +47,7 @@ async function main() {
   ) {
     pass("CONSTITUTION.md accessible");
   } else {
-    fail("CONSTITUTION.md not found (expected at ./, ../, or ../../)");
+    warn("CONSTITUTION.md not found (expected at ./, ../, or ../../) — this is a workspace-level check, not a project blocker");
   }
 
   // 3. CHANGELOG.md must have [Unreleased] section

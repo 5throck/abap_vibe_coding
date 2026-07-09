@@ -16,6 +16,19 @@ import path from "node:path";
 const scriptDir = path.dirname(import.meta.path);
 const projectRoot = path.resolve(scriptDir, "..");
 
+interface ParallelAgentTask {
+  description: string;
+  role: string;
+  task: string;
+  priority?: string;
+}
+
+interface SerialOptions {
+  stopOnError: boolean;
+  verbose: boolean;
+  dryRun: boolean;
+}
+
 interface CliOptions {
   mode: string;
   args: string[];
@@ -23,6 +36,10 @@ interface CliOptions {
 
 /**
  * Display help information
+ *
+ * TODO(Task 25): Consider migrating to a proper CLI parser library (e.g., commander, yargs)
+ * to handle --task, --pipeline, --continue-on-error, --verbose, --dry-run more robustly.
+ * Current manual parsing works but is fragile for new options.
  */
 function showHelp(): void {
   console.log(`
@@ -105,7 +122,7 @@ async function runParallel(args: string[]): Promise<void> {
   console.log('🚀 Parallel Dispatch Mode\n');
 
   // Build task list from --task arguments
-  const tasks: any[] = [];
+  const tasks: ParallelAgentTask[] = [];
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--task' && args[i + 1]) {
@@ -139,7 +156,7 @@ async function runParallel(args: string[]): Promise<void> {
 async function runSerial(args: string[]): Promise<void> {
   console.log('🔄 Serial Dispatch Mode\n');
 
-  const options: any = {
+  const options: SerialOptions = {
     stopOnError: !args.includes('--continue-on-error'),
     verbose: args.includes('--verbose') || args.includes('-v'),
     dryRun: args.includes('--dry-run')
@@ -147,7 +164,7 @@ async function runSerial(args: string[]): Promise<void> {
 
   // Check for custom pipeline
   const pipelineIndex = args.indexOf('--pipeline');
-  let pipeline: any;
+  let pipeline: unknown;
 
   if (pipelineIndex >= 0 && args[pipelineIndex + 1]) {
     const pipelinePath = path.resolve(projectRoot, args[pipelineIndex + 1]);
@@ -164,7 +181,7 @@ async function runSerial(args: string[]): Promise<void> {
   const dispatchModule = await import('./dispatch-serial.ts');
 
   if (pipeline) {
-    await dispatchModule.dispatchSerial(pipeline, options);
+    await dispatchModule.dispatchSerial(pipeline as SerialOptions[], options);
   } else {
     // Use default pipeline from module
     await dispatchModule.runDispatcher(options);

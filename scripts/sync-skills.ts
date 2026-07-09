@@ -31,25 +31,25 @@ const platformTargets = [
   path.join(projectRoot, ".agents", "skills"),
 ];
 
-// Shortcut skills that live only in .agents/skills/ and get back-propagated
+// Shortcut skills that live only in .agents/skills/ and get back-propagated.
 // Skills that already exist in L0 (skills/) do NOT need shortcuts — Phase 1 handles them.
-const shortcutSkillNames = ["meeting"];
+// When adding a new shortcut, update this list and run `bun scripts/sync-skills.ts`.
+const SHORTCUT_SKILL_NAMES: readonly string[] = ["meeting"];
 
-function copyDirIfExists(src: string, dest: string): boolean {
+// Only copy SKILL.md files — exclude .DS_Store, .gitkeep, etc.
+const SKILL_FILE_NAME = "SKILL.md";
+
+function copySkillIfExists(src: string, dest: string): boolean {
   if (!fs.existsSync(src)) return false;
   const stat = fs.statSync(src);
   if (!stat.isDirectory()) return false;
 
-  const entries = fs.readdirSync(src);
-  if (entries.length === 0) return true;
+  const srcFile = path.join(src, SKILL_FILE_NAME);
+  if (!fs.existsSync(srcFile)) return false;
 
   fs.mkdirSync(dest, { recursive: true });
-
-  for (const entry of entries) {
-    const srcFile = path.join(src, entry);
-    const destFile = path.join(dest, entry);
-    fs.copyFileSync(srcFile, destFile);
-  }
+  const destFile = path.join(dest, SKILL_FILE_NAME);
+  fs.copyFileSync(srcFile, destFile);
   return true;
 }
 
@@ -78,7 +78,7 @@ function phase1(): void {
 
     for (const target of platformTargets) {
       const dest = path.join(target, skillName);
-      const result = copyDirIfExists(src, dest);
+      const result = copySkillIfExists(src, dest);
       if (result) {
         if (!anyCopied) console.log(`  ✅ ${skillName}`);
         anyCopied = true;
@@ -102,12 +102,15 @@ function phase2(): void {
   const agentsSkills = collectSkills(agentsSkillsDir);
 
   // Only propagate shortcut skills (not SSOT skills already distributed in Phase 1)
-  const shortcuts = agentsSkills.filter((s) => shortcutSkillNames.includes(s));
+  const shortcuts = agentsSkills.filter((s) => SHORTCUT_SKILL_NAMES.includes(s));
   console.log(`Shortcut skills: ${shortcuts.join(", ") || "(none)"}\n`);
 
-  // Targets for back-propagation (exclude .agents/ itself)
+  // Targets for back-propagation (exclude .agents/skills itself)
+  // Use normalized paths to ensure cross-platform comparison works correctly
+  const agentsSkillsDir = path.join(projectRoot, ".agents", "skills");
+  const normalizedAgentsDir = path.normalize(agentsSkillsDir);
   const backPropTargets = platformTargets.filter(
-    (t) => !t.includes(".agents" + path.sep + "skills")
+    (t) => path.normalize(t) !== normalizedAgentsDir
   );
 
   let propagated = 0;

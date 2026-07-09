@@ -9,7 +9,9 @@
 
 ---
 
-## Context Loading
+## Session Start Checklist
+
+<!-- Shared 5-step checklist (matches CLAUDE.md Section 1) — platform overrides in each file -->
 
 Load project files at session start using the `@` syntax:
 *(Ref: `docs/context.md` -> `Initial Context Files`)*

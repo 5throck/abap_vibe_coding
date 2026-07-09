@@ -21,6 +21,22 @@ function fatal(msg: string) {
   if (import.meta.main) process.exit(1);
 }
 
+/**
+ * Detect co-author from environment (CLAUDE / GEMINI / ANONYMOUS).
+ * Returns a Co-Authored-By trailer line for the commit message.
+ */
+function detectCoAuthor(): string {
+  const env = process.env;
+  if (env.CLAUDE_CODE === "1" || env.CLAUDE_SESSION_ID) {
+    return "Co-Authored-By: Claude <noreply@anthropic.com>";
+  }
+  if (env.GEMINI_CLI === "1" || env.GEMINI_SESSION_ID) {
+    return "Co-Authored-By: Gemini <noreply@google.com>";
+  }
+  // Generic fallback
+  return "Co-Authored-By: AI Assistant <noreply@ai.example.com>";
+}
+
 async function main() {
   const msg = process.argv.slice(2).join(" ") || "chore: update";
   const dateObj = new Date();
@@ -54,10 +70,10 @@ async function main() {
     ? "\n---\n\n"
     : "";
   const logEntry = `${separator}## ${msg}
-- **Files**: ${fileList}
-- **Purpose**:
+- **Session Summary**: ${fileList}
+- **Changes**:
 - **Decisions**:
-- **Issues**: None
+- **Open Issues**: None
 `;
 
   const memoryFile = path.join(memoryDir, `${date}.md`);
@@ -86,7 +102,7 @@ async function main() {
           feat: "### Added",
           fix: "### Fixed",
           revert: "### Removed",
-          docs: "### Changed",
+          docs: "### Added",
           style: "### Changed",
           refactor: "### Changed",
           perf: "### Changed",
@@ -99,13 +115,24 @@ async function main() {
         const category = categoryMap[prefix] || "### Changed";
         const today = dateObj.toISOString().split("T")[0];
 
-        // Insert after the [Unreleased] header line
-        const newEntry = `\n${category}\n- **[${today}]**: ${msg}\n`;
-        const updatedContent = clContent.replace(
-          /(## \[Unreleased\])/,
-          `$1${newEntry}`
-        );
-        fs.writeFileSync(changelogPath, updatedContent, "utf-8");
+        // Check if the category header already exists in the [Unreleased] section
+        const categoryExists = unreleasedSection.includes(category);
+        if (categoryExists) {
+          // Insert entry after the existing category header
+          const updatedContent = clContent.replace(
+            new RegExp(`(## \\[Unreleased\\][\\s\\S]*?)(^${category}$)`, "m"),
+            `$1$2\n- **[${today}]**: ${msg}\n`
+          );
+          fs.writeFileSync(changelogPath, updatedContent, "utf-8");
+        } else {
+          // Insert new category header + entry after [Unreleased]
+          const newEntry = `\n${category}\n- **[${today}]**: ${msg}\n`;
+          const updatedContent = clContent.replace(
+            /(## \[Unreleased\])/,
+            `$1${newEntry}`
+          );
+          fs.writeFileSync(changelogPath, updatedContent, "utf-8");
+        }
         console.log(`${GREEN}📝 Auto-added changelog entry: ${msg}${RESET}`);
       }
     }
@@ -124,21 +151,61 @@ async function main() {
   }
 
   // ── 5. Guard against committing sensitive files ────────────────────────────────
-  try {
-    const { stdout } = await $`git ls-files --others --exclude-standard`.quiet().nothrow();
-    const untracked = stdout.toString().trim().split("\n").filter(Boolean);
-    const sensitivePattern =
-      /\.(pem|key|p12|pfx|jks|keystore)$|^\.env(\.[^sa]|$)|credentials\.json|service.?account\.json|secrets\.ya?ml/;
-    const sensitive = untracked.filter((f) => sensitivePattern.test(f));
+  const sensitivePattern =
+    /\.(pem|key|p12|pfx|jks|keystore)$|^\.env(\.[^sa]|$)|credentials\.json|service.?account\.json|secrets\.ya?ml/;
 
-    if (sensitive.length > 0) {
-      console.error(`${RED}❌ Potentially sensitive untracked files detected - refusing git add -A:${RESET}`);
-      sensitive.forEach((s) => console.error(`   ${s}`));
+  // Content-level secret patterns to scan in staged file diffs
+  const contentSecretPatterns = [
+    /password\s*[:=]\s*\S+/i,
+    /secret\s*[:=]\s*\S+/i,
+    /api[_-]?key\s*[:=]\s*\S+/i,
+    /token\s*[:=]\s*\S+/i,
+    /private[_-]?key\s*[:=]\s*["']/i,
+  ];
+
+  try {
+    // Check untracked files
+    const { stdout: untrackedOut } = await $`git ls-files --others --exclude-standard`.quiet().nothrow();
+    const untracked = untrackedOut.toString().trim().split("\n").filter(Boolean);
+    const sensitiveUntracked = untracked.filter((f) => sensitivePattern.test(f));
+
+    // Check staged files
+    const { stdout: stagedOut } = await $`git diff --cached --name-only`.quiet().nothrow();
+    const staged = stagedOut.toString().trim().split("\n").filter(Boolean);
+    const sensitiveStaged = staged.filter((f) => sensitivePattern.test(f));
+
+    // Content-level scan on staged diffs
+    const { stdout: diffOut } = await $`git diff --cached`.quiet().nothrow();
+    const diffContent = diffOut.toString();
+    const contentMatches: string[] = [];
+    for (const pattern of contentSecretPatterns) {
+      const match = diffContent.match(pattern);
+      if (match && match.index !== undefined) {
+        const lineNum = diffContent.substring(0, match.index).split("\n").length;
+        contentMatches.push(`  Line ~${lineNum}: ${match[0].substring(0, 60)}...`);
+      }
+    }
+
+    if (sensitiveUntracked.length > 0 || sensitiveStaged.length > 0) {
+      console.error(`${RED}❌ Potentially sensitive files detected:${RESET}`);
+      sensitiveUntracked.forEach((s) => console.error(`   (untracked) ${s}`));
+      sensitiveStaged.forEach((s) => console.error(`   (staged) ${s}`));
       console.error(`${YELLOW}   Stage files explicitly with 'git add <file>' or add them to .gitignore.${RESET}`);
       if (import.meta.main) process.exit(1);
     }
-  } catch {
-    // ignore
+
+    if (contentMatches.length > 0) {
+      console.error(`${RED}❌ Potential secrets detected in staged content:${RESET}`);
+      contentMatches.forEach((m) => console.error(`   ${m}`));
+      console.error(`${YELLOW}   Remove secrets from staged files before committing.${RESET}`);
+      if (import.meta.main) process.exit(1);
+    }
+
+    if (sensitiveUntracked.length === 0 && sensitiveStaged.length === 0 && contentMatches.length === 0) {
+      console.log(`${GREEN}✓ Sensitive file guard passed.${RESET}`);
+    }
+  } catch (e) {
+    console.error(`${YELLOW}⚠️  Sensitive file guard encountered an error: ${e}${RESET}`);
   }
 
   // ── 6. Branch → commit → push ────────────────────────────────────────────────
@@ -172,9 +239,9 @@ async function main() {
     console.log(`${CYAN}ℹ️  Already on branch '${branch}' - committing here without creating a new branch.${RESET}`);
   }
 
-  // Stage all changes
+  // Stage all changes (use `git add .` to respect .gitignore — avoids submodule/deleted surprises)
   try {
-    await $`git add -A`.nothrow();
+    await $`git add .`.nothrow();
   } catch (e) {
     fatal(`git add failed: ${e}`);
   }
@@ -187,8 +254,9 @@ async function main() {
     return;
   }
 
-  // Commit
-  const commitMsg = `${msg}\n\nCo-Authored-By: Claude <noreply@anthropic.com>`;
+  // Commit — detect co-author from environment
+  const coAuthor = detectCoAuthor();
+  const commitMsg = `${msg}\n\n${coAuthor}`;
   try {
     const commitRes = await $`git commit -m ${commitMsg}`.nothrow();
     if (commitRes.exitCode !== 0) {

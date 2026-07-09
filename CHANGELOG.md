@@ -10,28 +10,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 ### Added
 - **[2026-07-08]**: feat: add .agents/skills/ and sync-skills.ts for 3-platform skill distribution
-
-
-### Added
-- **[2026-07-08]**: fix\:\ pre\-push\ hook\ checks\ destination\ ref\ instead\ of\ current\ branch
-
-### Added
-- **[2026-07-08]**: chore\:\ bump\ devDependencies\ \(\@types\/node\,\ typescript\)
-
-### Added
-- **[2026-07-05]**: docs\:\ update\ memory\ log\ and\ skills\ index
-
-### Added
 - **[2026-07-05]**: feat: implement deliverables workflow and templates
-
-### Changed
-- **[2026-07-05]**: docs: map 3-tier model strategy to subagent execution plans
-
-### Added
 - **[2026-07-05]**: feat: expose skills to gemini and fix verify-skills.ts
 
-### Added
-- **[2026-07-03]**: chore\:\ sync\ ABAP\ inventory\ scratch\ work\,\ meeting\ command\,\ and\ repo\ housekeeping
+### Changed
+- **[2026-07-08]**: chore: bump devDependencies (@types/node, typescript)
+- **[2026-07-05]**: docs: update memory log and skills index
+- **[2026-07-05]**: docs: map 3-tier model strategy to subagent execution plans
+- **[2026-07-03]**: chore: sync ABAP inventory scratch work, meeting command, and repo housekeeping
+
+### Fixed
+- **[2026-07-08]**: fix: pre-push hook checks destination ref instead of current branch
 
 ### Fixed
 - **[2026-07-03]**: Remove broken wrapper scripts (`health-check.sh`, `sync-mcp.sh`) that referenced non-existent TypeScript targets

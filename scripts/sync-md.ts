@@ -35,8 +35,9 @@ async function main() {
 
   const content = await Bun.file(MEMORY_FILE).text();
 
-  // Dedup: only append if this date is not already in the index
-  if (!content.includes(`[${date}]`)) {
+  // Dedup: only append if this date is not already in the index (regex-based — avoids substring false matches)
+  const dateRowRegex = new RegExp(`^\\| \\[${date}\\]`, "m");
+  if (!dateRowRegex.test(content)) {
     const entry = `| [${date}](${date}.md) | ${summary} |\n`;
     await Bun.write(MEMORY_FILE, content + entry);
     console.log(`✓ Memory index updated: ${date} — ${summary}`);

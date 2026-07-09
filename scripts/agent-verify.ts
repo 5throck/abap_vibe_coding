@@ -51,7 +51,11 @@ function extractDocAgents(content: string): string[] {
     const agentName = match[1];
     if (!agents.includes(agentName)) agents.push(agentName);
   }
-  return agents;
+  // Filter out glob/template patterns (e.g., *, <module>-analyst)
+  const filtered = agents.filter(
+    (name) => !/[*<>{}[\]]/.test(name) && name.length > 1
+  );
+  return filtered;
 }
 
 async function verifyAgents(): Promise<VerificationResult> {
@@ -61,7 +65,7 @@ async function verifyAgents(): Promise<VerificationResult> {
   let agentFiles: string[] = [];
   try {
     const files = await fs.readdir(agentsDir);
-    agentFiles = files.filter((f) => f.endsWith(".md") && f !== "handoff-spec.md" && f !== "README.md" && f !== "README_ko.md");
+    agentFiles = files.filter((f) => f.endsWith(".md") && f !== "handoff-spec.md" && f !== "handoff-spec_ko.md" && f !== "README.md" && f !== "README_ko.md");
     stats.totalAgents = agentFiles.length;
   } catch {
     return { pass: false, issues: [{ type: "missing_file", agent: "N/A", message: "agents/ directory not found" }], stats };

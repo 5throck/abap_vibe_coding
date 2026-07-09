@@ -6,7 +6,9 @@
 
 ---
 
-## Session Start
+## Session Start Checklist
+
+<!-- Shared 5-step checklist (matches GEMINI.md Section 1) — platform overrides in each file -->
 
 At the start of every Claude Code session, run this checklist:
 *(Ref: `docs/context.md` -> `Initial Context Files`)*

@@ -97,11 +97,11 @@ function extractSkillMetadata(content: string, skillPath: string): SkillMetadata
     triggers: []
   };
 
-  // Extract frontmatter
+  // Extract frontmatter — require proper boundary: opening --- at position 0, closing --- after it
   const frontmatterStart = content.indexOf("---");
-  const frontmatterEnd = content.indexOf("---", 3);
+  const frontmatterEnd = content.indexOf("---", Math.max(frontmatterStart + 3, 3));
 
-  if (frontmatterStart !== -1 && frontmatterEnd !== -1) {
+  if (frontmatterStart === 0 && frontmatterEnd > frontmatterStart) {
     const frontmatter = content.substring(frontmatterStart + 3, frontmatterEnd);
 
     const nameMatch = frontmatter.match(/name:\s*(.+)/);
