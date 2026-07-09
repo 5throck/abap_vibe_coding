@@ -107,7 +107,6 @@ function phase2(): void {
 
   // Targets for back-propagation (exclude .agents/skills itself)
   // Use normalized paths to ensure cross-platform comparison works correctly
-  const agentsSkillsDir = path.join(projectRoot, ".agents", "skills");
   const normalizedAgentsDir = path.normalize(agentsSkillsDir);
   const backPropTargets = platformTargets.filter(
     (t) => path.normalize(t) !== normalizedAgentsDir
