@@ -138,6 +138,7 @@ Required env keys (see `.env.sample`):
 | `vsp-audit.ts` | Legacy audit wrapper (delegates to audit.ts) | active |
 | `vsp-task.ts` | Create task files from template | active |
 | `setup.ts` | Project environment setup | active |
+| `scratch-cleanup.ts` | Scratch workspace hygiene (temp purge, task archival, status) | active |
 | `install-vsp.ts` | VSP (VS Code extension) installation | active |
 | `install-bun.ts` | Bun runtime installation | active |
 | `git-sync.ts` | ~~Simple commit-and-push utility~~ Superseded by `dev-sync.ts` | **deprecated** |

@@ -16,3 +16,4 @@
 | [2026-07-05-deliverables](meeting-2026-07-05-deliverables-workflow-alignment.md) | Deliverables Workflow Alignment |
 | [2026-07-08](2026-07-08.md) | chore: bump devDependencies (@types/node, typescript) |
 | [2026-07-09](2026-07-09.md) | feat: add .agents/skills/ and sync-skills.ts for 3-platform skill distribution |
+| [2026-07-10](2026-07-10.md) | fix: comprehensive project review remediation (30 issues) |
