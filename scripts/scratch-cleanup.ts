@@ -82,10 +82,10 @@ function getDirStats(dirPath: string): DirStats {
   return stats;
 }
 
-function displayStatus(): void {
+function displayStatus(root: string = projectRoot): void {
   console.log(`${CYAN}=== Scratch Workspace Status ===${RESET}\n`);
 
-  const scratchDir = path.join(projectRoot, "scratch");
+  const scratchDir = path.join(root, "scratch");
   const subdirs = ["stable", "tasks", "temp"];
 
   for (const subdir of subdirs) {
@@ -123,8 +123,8 @@ function displayStatus(): void {
   }
 }
 
-function purgeTemp(maxAgeDays: number, dryRun: boolean): void {
-  const tempDir = path.join(projectRoot, "scratch", "temp");
+function purgeTemp(maxAgeDays: number, dryRun: boolean, root: string = projectRoot): void {
+  const tempDir = path.join(root, "scratch", "temp");
 
   if (!fs.existsSync(tempDir)) {
     console.log(`${CYAN}ℹ️  scratch/temp/ does not exist — nothing to purge.${RESET}`);
@@ -179,8 +179,8 @@ function purgeTemp(maxAgeDays: number, dryRun: boolean): void {
   console.log(`\n  Summary: ${toDelete.length} deleted, ${toSkip.length} kept`);
 }
 
-function archiveTasks(maxAgeDays: number, dryRun: boolean): void {
-  const tasksDir = path.join(projectRoot, "scratch", "tasks");
+function archiveTasks(maxAgeDays: number, dryRun: boolean, root: string = projectRoot): void {
+  const tasksDir = path.join(root, "scratch", "tasks");
   const archiveDir = path.join(tasksDir, "archive");
 
   if (!fs.existsSync(tasksDir)) {

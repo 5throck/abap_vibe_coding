@@ -9,7 +9,11 @@ on:
 jobs:
   quality-gates:
     name: Quality Gates
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -20,8 +24,11 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Type check
+        run: bun run typecheck
+
       - name: Run unit tests
-        run: bun test scripts/*.test.ts
+        run: bun test scripts
 
       - name: Run workspace audit
         run: bun scripts/audit.ts
@@ -31,3 +38,28 @@ jobs:
 
       - name: Verify agent sync
         run: bun scripts/agent-verify.ts
+
+      - name: Check MCP configuration drift
+        run: bun scripts/sync-mcp.ts --check
+
+      - name: Check 3-platform skill distribution drift
+        shell: bash
+        run: |
+          bun scripts/sync-skills.ts
+          git diff --exit-code -- .claude/skills .gemini/skills .agents/skills || {
+            echo "::error::Skill files are out of sync — run 'bun scripts/sync-skills.ts' and commit the result.";
+            exit 1;
+          }
+
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

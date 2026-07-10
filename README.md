@@ -72,6 +72,8 @@ For detailed roles, trigger keywords, and handoff protocols, see [AGENTS.md](AGE
 | **[docs/context.md](docs/context.md)** | **Shared** project context: build commands, codebase map, and development rules. |
 | **[skills/abap-dev/SKILL.md](skills/abap-dev/SKILL.md)** | Specialized AI skills (BAPI explorer, memory intelligence) and QA chains. |
 | **[docs/setup-guide.md](docs/setup-guide.md)** | Step-by-step environment setup (MCP, SAP, abapGit). |
+| **[deliverables/index.md](deliverables/index.md)** | Requirements Traceability Matrix (RTM) — Stage 1–5 tracking for every requirement. |
+| **[SECURITY.md](SECURITY.md)** | Vulnerability reporting and the MCP-driven SAP access threat model. |
 | **[memory/MEMORY.md](memory/MEMORY.md)** | Index of development history and architectural decisions. |
 
 ## Operational Workflow
@@ -91,8 +93,15 @@ For the detailed execution sequence, see [AGENTS.md § Collaborative Workflow](A
 # Agents collaborate in phases:
 # Phase 1: sap-investigator + read-only-analyst + schema-inspector (parallel)
 # Phase 2: architect designs → code-writer implements
-# Phase 3: test-runner verifies
+# Phase 3: test-runner verifies (SyntaxCheck → RunUnitTests → GetCodeCoverage → RunATCCheck)
 # Phase 4: transport release + git sync
+```
+
+New functional scope gets a formal Requirements Traceability Matrix entry automatically:
+
+```bash
+bun scripts/new-requirement.ts "New Pricing Rule" --module SD --owner "SD Analyst"
+# Scaffolds deliverables/REQ-NNN-slug/01_srs.md and registers the RTM row (Stage 1 / Draft)
 ```
 
 ---
@@ -128,7 +137,29 @@ bun scripts/dev-sync.ts "feat: description"
 bun scripts/audit.ts
 bun scripts/dispatch.ts parallel
 bun scripts/verify-skills.ts
+bun run typecheck   # tsc --noEmit over scripts/
+bun run test        # bun test scripts/ (100+ tests)
 ```
+
+---
+
+## Quality Gates
+
+Every PR runs through CI on **Ubuntu and Windows** matrix runners plus a dedicated secret scan:
+
+| Gate | What it checks |
+| :--- | :--- |
+| Type check | `tsc --noEmit` across all scripts |
+| Unit tests | `bun test scripts/` — git/file-mutating scripts (sync, audit, cleanup) are covered |
+| Workspace audit | `bun scripts/audit.ts` — documentation and structure integrity |
+| Skill / agent sync | `verify-skills.ts`, `agent-verify.ts` — docs match the actual roster |
+| MCP config drift | `.mcp.json` ↔ `.claude/settings.json` ↔ `.gemini/settings.json` |
+| 3-platform skill drift | `skills/` (SSOT) ↔ `.claude/skills/` ↔ `.gemini/skills/` ↔ `.agents/skills/` |
+| Secret scan | gitleaks, dedicated CI job + pre-commit hook |
+
+Locally, the same gates run automatically after every `WriteSource`/`EditSource` via the
+[Post-Write Mandatory Chain](skills/post-write-chain/SKILL.md): `SyntaxCheck` → `RunUnitTests` →
+`GetCodeCoverage` (≥70% on new objects) → `RunATCCheck` (zero Priority-1 findings).
 
 ---
 
@@ -156,4 +187,4 @@ See [LICENSE](LICENSE) for details. Commercial licensing is available - see [CON
 
 ---
 
-*Maintained by the Harness Engineering Team | Last Updated: 2026-07-08*
+*Maintained by the Harness Engineering Team | Last Updated: 2026-07-10*

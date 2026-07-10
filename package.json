@@ -11,10 +11,12 @@
     "dispatch:parallel": "bun scripts/dispatch.ts parallel",
     "dispatch:serial": "bun scripts/dispatch.ts serial",
     "scratch-cleanup": "bun scripts/scratch-cleanup.ts --status",
-    "test": "bun test scripts/*.test.ts"
+    "test": "bun test scripts",
+    "typecheck": "tsc --noEmit -p scripts/tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",
+    "bun-types": "^1.3.14",
     "typescript": "^5.9.3"
   },
   "engines": {

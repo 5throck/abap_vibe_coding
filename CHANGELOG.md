@@ -8,7 +8,23 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+### Added
+- **[2026-07-10]**: docs: update README/README_ko with post-write coverage gate, RTM automation, and CI quality gates
+
+- **[2026-07-10]**: feat: harden test/CI coverage, activate RTM workflow, and add SAP performance/dump-monitoring/coverage/threat-model enhancements
+
+- **[2026-07-10]**: Test coverage for `dev-sync.ts`, `sync-skills.ts`, `audit.ts`, `scratch-cleanup.ts` (previously untested git/file-mutating scripts) — 114 tests now pass across 9 files
+- **[2026-07-10]**: `bun run typecheck` (tsc --noEmit) added and wired into CI; fixed pre-existing type errors in `dispatch.ts` and `install-vsp.ts`
+- **[2026-07-10]**: CI now runs on an ubuntu/windows matrix, plus new MCP-drift and 3-platform skill-distribution-drift checks and a dedicated gitleaks secret-scan job
+- **[2026-07-10]**: `scripts/new-requirement.ts` — scaffolds `deliverables/REQ-NNN-slug/01_srs.md` and registers an RTM row; wired into `/triage` for requests classified as new functional scope
+- **[2026-07-10]**: `GetCodeCoverage` gate added to the Post-Write Mandatory Chain (70% threshold on new objects, regression check on existing ones, waiver-with-justification path)
+- **[2026-07-10]**: `skills/performance-tuning/SKILL.md` — standardized TraceExecution/ListSQLTraces/GetCallGraph workflow for slow-program and large-table performance analysis, owned by `dba`
+- **[2026-07-10]**: `skills/dump-monitor/SKILL.md` — standardized ListDumps/GetDump health-check workflow routed into `/triage`, owned by `devops-admin`
+- **[2026-07-10]**: Threat model section added to `SECURITY.md` — destructive-operation approval gates, package/feature whitelist policy, secrets handling, RFC call governance
+
 ### Fixed
+- **[2026-07-10]**: fix: correct cross-platform doc-drift — SKILLS.md path bug, AGENTS.md/test-runner.md stale post-write chain refs
+
 - **[2026-07-10]**: fix: harden auto-merge workflow, add sync-mcp.ts, and close review remediation gaps
 
 

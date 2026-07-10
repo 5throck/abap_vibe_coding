@@ -72,6 +72,8 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 | **[docs/context.md](docs/context.md)** | **공유** 프로젝트 컨텍스트: 빌드 명령어, 코드베이스 맵, 개발 규칙 |
 | **[skills/abap-dev/SKILL.md](skills/abap-dev/SKILL.md)** | 전문 AI 스킬(BAPI 탐색기, 메모리 인텔리전스) 및 QA 체인 |
 | **[docs/setup-guide.md](docs/setup-guide.md)** | 단계별 환경 설정(MCP, SAP, abapGit) |
+| **[deliverables/index.md](deliverables/index.md)** | 요구사항 추적 매트릭스(RTM) — 모든 요구사항의 Stage 1–5 추적 |
+| **[SECURITY.md](SECURITY.md)** | 취약점 신고 절차 및 MCP 기반 SAP 접근 위협 모델 |
 | **[memory/MEMORY.md](memory/MEMORY.md)** | 개발 이력 및 아키텍처 결정 인덱스 |
 
 ## 운영 워크플로우
@@ -91,8 +93,15 @@ AI 에이전트는 **PM 주도 거버넌스** 모델 하에 두 가지 전략 �
 # 에이전트 단계별 협업:
 # Phase 1: sap-investigator + read-only-analyst + schema-inspector (병렬)
 # Phase 2: architect 설계 → code-writer 구현
-# Phase 3: test-runner 검증
+# Phase 3: test-runner 검증 (SyntaxCheck → RunUnitTests → GetCodeCoverage → RunATCCheck)
 # Phase 4: 트랜스포트 릴리즈 + git 동기화
+```
+
+새로운 기능 범위는 자동으로 정식 요구사항 추적 매트릭스(RTM) 항목으로 등록됩니다:
+
+```bash
+bun scripts/new-requirement.ts "새 가격 규칙" --module SD --owner "SD Analyst"
+# deliverables/REQ-NNN-slug/01_srs.md를 스캐폴딩하고 RTM 행을 등록합니다 (Stage 1 / Draft)
 ```
 
 ---
@@ -128,7 +137,29 @@ bun scripts/dev-sync.ts "feat: description"
 bun scripts/audit.ts
 bun scripts/dispatch.ts parallel
 bun scripts/verify-skills.ts
+bun run typecheck   # scripts/ 전체에 대한 tsc --noEmit
+bun run test        # bun test scripts/ (100개 이상의 테스트)
 ```
+
+---
+
+## 품질 게이트
+
+모든 PR은 **Ubuntu와 Windows** 매트릭스 러너 및 전용 시크릿 스캔을 통과해야 합니다:
+
+| 게이트 | 검사 내용 |
+| :--- | :--- |
+| 타입 체크 | 전체 스크립트에 대한 `tsc --noEmit` |
+| 단위 테스트 | `bun test scripts/` — git/파일을 조작하는 스크립트(sync, audit, cleanup)까지 커버 |
+| 워크스페이스 감사 | `bun scripts/audit.ts` — 문서 및 구조 무결성 |
+| 스킬 / 에이전트 동기화 | `verify-skills.ts`, `agent-verify.ts` — 문서와 실제 로스터 일치 여부 |
+| MCP 설정 drift | `.mcp.json` ↔ `.claude/settings.json` ↔ `.gemini/settings.json` |
+| 3-플랫폼 스킬 drift | `skills/`(SSOT) ↔ `.claude/skills/` ↔ `.gemini/skills/` ↔ `.agents/skills/` |
+| 시크릿 스캔 | gitleaks, 전용 CI 잡 + pre-commit 훅 |
+
+로컬에서는 [Post-Write Mandatory Chain](skills/post-write-chain/SKILL.md)을 통해 모든
+`WriteSource`/`EditSource` 이후 동일한 게이트가 자동 실행됩니다: `SyntaxCheck` →
+`RunUnitTests` → `GetCodeCoverage`(신규 객체 70% 이상) → `RunATCCheck`(Priority-1 발견 0건).
 
 ---
 
@@ -156,4 +187,4 @@ bun scripts/verify-skills.ts
 
 ---
 
-*Harness Engineering 팀이 유지 관리 | 최종 업데이트: 2026-05-25*
+*Harness Engineering 팀이 유지 관리 | 최종 업데이트: 2026-07-10*

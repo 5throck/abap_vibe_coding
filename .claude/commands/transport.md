@@ -2,7 +2,7 @@
 name: transport
 description: Manage SAP Transport Requests (CTS) — list, create, add objects, release, and check status of transport requests. Runs pre-release quality gate before releasing.
 argument-hint: "<action> [arguments]  (actions: list, create, add, release, status)"
-allowed-tools: ["mcp__abap__ListTransports", "mcp__abap__CreateTransport", "mcp__abap__GetTransport", "mcp__abap__AddToTransport", "mcp__abap__ReleaseTransport", "mcp__abap__SyntaxCheck", "mcp__abap__RunUnitTests", "mcp__abap__RunATCCheck"]
+allowed-tools: ["mcp__abap__ListTransports", "mcp__abap__CreateTransport", "mcp__abap__GetTransport", "mcp__abap__AddToTransport", "mcp__abap__ReleaseTransport", "mcp__abap__SyntaxCheck", "mcp__abap__RunUnitTests", "mcp__abap__GetCodeCoverage", "mcp__abap__RunATCCheck"]
 ---
 
 # Transport

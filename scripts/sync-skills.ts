@@ -145,3 +145,5 @@ function main(): void {
 if (import.meta.main) {
   main();
 }
+
+export { copySkillIfExists, collectSkills, SHORTCUT_SKILL_NAMES, SKILL_FILE_NAME };

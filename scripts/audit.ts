@@ -6,7 +6,7 @@ import path from "node:path";
 import * as fs from "node:fs";
 
 const scriptDir = path.dirname(import.meta.path);
-const projectRoot = path.resolve(scriptDir, "..");
+const defaultProjectRoot = path.resolve(scriptDir, "..");
 
 const GREEN = "\x1b[32m";
 const RED = "\x1b[31m";
@@ -29,7 +29,8 @@ function warn(msg: string) {
   console.log(`${YELLOW}[WARN]${RESET} ${msg}`);
 }
 
-async function main() {
+async function main(projectRoot: string = defaultProjectRoot) {
+  errors = 0;
   console.log(`${CYAN}=== audit.ts - workspace standards check ===${RESET}\n`);
 
   // 1. CHANGELOG.md must exist
@@ -160,18 +161,19 @@ async function main() {
   console.log("");
   if (errors === 0) {
     console.log(`${GREEN}✅ All checks passed.${RESET}`);
-    process.exit(0);
   } else {
     console.log(`${RED}❌ ${errors} check(s) failed. Fix before committing.${RESET}`);
-    process.exit(1);
   }
+  return errors;
 }
 
 if (import.meta.main) {
-  main().catch((e) => {
-    console.error(`audit: ${e.message}`);
-    process.exit(1);
-  });
+  main()
+    .then((errCount) => process.exit(errCount === 0 ? 0 : 1))
+    .catch((e) => {
+      console.error(`audit: ${e.message}`);
+      process.exit(1);
+    });
 }
 
 export { main };

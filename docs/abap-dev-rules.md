@@ -47,7 +47,7 @@ See [testing-guidelines.md](testing-guidelines.md) for ATC priority thresholds a
    → dispatch sap-investigator, read-only-analyst, schema-inspector in one message
 
 3. Phase 2 — Implementation (serial, one object at a time)
-   → SyntaxCheck → EditSource/WriteSource → SyntaxCheck → RunUnitTests → RunATCCheck
+   → SyntaxCheck → EditSource/WriteSource → SyntaxCheck → RunUnitTests → GetCodeCoverage → RunATCCheck
 
 4. Phase 3 — QA and commit
    → RunATCCheck passes → memory log → git commit

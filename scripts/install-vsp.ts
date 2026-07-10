@@ -82,7 +82,7 @@ async function main() {
       const res = await fetch(
         `https://api.github.com/repos/${REPO}/releases/latest`
       );
-      const data = await res.json();
+      const data = (await res.json()) as { tag_name: string };
       version = data.tag_name;
     } catch {
       console.error(`${RED}Error: Failed to fetch latest version from GitHub API.${RESET}`);
