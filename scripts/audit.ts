@@ -109,7 +109,15 @@ async function main() {
       const residualPs1 = scriptFiles.filter(
         (f) => f.endsWith(".ps1") && !f.startsWith("vsp-publish")
       );
+      // vsp-publish.sh/.ps1 are an ADR-0036 exception (plugin packaging; TS port pending)
+      // — excluded from failure above, but surfaced here so the exemption stays visible.
+      const exempted = scriptFiles.filter((f) => f.startsWith("vsp-publish"));
       if (residualSh.length === 0 && residualPs1.length === 0) {
+        if (exempted.length > 0) {
+          warn(
+            `scripts/ has ADR-0036 exempted legacy script(s): ${exempted.join(", ")} (TS port pending)`
+          );
+        }
         pass("scripts/ fully migrated to TypeScript (no residual .sh/.ps1)");
       } else {
         for (const f of residualSh) {

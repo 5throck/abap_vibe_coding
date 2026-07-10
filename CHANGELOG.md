@@ -8,21 +8,52 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+### Fixed
+- **[2026-07-10]**: fix: harden auto-merge workflow, add sync-mcp.ts, and close review remediation gaps
+
+
+---
+
+## [1.0.0] — 2026-07-10
+
+First stable release cut — consolidates all changes accumulated since 0.5.0 (2026-05-20).
+
 ### Added
 - **[2026-07-08]**: feat: add .agents/skills/ and sync-skills.ts for 3-platform skill distribution
 - **[2026-07-05]**: feat: implement deliverables workflow and templates
 - **[2026-07-05]**: feat: expose skills to gemini and fix verify-skills.ts
+- **[2026-07-01]**: docs: port mig improvements and fix encoding regressions
+- **[2026-07-01]**: Ported agent lifecycle CLI scripts (`scripts/agent-create.ts`, `scripts/agent-delete.ts`, `scripts/agent-list.ts`, `scripts/agent-verify.ts`), docs/skills README indexes with Korean translations, and root `package.json`/`bun.lock` from the `abap_vibe_coding_mig` sibling project.
+- **[2026-05-25]**: docs: comprehensive documentation improvement and synchronization
+- **[2026-05-24]**: Bun-based single-source scripts (.ts) replacing dual .sh/.ps1 maintenance — health-check.ts, audit.ts, sync-mcp.ts, memory-index.ts
+- **[2026-05-24]**: `.mcp.json` as Single Source of Truth for MCP configuration across all platforms (Claude Code, Gemini, Antigravity)
+- **[2026-05-24]**: MCP sync script (sync-mcp.ts) for automatic settings synchronization from .mcp.json to platform-specific configs
+- **[2026-05-24]**: Health check script (health-check.ts) for system monitoring and version verification
+- **[2026-05-24]**: Memory index auto-updater (memory-index.ts) for maintaining memory/MEMORY.md index
+- **[2026-05-24]**: Desktop App fallback skill for manual QA when PostToolUse hooks don't fire
+- **[2026-05-24]**: Agent dispatch templates and handoff specification for standardized subagent coordination
+- **[2026-05-24]**: Skills index (SKILLS.md) documenting all available skills and their entry points
+- **[2026-05-24]**: MCP workflow references updated in CLAUDE.md and GEMINI.md to reflect .mcp.json SSoT approach
+- **[2026-05-24]**: Pre-commit hook now checks MCP configuration drift between .mcp.json and platform-specific configs
+- **[2026-05-23]**: `.githooks/pre-commit`: Add Markdown date auto-bumper and CHANGELOG auto-dating logic. Automatically updates `Last Updated:` date in staged `.md` files upon commit, and injects date into undated `CHANGELOG.md` entries.
+- **[2026-05-23]**: `docs/context.md`: Add `security-monitor` (Security group) to Agents table.
+- **[2026-05-23]**: `AGENTS.md`: Register `security-monitor` agent formally in the global Agent Roster.
+- **[2026-05-23]**: Standardize session start checklist in CLAUDE.md to 6-step format (git config, CONSTITUTION, context, AGENTS, memory, skills)
+- **[2026-05-23]**: Add `## Session Start Skills` section to docs/context.md for all-tool auto-discovery
+- **[2026-05-23]**: Expand GEMINI.md with tool safeguards, Planning Mode artifacts, and Subagent orchestration
 
 ### Changed
 - **[2026-07-08]**: chore: bump devDependencies (@types/node, typescript)
 - **[2026-07-05]**: docs: update memory log and skills index
 - **[2026-07-05]**: docs: map 3-tier model strategy to subagent execution plans
 - **[2026-07-03]**: chore: sync ABAP inventory scratch work, meeting command, and repo housekeeping
+- **[2026-07-03]**: Add Desktop App manual post-write chain guide to `CLAUDE.md`
+- **[2026-07-03]**: Add `metadata.type` to all 9 skill frontmatters (core/module)
+- **[2026-07-03]**: Document `.mcp.json` tracking policy in `docs/context.md`
+- **[2026-05-25]**: Established **Hybrid Scripting Automation** model. Utility scripts (`dev-sync`, `audit`) reverted to native PowerShell/Bash for simplicity, while agent orchestration (`dispatch`, `retry-handler`, `verify-skills`) remains in Bun (.ts) for complex async handling. *(Superseded by ADR-0036 — all scripts are TypeScript.)*
 
 ### Fixed
 - **[2026-07-08]**: fix: pre-push hook checks destination ref instead of current branch
-
-### Fixed
 - **[2026-07-03]**: Remove broken wrapper scripts (`health-check.sh`, `sync-mcp.sh`) that referenced non-existent TypeScript targets
 - **[2026-07-03]**: Fix `dispatch-serial.ts` double-execution bug (pipeline ran twice per invocation)
 - **[2026-07-03]**: Add CI status check and 2-approval minimum to `auto-merge.yml` workflow
@@ -36,54 +67,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **[2026-07-03]**: Fix Unicode encoding in `setup.ps1` header stack table, add Go/Rust/Elixir documentation
 - **[2026-07-03]**: Replace realistic password example with placeholder in `.env.sample`
 - **[2026-07-03]**: Populate `SECURITY.md` version support table with vsp >= 2.38
-
-### Changed
-- **[2026-07-03]**: Add Desktop App manual post-write chain guide to `CLAUDE.md`
-- **[2026-07-03]**: Add `metadata.type` to all 9 skill frontmatters (core/module)
-- **[2026-07-03]**: Document `.mcp.json` tracking policy in `docs/context.md`
-
-### Added
-- **[2026-07-01]**: docs\:\ port\ mig\ improvements\ and\ fix\ encoding\ regressions
-
-### Added
-- **[2026-07-01]**: Ported agent lifecycle CLI scripts (`scripts/agent-create.ts`, `scripts/agent-delete.ts`, `scripts/agent-list.ts`, `scripts/agent-verify.ts`), docs/skills README indexes with Korean translations, and root `package.json`/`bun.lock` from the `abap_vibe_coding_mig` sibling project.
-- **[2026-05-25]**: docs\:\ comprehensive\ documentation\ improvement\ and\ synchronization
-
-### Fixed
 - **[2026-07-01]**: Restored UTF-8 encoding corruption (stray BOM + mangled em-dash/arrow/section-sign characters) in `agents/pm.md`, `CLAUDE.md`, `GEMINI.md` introduced by a prior partial migration pass.
 - **[2026-07-01]**: Fixed a literal `\n` regression duplicating two table rows in `scripts/README.md`.
 - **[2026-07-01]**: Fixed a pre-existing typo in the `scripts/setup.ps1` header comment.
 - **[2026-05-25]**: fix: test changelog and memory automation
-
-### Added
-- **[2026-05-24]**: Bun-based single-source scripts (.ts) replacing dual .sh/.ps1 maintenance — health-check.ts, audit.ts, sync-mcp.ts, memory-index.ts
-- **[2026-05-24]**: `.mcp.json` as Single Source of Truth for MCP configuration across all platforms (Claude Code, Gemini, Antigravity)
-- **[2026-05-24]**: MCP sync script (sync-mcp.ts) for automatic settings synchronization from .mcp.json to platform-specific configs
-- **[2026-05-24]**: Health check script (health-check.ts) for system monitoring and version verification
-- **[2026-05-24]**: Memory index auto-updater (memory-index.ts) for maintaining memory/MEMORY.md index
-- **[2026-05-24]**: Desktop App fallback skill for manual QA when PostToolUse hooks don't fire
-- **[2026-05-24]**: Agent dispatch templates and handoff specification for standardized subagent coordination
-- **[2026-05-24]**: Skills index (SKILLS.md) documenting all available skills and their entry points
-- **[2026-05-23]**: `.githooks/pre-commit`: Add Markdown date auto-bumper and CHANGELOG auto-dating logic. Automatically updates `Last Updated:` date in staged `.md` files upon commit, and injects date into undated `CHANGELOG.md` entries.
-- **[2026-05-23]**: `docs/context.md`: Add `security-monitor` (Security group) to Agents table.
-- **[2026-05-23]**: `AGENTS.md`: Register `security-monitor` agent formally in the global Agent Roster.
 
 ### Deprecated
 - **[2026-05-24]**: Dual .sh/.ps1 script maintenance — use .ts scripts with Bun runtime instead (legacy wrappers retained for compatibility)
 
 ### Removed
 - **[2026-05-23]**: `README.md` / `README_ko.md`: Remove obsolete manual kickoff instruction text.
-
-
-### Changed
-- **[2026-05-25]**: Established **Hybrid Scripting Automation** model. Utility scripts (`dev-sync`, `audit`) reverted to native PowerShell/Bash for simplicity, while agent orchestration (`dispatch`, `retry-handler`, `verify-skills`) remains in Bun (.ts) for complex async handling.
-
-### Added
-- **[2026-05-24]**: MCP workflow references updated in CLAUDE.md and GEMINI.md to reflect .mcp.json SSoT approach
-- **[2026-05-24]**: Pre-commit hook now checks MCP configuration drift between .mcp.json and platform-specific configs
-- **[2026-05-23]**: Standardize session start checklist in CLAUDE.md to 6-step format (git config, CONSTITUTION, context, AGENTS, memory, skills)
-- **[2026-05-23]**: Add `## Session Start Skills` section to docs/context.md for all-tool auto-discovery
-- **[2026-05-23]**: Expand GEMINI.md with tool safeguards, Planning Mode artifacts, and Subagent orchestration
 
 ### Added (2026-05-23 Antigravity Project Configuration Support)
 - **[2026-05-23]**: `.gemini.settings.json.sample`: Created a template for Antigravity 2.0 and Gemini CLI project-level configuration to streamline setup for new workspaces.
