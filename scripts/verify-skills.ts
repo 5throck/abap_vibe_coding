@@ -210,7 +210,10 @@ async function verifySkill(skillFile: string): Promise<SkillCheck> {
       }
     }
 
-    const skillName = skillFile.match(/skills\/([^/]+)\//)?.[1] || skillFile;
+    // path.basename(dirname(...)) is separator-agnostic — the previous forward-slash-only
+    // regex silently fell back to the full absolute path on Windows (backslash separators),
+    // producing broken links in the generated skills/SKILLS.md index.
+    const skillName = path.basename(path.dirname(skillFile));
 
     return {
       name: skillName,

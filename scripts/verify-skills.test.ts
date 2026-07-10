@@ -9,6 +9,7 @@
  */
 
 import { describe, test, expect } from "bun:test";
+import path from "node:path";
 
 // ---------------------------------------------------------------------------
 // Inline copy of extractSkillMetadata (matches scripts/verify-skills.ts:92-127)
@@ -147,6 +148,32 @@ metadata:
 `;
     const m = extractSkillMetadata(content);
     expect(m.triggers).toEqual(["first item", "second item"]);
+  });
+});
+
+describe("skill name extraction for SKILLS.md index (regression)", () => {
+  // Mirrors verify-skills.ts:213 — path.basename(path.dirname(skillFile)).
+  // The prior implementation used skillFile.match(/skills\/([^/]+)\//), a
+  // forward-slash-only regex that silently failed on Windows absolute paths
+  // (backslash separators), falling back to the full path as the "name" and
+  // corrupting every generated link in skills/SKILLS.md.
+  function extractSkillName(skillFile: string): string {
+    return path.basename(path.dirname(skillFile));
+  }
+
+  test("extracts the skill directory name from a POSIX-style path", () => {
+    expect(extractSkillName("/repo/skills/abap-dev/SKILL.md")).toBe("abap-dev");
+  });
+
+  test("extracts the skill directory name from a Windows absolute path (path.win32, host-independent)", () => {
+    // Force win32 semantics so this assertion is meaningful on Linux CI runners too —
+    // the default `path` import is POSIX on Linux and would not split on backslashes there.
+    const winPath = "C:\\git\\ai_workspace\\Projects\\abap_vibe_coding\\skills\\performance-tuning\\SKILL.md";
+    expect(path.win32.basename(path.win32.dirname(winPath))).toBe("performance-tuning");
+  });
+
+  test("extracts the skill directory name from a relative path", () => {
+    expect(extractSkillName("skills/dump-monitor/SKILL.md")).toBe("dump-monitor");
   });
 });
 

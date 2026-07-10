@@ -21,6 +21,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **[2026-07-10]**: Threat model section added to `SECURITY.md` — destructive-operation approval gates, package/feature whitelist policy, secrets handling, RFC call governance
 
 ### Fixed
+- **[2026-07-10]**: fix: correct cross-platform doc-drift — SKILLS.md path bug, AGENTS.md/test-runner.md stale post-write chain refs
+
 - **[2026-07-10]**: fix: harden auto-merge workflow, add sync-mcp.ts, and close review remediation gaps
 
 

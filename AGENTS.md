@@ -178,7 +178,7 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
 
 5.  **Implementation & Verification Chain (Assigned Agents)**:
     *   Implementation is delegated to `code-writer` and verification to `test-runner`.
-    *   **Mandatory Chain**: Must pass `SyntaxCheck` → `RunUnitTests` → `RunATCCheck` (Zero P1 findings).
+    *   **Mandatory Chain**: Must pass `SyntaxCheck` → `RunUnitTests` → `GetCodeCoverage` (≥70% new objects) → `RunATCCheck` (Zero P1 findings).
 
 6.  **Finalization, Sync & Reporting (PM)**:
     *   **Memory Logging**: Record key decisions and issues in `memory/YYYY-MM-DD.md`.
