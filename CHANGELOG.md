@@ -9,6 +9,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
+- **[2026-07-10]**: docs: update README/README_ko with post-write coverage gate, RTM automation, and CI quality gates
+
 - **[2026-07-10]**: feat: harden test/CI coverage, activate RTM workflow, and add SAP performance/dump-monitoring/coverage/threat-model enhancements
 
 - **[2026-07-10]**: Test coverage for `dev-sync.ts`, `sync-skills.ts`, `audit.ts`, `scratch-cleanup.ts` (previously untested git/file-mutating scripts) — 114 tests now pass across 9 files
