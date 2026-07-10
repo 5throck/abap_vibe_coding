@@ -28,7 +28,7 @@ jobs:
         run: bun run typecheck
 
       - name: Run unit tests
-        run: bun test scripts/*.test.ts
+        run: bun test scripts
 
       - name: Run workspace audit
         run: bun scripts/audit.ts
