@@ -13,7 +13,7 @@
 # Limitations:
 #   - Step 1 uses sed with `eval` (required for cross-platform -i) — do NOT stage untrusted files
 #   - Step 1-A perl injection may conflict with existing `**[date]**` prefixes — manual review advised
-#   - Step 5 references `sync-mcp.ts` which may not exist in all projects
+#   - Step 5 remediation path: `bun scripts/sync-mcp.ts` (propagates .mcp.json to platform settings)
 #
 # Activation: git config core.hooksPath .githooks (run once per clone, or via setup.ts)
 

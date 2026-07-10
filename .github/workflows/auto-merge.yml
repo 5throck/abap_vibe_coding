@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  pull_requests: write
+  pull-requests: write
 
 jobs:
   check-reviews:
@@ -27,7 +27,11 @@ jobs:
               repo: context.repo.repo,
               pull_number: pr.number
             });
-            const approvals = reviews.data.filter(r => r.state === 'APPROVED');
+            // Only count approvals submitted for the current head commit —
+            // approvals on earlier commits are stale after a new push.
+            const approvals = reviews.data.filter(
+              r => r.state === 'APPROVED' && r.commit_id === pr.head.sha
+            );
             if (approvals.length >= 2) {
               console.log(`✅ ${approvals.length} approvals — proceeding`);
               core.setOutput('approved', 'true');
@@ -43,7 +47,7 @@ jobs:
     if: needs.check-reviews.outputs.approved == 'true'
     permissions:
       contents: write
-      pull_requests: write
+      pull-requests: write
     steps:
       - name: Check CI status
         uses: actions/github-script@v7
