@@ -191,7 +191,7 @@ Agent 3 — schema-inspector  (prompt: agents/schema-inspector.md)
 
 [serial per object — never parallelize writes]
   for each object in impact_list:
-    SyntaxCheck → EditSource(replace_all=true) → RunUnitTests → RunATCCheck
+    SyntaxCheck → EditSource(replace_all=true) → RunUnitTests → GetCodeCoverage → RunATCCheck
   memory log → git commit
 ```
 

@@ -214,7 +214,7 @@ All software requirements and implementation logs must be structured and stored 
 #### **Stage 4: Quality Gate Verification (`04_qa_report.md`)**
 *   **Responsible Agent**: **QA Engineer** (`test-runner`).
 *   **Deliverable**: `/deliverables/REQ-NNN-[slug]/04_qa_report.md`.
-*   **Scope**: Run the mandatory QA chain (`SyntaxCheck` -> `RunUnitTests` -> `RunATCCheck`). Record raw logs, code coverage percentages, and enforce zero Priority-1 findings. Mark as **[QUALITY GATE STATUS: PASSED]**.
+*   **Scope**: Run the mandatory QA chain (`SyntaxCheck` -> `RunUnitTests` -> `GetCodeCoverage` -> `RunATCCheck`). Record raw logs, code coverage percentages (70% threshold — see [skills/post-write-chain/SKILL.md](../skills/post-write-chain/SKILL.md)), and enforce zero Priority-1 findings. Mark as **[QUALITY GATE STATUS: PASSED]**.
 
 #### **Stage 5: Governance & Release**
 *   **Responsible Agent**: **PM** & **DevOps/Admin**.
@@ -312,7 +312,7 @@ Use this matrix to resolve ambiguity when multiple agents could handle a request
 | Design the DB/CDS schema (ERD, normalization, indexing) | `dba` | `architect` |
 | Design the implementation pattern (A/B/C) and execution plan | `architect` | `dba` |
 | Write or modify ABAP source code | `code-writer` | `architect` |
-| Run SyntaxCheck → RunUnitTests → RunATCCheck | `test-runner` | `code-writer` |
+| Run SyntaxCheck → RunUnitTests → GetCodeCoverage → RunATCCheck | `test-runner` | `code-writer` |
 | Create / release a Transport Request | `devops-admin` | `code-writer` |
 | Design OData / RFC / IDoc interfaces | `interface-expert` | `architect` |
 | Design Fiori / UI5 screens | `fiori-developer` | `interface-expert` |

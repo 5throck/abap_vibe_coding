@@ -25,17 +25,67 @@ function fatal(msg: string) {
  * Detect co-author from environment (CLAUDE / GEMINI / ANONYMOUS).
  * Returns a Co-Authored-By trailer line for the commit message.
  */
-function detectCoAuthor(): string {
-  const env = process.env;
+function detectCoAuthor(env: NodeJS.ProcessEnv = process.env): string {
   if (env.CLAUDE_CODE === "1" || env.CLAUDE_SESSION_ID) {
     return "Co-Authored-By: Claude <noreply@anthropic.com>";
   }
   if (env.GEMINI_CLI === "1" || env.GEMINI_SESSION_ID) {
     return "Co-Authored-By: Gemini <noreply@google.com>";
   }
-  // Generic fallback
   return "Co-Authored-By: AI Assistant <noreply@ai.example.com>";
 }
+
+const CATEGORY_MAP: Record<string, string> = {
+  feat: "### Added",
+  fix: "### Fixed",
+  revert: "### Removed",
+  docs: "### Added",
+  style: "### Changed",
+  refactor: "### Changed",
+  perf: "### Changed",
+  test: "### Changed",
+  chore: "### Changed",
+  ci: "### Changed",
+};
+
+function categorizeCommitMessage(msg: string): string {
+  const prefix = msg.split(":")[0] || "chore";
+  return CATEGORY_MAP[prefix] || "### Changed";
+}
+
+function insertChangelogEntry(
+  clContent: string,
+  msg: string,
+  category: string,
+  today: string
+): string {
+  const sectionMatch = /## \[Unreleased\]([\s\S]*?)(?=\n## |$)/.exec(clContent);
+  if (!sectionMatch) return clContent;
+
+  const unreleasedSection = sectionMatch[1];
+  if (unreleasedSection.includes(msg)) return clContent;
+
+  const categoryExists = unreleasedSection.includes(category);
+  if (categoryExists) {
+    return clContent.replace(
+      new RegExp(`(## \\[Unreleased\\][\\s\\S]*?)(^${category}$)`, "m"),
+      `$1$2\n- **[${today}]**: ${msg}\n`
+    );
+  }
+  const newEntry = `\n${category}\n- **[${today}]**: ${msg}\n`;
+  return clContent.replace(/(## \[Unreleased\])/, `$1${newEntry}`);
+}
+
+const SENSITIVE_FILE_PATTERN =
+  /\.(pem|key|p12|pfx|jks|keystore)$|^\.env(\.[^sa]|$)|credentials\.json|service.?account\.json|secrets\.ya?ml/;
+
+const CONTENT_SECRET_PATTERNS = [
+  /password\s*[:=]\s*\S+/i,
+  /secret\s*[:=]\s*\S+/i,
+  /api[_-]?key\s*[:=]\s*\S+/i,
+  /token\s*[:=]\s*\S+/i,
+  /private[_-]?key\s*[:=]\s*["']/i,
+];
 
 async function main() {
   const msg = process.argv.slice(2).join(" ") || "chore: update";
@@ -98,41 +148,10 @@ async function main() {
       const unreleasedSection = sectionMatch[1];
 
       if (!unreleasedSection.includes(msg)) {
-        const categoryMap: Record<string, string> = {
-          feat: "### Added",
-          fix: "### Fixed",
-          revert: "### Removed",
-          docs: "### Added",
-          style: "### Changed",
-          refactor: "### Changed",
-          perf: "### Changed",
-          test: "### Changed",
-          chore: "### Changed",
-          ci: "### Changed",
-        };
-
-        const prefix = msg.split(":")[0] || "chore";
-        const category = categoryMap[prefix] || "### Changed";
+        const category = categorizeCommitMessage(msg);
         const today = dateObj.toISOString().split("T")[0];
-
-        // Check if the category header already exists in the [Unreleased] section
-        const categoryExists = unreleasedSection.includes(category);
-        if (categoryExists) {
-          // Insert entry after the existing category header
-          const updatedContent = clContent.replace(
-            new RegExp(`(## \\[Unreleased\\][\\s\\S]*?)(^${category}$)`, "m"),
-            `$1$2\n- **[${today}]**: ${msg}\n`
-          );
-          fs.writeFileSync(changelogPath, updatedContent, "utf-8");
-        } else {
-          // Insert new category header + entry after [Unreleased]
-          const newEntry = `\n${category}\n- **[${today}]**: ${msg}\n`;
-          const updatedContent = clContent.replace(
-            /(## \[Unreleased\])/,
-            `$1${newEntry}`
-          );
-          fs.writeFileSync(changelogPath, updatedContent, "utf-8");
-        }
+        const updatedContent = insertChangelogEntry(clContent, msg, category, today);
+        fs.writeFileSync(changelogPath, updatedContent, "utf-8");
         console.log(`${GREEN}📝 Auto-added changelog entry: ${msg}${RESET}`);
       }
     }
@@ -151,17 +170,8 @@ async function main() {
   }
 
   // ── 5. Guard against committing sensitive files ────────────────────────────────
-  const sensitivePattern =
-    /\.(pem|key|p12|pfx|jks|keystore)$|^\.env(\.[^sa]|$)|credentials\.json|service.?account\.json|secrets\.ya?ml/;
-
-  // Content-level secret patterns to scan in staged file diffs
-  const contentSecretPatterns = [
-    /password\s*[:=]\s*\S+/i,
-    /secret\s*[:=]\s*\S+/i,
-    /api[_-]?key\s*[:=]\s*\S+/i,
-    /token\s*[:=]\s*\S+/i,
-    /private[_-]?key\s*[:=]\s*["']/i,
-  ];
+  const sensitivePattern = SENSITIVE_FILE_PATTERN;
+  const contentSecretPatterns = CONTENT_SECRET_PATTERNS;
 
   try {
     // Check untracked files
@@ -334,4 +344,11 @@ if (import.meta.main) {
   });
 }
 
-export { main };
+export {
+  main,
+  detectCoAuthor,
+  categorizeCommitMessage,
+  insertChangelogEntry,
+  SENSITIVE_FILE_PATTERN,
+  CONTENT_SECRET_PATTERNS,
+};

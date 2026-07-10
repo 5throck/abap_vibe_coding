@@ -35,7 +35,24 @@ If no module matches, assign `CROSS` and note it.
 | graph, call hierarchy, where-used, impact | `Graph Analysis` |
 | API, OData, RFC, IDoc, interface, integration | `Interface` |
 | install, transport, deploy, CTS, system | `Infra` |
+| new feature, new report, new requirement, add functionality, enhance process | `New Requirement` |
 | everything else | `ABAP Dev` |
+
+### 2-A. New Requirement Scaffolding (RTM Stage 1)
+
+If classified as `New Requirement` (net-new functional scope, not a bug fix or one-off
+investigation), scaffold a formal deliverable folder in addition to the task file:
+
+```bash
+bun "${CLAUDE_PLUGIN_ROOT:-.}/scripts/new-requirement.ts" "<short requirement title>" --module <MODULE> --owner "<Module> Analyst"
+```
+
+This creates `deliverables/REQ-NNN-<slug>/01_srs.md` pre-filled with the REQ ID and title, and
+adds a `Stage 1 / Draft` row to the RTM table in `deliverables/index.md`. The Module Analyst
+then fills in `01_srs.md` during §1 Business Analysis — see
+[deliverables/index.md — Workflow Stages](../../deliverables/index.md#workflow-stages--responsible-agents)
+for the full Stage 1→5 ownership chain. Skip this step for `Debug`, `Graph Analysis`, `Interface`,
+and `Infra` classifications — those are scoped fixes/investigations, not new RTM-tracked scope.
 
 ### 3. Create Task File
 

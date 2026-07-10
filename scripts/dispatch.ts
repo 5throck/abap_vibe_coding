@@ -12,6 +12,7 @@
  */
 
 import path from "node:path";
+import type { SerialAgentTask } from "./dispatch-serial.ts";
 
 const scriptDir = path.dirname(import.meta.path);
 const projectRoot = path.resolve(scriptDir, "..");
@@ -20,7 +21,7 @@ interface ParallelAgentTask {
   description: string;
   role: string;
   task: string;
-  priority?: string;
+  priority?: 'high' | 'medium' | 'low';
 }
 
 interface SerialOptions {
@@ -128,11 +129,12 @@ async function runParallel(args: string[]): Promise<void> {
     if (args[i] === '--task' && args[i + 1]) {
       const parts = args[i + 1].split(':');
       if (parts.length >= 3) {
+        const priority = parts[3] === 'high' || parts[3] === 'low' ? parts[3] : 'medium';
         tasks.push({
           description: parts[0],
           role: parts[1],
           task: parts[2],
-          priority: parts[3] || 'medium'
+          priority
         });
       }
       i++;
@@ -164,7 +166,7 @@ async function runSerial(args: string[]): Promise<void> {
 
   // Check for custom pipeline
   const pipelineIndex = args.indexOf('--pipeline');
-  let pipeline: unknown;
+  let pipeline: SerialAgentTask[] | undefined;
 
   if (pipelineIndex >= 0 && args[pipelineIndex + 1]) {
     const pipelinePath = path.resolve(projectRoot, args[pipelineIndex + 1]);
@@ -181,7 +183,7 @@ async function runSerial(args: string[]): Promise<void> {
   const dispatchModule = await import('./dispatch-serial.ts');
 
   if (pipeline) {
-    await dispatchModule.dispatchSerial(pipeline as SerialOptions[], options);
+    await dispatchModule.dispatchSerial(pipeline, options);
   } else {
     // Use default pipeline from module
     await dispatchModule.runDispatcher(options);

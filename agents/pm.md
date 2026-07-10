@@ -52,7 +52,7 @@ Follow the strictly structured **6-step Harness Engineering workflow**:
 
 ### 5. Implementation & Verification (Developer & QA)
 - `code-writer` serial implementation → `test-runner` QA validation.
-- Enforce the mandatory post-write chain: `SyntaxCheck` → `RunUnitTests` → `RunATCCheck`.
+- Enforce the mandatory post-write chain: `SyntaxCheck` → `RunUnitTests` → `GetCodeCoverage` → `RunATCCheck`.
 
 ### 6. Finalization (PM Final Step)
 - Execute `bun scripts/vsp-audit.ts` to audit documentation.

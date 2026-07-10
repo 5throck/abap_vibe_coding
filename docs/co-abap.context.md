@@ -77,7 +77,7 @@ Required env keys (see `.env.sample`):
 |-------|------|------|--------|
 | Architect | `agents/architect.md` | Technical Execution Lead — pattern selection, execution sequencing | active |
 | ABAP Developer | `agents/code-writer.md` | ABAP implementation via WriteSource/EditSource | active |
-| QA Engineer | `agents/test-runner.md` | SyntaxCheck → RunUnitTests → RunATCCheck | active |
+| QA Engineer | `agents/test-runner.md` | SyntaxCheck → RunUnitTests → GetCodeCoverage → RunATCCheck | active |
 | DBA | `agents/dba.md` | Table/CDS/index design, SQL performance tuning | active |
 | DevOps/Admin | `agents/devops-admin.md` | Transport management, infrastructure install | active |
 | Interface Expert | `agents/interface-expert.md` | OData/RFC/IDoc interface design | active |
@@ -101,8 +101,10 @@ Required env keys (see `.env.sample`):
 |-------|-----------|---------|--------|
 | ABAP Development | `.agents/skills/abap-dev/` | Core SAP ABAP development workflow | active |
 | Desktop App Fallback | `.agents/skills/desktop-app-fallback/` | Manual post-write QA for Claude Code Desktop App | active |
+| Dump Monitoring | `.agents/skills/dump-monitor/` | Standardized ListDumps/GetDump health check routed to /triage | active |
 | Meeting | `.agents/skills/meeting/` | Shortcut alias for meeting-facilitation | active |
 | Meeting Facilitation | `.agents/skills/meeting-facilitation/` | Structured multi-agent meetings for decisions | active |
+| Performance Tuning | `.agents/skills/performance-tuning/` | Standardized trace/SQL/call-graph analysis for slow programs and large-table access | active |
 | Post-Write Chain | `.agents/skills/post-write-chain/` | Mandatory QA chain after WriteSource/EditSource | active |
 | Project Review | `.agents/skills/project-review/` | Comprehensive parallel review using specialist agents | active |
 | SAP CO — Controlling | `.agents/skills/sap-co/` | CO module: cost centers, internal orders, CO-PA | active |
@@ -138,6 +140,7 @@ Required env keys (see `.env.sample`):
 | `retry-handler.ts` | Error recovery with 3-retry limit and exponential backoff | active |
 | `vsp-audit.ts` | Legacy audit wrapper (delegates to audit.ts) | active |
 | `vsp-task.ts` | Create task files from template | active |
+| `new-requirement.ts` | Scaffold `deliverables/REQ-NNN-slug/01_srs.md` and register RTM row (Stage 1) | active |
 | `setup.ts` | Project environment setup | active |
 | `scratch-cleanup.ts` | Scratch workspace hygiene (temp purge, task archival, status) | active |
 | `install-vsp.ts` | VSP (VS Code extension) installation | active |
@@ -153,7 +156,7 @@ Required env keys (see `.env.sample`):
 /triage <request>          # PM classifies — creates task file — parallel research
 
 # 2. After implementation
-/post-write                # SyntaxCheck → RunUnitTests → RunATCCheck
+/post-write                # SyntaxCheck → RunUnitTests → GetCodeCoverage → RunATCCheck
 /transport                 # Create/release CTS transport
 
 # 3. Sync to Git
@@ -227,7 +230,7 @@ See `.mcp.json` for the complete server list.
 - **Naming**: `ZCL_` (class), `ZIF_` (interface), `ZPROG_` (program).
 - **Isolation**: All local `.abap` files must be created ONLY in the `scratch/` directory.
 - **Write Operations**: Use `EditSource` for small changes. Always run `SyntaxCheck` before `WriteSource`.
-- **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` → `RunUnitTests` → `RunATCCheck`). Priority 1 findings block deployment. See [skills/post-write-chain/SKILL.md — Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details. **Note**: If your environment (e.g., Gemini CLI, Claude Desktop App) does not support automatic PostToolUse hooks, you MUST execute this chain manually.
+- **QA Chain**: After any logic change or edit, the `Post-Write Mandatory Chain` MUST be executed (`SyntaxCheck` → `RunUnitTests` → `GetCodeCoverage` → `RunATCCheck`). Priority 1 findings block deployment; coverage below 70% on new objects blocks proceeding to ATC unless waived. See [skills/post-write-chain/SKILL.md — Post-Write Mandatory Chain](../skills/post-write-chain/SKILL.md) for details. **Note**: If your environment (e.g., Gemini CLI, Claude Desktop App) does not support automatic PostToolUse hooks, you MUST execute this chain manually.
 - **Final Audit**: Before any sync/commit, run the `sap:documentation-audit` skill.
 
 ### ABAP SQL Reference (All Agents)
