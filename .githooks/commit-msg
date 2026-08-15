@@ -51,7 +51,12 @@ fi
 FILE_LIST=$(echo "$STAGED" | grep -v "^memory/" | paste -sd ", " - || echo "No files")
 
 # ── Auto-append memory log (skip if dev-sync already wrote this entry) ────────
-if ! grep -qF "## $COMMIT_MSG" "memory/$TODAY.md" 2>/dev/null; then
+# dev-sync.ts's own step-1 log entry uses a fixed "## Session Summary" heading with
+# the commit message as plain body text on the next line — NOT "## $COMMIT_MSG" as a
+# heading. The old pattern only matched this hook's own output format, so it never
+# matched dev-sync's, and every /sync run produced a duplicate entry here. Match the
+# raw message text (regardless of which format wrote it) instead of a heading shape.
+if ! grep -qF "$COMMIT_MSG" "memory/$TODAY.md" 2>/dev/null; then
   SEPARATOR=""
   [ -f "memory/$TODAY.md" ] && SEPARATOR=$'\n---\n\n'
 

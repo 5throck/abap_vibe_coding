@@ -66,7 +66,18 @@ $fileList = if ($stagedFiles.Count -gt 0) { $stagedFiles -join ", " } else { "No
 
 # Auto-append memory log
 $memoryFile = "memory/$today.md"
-$entryExists = Test-Path $memoryFile -and (Get-Content $memoryFile -Raw -Encoding UTF8) -match [regex]::Escape("## $commitMsg")
+# dev-sync.ts's own step-1 log entry uses a fixed "## Session Summary" heading with
+# the commit message as plain body text on the next line — NOT "## $commitMsg" as a
+# heading — so matching that shape never found dev-sync's entry and duplicated it on
+# every /sync run. Match the raw message text instead of a heading shape.
+# `-and` does not short-circuit in PowerShell, so the old one-liner called
+# Get-Content unconditionally and would throw on the first commit of a new day
+# (file not yet created) under $ErrorActionPreference = "Stop"; this splits the
+# existence check out so Get-Content only runs when the file is actually there.
+$entryExists = $false
+if (Test-Path $memoryFile) {
+    $entryExists = (Get-Content $memoryFile -Raw -Encoding UTF8) -match [regex]::Escape($commitMsg)
+}
 
 if (-not $entryExists) {
     $separator = if (Test-Path $memoryFile) { "`n---`n`n" } else { "" }
