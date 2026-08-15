@@ -1,4 +1,4 @@
-# abap_vibe_coding — Project Context
+# co-abap — Project Context
 
 > Shared reference for all AI tools (Claude Code, Gemini CLI, Antigravity).
 > Tool-specific behaviors: CLAUDE.md (Claude Code), GEMINI.md (Gemini/Antigravity).
@@ -7,6 +7,9 @@
 >
 > ⚠️ This file is IMMUTABLE after project creation.
 >    All project-specific changes belong in docs/co-abap.context.md
+
+<!-- WORKSPACE-MANAGED -->
+<!-- variant: co-abap | version: 1.0.0 | common-version: 0.5.3 | upgraded: 2026-08-15 -->
 
 ---
 

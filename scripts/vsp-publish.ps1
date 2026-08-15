@@ -15,7 +15,7 @@ Write-Host "--- Harness Packaging & Publishing Hook ---" -ForegroundColor Cyan
 
 # 1. Resolve and validate target directory (CLAUDE_PLUGIN_ROOT required; no hardcoded fallback)
 if ([string]::IsNullOrWhiteSpace($TargetDir)) {
-    Write-Error "CLAUDE_PLUGIN_ROOT is not set and -TargetDir was not provided.`nUsage: `$env:CLAUDE_PLUGIN_ROOT='C:\path\to\abap_vibe_coding_plugin'; .\scripts\vsp-publish.ps1 -CommitMessage '<message>'"
+    Write-Error "CLAUDE_PLUGIN_ROOT is not set and -TargetDir was not provided.`nUsage: `$env:CLAUDE_PLUGIN_ROOT='C:\path\to\co-abap_plugin'; .\scripts\vsp-publish.ps1 -CommitMessage '<message>'"
     exit 1
 }
 if (-not (Test-Path $TargetDir)) {

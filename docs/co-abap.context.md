@@ -1,4 +1,4 @@
-# abap_vibe_coding — co-abap Configuration
+# co-abap — co-abap Configuration
 
 > Extends docs/context.md. This file IS the customization layer for this project.
 > context.md is IMMUTABLE — all project-specific changes belong here.

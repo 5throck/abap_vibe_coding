@@ -1,4 +1,4 @@
-# Project Review Remediation Design: abap_vibe_coding
+# Project Review Remediation Design: co-abap
 
 **Date:** 2026-07-09
 **Status:** Approved

@@ -39,7 +39,7 @@ First stable release cut — consolidates all changes accumulated since 0.5.0 (2
 - **[2026-07-05]**: feat: implement deliverables workflow and templates
 - **[2026-07-05]**: feat: expose skills to gemini and fix verify-skills.ts
 - **[2026-07-01]**: docs: port mig improvements and fix encoding regressions
-- **[2026-07-01]**: Ported agent lifecycle CLI scripts (`scripts/agent-create.ts`, `scripts/agent-delete.ts`, `scripts/agent-list.ts`, `scripts/agent-verify.ts`), docs/skills README indexes with Korean translations, and root `package.json`/`bun.lock` from the `abap_vibe_coding_mig` sibling project.
+- **[2026-07-01]**: Ported agent lifecycle CLI scripts (`scripts/agent-create.ts`, `scripts/agent-delete.ts`, `scripts/agent-list.ts`, `scripts/agent-verify.ts`), docs/skills README indexes with Korean translations, and root `package.json`/`bun.lock` from the `co-abap_mig` sibling project.
 - **[2026-05-25]**: docs: comprehensive documentation improvement and synchronization
 - **[2026-05-24]**: Bun-based single-source scripts (.ts) replacing dual .sh/.ps1 maintenance — health-check.ts, audit.ts, sync-mcp.ts, memory-index.ts
 - **[2026-05-24]**: `.mcp.json` as Single Source of Truth for MCP configuration across all platforms (Claude Code, Gemini, Antigravity)

@@ -217,7 +217,7 @@ pwsh --version
 **Windows** (Git Bash):
 ```bash
 # Clone directly into your home folder
-git clone https://github.com/<your-org>/abap_vibe_coding.git ~/abap
+git clone https://github.com/<your-org>/co-abap.git ~/abap
 cd ~/abap
 ```
 
@@ -227,7 +227,7 @@ cd ~/abap
 **macOS/Linux**:
 ```bash
 # Clone directly into your home folder
-git clone https://github.com/<your-org>/abap_vibe_coding.git ~/abap
+git clone https://github.com/<your-org>/co-abap.git ~/abap
 cd ~/abap
 ```
 

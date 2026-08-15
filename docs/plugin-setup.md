@@ -28,8 +28,8 @@ claude --plugin-dir /path/to/abap-harness-engineering
 
 ### Method B. Permanent Consumer Repository Installation (Recommended)
 Copy the plugin repository folder directly into your user home's plugin folder to make it globally discoverable by Claude Code:
-- **Windows**: Copy the folder to `%USERPROFILE%\.claude\plugins\abap-vibe-coding`
-- **macOS/Linux**: Copy the folder to `~/.claude/plugins/abap-vibe-coding`
+- **Windows**: Copy the folder to `%USERPROFILE%\.claude\plugins\co-abap`
+- **macOS/Linux**: Copy the folder to `~/.claude/plugins/co-abap`
 
 *(Note: Once published, this can also be installed directly from the Claude Code Extension Marketplace)*
 
@@ -110,10 +110,10 @@ Once successfully registered, you can use these premium slash-commands inside yo
 
 For detailed guidelines regarding the complete Harness Governance, Agent role responsibilities, Fiori/BSP tool sets, and troubleshooting:
 
-- **Harness Engineering Core**: [abap_vibe_coding GitHub Repository](https://github.com/5throck/abap_vibe_coding)
-- **Governance & Roles**: [AGENTS.md](https://github.com/5throck/abap_vibe_coding/blob/main/AGENTS.md)
-- **Tool Boundaries**: [docs/tooling-matrix.md](https://github.com/5throck/abap_vibe_coding/blob/main/docs/tooling-matrix.md)
-- **MCP Server Details**: [docs/mcp_usage.md](https://github.com/5throck/abap_vibe_coding/blob/main/docs/mcp_usage.md)
+- **Harness Engineering Core**: [co-abap GitHub Repository](https://github.com/5throck/co-abap)
+- **Governance & Roles**: [AGENTS.md](https://github.com/5throck/co-abap/blob/main/AGENTS.md)
+- **Tool Boundaries**: [docs/tooling-matrix.md](https://github.com/5throck/co-abap/blob/main/docs/tooling-matrix.md)
+- **MCP Server Details**: [docs/mcp_usage.md](https://github.com/5throck/co-abap/blob/main/docs/mcp_usage.md)
 
 ---
 *Last Updated: 2026-07-08*

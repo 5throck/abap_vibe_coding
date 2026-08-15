@@ -1,6 +1,6 @@
 # Global Deliverables Index
 
-This index serves as the single source of truth for tracking software requirements, their implementation progress, and quality gate verification status within the `abap_vibe_coding` project.
+This index serves as the single source of truth for tracking software requirements, their implementation progress, and quality gate verification status within the `co-abap` project.
 
 ## Requirements Traceability Matrix
 
