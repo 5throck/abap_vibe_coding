@@ -55,6 +55,9 @@ scratch/temp/
 # CodeGraph Index
 .codegraph/
 
+# Antigravity/ZCode session-local state (plans, config -- never shared)
+.zcode/
+
 # OpenChrome MCP local cache
 .openchrome/
 

@@ -8,7 +8,12 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+### Fixed
+- **[2026-08-15]**: fix(gitignore): stop tracking `.zcode/plans/*.md` (Antigravity/ZCode session-local plan files) — added `.zcode/` to `.gitignore` and untracked the 2 files that had been committed; ported from an upstream ai-workspace-standards fix
+
 ### Changed
+- **[2026-08-15]**: --body-file .git/sync-pr-body.md fix(gitignore): stop tracking .zcode session-local state
+
 - **[2026-08-15]**: chore: update PM persona, bump version, and minor doc/config tweaks
 
 ### Added
