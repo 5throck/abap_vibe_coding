@@ -28,8 +28,7 @@
 | `scratch-cleanup.ts` | 1.0.0 | Scratch workspace hygiene (temp purge, task archival, status) | L1 |
 | `install-vsp.ts` | 1.0.0 | VSP (VS Code extension) installation | L1 |
 | `install-bun.ts` | 1.0.0 | Bun runtime installation | L1 |
-| `vsp-publish.sh` | — | Publish VSP binary (Unix) | L1 |
-| `vsp-publish.ps1` | — | Publish VSP binary (Windows) | L1 |
+| `vsp-publish.ts` | 1.0.0 | Package and publish core framework assets to the plugin repository | L1 |
 | `git-sync.ts` | 1.0.0 | ~~Simple commit-and-push utility~~ Superseded by `dev-sync.ts` | L1 (deprecated) |
 
 ## Test Files
@@ -39,8 +38,6 @@ are not part of the operational CLI surface.
 
 | Test File | Version | Covers |
 |-----------|---------|--------|
-| `audit.test.ts` | 1.0.0 | `audit.ts` |
-| `dev-sync.test.ts` | 1.0.0 | `dev-sync.ts` |
 | `new-requirement.test.ts` | 1.0.0 | `new-requirement.ts` |
 | `retry-handler.test.ts` | 1.0.0 | `retry-handler.ts` |
 | `scratch-cleanup.test.ts` | 1.0.0 | `scratch-cleanup.ts` |
@@ -48,6 +45,7 @@ are not part of the operational CLI surface.
 | `sync-md.test.ts` | 1.0.0 | `sync-md.ts` |
 | `sync-skills.test.ts` | 1.0.0 | `sync-skills.ts` |
 | `verify-skills.test.ts` | 1.0.0 | `verify-skills.ts` |
+| `vsp-publish.test.ts` | 1.0.0 | `vsp-publish.ts` |
 
 ## Layer Legend
 - **L0**: Workspace-root common scripts (managed by templates/common)

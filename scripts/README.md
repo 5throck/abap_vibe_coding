@@ -22,6 +22,7 @@ All project automation scripts, implemented in **TypeScript** and running on the
 | `install-bun.ts` | Bun runtime installer |
 | `install-vsp.ts` | VSP binary installer from GitHub Releases |
 | `setup.ts` | Post-scaffold environment setup (OS/stack detection, deps, licenses) |
+| `vsp-publish.ts` | Package and publish core framework assets to the plugin repository (requires `CLAUDE_PLUGIN_ROOT`) |
 
 ### Agent Orchestration Scripts
 
@@ -36,12 +37,6 @@ All project automation scripts, implemented in **TypeScript** and running on the
 | `dispatch-parallel.ts` | Parallel agent dispatcher |
 | `dispatch-serial.ts` | Serial pipeline executor with dependencies |
 | `retry-handler.ts` | Retry logic with exponential backoff |
-
-### Legacy (Shell)
-
-| Script | Purpose |
-|--------|---------|
-| `vsp-publish.sh` / `vsp-publish.ps1` | Plugin asset packaging (to be converted in future iteration) |
 
 ## NPM Scripts
 

@@ -22,6 +22,7 @@
 | `install-bun.ts` | Bun 런타임 설치 |
 | `install-vsp.ts` | GitHub Releases에서 VSP 바이너리 설치 |
 | `setup.ts` | 스캐폴드 후 환경 설정 (OS/스택 감지, 의존성, 라이선스 감사) |
+| `vsp-publish.ts` | 핵심 프레임워크 에셋을 플러그인 저장소에 패키징 및 배포 (`CLAUDE_PLUGIN_ROOT` 필요) |
 
 ### 에이전트 오케스트레이션 스크립트
 
@@ -36,12 +37,6 @@
 | `dispatch-parallel.ts` | 병렬 에이전트 디스패처 |
 | `dispatch-serial.ts` | 종속성이 있는 직렬 에이전트 디스패처 |
 | `retry-handler.ts` | 지수 백오프가 포함된 재시도 로직 |
-
-### 레거시 (셸)
-
-| 스크립트 | 목적 |
-|---------|------|
-| `vsp-publish.sh` / `vsp-publish.ps1` | 플러그인 에셋 패키징 (향후 이터레이션에서 변환 예정) |
 
 ## NPM 스크립트
 
