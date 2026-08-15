@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# .githooks/post-checkout
+
+PREV_COMMIT=$1
+POST_COMMIT=$2
+IS_BRANCH_CHECKOUT=$3
+
+# Only trigger on branch checkouts
+if [ "$IS_BRANCH_CHECKOUT" != "1" ]; then
+    exit 0
+fi
+
+# Get the current branch name
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+# ── Validate branch name before embedding in any prompt ───────────────────────
+# Reject branch names containing characters that could corrupt shell strings
+# or AI CLI prompts (quotes, newlines, semicolons, percent signs, etc.)
+if ! echo "$BRANCH_NAME" | grep -qE '^[a-zA-Z0-9/_.-]+$'; then
+    echo "⚠️  post-checkout: branch name '$BRANCH_NAME' contains unsafe characters."
+    echo "   AI auto-orchestration skipped. Rename the branch to use only: a-z A-Z 0-9 / _ . -"
+    exit 0
+fi
+
+# Set AI_AUTOSTART=0 in your shell profile to disable automatic AI session launch on branch creation.
+if [ "${AI_AUTOSTART:-1}" = "0" ]; then
+  exit 0
+fi
+
+# Lock guard: prevent concurrent background AI sessions when the user checks out
+# multiple branches in quick succession. The AI process only reads/analyzes and
+# writes to the log file, so file conflicts are unlikely — the lock primarily
+# prevents redundant parallel sessions.
+LOCK_FILE="$(git rev-parse --git-dir)/post-checkout-ai.lock"
+
+if [ -f "$LOCK_FILE" ]; then
+  echo "[post-checkout] AI session already running, skipping."
+  exit 0
+fi
+
+touch "$LOCK_FILE"
+trap "rm -f '$LOCK_FILE'" EXIT
+
+# Trigger only for new feature/design/fix branches
+if [[ "$BRANCH_NAME" == "feat/"* || "$BRANCH_NAME" == "feature/"* || "$BRANCH_NAME" == "design/"* || "$BRANCH_NAME" == "fix/"* ]]; then
+    echo "=========================================================="
+    echo "🤖 AIG Auto-Orchestration Triggered!"
+    echo "Branch: $BRANCH_NAME"
+    echo "Starting PM Agent Kickoff in the background..."
+    echo "=========================================================="
+
+    # Build prompt from safe, validated branch name
+    PROMPT="A new branch '${BRANCH_NAME}' was created. Please lead a PM kickoff meeting with all agents to derive improvement plans and create an implementation plan for this branch. Reference Phase 0/1."
+
+    # Log location for the background process output — inside .git/, never committed.
+    LOG_FILE="$(git rev-parse --git-dir)/post-checkout-ai.log"
+
+    # Platform-neutral AI CLI detection — uses whichever CLI is installed:
+    # Claude Code, Gemini CLI, Antigravity CLI, or Codex.
+    if command -v claude &> /dev/null; then
+        claude -p "$PROMPT" > "$LOG_FILE" 2>&1 &
+        echo "✅ Claude Code launched in the background."
+        echo "   Output log: $LOG_FILE"
+    elif command -v gemini &> /dev/null; then
+        gemini -p "$PROMPT" > "$LOG_FILE" 2>&1 &
+        echo "✅ Gemini CLI launched in the background."
+        echo "   Output log: $LOG_FILE"
+    elif command -v antigravity &> /dev/null; then
+        antigravity pm --prompt "$PROMPT" > "$LOG_FILE" 2>&1 &
+        echo "✅ Antigravity CLI launched in the background."
+        echo "   Output log: $LOG_FILE"
+    elif command -v codex &> /dev/null; then
+        codex --prompt "$PROMPT" > "$LOG_FILE" 2>&1 &
+        echo "✅ Codex CLI launched in the background."
+        echo "   Output log: $LOG_FILE"
+    else
+        echo "⚠️ No supported AI CLI found (claude, gemini, antigravity, codex)."
+        echo "   Please run the kickoff manually:"
+        echo "   'Let's start the PM agent kickoff meeting for this project.'"
+    fi
+    echo "=========================================================="
+fi
+
+exit 0

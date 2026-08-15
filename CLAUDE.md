@@ -107,3 +107,14 @@ Agent(
 )
 ```
 When dispatching subagents defined in `agents/*.md`, translate their configured tier into the corresponding short alias above.
+
+
+<!-- COMMON-CLAUDE:START -->
+## Git & PR Additions (Claude Code)
+
+All shared Git/PR rules are in [docs/context.md](docs/context.md). Claude Code-specific additions:
+
+- **PR Language**: Governed by [docs/context.md](docs/context.md). All PR titles, bodies, and review comments must be written in English - no exceptions.
+
+*Last Updated: 2026-08-15 — removed redundant N-1/N boilerplate rows; /sync already covers lifecycle + audit + commit + push + PR; previous: 2026-06-21 inlined N-1/N rows*
+<!-- COMMON-CLAUDE:END -->

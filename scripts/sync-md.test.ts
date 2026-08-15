@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Tests for sync-md.ts
  * Covers: MEMORY.md initialisation, entry append, dedup logic

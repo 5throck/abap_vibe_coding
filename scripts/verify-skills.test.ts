@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Tests for verify-skills.ts
  * Covers: extractSkillMetadata, verifySkill with valid/empty/malformed content

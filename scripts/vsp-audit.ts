@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 // vsp-audit.ts - Legacy wrapper — delegates to audit.ts
 // Usage: bun scripts/vsp-audit.ts
 
