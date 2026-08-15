@@ -1,7 +1,6 @@
 # SAP ABAP를 위한 Harness Engineering
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Contributing](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Ready-blue)](https://claude.com/claude-code)
 
@@ -167,7 +166,6 @@ bun run test        # bun test scripts/ (100개 이상의 테스트)
 
 - 🐛 [이슈 신고](https://github.com/5throck/co-abap/issues)
 - 💡 [기능 요청](https://github.com/5throck/co-abap/discussions)
-- 📖 [기여 가이드](CONTRIBUTING.md)
 
 ---
 
@@ -183,7 +181,7 @@ bun run test        # bun test scripts/ (100개 이상의 테스트)
 ## 라이선스
 
 이 프로젝트는 **GNU Affero General Public License v3.0 (AGPL v3)** 라이선스를 적용합니다.
-자세한 내용은 [LICENSE](LICENSE)를 참조하세요. 상업용 라이선스도 제공됩니다 — [CONTRIBUTING.md](CONTRIBUTING.md)를 확인하세요.
+자세한 내용은 [LICENSE](LICENSE)를 참조하세요.
 
 ---
 

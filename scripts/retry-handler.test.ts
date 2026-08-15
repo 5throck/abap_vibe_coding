@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Tests for retry-handler.ts
  * Covers: withRetry success/failure/backoff, classifyError, getRecoverySuggestion

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 // install-vsp.ts - Downloads and installs the vsp binary from GitHub Releases
 // Source: https://github.com/oisee/vibing-steampunk
 // Usage: bun scripts/install-vsp.ts [version]

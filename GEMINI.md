@@ -177,3 +177,22 @@ The PM agent MUST leverage the **`superpowers`** plugin (e.g., `subagent-driven-
 
 
 
+
+
+<!-- COMMON-GEMINI:START -->
+## Pre-Edit Quality Gate (All Platforms)
+
+Before editing any file for the **FIRST time in a session**, the agent MUST:
+
+1. Search for all files that import or require the target file
+2. Identify data schemas, interfaces, and type definitions the file exports
+3. Review the user's instructions for explicit scope constraints
+4. Briefly summarize findings (1-3 sentences) before proceeding
+
+| Platform | Enforcement | Details |
+|----------|:-----------:|---------|
+| Gemini CLI | ✅ Hook (automatic) | BeforeTool `deny` mode — blocked until agent investigates |
+| Antigravity | ✅ Prompt (manual) | Hooks do not fire — agent self-enforces |
+
+If the hook is not active (Antigravity), agents must still follow the 4-step process before making first edits.
+<!-- COMMON-GEMINI:END -->
