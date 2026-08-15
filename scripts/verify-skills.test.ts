@@ -168,7 +168,7 @@ describe("skill name extraction for SKILLS.md index (regression)", () => {
   test("extracts the skill directory name from a Windows absolute path (path.win32, host-independent)", () => {
     // Force win32 semantics so this assertion is meaningful on Linux CI runners too —
     // the default `path` import is POSIX on Linux and would not split on backslashes there.
-    const winPath = "C:\\git\\ai_workspace\\Projects\\abap_vibe_coding\\skills\\performance-tuning\\SKILL.md";
+    const winPath = "C:\\git\\ai_workspace\\Projects\\co-abap\\skills\\performance-tuning\\SKILL.md";
     expect(path.win32.basename(path.win32.dirname(winPath))).toBe("performance-tuning");
   });
 

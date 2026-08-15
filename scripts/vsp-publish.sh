@@ -15,7 +15,7 @@ if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
     TARGET_DIR="$CLAUDE_PLUGIN_ROOT"
 else
     echo "  [!] CLAUDE_PLUGIN_ROOT is not set."
-    echo "  [!] Usage: CLAUDE_PLUGIN_ROOT=/path/to/abap_vibe_coding_plugin bash ./scripts/vsp-publish.sh \"<message>\""
+    echo "  [!] Usage: CLAUDE_PLUGIN_ROOT=/path/to/co-abap_plugin bash ./scripts/vsp-publish.sh \"<message>\""
     exit 1
 fi
 

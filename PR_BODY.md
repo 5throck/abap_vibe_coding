@@ -1,6 +1,6 @@
 ## Why
 
-Comprehensive documentation improvement and synchronization between the reference implementation (`abap_vibe_coding`) and the plugin distribution (`abap_vibe_coding_plugin`). This ensures consistency across both projects.
+Comprehensive documentation improvement and synchronization between the reference implementation (`co-abap`) and the plugin distribution (`co-abap_plugin`). This ensures consistency across both projects.
 
 ## What Changed
 

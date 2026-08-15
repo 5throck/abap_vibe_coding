@@ -165,15 +165,15 @@ bun run test        # bun test scripts/ (100개 이상의 테스트)
 
 ## 커뮤니티
 
-- 🐛 [이슈 신고](https://github.com/5throck/abap_vibe_coding/issues)
-- 💡 [기능 요청](https://github.com/5throck/abap_vibe_coding/discussions)
+- 🐛 [이슈 신고](https://github.com/5throck/co-abap/issues)
+- 💡 [기능 요청](https://github.com/5throck/co-abap/discussions)
 - 📖 [기여 가이드](CONTRIBUTING.md)
 
 ---
 
 ## 관련 문서
 
-- [플러그인 배포판](https://github.com/5throck/abap_vibe_coding_plugin) - 즉시 사용 가능한 Claude Code 플러그인
+- [플러그인 배포판](https://github.com/5throck/co-abap_plugin) - 즉시 사용 가능한 Claude Code 플러그인
 - [에이전트 역할](AGENTS.md) - 전체 에이전트 카탈로그 및 워크플로우
 - [설치 가이드](docs/setup-guide.md) - 환경 설정
 - [변경 로그](CHANGELOG.md) - 버전 기록

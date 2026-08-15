@@ -17,3 +17,4 @@
 | [2026-07-08](2026-07-08.md) | chore: bump devDependencies (@types/node, typescript) |
 | [2026-07-09](2026-07-09.md) | feat: add .agents/skills/ and sync-skills.ts for 3-platform skill distribution |
 | [2026-07-10](2026-07-10.md) | fix: comprehensive project review remediation (30 issues) |
+| [2026-08-15](2026-08-15.md) | chore: update PM persona, bump version, and minor doc/config tweaks |

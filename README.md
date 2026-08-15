@@ -165,15 +165,15 @@ Locally, the same gates run automatically after every `WriteSource`/`EditSource`
 
 ## Community
 
-- 🐛 [Report Issues](https://github.com/5throck/abap_vibe_coding/issues)
-- 💡 [Feature Requests](https://github.com/5throck/abap_vibe_coding/discussions)
+- 🐛 [Report Issues](https://github.com/5throck/co-abap/issues)
+- 💡 [Feature Requests](https://github.com/5throck/co-abap/discussions)
 - 📖 [Contributing Guide](CONTRIBUTING.md)
 
 ---
 
 ## Related Documentation
 
-- [Plugin Distribution](https://github.com/5throck/abap_vibe_coding_plugin) - Ready-to-use Claude Code plugin
+- [Plugin Distribution](https://github.com/5throck/co-abap_plugin) - Ready-to-use Claude Code plugin
 - [Agent Roles](AGENTS.md) - Complete agent catalog and workflows
 - [Setup Guide](docs/setup-guide.md) - Environment configuration
 - [Changelog](CHANGELOG.md) - Version history

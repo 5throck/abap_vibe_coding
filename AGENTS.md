@@ -9,6 +9,8 @@
 > Shared engineering rules (memory logging, language, file isolation, post-write chain, git) live in [docs/context.md](docs/context.md#project-wide-rules-all-tools).
 > Tool-specific overrides live in [CLAUDE.md](CLAUDE.md), [GEMINI.md](GEMINI.md), and [.codex/](.codex/).
 
+<!-- variant: co-abap | version: 1.0.0 | upgraded: 2026-08-15 -->
+
 This file indexes the agent roles and defines the orchestration workflow for the ABAP development ecosystem, organized into Business and Technical groups.
 
 ## 🏢 Business Group (Project Governance & Analysis)
@@ -21,6 +23,8 @@ This file indexes the agent roles and defines the orchestration workflow for the
 - **Subagent prompt**: [`agents/pm.md`](agents/pm.md)
 
 ### Business Analysts
+
+<!-- VARIANT-AGENTS-START -->
 
 Each analyst activates on matching trigger keywords, queries SAP directly via read-only MCP tools, produces a structured PRD/AC output, and hands off to the Technical Group.
 Load the matching `agents/<module>-analyst.md` file at activation for tools, output format, and domain knowledge.
@@ -72,6 +76,8 @@ Load the matching `agents/<module>-analyst.md` file at activation for tools, out
 - **Trigger keywords**: Cost Center, Internal Order, Profitability Analysis, CO-PA, Allocation, CO, KS*, KO*, CSKS, CSKB, COEP, COSP, CE1*
 - **Subagent prompt**: [`agents/co-analyst.md`](agents/co-analyst.md)
 - **Handoff out**: Allocation Logic → Architect, CO-PA Mapping → DBA
+
+<!-- VARIANT-AGENTS-END -->
 
 ---
 
