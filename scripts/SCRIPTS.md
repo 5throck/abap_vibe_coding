@@ -1,31 +1,53 @@
 # Scripts Registry
 
-| Script | Purpose | Layer |
-|--------|---------|-------|
-| `dev-sync.ts` | Full sync pipeline (memlog → changelog → audit → commit → PR) | L0+L1 |
-| `sync-skills.ts` | 3-platform skill distribution (.agents → .claude/.gemini) | L0+L1 |
-| `audit.ts` | Documentation integrity audit | L0+L1 |
-| `sync-md.ts` | Update memory/MEMORY.md index | L0+L1 |
-| `sync-mcp.ts` | Propagate .mcp.json (SSOT) to .claude/.gemini settings | L0+L1 |
-| `verify-skills.ts` | Skill auto-discovery and index generation | L0+L1 |
-| `agent-verify.ts` | Agent file ↔ documentation synchronization check | L0+L1 |
-| `agent-create.ts` | Create new agent files from template | L0+L1 |
-| `agent-list.ts` | List all agents with metadata | L0+L1 |
-| `agent-delete.ts` | Delete agent files | L0+L1 |
-| `dispatch.ts` | Main CLI dispatcher with parallel/serial modes | L1 |
-| `dispatch-parallel.ts` | Parallel agent dispatcher for read-only tasks | L1 |
-| `dispatch-serial.ts` | Serial pipeline executor for write operations | L1 |
-| `retry-handler.ts` | Error recovery with 3-retry limit and exponential backoff | L1 |
-| `vsp-audit.ts` | VSP configuration audit | L1 |
-| `vsp-task.ts` | Create task files from template | L1 |
-| `new-requirement.ts` | Scaffold deliverables/REQ-NNN-slug/01_srs.md and register RTM row | L1 |
-| `setup.ts` | Project environment setup | L1 |
-| `scratch-cleanup.ts` | Scratch workspace hygiene (temp purge, task archival, status) | L1 |
-| `install-vsp.ts` | VSP (VS Code extension) installation | L1 |
-| `install-bun.ts` | Bun runtime installation | L1 |
-| `vsp-publish.sh` | Publish VSP binary (Unix) | L1 |
-| `vsp-publish.ps1` | Publish VSP binary (Windows) | L1 |
-| `git-sync.ts` | ~~Simple commit-and-push utility~~ Superseded by `dev-sync.ts` | L1 (deprecated) |
+| Script | Version | Purpose | Layer |
+|--------|---------|---------|-------|
+| `dev-sync.ts` | 1.5.1 | Full sync pipeline (memlog → changelog → audit → commit → PR) | L0+L1 |
+| `sync-skills.ts` | 1.4.1 | 3-platform skill distribution (.agents → .claude/.gemini) | L0+L1 |
+| `audit.ts` | 2.10.17 | Documentation integrity audit | L0+L1 |
+| `sync-md.ts` | 1.2.0 | Update memory/MEMORY.md index | L0+L1 |
+| `sync-mcp.ts` | 1.0.0 | Propagate .mcp.json (SSOT) to .claude/.gemini settings | L0+L1 |
+| `verify-skills.ts` | 1.0.0 | Skill auto-discovery and index generation | L0+L1 |
+| `agent-verify.ts` | 1.0.0 | Agent file ↔ documentation synchronization check | L0+L1 |
+| `agent-create.ts` | 1.0.0 | Create new agent files from template | L0+L1 |
+| `agent-list.ts` | 1.0.0 | List all agents with metadata | L0+L1 |
+| `agent-delete.ts` | 1.0.0 | Delete agent files | L0+L1 |
+| `validate-docs-links.ts` | 1.0.0 | Scan Markdown documentation for dead links and file reference errors | L0+L1 |
+| `validate-md-language.ts` | 1.5.0 | Detect undeclared Korean content in official markdown files | L0+L1 |
+| `verify-readme-sync.ts` | 1.1.1 | Verify README.md / README_ko.md structural parity | L0+L1 |
+| `analyze-git-history.ts` | 1.0.1 | Analyze git commit history for reporting/insights | L0+L1 |
+| `cleanup-completed-md.ts` | 1.0.1 | Archive/clean completed markdown task files | L0+L1 |
+| `dispatch.ts` | 1.0.0 | Main CLI dispatcher with parallel/serial modes | L1 |
+| `dispatch-parallel.ts` | 1.0.0 | Parallel agent dispatcher for read-only tasks | L1 |
+| `dispatch-serial.ts` | 1.0.0 | Serial pipeline executor for write operations | L1 |
+| `retry-handler.ts` | 1.0.0 | Error recovery with 3-retry limit and exponential backoff | L1 |
+| `vsp-audit.ts` | 1.0.0 | VSP configuration audit | L1 |
+| `vsp-task.ts` | 1.0.0 | Create task files from template | L1 |
+| `new-requirement.ts` | 1.0.0 | Scaffold deliverables/REQ-NNN-slug/01_srs.md and register RTM row | L1 |
+| `setup.ts` | 1.0.0 | Project environment setup | L1 |
+| `scratch-cleanup.ts` | 1.0.0 | Scratch workspace hygiene (temp purge, task archival, status) | L1 |
+| `install-vsp.ts` | 1.0.0 | VSP (VS Code extension) installation | L1 |
+| `install-bun.ts` | 1.0.0 | Bun runtime installation | L1 |
+| `vsp-publish.sh` | — | Publish VSP binary (Unix) | L1 |
+| `vsp-publish.ps1` | — | Publish VSP binary (Windows) | L1 |
+| `git-sync.ts` | 1.0.0 | ~~Simple commit-and-push utility~~ Superseded by `dev-sync.ts` | L1 (deprecated) |
+
+## Test Files
+
+Unit test files under `scripts/*.test.ts` are versioned alongside the script they cover but
+are not part of the operational CLI surface.
+
+| Test File | Version | Covers |
+|-----------|---------|--------|
+| `audit.test.ts` | 1.0.0 | `audit.ts` |
+| `dev-sync.test.ts` | 1.0.0 | `dev-sync.ts` |
+| `new-requirement.test.ts` | 1.0.0 | `new-requirement.ts` |
+| `retry-handler.test.ts` | 1.0.0 | `retry-handler.ts` |
+| `scratch-cleanup.test.ts` | 1.0.0 | `scratch-cleanup.ts` |
+| `sync-mcp.test.ts` | 1.0.0 | `sync-mcp.ts` |
+| `sync-md.test.ts` | 1.0.0 | `sync-md.ts` |
+| `sync-skills.test.ts` | 1.0.0 | `sync-skills.ts` |
+| `verify-skills.test.ts` | 1.0.0 | `verify-skills.ts` |
 
 ## Layer Legend
 - **L0**: Workspace-root common scripts (managed by templates/common)

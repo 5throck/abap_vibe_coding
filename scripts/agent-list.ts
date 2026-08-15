@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Agent Lister CLI
  * Lists all agents in the agents/ directory with metadata

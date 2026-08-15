@@ -1,149 +1,224 @@
 #!/usr/bin/env bun
+// @version 1.4.1
 /**
- * sync-skills.ts — L0 → L1 platform skill distribution
+ * sync-skills.ts
+ * Distributes skills from the SSOT (skills/) to .claude/skills/, .gemini/skills/, and .agents/skills/.
+ * Also syncs shortcut skills (sync, meeting) from .agents/skills/ back to .claude and .gemini.
  *
- * Distributes skill definitions from the canonical skills/ (L0 SSOT) to
- * all three platform directories:
- *   - .claude/skills/   (Claude Code)
- *   - .gemini/skills/   (Gemini CLI / Antigravity)
- *   - .agents/skills/   (Antigravity-specific shortcuts)
+ * Phase 1: Copy every skill directory (containing SKILL.md) to all three platform skill directories.
+ * Phase 2: Back-sync shortcut skills that only exist in .agents/skills/ to .claude and .gemini.
+ * Special: meeting-facilitation SKILL.md is also synced to .claude/commands/meeting.md and .gemini/commands/meeting.md.
  *
- * Phase 1: skills/ → all platform skill directories
- * Phase 2: .agents/skills/ shortcut skills → .claude/skills/ and .gemini/skills/
+ * Idempotent: a target is only overwritten when its content differs from the
+ * source (dirsEqual()); unchanged skills are left untouched on repeat runs
+ * (no needless mtime churn or filesystem writes).
  *
- * @version 1.0.0
- * @owner pm
+ * By default operates on the workspace root. Pass `--dir <path>` to target a single
+ * project root instead (e.g. a `templates/co-*` variant or `templates/common`), or
+ * `--all-variants` to run once per `templates/co-*` directory plus `templates/common`
+ * — this is how per-variant `.agents/skills/` (Antigravity CLI) drift gets caught and
+ * fixed; the default workspace-root run does NOT touch variant directories.
+ *
+ * `security-gate: true` skills (validate-templates.ts Check B-03) are excluded from
+ * Phase 1 distribution entirely — they must remain platform-neutral (`skills/` only).
+ *
+ * @version 1.4.1
  */
 
-import * as fs from "node:fs";
-import * as path from "node:path";
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
-const scriptDir = path.dirname(import.meta.path);
-const projectRoot = path.resolve(scriptDir, "..");
+const scriptDir     = import.meta.dir;
+const workspaceRoot = path.resolve(scriptDir, '..');
 
-// L0 SSOT source
-const skillsRoot = path.join(projectRoot, "skills");
-
-// L1 platform targets
-const platformTargets = [
-  path.join(projectRoot, ".claude", "skills"),
-  path.join(projectRoot, ".gemini", "skills"),
-  path.join(projectRoot, ".agents", "skills"),
-];
-
-// Shortcut skills that live only in .agents/skills/ and get back-propagated.
-// Skills that already exist in L0 (skills/) do NOT need shortcuts — Phase 1 handles them.
-// When adding a new shortcut, update this list and run `bun scripts/sync-skills.ts`.
-const SHORTCUT_SKILL_NAMES: readonly string[] = ["meeting"];
-
-// Only copy SKILL.md files — exclude .DS_Store, .gitkeep, etc.
-const SKILL_FILE_NAME = "SKILL.md";
-
-function copySkillIfExists(src: string, dest: string): boolean {
-  if (!fs.existsSync(src)) return false;
-  const stat = fs.statSync(src);
-  if (!stat.isDirectory()) return false;
-
-  const srcFile = path.join(src, SKILL_FILE_NAME);
-  if (!fs.existsSync(srcFile)) return false;
-
-  fs.mkdirSync(dest, { recursive: true });
-  const destFile = path.join(dest, SKILL_FILE_NAME);
-  fs.copyFileSync(srcFile, destFile);
-  return true;
+function resolveTargetRoots(): string[] {
+    const args = process.argv.slice(2);
+    const dirArgIndex = args.indexOf('--dir');
+    if (dirArgIndex !== -1 && args[dirArgIndex + 1]) {
+        return [path.resolve(workspaceRoot, args[dirArgIndex + 1])];
+    }
+    if (args.includes('--all-variants')) {
+        const templatesDir = path.join(workspaceRoot, 'templates');
+        const variants = fs.readdirSync(templatesDir, { withFileTypes: true })
+            .filter(d => d.isDirectory() && d.name.startsWith('co-'))
+            .map(d => path.join(templatesDir, d.name));
+        return [...variants, path.join(templatesDir, 'common')];
+    }
+    return [workspaceRoot];
 }
 
-function collectSkills(dir: string): string[] {
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((e) => {
-      const fullPath = path.join(dir, e);
-      return fs.statSync(fullPath).isDirectory() && fs.existsSync(path.join(fullPath, "SKILL.md"));
-    });
+function dirsFor(root: string): SkillSyncDirs {
+    return {
+        ssotSkills:   path.join(root, 'skills'),
+        claudeSkills: path.join(root, '.claude', 'skills'),
+        geminiSkills: path.join(root, '.gemini', 'skills'),
+        agentsSkills: path.join(root, '.agents', 'skills'),
+    };
 }
 
-function phase1(): void {
-  console.log("=== Phase 1: Distribute L0 skills/ → platform directories ===\n");
+export interface SkillSyncDirs {
+    ssotSkills: string;
+    claudeSkills: string;
+    geminiSkills: string;
+    agentsSkills: string;
+}
 
-  const ssotSkills = collectSkills(skillsRoot);
-  console.log(`L0 SSOT skills: ${ssotSkills.join(", ") || "(none)"}\n`);
+export interface SyncSkillsOptions {
+    /** Overridable for tests; defaults to an idempotent (compare-then-copy) real fs copy. */
+    copyDir?: (src: string, dest: string) => void;
+}
 
-  let copied = 0;
-  let skipped = 0;
+/**
+ * Recursively compares two directories (or files) for identical content.
+ * Returns false if either path is missing, if the entry sets differ, or if
+ * any file's content differs. Used to skip no-op copies (M3 idempotency).
+ */
+export function dirsEqual(a: string, b: string): boolean {
+    if (!fs.existsSync(a) || !fs.existsSync(b)) return false;
 
-  for (const skillName of ssotSkills) {
-    const src = path.join(skillsRoot, skillName);
-    let anyCopied = false;
+    const statA = fs.statSync(a);
+    const statB = fs.statSync(b);
+    if (statA.isDirectory() !== statB.isDirectory()) return false;
 
-    for (const target of platformTargets) {
-      const dest = path.join(target, skillName);
-      const result = copySkillIfExists(src, dest);
-      if (result) {
-        if (!anyCopied) console.log(`  ✅ ${skillName}`);
-        anyCopied = true;
-        copied++;
-      }
+    if (statA.isDirectory()) {
+        const entriesA = fs.readdirSync(a).sort();
+        const entriesB = fs.readdirSync(b).sort();
+        if (entriesA.length !== entriesB.length) return false;
+        for (let i = 0; i < entriesA.length; i++) {
+            if (entriesA[i] !== entriesB[i]) return false;
+            if (!dirsEqual(path.join(a, entriesA[i]), path.join(b, entriesB[i]))) return false;
+        }
+        return true;
     }
 
-    if (!anyCopied) {
-      console.log(`  ⏭️  ${skillName} (no SKILL.md found)`);
-      skipped++;
-    }
-  }
-
-  console.log(`\nPhase 1 result: ${copied} copies, ${skipped} skipped\n`);
+    return fs.readFileSync(a).equals(fs.readFileSync(b));
 }
 
-function phase2(): void {
-  console.log("=== Phase 2: Back-propagate .agents/skills/ shortcuts ===\n");
-
-  const agentsSkillsDir = path.join(projectRoot, ".agents", "skills");
-  const agentsSkills = collectSkills(agentsSkillsDir);
-
-  // Only propagate shortcut skills (not SSOT skills already distributed in Phase 1)
-  const shortcuts = agentsSkills.filter((s) => SHORTCUT_SKILL_NAMES.includes(s));
-  console.log(`Shortcut skills: ${shortcuts.join(", ") || "(none)"}\n`);
-
-  // Targets for back-propagation (exclude .agents/skills itself)
-  // Use normalized paths to ensure cross-platform comparison works correctly
-  const normalizedAgentsDir = path.normalize(agentsSkillsDir);
-  const backPropTargets = platformTargets.filter(
-    (t) => path.normalize(t) !== normalizedAgentsDir
-  );
-
-  let propagated = 0;
-  for (const skillName of shortcuts) {
-    const src = path.join(agentsSkillsDir, skillName);
-
-    for (const target of backPropTargets) {
-      const dest = path.join(target, skillName);
-      fs.mkdirSync(dest, { recursive: true });
-      fs.copyFileSync(path.join(src, "SKILL.md"), path.join(dest, "SKILL.md"));
-      propagated++;
-    }
-
-    console.log(`  ✅ ${skillName} → .claude/skills/, .gemini/skills/`);
-  }
-
-  console.log(`\nPhase 2 result: ${propagated} back-propagations\n`);
+function defaultCopyDir(src: string, dest: string): void {
+    if (fs.existsSync(dest)) fs.rmSync(dest, { recursive: true, force: true });
+    fs.cpSync(src, dest, { recursive: true });
 }
 
-function main(): void {
-  console.log("sync-skills.ts — L0 → L1 platform skill distribution\n");
-  console.log(`Project root : ${projectRoot}`);
-  console.log(`L0 SSOT      : ${skillsRoot}`);
-  console.log(`L1 targets   : ${platformTargets.map((t) => path.relative(projectRoot, t)).join(", ")}`);
-  console.log("");
+/**
+ * Runs the full skill distribution (Phase 1: SSOT -> platform dirs; Phase 2:
+ * .agents/ shortcut skills back-synced to .claude/.gemini). Each skill/item
+ * is wrapped independently in try/catch (M2): a failure on one item is
+ * collected and reported, and does not abort processing of the rest.
+ */
+export async function syncSkills(dirs: SkillSyncDirs, opts: SyncSkillsOptions = {}): Promise<{ errors: string[] }> {
+    const copyDir = opts.copyDir ?? defaultCopyDir;
+    const { ssotSkills, claudeSkills, geminiSkills, agentsSkills } = dirs;
+    const root = path.dirname(ssotSkills);
 
-  phase1();
-  phase2();
+    fs.mkdirSync(claudeSkills, { recursive: true });
+    fs.mkdirSync(geminiSkills, { recursive: true });
+    fs.mkdirSync(agentsSkills, { recursive: true });
 
-  console.log("✅ Skill distribution complete.");
+    const errors: string[] = [];
+
+    if (!fs.existsSync(ssotSkills)) {
+        return { errors };
+    }
+
+    // --- Phase 1: Distribute SSOT skills to all three platform directories ---
+    for (const item of fs.readdirSync(ssotSkills)) {
+        try {
+            const itemPath = path.join(ssotSkills, item);
+            const stat = fs.statSync(itemPath);
+            if (!stat.isDirectory()) continue;
+            const skillMdSrc = path.join(itemPath, 'SKILL.md');
+            // Skip non-skill files (README.md, SKILLS.md, etc.)
+            if (!fs.existsSync(skillMdSrc)) continue;
+
+            // `security-gate: true` skills are a platform-neutral-only hard gate
+            // (validate-templates.ts Check B-03) — they must never be mirrored into
+            // .claude/skills/, .gemini/skills/, or .agents/skills/, only skills/.
+            if (/^security-gate:\s*true\b/m.test(fs.readFileSync(skillMdSrc, 'utf-8'))) {
+                continue;
+            }
+
+            for (const targetDir of [claudeSkills, geminiSkills, agentsSkills]) {
+                const target = path.join(targetDir, item);
+                if (dirsEqual(itemPath, target)) {
+                    continue; // idempotent skip — content already matches
+                }
+                copyDir(itemPath, target);
+                console.log(`  -> Synced ${item} to ${path.relative(root, targetDir)}/`);
+            }
+
+            // Special logic for commands derived from skills
+            if (item === 'meeting-facilitation') {
+                const claudeCmdDir = path.join(root, '.claude', 'commands');
+                const geminiCmdDir = path.join(root, '.gemini', 'commands');
+                fs.mkdirSync(claudeCmdDir, { recursive: true });
+                fs.mkdirSync(geminiCmdDir, { recursive: true });
+
+                const skillMdPath = path.join(itemPath, 'SKILL.md');
+                if (fs.existsSync(skillMdPath)) {
+                    const claudeCmdTarget = path.join(claudeCmdDir, 'meeting.md');
+                    if (!dirsEqual(skillMdPath, claudeCmdTarget)) {
+                        fs.copyFileSync(skillMdPath, claudeCmdTarget);
+                        console.log(`  -> Synced SKILL.md to .claude/commands/meeting.md`);
+                    }
+
+                    const geminiCmdTarget = path.join(geminiCmdDir, 'meeting.md');
+                    if (!dirsEqual(skillMdPath, geminiCmdTarget)) {
+                        fs.copyFileSync(skillMdPath, geminiCmdTarget);
+                        console.log(`  -> Synced SKILL.md to .gemini/commands/meeting.md`);
+                    }
+                }
+            }
+        } catch (err) {
+            const msg = (err instanceof Error) ? err.message : String(err);
+            errors.push(`Phase 1: ${item}: ${msg}`);
+            console.error(`  ❌ Error syncing ${item}: ${msg}`);
+        }
+    }
+
+    // --- Phase 2: Sync .agents/skills/ shortcut skills back to .claude and .gemini ---
+    // These are skills that only exist in .agents/skills/ (not in SSOT) but should be
+    // available on Claude Code and Gemini CLI as well.
+    const SHORTCUT_SKILLS = ['sync', 'meeting', 'source-command-commit-push-pr'];
+
+    for (const item of SHORTCUT_SKILLS) {
+        try {
+            const source = path.join(agentsSkills, item);
+            if (!fs.existsSync(source) || !fs.existsSync(path.join(source, 'SKILL.md'))) continue;
+
+            for (const targetDir of [claudeSkills, geminiSkills]) {
+                const target = path.join(targetDir, item);
+                if (dirsEqual(source, target)) {
+                    continue; // idempotent skip
+                }
+                copyDir(source, target);
+                console.log(`  -> Synced shortcut ${item} to ${path.relative(root, targetDir)}/`);
+            }
+        } catch (err) {
+            const msg = (err instanceof Error) ? err.message : String(err);
+            errors.push(`Phase 2: ${item}: ${msg}`);
+            console.error(`  ❌ Error syncing shortcut ${item}: ${msg}`);
+        }
+    }
+
+    return { errors };
 }
 
 if (import.meta.main) {
-  main();
-}
+    const targetRoots = resolveTargetRoots();
+    const allErrors: string[] = [];
 
-export { copySkillIfExists, collectSkills, SHORTCUT_SKILL_NAMES, SKILL_FILE_NAME };
+    for (const root of targetRoots) {
+        const dirs = dirsFor(root);
+        console.log(`Syncing skills from SSOT (${dirs.ssotSkills})...`);
+        const { errors } = await syncSkills(dirs);
+        allErrors.push(...errors);
+    }
+
+    if (allErrors.length > 0) {
+        console.error(`\n❌ ${allErrors.length} error(s) during skill synchronization:`);
+        for (const e of allErrors) console.error(`  - ${e}`);
+        process.exitCode = 1;
+    }
+
+    console.log('Skill synchronization complete!');
+}

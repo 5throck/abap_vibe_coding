@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 
 /**
  * Skill Verification Script

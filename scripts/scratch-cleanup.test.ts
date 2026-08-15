@@ -1,3 +1,4 @@
+// @version 1.0.0
 import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readdirSync, utimesSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";

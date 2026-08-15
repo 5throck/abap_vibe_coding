@@ -1,7 +1,6 @@
 # Harness Engineering for SAP ABAP
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Contributing](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Ready-blue)](https://claude.com/claude-code)
 
@@ -167,7 +166,6 @@ Locally, the same gates run automatically after every `WriteSource`/`EditSource`
 
 - 🐛 [Report Issues](https://github.com/5throck/co-abap/issues)
 - 💡 [Feature Requests](https://github.com/5throck/co-abap/discussions)
-- 📖 [Contributing Guide](CONTRIBUTING.md)
 
 ---
 
@@ -183,7 +181,7 @@ Locally, the same gates run automatically after every `WriteSource`/`EditSource`
 ## License
 
 This project is licensed under the **GNU Affero General Public License v3.0 (AGPL v3)**.
-See [LICENSE](LICENSE) for details. Commercial licensing is available - see [CONTRIBUTING.md](CONTRIBUTING.md).
+See [LICENSE](LICENSE) for details.
 
 ---
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Agent Verification Script
  * Verifies synchronization between agents/ directory and documentation (AGENTS.md, docs/context.md)

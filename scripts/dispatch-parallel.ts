@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Parallel Agent Dispatcher
  * Automates dispatching multiple read-only subagents simultaneously

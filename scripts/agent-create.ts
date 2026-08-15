@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Agent Creator CLI
  * Creates new agent definition files in the agents/ directory

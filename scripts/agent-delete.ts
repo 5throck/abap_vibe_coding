@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 /**
  * Agent Deleter CLI
  * Deletes agent definition files from the agents/ directory

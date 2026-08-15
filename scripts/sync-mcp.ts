@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @version 1.0.0
 // sync-mcp.ts - Propagate MCP server config from .mcp.json (SSOT) to platform settings.
 //
 // Targets:

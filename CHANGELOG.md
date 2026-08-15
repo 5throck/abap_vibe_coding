@@ -1,4 +1,4 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to **abap-harness-engineering** (main project harness) are documented here.
 
@@ -8,8 +8,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+### Changed
+- **[2026-08-15]**: chore(upgrade): sync template infrastructure to keep multi-platform support (Claude Desktop App/Claude Code/Antigravity/Antigravity CLI) current — ran `upgrade-project.ts --variant co-abap`, refreshing 47 scripts/skills/agents to latest versions and merging `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` managed sections; `.claude/`, `.gemini/`, `.agents/` platform mirrors re-synced via `sync-skills.ts`; security bootstrap checks passed
+
 ### Fixed
 - **[2026-08-15]**: fix(gitignore): stop tracking `.zcode/plans/*.md` (Antigravity/ZCode session-local plan files) — added `.zcode/` to `.gitignore` and untracked the 2 files that had been committed; ported from an upstream ai-workspace-standards fix
+- **[2026-08-15]**: fix(scripts): `dev-sync.ts` called `.trim()` directly on `Buffer` stderr output (would throw at runtime on any non-empty stderr) and typed `withRetry`'s `isSuccess` callbacks too narrowly for its `unknown`-typed contract; `sync-md.ts` lacked a module marker needed for its top-level `await` to type-check
+- **[2026-08-15]**: fix(scripts): `dev-sync.test.ts` and `audit.test.ts` were stray copies of another project's test suite testing nonexistent exports — removed; `sync-skills.test.ts` was similarly mismatched and has been rewritten against this project's actual `dirsEqual`/`syncSkills` API
+- **[2026-08-15]**: docs: complete `SCRIPTS.md` version registry — added `@version` headers to the 26 scripts/tests that lacked them and registered all scripts (including previously-untracked ones) with a Version column; removed BOM from `CHANGELOG.md`/`memory/2026-07-05.md`; relocated stray `PR_BODY.md` to `memory/archive/`; removed `CONTRIBUTING.md` and its README references (not applicable to this independent project)
 
 ### Changed
 - **[2026-08-15]**: --body-file .git/sync-pr-body.md fix(gitignore): stop tracking .zcode session-local state
