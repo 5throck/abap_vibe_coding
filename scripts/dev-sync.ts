@@ -430,12 +430,19 @@ if (!pushRetry.success) {
     }
 }
 
-// 7. Generate PR body and open PR — but skip creation if a PR already exists for
-// this branch (e.g. re-running /sync to push a follow-up commit onto an open PR).
+// 7. Generate PR body and open PR — but skip creation if an OPEN PR already exists
+// for this branch (e.g. re-running /sync to push a follow-up commit onto an open PR).
 // The push above already updated it; calling `gh pr create` again would just fail
 // with "a pull request ... already exists", masking the fact that the commit/push
 // actually succeeded.
-const existingPrRes = await $`gh pr view ${branch} --json url --jq .url`.quiet().nothrow();
+//
+// `gh pr view <branch>` returns the most recent PR for a branch regardless of its
+// state — on a branch whose PR was already MERGED (e.g. a stale local branch reused
+// after its PR landed), this used to report that PR as "existing" and skip creating
+// a new one, silently stranding the new commit with no open PR pointing at it.
+// Filtering to state == OPEN here ensures a merged/closed PR is treated the same as
+// "no PR" and a fresh one gets created.
+const existingPrRes = await $`gh pr view ${branch} --json url,state --jq "if .state == \"OPEN\" then .url else \"\" end"`.quiet().nothrow();
 const existingPrUrl = existingPrRes.exitCode === 0 ? existingPrRes.stdout.toString().trim() : '';
 
 if (existingPrUrl) {
