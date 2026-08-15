@@ -8,6 +8,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+### Changed
+- **[2026-08-15]**: chore: update PM persona, bump version, and minor doc/config tweaks
+
 ### Added
 - **[2026-07-10]**: docs: update README/README_ko with post-write coverage gate, RTM automation, and CI quality gates
 
