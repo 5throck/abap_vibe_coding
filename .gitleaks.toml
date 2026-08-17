@@ -43,4 +43,8 @@ paths = [
   '''(^|/)venv/''',
   '''(^|/)node_modules/''',
   '''(^|/)__pycache__/''',
+  # scratch/stable/ contains vendored/reference ABAP source (zabapgit, zadt_vsp_git)
+  # whose local variable assignments (e.g. `iv_key = ls_dm02l-entid`) commonly
+  # trip the generic-api-key regex on `key = <identifier>` patterns — not secrets.
+  '''(^|/)scratch/''',
 ]
