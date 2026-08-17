@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Serial Agent Dispatcher — VSP variant wrapper
- * @version 1.0.1
+ * @version 1.0.2
  * Automates dispatching subagents that must run sequentially
  *
  * Re-exports the common dispatcher with VSP-specific default pipeline.
@@ -15,7 +15,7 @@ import {
   type SerialAgentTask,
   type SerialPipelineResult,
   type SerialExecutionOptions
-} from '../../dispatch-serial.ts';
+} from '../dispatch-serial.ts';
 
 /**
  * VSP-specific default pipeline for serial dispatch

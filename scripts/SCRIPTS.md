@@ -94,3 +94,8 @@
 ## Guide
 
 <!-- Add human-readable documentation for each script here -->
+
+### Variant wrapper scripts (scripts/co-abap/)
+
+- `dispatch.ts` / `dispatch-parallel.ts` / `dispatch-serial.ts` are ADR-0050 variant wrappers that import the common dispatchers from `scripts/` via `../dispatch-*.ts` (fixed 2026-08-18 from a broken `../../dispatch-*.ts` path that resolved outside the project root; wrappers bumped to 1.0.2 — tracked in `scripts/co-abap/SCRIPTS.md`, not in this root registry).
+
