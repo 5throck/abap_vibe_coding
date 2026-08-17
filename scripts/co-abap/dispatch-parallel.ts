@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Parallel Agent Dispatcher — VSP variant wrapper
- * @version 1.0.1
+ * @version 1.0.2
  * Automates dispatching multiple read-only subagents simultaneously
  *
  * Re-exports the common dispatcher with VSP-specific default tasks.
@@ -14,7 +14,7 @@ import {
   dispatchParallel as commonDispatchParallel,
   type ParallelAgentTask,
   type DispatchResult
-} from '../../dispatch-parallel.ts';
+} from '../dispatch-parallel.ts';
 
 /**
  * VSP-specific default tasks for parallel dispatch
