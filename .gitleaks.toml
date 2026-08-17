@@ -21,6 +21,10 @@ regexes = [
   '''YOUR_SECRET''',
   # gitleaks:allow inline marker (single-line suppression)
   '''gitleaks:allow''',
+  # SAP developer trial system's publicly-documented default credential
+  # (docs/setup-guide.md curl example) — not a real secret, this is SAP's
+  # own shipped default for the free ABAP developer edition.
+  '''DEVELOPER:Down1oad''',
 ]
 paths = [
   '''\.env\.sample''',
