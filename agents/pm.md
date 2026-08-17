@@ -12,6 +12,11 @@ examples:
     assistant: "I'll dispatch the pm agent to triage the request, create the task file, and run Phase 1 parallel research."
   - user: "Verify the quality gate and commit the final code"
     assistant: "Let me use the pm agent to run the post-write audits and perform the final repository sync."
+lifecycle:
+  phase: production
+  created: "2026-08-15"
+  last_updated: "2026-08-15"
+  governance: docs/lifecycle/agents/pm.md
 ---
 
 ## co-abap PM Override Notes

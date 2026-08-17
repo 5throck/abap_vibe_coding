@@ -4,6 +4,8 @@ description: Use when working on FI module tasks — journal entries, account de
 metadata:
   type: module
 version: 1.0.0
+owner: pm
+status: active
 ---
 
 # FI Analyst Context — Financial Accounting

@@ -1,4 +1,9 @@
-// @version 1.5.1
+// @version 1.5.4
+// v1.5.4: fix(pr-check): "PR already exists for branch" step now checks PR state —
+//           previously `gh pr view <branch>` matched ANY PR regardless of state, so
+//           reusing a branch name whose earlier PR was already MERGED/CLOSED caused
+//           new commits to be pushed with zero PR coverage (silently reported as
+//           "no new PR needed").
 import { $ } from 'bun';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -106,7 +111,24 @@ let separator = "";
 const memoryFile = path.join('memory', `${date}.md`);
 if (fs.existsSync(memoryFile)) { separator = "\n---\n\n"; }
 
-const template = `${separator}## Session Summary
+// Idempotency check: skip append if a Session Summary with the same
+// commit message already exists for today (prevents duplicates when
+// /sync is re-run on the same day).
+let alreadyLogged = false;
+if (fs.existsSync(memoryFile)) {
+    const existing = fs.readFileSync(memoryFile, 'utf-8');
+    // Match a Session Summary header followed by the same message
+    const duplicatePattern = new RegExp(
+        `^## Session Summary\\s*\\n${msg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
+        'm'
+    );
+    alreadyLogged = duplicatePattern.test(existing);
+}
+
+if (alreadyLogged) {
+    console.log(`${YELLOW}⚙ Session summary already logged for today — skipping append (idempotent).${RESET}`);
+} else {
+    const template = `${separator}## Session Summary
 ${msg}
 
 ## Changes
@@ -119,7 +141,8 @@ ${fileLines}
 - None
 `;
 
-fs.appendFileSync(memoryFile, template, 'utf8');
+    fs.appendFileSync(memoryFile, template, 'utf8');
+}
 
 // 2. Update MEMORY.md index
 try {
@@ -204,9 +227,11 @@ if (fs.existsSync(archiveMemoryTs)) {
 }
 
 // 3.9 Spec registry check (non-blocking — warns if approved specs are stale or code has no spec)
+// Output is intentionally visible (no .quiet()) — Stage 1 of the spec-registry-enforcement
+// rollout; see docs/designs/2026-08-16-spec-registry-enforcement-design.md.
 const specRegPath = path.join('docs', 'specs', 'registry.json');
 if (fs.existsSync(specRegPath)) {
-    await $`bun scripts/audit.ts --spec-check --lifecycle-only`.quiet().nothrow();
+    await $`bun scripts/audit.ts --spec-check --lifecycle-only`.nothrow();
 }
 
 // 3.95 QA Pre-checks (non-fatal — unique checks from qa-gate.ts)
@@ -219,7 +244,7 @@ if (fs.existsSync('package.json')) {
             const testResult = await $`bun test`.nothrow();
             if (testResult.exitCode !== 0) {
                 console.warn(`⚠️  Project tests failed (non-blocking, exit ${testResult.exitCode})`);
-                if (testResult.stderr) console.warn(testResult.stderr.toString().trim());
+                if (testResult.stderr) console.warn(testResult.stderr.trim());
             }
         }
     } catch { /* ignore parse errors */ }
@@ -266,7 +291,7 @@ console.log('📋 Step 4.6: Syncing skills to platform directories...');
 const syncSkillsResult = await $`bun scripts/sync-skills.ts`.nothrow();
 if (syncSkillsResult.exitCode !== 0) {
     console.warn(`⚠️  Skill sync had warnings (exit ${syncSkillsResult.exitCode}), continuing...`);
-    if (syncSkillsResult.stderr) console.warn(syncSkillsResult.stderr.toString().trim());
+    if (syncSkillsResult.stderr) console.warn(syncSkillsResult.stderr.trim());
 }
 
 // 4. Generate VERSION_MANIFEST.md
@@ -418,7 +443,7 @@ try {
 
 const pushRetry = await withRetry(
     () => $`git push -u origin ${branch}`.nothrow(),
-    { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => (r as { exitCode: number }).exitCode === 0 },
+    { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
     'git push'
 );
 const pushProc = pushRetry.result as { exitCode: number; stderr: { toString(): string } } | undefined;
@@ -435,13 +460,10 @@ if (!pushRetry.success) {
 // The push above already updated it; calling `gh pr create` again would just fail
 // with "a pull request ... already exists", masking the fact that the commit/push
 // actually succeeded.
-//
-// `gh pr view <branch>` returns the most recent PR for a branch regardless of its
-// state — on a branch whose PR was already MERGED (e.g. a stale local branch reused
-// after its PR landed), this used to report that PR as "existing" and skip creating
-// a new one, silently stranding the new commit with no open PR pointing at it.
-// Filtering to state == OPEN here ensures a merged/closed PR is treated the same as
-// "no PR" and a fresh one gets created.
+// `gh pr view <branch>` resolves to ANY PR for that branch regardless of state —
+// on a reused branch name whose earlier PR was already MERGED/CLOSED, that lookup
+// still "succeeds" and this step would wrongly report "no new PR needed" while the
+// new commits sit with zero PR coverage. Must check state explicitly.
 const existingPrRes = await $`gh pr view ${branch} --json url,state --jq "if .state == \"OPEN\" then .url else \"\" end"`.quiet().nothrow();
 const existingPrUrl = existingPrRes.exitCode === 0 ? existingPrRes.stdout.toString().trim() : '';
 
@@ -500,26 +522,26 @@ if (existingPrUrl) {
     if (bodySourceFile) {
         prCreateRetry = await withRetry(
             () => $`gh pr create --title ${msg} --body-file ${bodySourceFile}`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => (r as { exitCode: number }).exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
             'gh pr create'
         );
     } else if (prBody) {
         prCreateRetry = await withRetry(
             () => $`gh pr create --title ${msg} --body ${prBody}`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => (r as { exitCode: number }).exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
             'gh pr create'
         );
     } else if (fs.existsSync(path.join('.github', 'pull_request_template.md'))) {
         const prTpl = fs.readFileSync(path.join('.github', 'pull_request_template.md'), 'utf-8');
         prCreateRetry = await withRetry(
             () => $`gh pr create --title ${msg} --body ${prTpl}`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => (r as { exitCode: number }).exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
             'gh pr create'
         );
     } else {
         prCreateRetry = await withRetry(
             () => $`gh pr create --fill`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => (r as { exitCode: number }).exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
             'gh pr create'
         );
     }

@@ -4,6 +4,8 @@ description: Use when investigating slow ABAP programs, expensive SQL statements
 metadata:
   type: core
 version: 1.0.0
+owner: pm
+status: active
 ---
 
 # Performance Tuning Workflow

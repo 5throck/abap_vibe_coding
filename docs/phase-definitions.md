@@ -1,86 +1,103 @@
 # Phase Definitions
 
-This document defines the standard workflow phases used across all variants. Each variant customizes the specialist agents for phases 1–5 while the overall structure remains consistent.
+This document defines the workflow phases used by the co-abap variant. It formalizes the
+orchestration workflow and phase-numbering map that previously lived only inline in
+[`AGENTS.md § 3`](../AGENTS.md), matching the `docs/phase-definitions.md` convention used by every
+other variant in this workspace.
+
+co-abap uses a **6-step orchestration workflow** (business-facing steps) that maps onto a
+**6-phase agent model** (the `phases:` field in each `agents/<name>.md` frontmatter). The two
+numbering schemes are not 1:1 — see the mapping table below.
 
 ---
 
-## Phase Overview
+## Orchestration Workflow (Harness Advanced)
 
-| Phase | Name | PM Role | Who Acts |
-|-------|------|---------|----------|
-| 0 | Project Initiation | Orchestrator | PM + variant setup agents |
-| 1 | Research / Analysis | Observer | Specialist agents (variant-defined) |
-| 1-2 | Research & Architecture | Observer / Gate Keeper | Specialist agents (variant-defined) |
-| 2 | Design Review & Approval | Gate Keeper | PM + senior specialist agents |
-| 3 | Execution / Creation | Coordinator | Specialist agents (variant-defined) |
-| 4 | Delivery / Integration | Coordinator | Specialist agents (variant-defined) |
-| 5 | Lifecycle Finalization | Owner | PM (updates governance records, logs decisions) |
-| 6 | Quality Assurance & Finalization | Owner | PM (runs audit scripts, /sync, creates PR) |
+1. **Triage & Initial Research** (PM & Subagents)
+   - The Global PM receives and classifies the request.
+   - Immediate research is dispatched (parallel: `sap-investigator` + `read-only-analyst` +
+     `schema-inspector`) to gather technical and business data before any discussion.
+
+2. **Business Analysis & AC Definition** (Biz Group)
+   - Module analysts (SD, MM, FI, CO, PP, LE) discuss the request based on research data.
+   - **Output**: PRD (Product Requirements Document) and clear Acceptance Criteria (AC).
+
+3. **Governance & Implementation Approval** (PM & User)
+   - PM Agent reviews the PRD/AC and confirms the scope.
+   - **User Approval Required** for high-risk changes (core BAPI/CDS modification, schema
+     changes, cross-module refactors).
+
+4. **Technical Design & Impact Analysis** (Tech Group)
+   - Technical agents (Architect, DBA, Developer) design the implementation.
+   - **Impact Analysis**: use `sap:impact-architecture` to identify side effects.
+
+5. **Implementation & Verification Chain** (Assigned Agents)
+   - Implementation is delegated to `code-writer`; verification to `test-runner`.
+   - **Mandatory Chain**: must pass `SyntaxCheck` → `RunUnitTests` → `GetCodeCoverage` (≥70% new
+     objects) → `RunATCCheck` (zero P1 findings).
+
+6. **Finalization, Sync & Reporting** (PM)
+   - **Memory Logging**: record key decisions and issues in `memory/YYYY-MM-DD.md`.
+   - **Git Sync**: execute `/sync` (full pipeline: memlog → changelog → audit → commit → push → PR).
+   - **Final Report**: PM summarizes the outcome and test results for the user.
 
 ---
 
-## Phase Details
+## Phase Numbering Map (Orchestration Steps ↔ Agent Phases)
 
-### Phase 0 — Project Initiation
-**PM opens the phase**: clarify objective, confirm scope, assemble the team.
-- PM reviews the request and classifies it
-- PM identifies which specialist agents are needed
-- Setup agents (if any) prepare the environment
-- **Output**: confirmed scope, team assignment
+The orchestration workflow above uses **steps 1-6**; individual agent definitions use **phases
+1-5** (plus occasional phase 6 for late-stage skills). The mapping is:
 
-### Phase 1 — Research / Analysis
-**PM observes**: specialists work autonomously.
-- Research agents gather data, evidence, and context
-- Analysis agents synthesize findings
-- PM intervenes only if quality standards are not met
-- **Output**: research findings, analysis report
-- **Gate**: none — phase ends when agents signal completion
+| Orchestration Step | Agent Phase | Scope |
+|--------------------|:-----------:|-------|
+| 1. Triage & Initial Research | 1 | Read-only parallel research (sap-investigator, read-only-analyst, schema-inspector, module analysts) |
+| 2. Business Analysis & AC Definition | 1 | Module analyst PRD/AC drafting (read-only) |
+| 3. Governance & Implementation Approval | 2 | Design & approval gate (PM + user sign-off) |
+| 4. Technical Design & Impact Analysis | 2 | Architect/DBA design, impact analysis |
+| 5. Implementation & Verification Chain | 3-4 | code-writer implementation (3) + test-runner QA chain (4) |
+| 6. Finalization, Sync & Reporting | 5-6 | Memory logging, /sync, reporting (5); late-stage skills (e.g., dump-monitor) run at 6 |
 
-### Phase 1-2 — Combined Research & Architecture
-Some variants combine phases 1 and 2 when research and architecture planning are tightly coupled. In this case, specialist agents perform both research and architectural design before PM's approval gate. The approval gate still applies at the end of phase 1-2.
+> Agent `phases:` fields refer to the **Agent Phase** column above, not the orchestration step
+> number. Skills may declare phase 6 for post-release monitoring.
 
-### Phase 2 — Design Review & Approval
-**PM enforces the gate**: no execution without explicit user approval.
-- Senior specialist agents present the proposed approach
-- PM synthesizes findings into a decision recommendation
-- **USER APPROVAL REQUIRED** before proceeding to Phase 3
-- **Output**: approved implementation plan
+---
 
-### Phase 3 — Execution / Creation
-**PM coordinates**: specialists implement per the approved plan.
-- Content, design, or code agents execute their domain work
-- Agents may hand off directly to each other without PM intervention
-- PM reviews output quality at phase end
-- **Output**: primary deliverables (documents, designs, code, etc.)
+## Requirements-Driven Deliverables Workflow (Stage 1 to 5)
 
-### Phase 4 — Delivery / Integration
-**PM coordinates**: delivery agents finalize output.
-- Platform integration, publication, or deployment agents act
-- Project coordinators manage stakeholder communication
-- **Output**: delivered and integrated work product
+All software requirements and implementation logs are structured and stored under
+`deliverables/`, managed by a central index `deliverables/index.md` (Traceability Matrix). This
+pipeline runs *within* orchestration steps 2-6 above — it is the concrete deliverable trail for
+Business Analysis through Finalization.
 
-### Phase 5 — Lifecycle Finalization
-**PM owns**: updates governance records for any changed artifacts.
-- PM updates governance documents for agent/skill/script changes
-- PM logs decisions to `memory/YYYY-MM-DD.md`
-- Lifecycle state synced for any modified lifecycle-tracked artifacts
-- **Output**: governance records updated, drift report or "no drift" confirmation
+| Stage | Deliverable | Responsible Agent |
+|-------|-------------|--------------------|
+| 1. Requirements Definition | `deliverables/REQ-NNN-[slug]/01_srs.md` | Module Analyst (SD/MM/FI/CO/PP/LE) or PM (cross-module/integration task) |
+| 2. Technical Design | `deliverables/REQ-NNN-[slug]/02_technical_design.md` | Architect (control flows, architecture) & DBA (schema/index design) |
+| 3. Coding & Implementation | `deliverables/REQ-NNN-[slug]/03_implementation_report.md` | ABAP Developer (`code-writer`) or specialist developers |
+| 4. Quality Gate Verification | `deliverables/REQ-NNN-[slug]/04_qa_report.md` | QA Engineer (`test-runner`) — runs `SyntaxCheck` → `RunUnitTests` → `GetCodeCoverage` → `RunATCCheck`, marks `[QUALITY GATE STATUS: PASSED]` |
+| 5. Governance & Release | — | PM & DevOps/Admin |
 
-### Phase 6 — Quality Assurance & Finalization
-**PM owns**: finalizes the session.
-- PM runs `audit-workspace` skill
-- PM runs `validate-docs-links` skill
-- Maximum 2 fix iterations before escalating to user
-- PM runs `/sync` pipeline
-- PR opened with English title and description
-- Memory log updated
-- **Output**: passing audit report, merged PR or open PR link
+Stage 1 transitions require approval by PM and sign-off by the Technical Lead before Stage 2
+begins.
+
+---
+
+## PM Facilitation per Orchestration Step
+
+| Step | PM Opening | PM Monitoring | PM Synthesis |
+|------|-----------|----------------|---------------|
+| 1. Triage & Initial Research | Classify request, dispatch parallel research | Confirm research agents completed | Technical/business data summary |
+| 2. Business Analysis & AC Definition | Brief module analysts on scope | Check PRD/AC quality | PRD + Acceptance Criteria |
+| 3. Governance & Implementation Approval | Present PRD/AC for review | — | **USER APPROVAL** (high-risk changes only) + confirmed scope |
+| 4. Technical Design & Impact Analysis | Hand off approved scope to tech group | Review impact analysis | Approved technical design |
+| 5. Implementation & Verification Chain | Dispatch code-writer with approved design | Track QA chain progress; max 3 fix iterations | Quality-gate-passed implementation |
+| 6. Finalization, Sync & Reporting | Run `/sync` | — | PR link + final report |
 
 ---
 
 ## Variant Customization Points
 
-Each variant declares its specialist agents per phase in `AGENTS.md § Phase Summary` and each agent's `agents/<name>.md` frontmatter:
+co-abap declares its specialist agents per phase in each agent's `agents/<name>.md` frontmatter:
 
 ```yaml
 # Example agent frontmatter
@@ -90,18 +107,5 @@ handoff_from: [pm]
 required_skills: [skill-name]
 ```
 
-The PM role and Phase 0/5/6 structure are identical across all variants. Variants differ in phases 1–4.
-
----
-
-## PM Facilitation per Phase
-
-| Phase | PM Opening | PM Monitoring | PM Synthesis |
-|-------|-----------|---------------|--------------|
-| 0 | Set objective, nominate team | Confirm setup complete | Scope document |
-| 1 | Brief analysts on research goal | Check quality of findings | Key findings summary |
-| 2 | Present findings for approval | — | Decision + approved plan |
-| 3 | Hand off approved plan | Intervene if off-plan | Quality review |
-| 4 | Confirm delivery targets | Track completion | Delivery confirmation |
-| 5 | Update governance records | Verify lifecycle drift | Drift report or "no drift" confirmation |
-| 6 | Run audit + /sync | Fix issues (max 2 iterations) | Audit pass report + PR link |
+See [`AGENTS.md § 2`](../AGENTS.md) for the full agent roster and individual agent definitions,
+and [`AGENTS.md § 3`](../AGENTS.md) for the PM subagent dispatch decision tree.

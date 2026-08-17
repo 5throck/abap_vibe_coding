@@ -173,26 +173,28 @@ The PM agent MUST leverage the **`superpowers`** plugin (e.g., `subagent-driven-
 
 ---
 
-*Last Updated: 2026-07-08*
+*Last Updated: 2026-08-17*
 
 
 
 
 
 <!-- COMMON-GEMINI:START -->
-## Pre-Edit Quality Gate (All Platforms)
+### 4. Language Policy for Documentation
 
-Before editing any file for the **FIRST time in a session**, the agent MUST:
+All `.md` files you create or modify MUST be in English, except in `ko/` or `locales/ko/` directories (Korean translation zones) or when explicitly declared as a Korean legal/regulatory content exception.
 
-1. Search for all files that import or require the target file
-2. Identify data schemas, interfaces, and type definitions the file exports
-3. Review the user's instructions for explicit scope constraints
-4. Briefly summarize findings (1-3 sentences) before proceeding
+- README.md, CLAUDE.md, GEMINI.md, AGENTS.md, context.md, CHANGELOG.md — English only
+- All documentation in docs/, agents/, skills/ — English only
+- Git commit messages, PR titles, PR descriptions — English only
+- Branch names — English only
+- Code comments — English (unless documenting locale-specific logic)
 
-| Platform | Enforcement | Details |
-|----------|:-----------:|---------|
-| Gemini CLI | ✅ Hook (automatic) | BeforeTool `deny` mode — blocked until agent investigates |
-| Antigravity | ✅ Prompt (manual) | Hooks do not fire — agent self-enforces |
-
-If the hook is not active (Antigravity), agents must still follow the 4-step process before making first edits.
+#### Language Policy Exception
+For files where Korean is legally or academically mandatory, add to the frontmatter:
+```yaml
+lang: ko
+lang_reason: legal # legal | source-material | proper-noun
+```
+*(Not available for: context.md, CLAUDE.md, GEMINI.md, AGENTS.md, or any variant context.md)*
 <!-- COMMON-GEMINI:END -->

@@ -1,3 +1,12 @@
+---
+name: handoff-spec_ko
+lifecycle:
+  phase: production
+  created: "2026-08-17"
+  last_updated: "2026-08-17"
+  governance: docs/lifecycle/agents/handoff-spec.md
+---
+
 # 에이전트 핸드오프 명세서
 
 이 문서는 멀티 에이전트 워크플로우에서 에이전트 간 JSON 기반 핸드오프 형식을 정의합니다.

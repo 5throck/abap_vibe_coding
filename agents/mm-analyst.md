@@ -1,6 +1,11 @@
 ---
 name: mm-analyst
 model: inherit
+tier:
+  claude: medium
+  gemini: medium
+  antigravity: medium
+  gemini-cli: medium
 color: yellow
 description: 'MM Module Analyst — deep domain expert for Materials Management business processes. Use when: "MM analyst", "purchase order analysis", "goods receipt", "inventory management", "procurement process", "MM module", "material master".'
 examples:
@@ -8,6 +13,11 @@ examples:
     assistant: "I'll dispatch the mm-analyst agent to query EKKO/EKPO/MSEG and produce the AS-IS procurement analysis."
   - user: "We need an MM analyst to look at the inventory valuation discrepancy in plant 1000"
     assistant: "Let me use the mm-analyst agent to examine MARD/MBEW stock data and draft the GAP analysis."
+lifecycle:
+  phase: production
+  created: "2026-08-17"
+  last_updated: "2026-08-17"
+  governance: docs/lifecycle/agents/mm-analyst.md
 ---
 
 # MM Analyst — Materials Management

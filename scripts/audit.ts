@@ -1,12 +1,15 @@
-// @version 2.10.17
+// @version 2.13.1
+// v2.13.1: Homoglyph check (3.7) now skips docs/adr/ and docs/designs/ — these
+//   legitimately use Greek letters as math notation, not homoglyph-attack candidates.
 import { $ } from 'bun';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { parsePmMd, extractVariantOverrides } from './helpers/pm-md-parser.ts';
+import { sourceShellInjectionPatterns } from './helpers/security-validator.ts';
 import * as url from 'node:url';
-import { detectEncoding, detectHomoglyphs, detectZeroWidthChars } from './lib/encoding-utils.ts';
+import { detectEncoding, detectHomoglyphs, detectZeroWidthChars, readUTF8File } from './lib/encoding-utils.ts';
 
 // Check for --lifecycle-only flag
 const LIFECYCLE_ONLY = process.argv.includes('--lifecycle-only');
@@ -61,7 +64,7 @@ if (fs.existsSync('CONSTITUTION.md') || fs.existsSync('../CONSTITUTION.md') || f
 
 // 2.5. Constitution section files must exist and be non-empty (workspace root only)
 if (fs.existsSync('CONSTITUTION.md') && fs.existsSync('docs/constitution')) {
-    const content = fs.readFileSync('CONSTITUTION.md', 'utf-8');
+    const content = readUTF8File('CONSTITUTION.md');
     const regex = /docs\/constitution\/([\w.-]+\.md)/g;
     let match;
     while ((match = regex.exec(content)) !== null) {
@@ -109,7 +112,7 @@ if (!LIFECYCLE_ONLY) {
         const urlRegex = /https:\/\/raw\.githubusercontent\.com\/5throck\/ai-workspace-standards\/main\/CONSTITUTION\.md#[\w-]+/g;
 
         for (const filePath of urlCheckFiles) {
-            const content = fs.readFileSync(filePath, 'utf-8');
+            const content = readUTF8File(filePath);
             let match;
             while ((match = urlRegex.exec(content)) !== null) {
                 const url = match[0];
@@ -133,7 +136,7 @@ if (!LIFECYCLE_ONLY) {
 
 // 3. CHANGELOG.md must have [Unreleased] section
 if (fs.existsSync('CHANGELOG.md')) {
-    const cl = fs.readFileSync('CHANGELOG.md', 'utf-8');
+    const cl = readUTF8File('CHANGELOG.md');
     if (cl.includes('[Unreleased]')) {
         Pass('CHANGELOG.md has [Unreleased] section');
     } else {
@@ -238,7 +241,10 @@ if (!LIFECYCLE_ONLY) {
     let homoglyphErrors = 0;
     const HOMOGLYPH_DIRS = ['agents', 'docs', 'memory', 'scripts', 'skills', 'tests'];
     const HOMOGLYPH_EXTENSIONS = new Set(['.md', '.ts', '.tsx', '.js', '.jsx']);
-    const HOMOGLYPH_SKIP_PREFIXES = ['node_modules/', '.git/', 'templates/', 'memory/archive/'];
+    // docs/adr/ and docs/designs/ legitimately use Greek letters (sigma, theta,
+    // gamma, etc.) as mathematical notation in architecture/algorithm documentation
+    // — not homoglyph-attack candidates. Excluded rather than flagged per-occurrence.
+    const HOMOGLYPH_SKIP_PREFIXES = ['node_modules/', '.git/', 'templates/', 'memory/archive/', 'docs/adr/', 'docs/designs/'];
 
     for (const dir of HOMOGLYPH_DIRS) {
         if (!fs.existsSync(dir)) continue;
@@ -253,7 +259,7 @@ if (!LIFECYCLE_ONLY) {
             if (HOMOGLYPH_SKIP_PREFIXES.some(p => normalizedPath.includes(p))) return;
 
             try {
-                const content = fs.readFileSync(filePath, 'utf-8');
+                const content = readUTF8File(filePath);
                 const matches = detectHomoglyphs(content);
                 if (matches.length > 0) {
                     // Report first 5 matches per file to avoid spam
@@ -296,7 +302,7 @@ if (!LIFECYCLE_ONLY) {
             if (ZW_SKIP_PREFIXES.some(p => normalizedPath.includes(p))) return;
 
             try {
-                const content = fs.readFileSync(filePath, 'utf-8');
+                const content = readUTF8File(filePath);
                 const matches = detectZeroWidthChars(content);
                 // U+FEFF (BOM) and U+2060 (word joiner) have legitimate uses in
                 // source code (BOM-stripping regexes, code-fence escapes).
@@ -342,7 +348,7 @@ if (fs.existsSync('agents') && fs.readdirSync('agents').some(f => f.endsWith('.m
 // 6-8. Project-level checks
 if (!LIFECYCLE_ONLY) {
     if (fs.existsSync(projectCtxPath)) {
-    const ctx = fs.readFileSync(projectCtxPath, 'utf-8');
+    const ctx = readUTF8File(projectCtxPath);
     if (/^## Coding Guidelines/m.test(ctx)) {
         Pass('docs/context.md has ## Coding Guidelines');
     } else {
@@ -380,7 +386,7 @@ if (!LIFECYCLE_ONLY) {
     if (fs.existsSync(researchDir)) {
         const researchFiles = fs.readdirSync(researchDir).filter(f => f.endsWith('.md'));
         const missingRefs = researchFiles.filter(f => {
-            const content = fs.readFileSync(path.join(researchDir, f), 'utf-8');
+            const content = readUTF8File(path.join(researchDir, f));
             return !content.includes('## References') && !content.includes('## Sources');
         });
         if (missingRefs.length > 0) {
@@ -409,7 +415,7 @@ if (!LIFECYCLE_ONLY && fs.existsSync(path.join('scripts', 'SCRIPTS.md'))) {
     }
 
     if (modifiedScripts.size > 0) {
-        const scriptsMd = fs.readFileSync(path.join('scripts', 'SCRIPTS.md'), 'utf-8');
+        const scriptsMd = readUTF8File(path.join('scripts', 'SCRIPTS.md'));
         const registryLines = scriptsMd.split('\n').filter(l => l.startsWith('| `'));
         
         let pairErrors = 0;
@@ -560,7 +566,7 @@ function verifyScriptVersionHeaders(): boolean {
     const scripts = fs.readdirSync(scriptsDir).filter(f => f.endsWith('.ts'));
     for (const script of scripts) {
         const scriptPath = path.join(scriptsDir, script);
-        const content = fs.readFileSync(scriptPath, 'utf-8');
+        const content = readUTF8File(scriptPath);
         if (!content.match(/@version\s+\d+\.\d+\.\d+/)) {
             Fail(`Missing @version header in ${script}`);
             return false;
@@ -582,11 +588,11 @@ function verifyScriptRegistryConsistency(): boolean {
     }
 
     const scripts = fs.readdirSync(scriptsDir).filter(f => f.endsWith('.ts') && !f.startsWith('test-'));
-    const scriptsMdContent = fs.readFileSync(scriptsMdPath, 'utf-8');
+    const scriptsMdContent = readUTF8File(scriptsMdPath);
 
     for (const script of scripts) {
         const scriptPath = path.join(scriptsDir, script);
-        const scriptContent = fs.readFileSync(scriptPath, 'utf-8');
+        const scriptContent = readUTF8File(scriptPath);
         const versionMatch = scriptContent.match(/@version\s+(\d+\.\d+\.\d+)/);
 
         if (!versionMatch) {
@@ -628,13 +634,13 @@ if (langValidate.exitCode === 0) {
 // Agent/Skill State Synchronization Check
 if (!LIFECYCLE_ONLY && fs.existsSync('AGENTS.md') && fs.existsSync('agents')) {
     let syncErrors = 0;
-    const agentsContent = fs.readFileSync('AGENTS.md', 'utf-8');
-    
+    const agentsContent = readUTF8File('AGENTS.md');
+
     for (const file of fs.readdirSync('agents')) {
         if (!file.endsWith('.md')) continue;
         const agentFile = path.join('agents', file);
         const agentName = path.basename(file, '.md');
-        const content = fs.readFileSync(agentFile, 'utf-8');
+        const content = readUTF8File(agentFile);
         
         const statusMatch = /^status:\s*(.+)$/m.exec(content);
         if (statusMatch) {
@@ -665,7 +671,7 @@ if (!LIFECYCLE_ONLY && fs.existsSync(claudeCommandsDir)) {
     for (const file of fs.readdirSync(claudeCommandsDir)) {
         if (!file.endsWith('.md')) continue;
         const filePath = path.join(claudeCommandsDir, file);
-        const content = fs.readFileSync(filePath, 'utf-8');
+        const content = readUTF8File(filePath);
         if (/^gemini-parity:\s*skip/m.test(content)) continue;
         
         const geminiCmd = path.join('.gemini', 'commands', file);
@@ -712,7 +718,7 @@ function checkL2VariantIntegrity() {
 
     const pmMdPath = path.join(variantDir, 'agents', 'pm.md');
     if (fs.existsSync(pmMdPath)) {
-      const pmContent = fs.readFileSync(pmMdPath, 'utf-8');
+      const pmContent = readUTF8File(pmMdPath);
       const hasVariantOverrides = pmContent.includes('variant_overrides:');
       const hasExtendsPattern = pmContent.includes('extends:');
       const isResolved = pmContent.startsWith('# @resolved-from:');
@@ -750,7 +756,7 @@ function checkVariantContextGuidelinesSection() {
     for (const file of fs.readdirSync(docsDir)) {
       if (!file.endsWith('.context.md')) continue;
       const filePath = path.join(docsDir, file);
-      const content = fs.readFileSync(filePath, 'utf-8');
+      const content = readUTF8File(filePath);
       if (!content.includes('VARIANT-INJECT: guidelines [REQUIRED]')) {
         missing.push(`templates/${variant}/docs/${file}`);
       }
@@ -797,7 +803,7 @@ function checkVariantAgentSections() {
       .filter(f => f.endsWith('.md') && f !== 'pm.md' && !f.startsWith('_') && !f.startsWith('README'));
     for (const file of agentFiles) {
       const filePath = path.join(agentsDir, file);
-      const content = fs.readFileSync(filePath, 'utf-8');
+      const content = readUTF8File(filePath);
       const missing = REQUIRED_SECTIONS.filter(s => !content.includes(s));
       if (missing.length > 0) {
         failures.push(`templates/${variant}/agents/${file}: missing ${missing.map(s => `"${s}"`).join(', ')}`);
@@ -843,7 +849,7 @@ function checkVariantSkillSections() {
     for (const slug of slugs) {
       const skillPath = path.join(skillsDir, slug, 'SKILL.md');
       if (!fs.existsSync(skillPath)) continue;
-      const content = fs.readFileSync(skillPath, 'utf-8');
+      const content = readUTF8File(skillPath);
 
       // Skip files marked with audit_exception (e.g., PM reference cards that use a different structure)
       if (/^audit_exception:/m.test(content)) continue;
@@ -892,7 +898,7 @@ function checkVariantJsonSchema() {
     if (!fs.existsSync(variantJsonPath)) continue;
 
     try {
-      const content = fs.readFileSync(variantJsonPath, 'utf-8');
+      const content = readUTF8File(variantJsonPath);
       const variantData = JSON.parse(content);
 
       // Validate required fields per variant.schema.json
@@ -1002,7 +1008,7 @@ function checkStaleShellReferences() {
     let staleErrors = 0;
     for (const filePath of filesToScan) {
         if (!fs.existsSync(filePath)) continue;
-        const content = fs.readFileSync(filePath, 'utf-8');
+        const content = readUTF8File(filePath);
         const lines = content.split('\n');
         lines.forEach((line, idx) => {
             // Skip lines that are documentation examples (e.g. anti-pattern tables with backtick-quoted examples)
@@ -1030,6 +1036,206 @@ function checkStaleShellReferences() {
     }
 }
 checkStaleShellReferences();
+
+// Shell-injection-shaped source scan (WARN-only, first-pass heuristic).
+// See docs/designs/2026-08-16-august-regression-coverage-design.md for full
+// FAIL-vs-WARN reasoning and pattern-calibration notes. TODO: revisit
+// promoting this to Fail() once the false-positive rate is empirically known
+// after a full audit cycle.
+function checkShellInjectionPatterns() {
+    // Self-contained recursive directory walk (the module-level `walkDir` is
+    // block-scoped to an earlier `if (!LIFECYCLE_ONLY)` block and is not
+    // visible here).
+    function walkScanDir(dir: string, callback: (fPath: string) => void) {
+        if (!fs.existsSync(dir)) return;
+        const SKIP_DIRS = new Set(['node_modules', '.git', '.bun', '.temp']);
+        for (const f of fs.readdirSync(dir)) {
+            if (SKIP_DIRS.has(f)) continue;
+            const dirPath = path.join(dir, f);
+            if (!fs.existsSync(dirPath)) continue;
+            try {
+                const isDirectory = fs.statSync(dirPath).isDirectory();
+                if (isDirectory) {
+                    walkScanDir(dirPath, callback);
+                } else {
+                    callback(dirPath);
+                }
+            } catch {
+                // Ignore transient files deleted during concurrent test runs
+            }
+        }
+    }
+
+    const scanRoots = ['scripts'];
+    if (fs.existsSync('templates')) {
+        for (const variant of fs.readdirSync('templates')) {
+            if (!variant.startsWith('co-')) continue;
+            const variantScriptsDir = path.join('templates', variant, 'scripts');
+            if (fs.existsSync(variantScriptsDir)) scanRoots.push(variantScriptsDir);
+        }
+    }
+
+    let warnCount = 0;
+    for (const root of scanRoots) {
+        if (!fs.existsSync(root)) continue;
+        walkScanDir(root, (filePath) => {
+            if (filePath.includes('node_modules')) return;
+            const normalized = filePath.replace(/\\/g, '/');
+            if (!normalized.endsWith('.ts')) return;
+            if (normalized.endsWith('.test.ts') || normalized.endsWith('.d.ts')) return;
+
+            let content: string;
+            try {
+                content = readUTF8File(filePath);
+            } catch {
+                return;
+            }
+
+            for (const sourcePattern of sourceShellInjectionPatterns) {
+                sourcePattern.pattern.lastIndex = 0;
+                const matches = content.matchAll(sourcePattern.pattern);
+                for (const foundMatch of matches) {
+                    const matchIndex = foundMatch.index ?? 0;
+                    const upToMatch = content.slice(0, matchIndex);
+                    const lineNo = upToMatch.split('\n').length;
+                    const remediationText = sourcePattern.remediation;
+                    const patternLabel = sourcePattern.name;
+                    Warn(`Shell injection pattern: ${filePath}:${lineNo} matched "${patternLabel}" - ${remediationText}`);
+                    warnCount++;
+                }
+            }
+        });
+    }
+
+    if (warnCount === 0) {
+        Pass('Shell injection pattern scan: no matches found');
+    } else {
+        Warn(`Shell injection pattern scan: ${warnCount} match(es) found (WARN-only, first-pass heuristic)`);
+    }
+}
+checkShellInjectionPatterns();
+
+// Variant script drift detection (WARN-only, first-pass heuristic).
+// Flags templates/co-*/scripts files that duplicate templates/common/scripts files by >50% content overlap.
+// See docs/designs/2026-08-16-august-regression-coverage-design.md §2 for design, rationale, and denominator choice.
+function checkVariantScriptDrift() {
+    // Build a map of basename -> full path for all templates/common/scripts/**/*.ts
+    const commonScriptMap = new Map<string, string>();
+
+    function populateCommonMap() {
+        const commonDir = path.join('templates', 'common', 'scripts');
+        if (!fs.existsSync(commonDir)) return;
+
+        function walkDir(dir: string) {
+            for (const entry of fs.readdirSync(dir)) {
+                const fullPath = path.join(dir, entry);
+                try {
+                    const stat = fs.statSync(fullPath);
+                    if (stat.isDirectory()) {
+                        walkDir(fullPath);
+                    } else if (entry.endsWith('.ts') && !entry.endsWith('.test.ts') && !entry.endsWith('.d.ts')) {
+                        const basename = path.basename(fullPath);
+                        // Store the first occurrence; later ones are ignored (unlikely in practice)
+                        if (!commonScriptMap.has(basename)) {
+                            commonScriptMap.set(basename, fullPath);
+                        }
+                    }
+                } catch {
+                    // Ignore transient files
+                }
+            }
+        }
+        walkDir(commonDir);
+    }
+
+    populateCommonMap();
+
+    // Helper: extract non-blank, non-comment-only trimmed lines
+    function getContentLines(content: string): Set<string> {
+        const lines = new Set<string>();
+        for (const line of content.split('\n')) {
+            const trimmed = line.trim();
+            // Skip blank lines and comment-only lines
+            if (trimmed && !trimmed.startsWith('//') && !trimmed.startsWith('/*') && !trimmed.startsWith('*')) {
+                lines.add(trimmed);
+            }
+        }
+        return lines;
+    }
+
+    // Helper: compute line-overlap similarity using |intersection| / min(|A|,|B|)
+    function computeSimilarity(contentA: string, contentB: string): number {
+        const linesA = getContentLines(contentA);
+        const linesB = getContentLines(contentB);
+
+        if (linesA.size === 0 || linesB.size === 0) return 0;
+
+        // Compute intersection
+        let intersection = 0;
+        for (const line of linesA) {
+            if (linesB.has(line)) intersection++;
+        }
+
+        // Denominator: min(|A|, |B|) to catch copy-paste-then-extend patterns
+        const denominator = Math.min(linesA.size, linesB.size);
+        return denominator > 0 ? intersection / denominator : 0;
+    }
+
+    // Scan templates/co-*/scripts/**/*.ts
+    let warnCount = 0;
+    const templatesDir = path.join('templates');
+    if (fs.existsSync(templatesDir)) {
+        for (const variant of fs.readdirSync(templatesDir)) {
+            if (!variant.startsWith('co-')) continue;
+            const variantScriptsDir = path.join(templatesDir, variant, 'scripts');
+            if (!fs.existsSync(variantScriptsDir)) continue;
+
+            function walkVariantScripts(dir: string) {
+                for (const entry of fs.readdirSync(dir)) {
+                    const fullPath = path.join(dir, entry);
+                    try {
+                        const stat = fs.statSync(fullPath);
+                        if (stat.isDirectory()) {
+                            walkVariantScripts(fullPath);
+                        } else if (entry.endsWith('.ts') && !entry.endsWith('.test.ts') && !entry.endsWith('.d.ts')) {
+                            const basename = path.basename(fullPath);
+                            const commonPath = commonScriptMap.get(basename);
+                            if (commonPath) {
+                                let variantContent: string;
+                                let commonContent: string;
+                                try {
+                                    variantContent = readUTF8File(fullPath);
+                                    commonContent = readUTF8File(commonPath);
+                                } catch {
+                                    return;
+                                }
+
+                                const similarity = computeSimilarity(commonContent, variantContent);
+                                if (similarity > 0.50) {
+                                    const percent = (similarity * 100).toFixed(1);
+                                    const remediationNote = 'ADR-0050 Part 1: variant-local scripts must not duplicate common/ logic; compose/call common instead.';
+                                    Warn(`Script drift detected: ${fullPath} (${percent}% similar to ${commonPath}) - ${remediationNote}`);
+                                    warnCount++;
+                                }
+                            }
+                        }
+                    } catch {
+                        // Ignore transient files
+                    }
+                }
+            }
+            walkVariantScripts(variantScriptsDir);
+        }
+    }
+
+    if (warnCount === 0) {
+        Pass('Variant script drift check: no high-similarity duplicates found');
+    } else {
+        Warn(`Variant script drift check: ${warnCount} match(es) found (WARN-only, first-pass heuristic)`);
+    }
+}
+checkVariantScriptDrift();
+
 // Script sync: validated by bun scripts/propagate-to-templates.ts --dry-run --domain scripts
 checkL2VariantIntegrity();
 checkVariantContextGuidelinesSection();
@@ -1040,7 +1246,7 @@ checkVariantJsonSchema();
 
 // Workspace root detection: presence of context.md (and absence of variant.json)
 // distinguishes the governance root from generated project copies.
-const IS_WORKSPACE_ROOT = fs.existsSync('context.md') && !fs.existsSync('variant.json');
+const IS_WORKSPACE_ROOT = fs.existsSync('CONSTITUTION.md') && !fs.existsSync('variant.json');
 
 // Check: Agent files must have a non-empty ## Required Tools section (workspace root only)
 if (IS_WORKSPACE_ROOT && fs.existsSync('agents')) {
@@ -1051,7 +1257,7 @@ if (IS_WORKSPACE_ROOT && fs.existsSync('agents')) {
     let emptySection = 0;
     for (const file of agentFiles) {
         const filePath = path.join('agents', file);
-        const content = fs.readFileSync(filePath, 'utf-8');
+        const content = readUTF8File(filePath);
         const sectionIdx = content.indexOf('## Required Tools');
         if (sectionIdx === -1) {
             Fail(`Agent file missing Required Tools section: ${file}`);
@@ -1074,7 +1280,7 @@ if (IS_WORKSPACE_ROOT && fs.existsSync('agents')) {
 
 // Check: AGENTS.md PM Direct Execution Scope synced to templates/co-*/AGENTS.md (workspace root only)
 if (IS_WORKSPACE_ROOT && fs.existsSync('AGENTS.md')) {
-    const agentsMdContent = fs.readFileSync('AGENTS.md', 'utf-8');
+    const agentsMdContent = readUTF8File('AGENTS.md');
     const hasPmScope = agentsMdContent.includes('### PM Direct Execution Scope');
     if (hasPmScope) {
         const templatesDir = 'templates';
@@ -1085,7 +1291,7 @@ if (IS_WORKSPACE_ROOT && fs.existsSync('AGENTS.md')) {
                 if (!entry.startsWith('co-')) continue;
                 const variantAgentsMd = path.join(templatesDir, entry, 'AGENTS.md');
                 if (!fs.existsSync(variantAgentsMd)) continue;
-                const variantContent = fs.readFileSync(variantAgentsMd, 'utf-8');
+                const variantContent = readUTF8File(variantAgentsMd);
                 // Only check variants that have a pm agent entry
                 const hasPmEntry = /\|\s*pm\s*\|/.test(variantContent)
                     || /pm\.md/.test(variantContent)
@@ -1136,7 +1342,7 @@ if (IS_WORKSPACE_ROOT) {
 
     let strayFound = 0;
     try {
-        const schemaRaw = fs.readFileSync(path.join('docs', 'workspace-schema.json'), 'utf-8');
+        const schemaRaw = readUTF8File(path.join('docs', 'workspace-schema.json'));
         const schema = JSON.parse(schemaRaw);
         const allowedFiles: string[] = schema?.rootAllowlist?.files ?? [];
         const allowedDirs: string[] = schema?.rootAllowlist?.dirs ?? [];
@@ -1214,7 +1420,7 @@ if (!LIFECYCLE_ONLY && fs.existsSync('templates')) {
                 if (SKIP_DIRS.has(item)) continue;
                 checkLeakage(itemPath);
             } else if (stat.isFile() && itemPath.endsWith('.md')) {
-                const content = fs.readFileSync(itemPath, 'utf-8');
+                const content = readUTF8File(itemPath);
                 if (L0_LEAK_PATTERN.test(content) && !content.includes('intentional-duplicate')) {
                     Fail(`L0 Leakage: ${itemPath} contains unauthorized reference to CONSTITUTION`);
                     leakageErrors++;
@@ -1290,7 +1496,7 @@ if (fs.existsSync('templates')) {
     const versionFile = 'templates/VERSION';
     if (fs.existsSync(versionFile)) {
         try {
-            const version = fs.readFileSync(versionFile, 'utf-8').trim();
+            const version = readUTF8File(versionFile).trim();
             const tagOut = execFileSync('git', ['tag', '-l', `template-v${version}`], { encoding: 'utf-8' }).trim();
             if (tagOut === '') {
                 Warn(`Template version ${version} in templates/VERSION has no corresponding git tag. Run: bun scripts/tag-template.ts`);
@@ -1351,8 +1557,8 @@ if (!LIFECYCLE_ONLY && IS_WORKSPACE_ROOT) {
             return true; // Not applicable
         }
 
-        const l0Content = fs.readFileSync(l0PmPath, 'utf-8');
-        const l1Content = fs.readFileSync(l1PmPath, 'utf-8');
+	        const l0Content = readUTF8File(l0PmPath);
+	        const l1Content = readUTF8File(l1PmPath);
 
         // Extract YAML frontmatter sections
         const extractYamlSection = (content: string, sectionStart: string, sectionEnd: string): string => {
@@ -1444,9 +1650,9 @@ if (!LIFECYCLE_ONLY && IS_WORKSPACE_ROOT) {
                 const l2PmPath = path.join(templatesDir, variant, 'agents', 'pm.md');
                 if (!fs.existsSync(l2PmPath)) continue;
 
-                const l2Content = fs.readFileSync(l2PmPath, 'utf-8');
+	                const l2Content = readUTF8File(l2PmPath);
 
-                const hasVariantOverrides = l2Content.includes('variant_overrides:');
+	                const hasVariantOverrides = l2Content.includes('variant_overrides:');
                 const hasExtendsPattern = l2Content.includes('extends:');
                 const isResolved = l2Content.startsWith('# @resolved-from:');
                 if (!hasVariantOverrides && !hasExtendsPattern && !isResolved) {
@@ -1518,14 +1724,17 @@ if (fs.existsSync(variantAuditPath)) {
 }
 
 // ── Spec Registry Checks (--spec-check mode, warn-only) ─────────────────────
-if (SPEC_CHECK && !LIFECYCLE_ONLY) {
+// NOTE: guarded by SPEC_CHECK alone (not !LIFECYCLE_ONLY) because dev-sync.ts's
+// only call site passes --spec-check --lifecycle-only together; gating on
+// !LIFECYCLE_ONLY here made this block permanently unreachable.
+if (SPEC_CHECK) {
     const SPEC_REGISTRY = path.join('docs', 'specs', 'registry.json');
     if (!fs.existsSync(SPEC_REGISTRY)) {
         Warn('Spec registry not found at docs/specs/registry.json — run: bun scripts/spec-register.ts to initialize');
     } else {
         interface SpecEntry { id: string; file: string; status: string; created: string; last_updated: string; }
         interface Registry { specs: SpecEntry[]; }
-        const registry: Registry = JSON.parse(fs.readFileSync(SPEC_REGISTRY, 'utf-8'));
+	        const registry: Registry = JSON.parse(readUTF8File(SPEC_REGISTRY));
 
         // Check 1: modified code files with no associated spec
         let changedFiles: string[] = [];
@@ -1538,14 +1747,23 @@ if (SPEC_CHECK && !LIFECYCLE_ONLY) {
 
         const codeChangedDirs = ['scripts/', 'templates/', 'agents/'];
         const changedCode = changedFiles.filter(f => codeChangedDirs.some(d => f.startsWith(d)));
+        const changedSpecArea = changedFiles.some(f =>
+            f.startsWith('docs/specs/') || f.startsWith('docs/designs/'));
         if (changedCode.length > 0) {
-            const registeredFiles = new Set(registry.specs.map(s => s.file));
-            // Loose check: any approved/draft spec is sufficient (no file-level mapping required)
-            const hasActiveSpec = registry.specs.some(s => s.status === 'approved' || s.status === 'implemented');
-            if (!hasActiveSpec) {
-                Warn(`Spec check: ${changedCode.length} code file(s) changed but no approved/implemented spec found in registry — consider running brainstorming skill or spec-register.ts`);
+            const RECENT_DAYS = 7;
+            const now = Date.now();
+            const recentActiveSpec = registry.specs.some(s => {
+                if (s.status !== 'approved' && s.status !== 'implemented') return false;
+                const updated = Date.parse(s.last_updated);
+                return !isNaN(updated) && (now - updated) <= RECENT_DAYS * 86400 * 1000;
+            });
+            // Relevance is diff-recency-based, not true per-file spec-to-code mapping
+            // (out of scope for this pass — see docs/designs/2026-08-16-spec-registry-enforcement-design.md).
+            const relevant = changedSpecArea || recentActiveSpec;
+            if (!relevant) {
+                Warn(`Spec check: ${changedCode.length} code file(s) changed but no recent/relevant spec activity (diff doesn't touch docs/specs|docs/designs, and no approved/implemented spec updated within ${RECENT_DAYS}d) — consider running the brainstorming skill or spec-register.ts`);
             } else {
-                Pass(`Spec check: code changes covered by spec registry (${registry.specs.filter(s => s.status === 'approved' || s.status === 'implemented').length} active spec(s))`);
+                Pass('Spec check: code changes covered by spec registry activity');
             }
         }
 

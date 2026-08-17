@@ -4,6 +4,8 @@ description: Use when checking SAP system health, investigating reported errors,
 metadata:
   type: core
 version: 1.0.0
+owner: pm
+status: active
 ---
 
 # Dump Monitoring Workflow

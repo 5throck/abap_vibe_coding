@@ -1,3 +1,12 @@
+---
+name: handoff-spec
+lifecycle:
+  phase: production
+  created: "2026-08-17"
+  last_updated: "2026-08-17"
+  governance: docs/lifecycle/agents/handoff-spec.md
+---
+
 # Agent Handoff Specification
 
 This document defines the JSON-based handoff format between agents in the multi-agent workflow.

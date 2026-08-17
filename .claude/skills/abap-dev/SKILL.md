@@ -4,6 +4,8 @@ description: Use when working on SAP ABAP development tasks — provides special
 metadata:
   type: core
 version: 1.1.0
+owner: pm
+status: active
 ---
 
 # ABAP Development Skills (vsp)
