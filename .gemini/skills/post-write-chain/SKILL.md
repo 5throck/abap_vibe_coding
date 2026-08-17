@@ -4,6 +4,8 @@ description: Use after ANY WriteSource, EditSource, or Activate operation on SAP
 metadata:
   type: core
 version: 1.1.0
+owner: pm
+status: active
 ---
 
 > ⚠️ **Desktop App**: `PostToolUse` hooks do **not** fire automatically. Run `/post-write <object-name>` **manually** after every WriteSource or EditSource in Desktop App sessions.

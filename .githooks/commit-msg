@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 # commit-msg: auto-log memory + CHANGELOG on every direct git commit.
 # Receives the commit message file path as $1.
 # Runs AFTER pre-commit, so the message is guaranteed to be available.
@@ -11,11 +12,35 @@ COMMIT_BODY=$(tail -n +2 "$COMMIT_MSG_FILE" | sed -e '1,/^$/d' -e '/^#/d' | sed 
 [ -z "$COMMIT_MSG" ] && exit 0
 echo "$COMMIT_MSG" | grep -qE "^Merge|^WIP|^fixup!|^squash!" && exit 0
 
+# ── Enforce English Only ───────────────────────────────────────────────────────
+# Uses language-guard.ts (Korean + Japanese + Chinese detection + code-block stripping).
+# Falls back to python3 Korean-only regex if bun is unavailable.
+if command -v bun >/dev/null 2>&1; then
+  if ! bun -e "
+    import { readFileSync } from 'fs';
+    import { hasNonEnglish } from './scripts/lib/language-guard.ts';
+    const text = readFileSync(process.argv[1], 'utf-8');
+    process.exit(hasNonEnglish(text) ? 1 : 0);
+  " "$COMMIT_MSG_FILE"; then
+    echo -e "\033[31m[FAIL]\033[0m Non-English characters detected in commit message."
+    echo "       Workspace policy requires all commit messages must be in English."
+    exit 1
+  fi
+elif command -v python3 >/dev/null 2>&1; then
+  # Fallback: Korean-only regex (narrower than language-guard.ts)
+  if ! python3 -c "import sys,re; data=open(sys.argv[1],encoding='utf-8').read(); sys.exit(1) if re.search(r'[가-힣ᄀ-ᇿ㄰-㆏]',data) else sys.exit(0)" "$COMMIT_MSG_FILE"; then
+    echo -e "\033[31m[FAIL]\033[0m Non-English characters detected in commit message."
+    echo "       Workspace policy requires all commit messages must be in English."
+    exit 1
+  fi
+else
+  echo "[WARN] bun and python3 not found — non-English check skipped." >&2
+fi
+
 TODAY=$(date +%Y-%m-%d)
 mkdir -p memory
 
 STAGED=$(git diff --cached --name-only)
-STAGED_COUNT=$(echo "$STAGED" | grep -v "^memory/" | wc -l)
 
 # ── Extract decisions from commit body (look for "Decided:", "Choice:", etc.) ─
 DECISIONS=""
@@ -28,72 +53,55 @@ ISSUES=""
 if echo "$COMMIT_BODY" | grep -qiE "issue:|bug:|fix:|problem:|blocker:|error:|fail"; then
   ISSUES=$(echo "$COMMIT_BODY" | grep -iE "issue:|bug:|fix:|problem:|blocker:|error:|fail" | head -2 | sed 's/^[^:]*: //')
 fi
-[ -z "$ISSUES" ] && ISSUES="None"
 
 # ── Build purpose from commit body (first non-empty line) ───────────────────
 if [ -n "$COMMIT_BODY" ]; then
-  # First meaningful line from body
   PURPOSE=$(echo "$COMMIT_BODY" | head -1)
 else
-  # Fallback: derive from commit title
   case "$COMMIT_MSG" in
-    feat:*)  PURPOSE="Feature implementation: ${COMMIT_MSG#feat: }" ;;
-    fix:*)   PURPOSE="Bug fix: ${COMMIT_MSG#fix: }" ;;
+    feat:*)     PURPOSE="Feature implementation: ${COMMIT_MSG#feat: }" ;;
+    fix:*)      PURPOSE="Bug fix: ${COMMIT_MSG#fix: }" ;;
     refactor:*) PURPOSE="Refactoring: ${COMMIT_MSG#refactor: }" ;;
-    docs:*)  PURPOSE="Documentation update: ${COMMIT_MSG#docs: }" ;;
-    test:*)  PURPOSE="Test improvement: ${COMMIT_MSG#test: }" ;;
-    chore:*) PURPOSE="Maintenance task: ${COMMIT_MSG#chore: }" ;;
-    *)       PURPOSE="${COMMIT_MSG}" ;;
+    docs:*)     PURPOSE="Documentation update: ${COMMIT_MSG#docs: }" ;;
+    test:*)     PURPOSE="Test improvement: ${COMMIT_MSG#test: }" ;;
+    chore:*)    PURPOSE="Maintenance task: ${COMMIT_MSG#chore: }" ;;
+    *)          PURPOSE="${COMMIT_MSG}" ;;
   esac
 fi
 
-# ── Build detailed file list with categories ───────────────────────────────
-FILE_LIST=$(echo "$STAGED" | grep -v "^memory/" | paste -sd ", " - || echo "No files")
-
-# ── Auto-append memory log (skip if dev-sync already wrote this entry) ────────
-# dev-sync.ts's own step-1 log entry uses a fixed "## Session Summary" heading with
-# the commit message as plain body text on the next line — NOT "## $COMMIT_MSG" as a
-# heading. The old pattern only matched this hook's own output format, so it never
-# matched dev-sync's, and every /sync run produced a duplicate entry here. Match the
-# raw message text (regardless of which format wrote it) instead of a heading shape.
-if ! grep -qF "$COMMIT_MSG" "memory/$TODAY.md" 2>/dev/null; then
+# ── Auto-append memory log in mandatory 4-section format ─────────────────────
+# (skip if dev-sync already wrote an entry for this commit message today)
+if ! grep -qxF "$COMMIT_MSG" "memory/$TODAY.md" 2>/dev/null; then
   SEPARATOR=""
   [ -f "memory/$TODAY.md" ] && SEPARATOR=$'\n---\n\n'
 
-  cat >> "memory/$TODAY.md" << EOF
-${SEPARATOR}## ${COMMIT_MSG}
+  # Build file list as markdown bullets (exclude memory/ self-references)
+  FILE_BULLETS=$(echo "$STAGED" | grep -v "^memory/" | sed 's/^/- `/' | sed 's/$/`/' 2>/dev/null || true)
+  [ -z "$(echo "${FILE_BULLETS}" | tr -d '[:space:]')" ] && FILE_BULLETS="- N/A"
 
-**Summary**: ${PURPOSE}
-
-**Files Changed** (${STAGED_COUNT} files): ${FILE_LIST}
-EOF
-
-  # Add Decisions section if we have content
+  DECISIONS_BLOCK="- None"
   if [ -n "$DECISIONS" ]; then
-    echo "" >> "memory/$TODAY.md"
-    echo "**Decisions**:" >> "memory/$TODAY.md"
-    echo "$DECISIONS" | while read -r line; do
-      [ -n "$line" ] && echo "- $line" >> "memory/$TODAY.md"
-    done
+    DECISIONS_BLOCK=$(printf '%s' "$DECISIONS" | sed 's/^/- /')
   fi
 
-  # Add Issues section
-  echo "" >> "memory/$TODAY.md"
-  echo "**Issues**: ${ISSUES}" >> "memory/$TODAY.md"
-  echo "" >> "memory/$TODAY.md"
+  ISSUES_BLOCK="- None"
+  if [ -n "$ISSUES" ]; then
+    ISSUES_BLOCK=$(printf '%s' "$ISSUES" | sed 's/^/- /')
+  fi
+
+  printf '%s## Session Summary\n%s\n\n## Changes\n%s\n\n## Decisions\n%s\n\n## Open Issues\n%s\n' \
+    "$SEPARATOR" \
+    "$COMMIT_MSG" \
+    "$FILE_BULLETS" \
+    "$DECISIONS_BLOCK" \
+    "$ISSUES_BLOCK" \
+    >> "memory/$TODAY.md"
 fi
 
 # ── Auto-update MEMORY.md index ───────────────────────────────────────────────
-bun scripts/sync-md.ts "$TODAY" "$COMMIT_MSG" 2>/dev/null || true
-
-# ── Auto-add CHANGELOG entry if [Unreleased] section has no entries yet ───────
-if [ -f "CHANGELOG.md" ] && ! echo "$STAGED" | grep -q "CHANGELOG.md"; then
-  SECTION=$(awk '/\[Unreleased\]/{f=1;next} f && /^## /{exit} f{print}' CHANGELOG.md)
-  if ! echo "$SECTION" | grep -qE "^[[:space:]]*[-*]|^### "; then
-    perl -i -pe 'BEGIN{$m=shift; $d=shift}
-      if (/^## \[Unreleased\]/) { $_ .= "\n### Added\n- **[$d]**: \Q$m\E\n" }
-    ' "$COMMIT_MSG" "$TODAY" CHANGELOG.md
-  fi
+if [ -f "scripts/sync-md.ts" ]; then
+  bun scripts/sync-md.ts "$TODAY" "$COMMIT_MSG" 2>/dev/null || true
 fi
+
 
 exit 0

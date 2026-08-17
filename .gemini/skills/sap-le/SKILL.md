@@ -4,6 +4,8 @@ description: Use when working on LE module tasks — shipping, transport, wareho
 metadata:
   type: module
 version: 1.0.0
+owner: pm
+status: active
 ---
 
 # LE Analyst Context — Logistics Execution

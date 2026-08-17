@@ -1,53 +1,96 @@
-# Scripts Registry
+# SCRIPTS.md — Script Lifecycle Registry
 
-| Script | Version | Purpose | Layer |
-|--------|---------|---------|-------|
-| `dev-sync.ts` | 1.5.1 | Full sync pipeline (memlog → changelog → audit → commit → PR) | L0+L1 |
-| `sync-skills.ts` | 1.4.1 | 3-platform skill distribution (.agents → .claude/.gemini) | L0+L1 |
-| `audit.ts` | 2.10.17 | Documentation integrity audit | L0+L1 |
-| `sync-md.ts` | 1.2.0 | Update memory/MEMORY.md index | L0+L1 |
-| `sync-mcp.ts` | 1.0.0 | Propagate .mcp.json (SSOT) to .claude/.gemini settings | L0+L1 |
-| `verify-skills.ts` | 1.0.0 | Skill auto-discovery and index generation | L0+L1 |
-| `agent-verify.ts` | 1.0.0 | Agent file ↔ documentation synchronization check | L0+L1 |
-| `agent-create.ts` | 1.0.0 | Create new agent files from template | L0+L1 |
-| `agent-list.ts` | 1.0.0 | List all agents with metadata | L0+L1 |
-| `agent-delete.ts` | 1.0.0 | Delete agent files | L0+L1 |
-| `validate-docs-links.ts` | 1.0.0 | Scan Markdown documentation for dead links and file reference errors | L0+L1 |
-| `validate-md-language.ts` | 1.5.0 | Detect undeclared Korean content in official markdown files | L0+L1 |
-| `verify-readme-sync.ts` | 1.1.1 | Verify README.md / README_ko.md structural parity | L0+L1 |
-| `analyze-git-history.ts` | 1.0.1 | Analyze git commit history for reporting/insights | L0+L1 |
-| `cleanup-completed-md.ts` | 1.0.1 | Archive/clean completed markdown task files | L0+L1 |
-| `dispatch.ts` | 1.0.0 | Main CLI dispatcher with parallel/serial modes | L1 |
-| `dispatch-parallel.ts` | 1.0.0 | Parallel agent dispatcher for read-only tasks | L1 |
-| `dispatch-serial.ts` | 1.0.0 | Serial pipeline executor for write operations | L1 |
-| `retry-handler.ts` | 1.0.0 | Error recovery with 3-retry limit and exponential backoff | L1 |
-| `vsp-audit.ts` | 1.0.0 | VSP configuration audit | L1 |
-| `vsp-task.ts` | 1.0.0 | Create task files from template | L1 |
-| `new-requirement.ts` | 1.0.0 | Scaffold deliverables/REQ-NNN-slug/01_srs.md and register RTM row | L1 |
-| `setup.ts` | 1.0.0 | Project environment setup | L1 |
-| `scratch-cleanup.ts` | 1.0.0 | Scratch workspace hygiene (temp purge, task archival, status) | L1 |
-| `install-vsp.ts` | 1.0.0 | VSP (VS Code extension) installation | L1 |
-| `install-bun.ts` | 1.0.0 | Bun runtime installation | L1 |
-| `vsp-publish.ts` | 1.0.0 | Package and publish core framework assets to the plugin repository | L1 |
-| `git-sync.ts` | 1.0.0 | ~~Simple commit-and-push utility~~ Superseded by `dev-sync.ts` | L1 (deprecated) |
+> Auto-generated draft. Review and fill in the Guide section before committing.
 
-## Test Files
+---
 
-Unit test files under `scripts/*.test.ts` are versioned alongside the script they cover but
-are not part of the operational CLI surface.
+## Registry
 
-| Test File | Version | Covers |
-|-----------|---------|--------|
-| `new-requirement.test.ts` | 1.0.0 | `new-requirement.ts` |
-| `retry-handler.test.ts` | 1.0.0 | `retry-handler.ts` |
-| `scratch-cleanup.test.ts` | 1.0.0 | `scratch-cleanup.ts` |
-| `sync-mcp.test.ts` | 1.0.0 | `sync-mcp.ts` |
-| `sync-md.test.ts` | 1.0.0 | `sync-md.ts` |
-| `sync-skills.test.ts` | 1.0.0 | `sync-skills.ts` |
-| `verify-skills.test.ts` | 1.0.0 | `verify-skills.ts` |
-| `vsp-publish.test.ts` | 1.0.0 | `vsp-publish.ts` |
+| script | source | version | status | removal-date | security-advisory | layer | pair |
+|--------|--------|---------|--------|--------------|-------------------|-------|------|
+| `agent-create.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `agent-delete.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `agent-lifecycle-audit.ts` | L0 | 1.1.5 | active | — | — | common | — |
+| `agent-list.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `agent-verify.ts` | L0 | 1.0.2 | active | — | — | common | — |
+| `analyze-git-history.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `archive-memory.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `audit.ts` | L0 | 2.13.1 | active | — | — | common | — |
+| `cleanup-completed-md.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `clear-pm-approval.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `compile-tokens.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `dev-sync.ts` | L0 | 1.5.4 | active | — | — | common | — |
+| `dispatch-parallel.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `dispatch-serial.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `dispatch.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `gen-pr-body.ts` | L0 | 1.2.0 | active | — | — | common | — |
+| `generate-ide-rules.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `git-sync.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `helpers/extends-validator.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `helpers/merge-frontmatter.ts` | L0 | 1.8.6 | active | — | — | common | — |
+| `helpers/pm-md-parser.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `helpers/security-validator.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `helpers/template-utils.ts` | L0 | 1.1.1 | active | — | — | common | — |
+| `hooks/gateguard-fact-force.ts` | L0 | 1.2.0 | active | — | — | common | — |
+| `hooks/post-write-lifecycle-check.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `hooks/pre-commit.ts` | L0 | 1.5.9 | active | — | — | common | — |
+| `hooks/pre-push.ts` | L0 | 1.2.8 | active | — | — | common | — |
+| `install-bun.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `install-vsp.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `lib/auth.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `lib/encoding-utils.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `lib/error-handling.ts` | L0 | 1.3.0 | active | — | — | common | — |
+| `lib/language-guard.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `lib/pipeline-state.ts` | L0 | 1.1.1 | active | — | — | common | — |
+| `lib/platform-context.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `lib/ssrf.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `lifecycle-sync-audit.ts` | L0 | 1.4.5 | active | — | — | common | — |
+| `md-to-ooxml.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `new-requirement.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `new-requirement.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `qa-gate.ts` | L0 | 1.2.0 | active | — | — | common | — |
+| `readme-lifecycle-audit.ts` | L0 | 1.0.3 | active | — | — | common | — |
+| `render-pdf-deck.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `retry-handler.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `retry-handler.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `scratch-cleanup.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `scratch-cleanup.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `setup-github-branch-protection.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `setup.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `skill-lifecycle-audit.ts` | L0 | 1.3.0 | active | — | — | common | — |
+| `sync-agent-status.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `sync-mcp.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `sync-mcp.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `sync-md.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `sync-md.ts` | L0 | 1.2.0 | active | — | — | common | — |
+| `sync-skill-status.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `sync-skills.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `sync-skills.ts` | L0 | 1.4.1 | active | — | — | common | — |
+| `team-builder.ts` | L0 | 1.2.1 | active | — | — | common | — |
+| `test-platform-parity.ts` | L0 | 0.2.4 | active | — | — | common | — |
+| `test-runner.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `translate-readme.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `validate-agents.ts` | L0 | 1.0.5 | active | — | — | common | — |
+| `validate-doc-folder.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `validate-docs-links.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `validate-md-language.ts` | L0 | 1.6.0 | active | — | — | common | — |
+| `validate-model-registry.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `validate-pm-extends.ts` | L0 | 0.3.1 | active | — | — | common | — |
+| `validate-skills.ts` | L0 | 1.0.3 | active | — | — | common | — |
+| `verify-agent-deliverables.ts` | L0 | 1.0.1 | active | — | — | common | — |
+| `verify-memory.ts` | L0 | 1.1.0 | active | — | — | common | — |
+| `verify-platform-lifecycle.ts` | L0 | 1.1.2 | active | — | — | common | — |
+| `verify-readme-sync.ts` | L0 | 1.1.1 | active | — | — | common | — |
+| `verify-scripts.ts` | L0 | 1.4.0 | active | — | — | common | — |
+| `verify-skills.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `verify-skills.ts` | L0 | 1.2.0 | active | — | — | common | — |
+| `vsp-audit.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `vsp-publish.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `vsp-publish.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `vsp-task.ts` | L0 | 1.0.0 | active | — | — | common | — |
 
-## Layer Legend
-- **L0**: Workspace-root common scripts (managed by templates/common)
-- **L1**: Variant-specific scripts (managed by co-abap variant)
-- **L0+L1**: Common infrastructure scripts used across all variants
+---
+
+## Guide
+
+<!-- Add human-readable documentation for each script here -->

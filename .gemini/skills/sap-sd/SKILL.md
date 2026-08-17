@@ -4,6 +4,8 @@ description: Use when working on SD module tasks — sales orders, deliveries, b
 metadata:
   type: module
 version: 1.0.0
+owner: pm
+status: active
 ---
 
 # SD Analyst Context — Sales & Distribution

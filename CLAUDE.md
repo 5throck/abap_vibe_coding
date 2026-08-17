@@ -82,7 +82,7 @@ See `skills/desktop-app-fallback/SKILL.md` for the complete fallback workflow.
 
 ---
 
-*Last Updated: 2026-07-08*
+*Last Updated: 2026-08-17*
 
 
 ### Optimal Interaction Guidelines
@@ -110,11 +110,18 @@ When dispatching subagents defined in `agents/*.md`, translate their configured 
 
 
 <!-- COMMON-CLAUDE:START -->
-## Git & PR Additions (Claude Code)
+#### teammateMode (Claude Code Agent Teams execution mode)
 
-All shared Git/PR rules are in [docs/context.md](docs/context.md). Claude Code-specific additions:
+**teammateMode** specifies the parallel execution mode when Agent Teams is enabled in Claude Code.
 
-- **PR Language**: Governed by [docs/context.md](docs/context.md). All PR titles, bodies, and review comments must be written in English - no exceptions.
+**Values**:
+- `in-process` — Parallel execution within the same process (applies to both Claude Code CLI and Desktop App)
+- `tmux` — Parallel execution using tmux split-pane (Claude Code CLI only, not supported in Desktop App)
+- `null` — Default value (auto-selects based on environment)
 
-*Last Updated: 2026-08-15 — removed redundant N-1/N boilerplate rows; /sync already covers lifecycle + audit + commit + push + PR; previous: 2026-06-21 inlined N-1/N rows*
+**Configuration location**: `.claude/settings.json` → `teammateMode`
+
+**Note**: Antigravity does not have an equivalent to Agent Teams, so teammateMode is a Claude Code-specific setting. Antigravity 2.0+ uses Agent Manager to manage multiple workspace shards.
+
+**Relationship to execution plan table**: teammateMode controls parallel execution mode. The execution plan table defines the multi-agent task dispatch.
 <!-- COMMON-CLAUDE:END -->

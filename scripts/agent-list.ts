@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-// @version 1.0.0
 /**
- * Agent Lister CLI
+ * Agent Lister CLI for Workspace Root
+ * @version 1.1.0
  * Lists all agents in the agents/ directory with metadata
  *
  * Usage:
@@ -12,6 +12,7 @@
 
 import path from "node:path";
 import { promises as fs } from "node:fs";
+import { ErrorPhase, die } from "./lib/error-handling.ts";
 
 const scriptDir = path.dirname(import.meta.path);
 const projectRoot = path.resolve(scriptDir, "..");
@@ -54,7 +55,7 @@ function extractMetadata(content: string, filename: string): AgentMetadata {
   }
 
   // Extract triggers
-  const triggerSection = content.match(/## Trigger keywords?\n([\s\S]+?)(?=\n##|$)/);
+  const triggerSection = content.match(/## Triggers\n([\s\S]+?)(?=\n##|$)/);
   if (triggerSection) {
     const triggers = triggerSection[1]
       .split("\n")
@@ -110,7 +111,7 @@ async function listAgents(groupFilter?: string, verbose: boolean = false): Promi
       grouped.get(group)!.push(agent);
     }
 
-    console.log(`\n📋 ABAP Agent Registry (${filteredAgents.length} agents)\n`);
+    console.log(`\n📋 Workspace Agent Registry (${filteredAgents.length} agents)\n`);
     console.log(`━${"━".repeat(60)}`);
 
     for (const [group, groupAgents] of grouped) {
@@ -136,11 +137,10 @@ async function listAgents(groupFilter?: string, verbose: boolean = false): Promi
     console.log(`\nTotal: ${filteredAgents.length} agents\n`);
   } catch (error) {
     if ((error as any).code === "ENOENT") {
-      console.error("Agents directory not found.");
+      die("Agents directory not found", 1);
     } else {
-      console.error("Error:", error);
+      die(`Error listing agents: ${error instanceof Error ? error.message : String(error)}`, 1);
     }
-    process.exit(1);
   }
 }
 
@@ -166,13 +166,13 @@ function parseArgs(): { group?: string; verbose: boolean } {
 Usage: bun scripts/agent-list.ts [options]
 
 Options:
-  --group <group>    Filter by agent group (e.g., Business, Technical)
+  --group <group>    Filter by agent group (e.g., Orchestration, Design, Execution)
   --verbose, -v      Show detailed information
   --help, -h         Show this help message
 
 Examples:
   bun scripts/agent-list.ts
-  bun scripts/agent-list.ts --group Business
+  bun scripts/agent-list.ts --group Orchestration
   bun scripts/agent-list.ts --verbose
 `);
         process.exit(0);
@@ -192,7 +192,6 @@ async function main(): Promise<void> {
 
 if (import.meta.main) {
   main().catch(error => {
-    console.error("Error:", error);
-    process.exit(1);
+    die(`Fatal error: ${error instanceof Error ? error.message : String(error)}`, 1);
   });
 }

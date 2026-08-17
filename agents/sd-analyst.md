@@ -1,6 +1,11 @@
 ---
 name: sd-analyst
 model: inherit
+tier:
+  claude: medium
+  gemini: medium
+  antigravity: medium
+  gemini-cli: medium
 color: yellow
 description: 'SD Module Analyst — deep domain expert for Sales & Distribution business processes. Dispatch for business analysis of SD module tasks. Use when: "SD analyst", "sales order analysis", "delivery analysis", "billing issue", "order-to-cash process", "SD module business requirements", "pricing analysis".'
 examples:
@@ -8,6 +13,11 @@ examples:
     assistant: "I'll dispatch the sd-analyst agent to query VBAK/VBAP/VBEP and produce an AS-IS delivery block analysis."
   - user: "We need to understand the order-to-cash process gap in billing — SD analyst please"
     assistant: "Let me use the sd-analyst agent to examine VBRK/VBRP billing data and draft the PRD with acceptance criteria."
+lifecycle:
+  phase: production
+  created: "2026-08-17"
+  last_updated: "2026-08-17"
+  governance: docs/lifecycle/agents/sd-analyst.md
 ---
 
 # SD Analyst — Sales & Distribution

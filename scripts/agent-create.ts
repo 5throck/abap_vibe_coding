@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-// @version 1.0.0
 /**
- * Agent Creator CLI
+ * Agent Creator CLI for Workspace Root
+ * @version 1.0.1
  * Creates new agent definition files in the agents/ directory
  *
  * Usage:
@@ -12,6 +12,7 @@
 
 import path from "node:path";
 import { promises as fs } from "node:fs";
+import { existsSync } from "node:fs";
 
 const scriptDir = path.dirname(import.meta.path);
 const projectRoot = path.resolve(scriptDir, "..");
@@ -25,13 +26,13 @@ interface AgentOptions {
 }
 
 /**
- * Agent template for ABAP project
+ * Agent template for workspace root
  */
 function getAgentTemplate(options: AgentOptions): string {
   const { name, role, group, description } = options;
 
   const roleText = role || name.charAt(0).toUpperCase() + name.slice(1);
-  const groupText = group || "Business";
+  const groupText = group || "Execution";
   const descText = description || `Brief description of what this ${roleText} agent does`;
 
   return `# ${roleText}
@@ -56,10 +57,10 @@ ${descText}.
 
 ---
 
-## Key Tools
+## Tools & Capabilities
 
-| Tool | Purpose |
-|------|---------|
+| Tool / Capability | Purpose |
+|-------------------|---------|
 | <!-- tool-name --> | <!-- purpose -->
 
 ---
@@ -99,26 +100,27 @@ The agent produces:
 \`\`\`
 
 ---
-
-## Handoff Rules
-
-### Receives From
-
-- <!-- Agent or role that hands off to this agent -->
-
-### Hands Off To
-
-- <!-- Agent or role that this agent hands off to -->
-
----
-
-## Constraints & Boundaries
-
-- <!-- Constraint 1 -->
-- <!-- Constraint 2 -->
-
----
 `;
+}
+
+async function supplementFromAgencyAgents(agentPath: string, options: AgentOptions): Promise<void> {
+  const agencyGeneratorPath = path.join(projectRoot, "scripts", "external", "agency-agents-generator.ts");
+  let supplementText = `\n\n## Agency-Agents Supplement\n`;
+  try {
+    await fs.access(agencyGeneratorPath);
+    console.log(`⏳ Running agency-agents generator for supplementation...`);
+    const { $ } = await import("bun");
+    const res = await $`bun ${agencyGeneratorPath} --agent ${options.name}`.nothrow();
+    if (res.exitCode === 0) {
+      supplementText += res.stdout.toString();
+    } else {
+      supplementText += `> ⚠️ Supplementation failed or returned no data.\n`;
+    }
+  } catch {
+    console.log(`⚠️ agency-agents-generator not found at ${agencyGeneratorPath}. Skipping external supplementation.`);
+    supplementText += `> ℹ️ \`agency-agents-generator.ts\` not found. Run ingest-external-skills.ts to fetch external blueprints.\n`;
+  }
+  await fs.appendFile(agentPath, supplementText, "utf-8");
 }
 
 /**
@@ -136,17 +138,23 @@ async function createAgent(options: AgentOptions): Promise<void> {
     // File doesn't exist, continue
   }
 
-  // Create agent file
+  // Create agent file (Step 1: Local Draft)
   const content = getAgentTemplate(options);
   await fs.writeFile(agentPath, content, "utf-8");
+
+  // Step 2: Supplementation
+  await supplementFromAgencyAgents(agentPath, options);
 
   console.log(`✅ Agent created: ${agentPath}`);
   console.log(`\nNext steps:`);
   console.log(`  1. Edit the agent file to add role-specific content`);
   console.log(`  2. Add the agent to AGENTS.md (Agent Roster table)`);
   console.log(`  3. Add the agent to Subagent Roster table in AGENTS.md`);
-  console.log(`  4. Update docs/context.md § Agents if needed`);
-  console.log(`  5. Add dispatch triggers to PM or other agents`);
+  if (existsSync(path.join(projectRoot, "CONSTITUTION.md"))) {
+    console.log(`  4. Update CONSTITUTION.md §5.2 Role Groups if needed`);
+  } else {
+    console.log(`  4. Update docs/context.md — Multi-Agent Architecture if needed`);
+  }
 }
 
 /**
@@ -164,13 +172,13 @@ Arguments:
 
 Options:
   --role <role>         Display name for the role (default: capitalized name)
-  --group <group>       Agent group: Business, Technical, Orchestration
+  --group <group>       Agent group: Orchestration, Design, Execution, Security
   --description <desc>  Brief description of the agent's purpose
 
 Examples:
-  bun scripts/agent-create.ts qm-analyst
-  bun scripts/agent-create.ts qm-analyst --role "QM Analyst" --group Business
-  bun scripts/agent-create.ts interface-expert --group Technical --description "Handles interface integrations"
+  bun scripts/agent-create.ts code-reviewer
+  bun scripts/agent-create.ts code-reviewer --role "Code Reviewer" --group Execution
+  bun scripts/agent-create.ts i18n-specialist --group Design --description "Handles internationalization"
 `);
     process.exit(1);
   }

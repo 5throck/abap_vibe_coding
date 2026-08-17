@@ -4,6 +4,8 @@ description: Use when working on MM module tasks — purchasing, goods receipt, 
 metadata:
   type: module
 version: 1.0.0
+owner: pm
+status: active
 ---
 
 # MM Analyst Context — Materials Management
