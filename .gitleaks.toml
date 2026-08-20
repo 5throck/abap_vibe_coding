@@ -21,6 +21,10 @@ regexes = [
   '''YOUR_SECRET''',
   # gitleaks:allow inline marker (single-line suppression)
   '''gitleaks:allow''',
+  # SAP developer trial system's publicly-documented default credential
+  # (docs/setup-guide.md curl example) — not a real secret, this is SAP's
+  # own shipped default for the free ABAP developer edition.
+  '''DEVELOPER:Down1oad''',
 ]
 paths = [
   '''\.env\.sample''',
@@ -43,4 +47,8 @@ paths = [
   '''(^|/)venv/''',
   '''(^|/)node_modules/''',
   '''(^|/)__pycache__/''',
+  # scratch/stable/ contains vendored/reference ABAP source (zabapgit, zadt_vsp_git)
+  # whose local variable assignments (e.g. `iv_key = ls_dm02l-entid`) commonly
+  # trip the generic-api-key regex on `key = <identifier>` patterns — not secrets.
+  '''(^|/)scratch/''',
 ]
