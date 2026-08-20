@@ -9,6 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- **[2026-08-21]**: chore(upgrade): synced template infrastructure via `upgrade-project.ts` (workspace common → 0.5.3 latest) — `docs/context.md` v2.0 → v2.4 (picks up the Context Commonization Review process and the promoted "Git / PR Workflow" section), several `scripts/` updated (`dev-sync.ts`, `sync-md.ts`, `lifecycle-sync-audit.ts`, `readme-lifecycle-audit.ts`, `analyze-git-history.ts`, `hooks/pre-commit.ts`, `hooks/pre-push.ts`), new `scripts/helpers/context-sections.ts` dependency added, `.gitleaks.toml` refreshed. Manually reconciled 7 script version mismatches the upgrade left in `scripts/SCRIPTS.md` (file content synced but registry versions weren't — a known gap noted in `skills/upgrade-project/SKILL.md`'s Post-Upgrade Verification step). `bun scripts/audit.ts` passes clean.
 - **[2026-08-18]**: fix(scripts): `scripts/co-abap/dispatch-parallel.ts` and `dispatch-serial.ts` (ADR-0050 variant wrappers) imported the common dispatchers via `../../dispatch-*.ts` — resolving to the project root instead of `scripts/`, making both wrappers unimportable (`bun scripts/co-abap/dispatch-parallel.ts --help` failed with "Cannot find module"). Corrected to `../dispatch-*.ts`. Ported from ai-workspace-standards PR #557 (template-side fix).
 
 
