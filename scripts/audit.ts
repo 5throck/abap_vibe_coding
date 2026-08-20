@@ -1,4 +1,13 @@
-// @version 2.13.1
+// @version 2.14.1
+// v2.14.1: checkVariantContextCommonization()'s section-parsing extracted to
+//   helpers/context-sections.ts (shared with the new promote-context-section.ts) —
+//   behavior-preserving refactor, no output change.
+// v2.14.0: New checkVariantContextCommonization() — WARN-only cross-variant check flagging
+//   docs/<variant>.context.md sections that duplicate the same-heading section in another
+//   variant's context.md by >50% overlap (ADR-0050 Part 3, mirrors checkVariantScriptDrift()).
+// v2.13.3: docs/context.md missing now FAILs (not just Warns) for L2/L3 projects —
+//   previously any project without it was silently assumed to be the workspace root,
+//   letting create-l3-scaffold.ts's missing-context.md defect pass audit undetected.
 // v2.13.1: Homoglyph check (3.7) now skips docs/adr/ and docs/designs/ — these
 //   legitimately use Greek letters as math notation, not homoglyph-attack candidates.
 import { $ } from 'bun';
@@ -8,6 +17,7 @@ import * as crypto from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { parsePmMd, extractVariantOverrides } from './helpers/pm-md-parser.ts';
 import { sourceShellInjectionPatterns } from './helpers/security-validator.ts';
+import { splitIntoSections, getContentLines } from './helpers/context-sections.ts';
 import * as url from 'node:url';
 import { detectEncoding, detectHomoglyphs, detectZeroWidthChars, readUTF8File } from './lib/encoding-utils.ts';
 
@@ -54,7 +64,11 @@ if (fs.existsSync('CHANGELOG.md')) {
 // 2. context.md must be accessible (workspace root / L1 template context only —
 //    L2 variant templates and L3 projects intentionally omit context.md and use
 //    docs/context.md instead; variant.json, when present, also marks a generated project copy)
-if (fs.existsSync('CONSTITUTION.md') || fs.existsSync('../CONSTITUTION.md') || fs.existsSync('../../CONSTITUTION.md')) {
+// isWorkspaceRoot is reused below (§6-8) to tell "we ARE the workspace root" apart from
+// "we're a scaffolded project that's simply missing its docs/context.md" — the two cases
+// look identical if you only check for docs/context.md's absence.
+const isWorkspaceRoot = fs.existsSync('CONSTITUTION.md') || fs.existsSync('../CONSTITUTION.md') || fs.existsSync('../../CONSTITUTION.md');
+if (isWorkspaceRoot) {
     Pass('CONSTITUTION.md accessible');
 } else if (fs.existsSync('docs/context.md') || fs.existsSync('variant.json')) {
     Pass('CONSTITUTION.md check skipped (L2/L3 project — uses docs/context.md)');
@@ -395,8 +409,10 @@ if (!LIFECYCLE_ONLY) {
             Pass('docs/research/: all research files have ## References section');
         }
     }
-} else {
+} else if (isWorkspaceRoot) {
     Warn('docs/context.md not found - skipping project-level checks (workspace root)');
+} else {
+    Fail('docs/context.md missing — every scaffolded L2/L3 project must carry an immutable docs/context.md (SSOT: templates/common/docs/context.md). This usually means the project was created before create-l3-scaffold.ts copied this file (fixed in v1.10.1) — copy templates/common/docs/context.md into docs/context.md to repair it.');
 }
 }
 
@@ -1236,6 +1252,85 @@ function checkVariantScriptDrift() {
 }
 checkVariantScriptDrift();
 
+// Cross-variant context commonization check (WARN-only, first-pass heuristic).
+// Flags docs/<variant>.context.md sections that duplicate the SAME-heading section in
+// another variant's context.md by >50% content overlap — a candidate for promotion into
+// the shared docs/context.md (ADR-0050 Part 3), or extraction into a shared skill if only
+// a subset of variants need it. Mirrors checkVariantScriptDrift()'s similarity heuristic,
+// scoped per markdown section instead of per whole file.
+function checkVariantContextCommonization() {
+    const templatesDir = 'templates';
+    if (!fs.existsSync(templatesDir)) return;
+
+    const variants = fs.readdirSync(templatesDir)
+        .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+    if (variants.length < 2) return; // nothing to compare cross-variant
+
+    type Section = { variant: string; heading: string; lines: Set<string> };
+    const sections: Section[] = [];
+
+    for (const variant of variants) {
+        const docsDir = path.join(templatesDir, variant, 'docs');
+        if (!fs.existsSync(docsDir)) continue;
+        for (const file of fs.readdirSync(docsDir)) {
+            if (!file.endsWith('.context.md')) continue;
+            const content = readUTF8File(path.join(docsDir, file));
+            for (const { heading, body } of splitIntoSections(content)) {
+                const bodyLines = getContentLines(body);
+                if (bodyLines.size >= 3) { // skip trivial/near-empty sections
+                    sections.push({ variant, heading, lines: bodyLines });
+                }
+            }
+        }
+    }
+
+    // Group by normalized heading — only compare sections that answer the same question.
+    const byHeading = new Map<string, Section[]>();
+    for (const s of sections) {
+        if (!byHeading.has(s.heading)) byHeading.set(s.heading, []);
+        byHeading.get(s.heading)!.push(s);
+    }
+
+    // Aggregate per heading rather than reporting every pair — a heading shared across
+    // N variants produces up to N*(N-1)/2 pairwise matches, which buries the one decision
+    // that actually matters ("is this heading common enough to promote?") under noise.
+    let flaggedHeadings = 0;
+    const totalVariantCount = variants.length;
+    for (const [heading, group] of byHeading) {
+        const involved = new Set<string>();
+        let minSim = 1, maxSim = 0;
+        for (let i = 0; i < group.length; i++) {
+            for (let j = i + 1; j < group.length; j++) {
+                const a = group[i], b = group[j];
+                if (a.variant === b.variant) continue;
+                let intersection = 0;
+                for (const line of a.lines) if (b.lines.has(line)) intersection++;
+                const denominator = Math.min(a.lines.size, b.lines.size);
+                const similarity = denominator > 0 ? intersection / denominator : 0;
+                if (similarity > 0.50) {
+                    involved.add(a.variant);
+                    involved.add(b.variant);
+                    minSim = Math.min(minSim, similarity);
+                    maxSim = Math.max(maxSim, similarity);
+                }
+            }
+        }
+        if (involved.size > 0) {
+            flaggedHeadings++;
+            const range = minSim === maxSim ? `${(minSim * 100).toFixed(0)}%` : `${(minSim * 100).toFixed(0)}-${(maxSim * 100).toFixed(0)}%`;
+            const variantList = [...involved].sort().join(', ');
+            Warn(`Context commonization candidate: "${heading}" section is >50% similar (${range} overlap) across ${involved.size}/${totalVariantCount} variants: ${variantList} — consider promoting to docs/context.md if shared by most variants, or a shared skill if only a subset (ADR-0050 Part 3)`);
+        }
+    }
+
+    if (flaggedHeadings === 0) {
+        Pass('Context commonization check: no high-similarity cross-variant sections found');
+    } else {
+        Warn(`Context commonization check: ${flaggedHeadings} section heading(s) flagged across variants (WARN-only, first-pass heuristic — see ADR-0050 Part 3)`);
+    }
+}
+checkVariantContextCommonization();
+
 // Script sync: validated by bun scripts/propagate-to-templates.ts --dry-run --domain scripts
 checkL2VariantIntegrity();
 checkVariantContextGuidelinesSection();
@@ -1358,11 +1453,17 @@ if (IS_WORKSPACE_ROOT) {
                     let rmResult;
                     if (process.platform === 'win32') {
                         rmResult = spawnSync('bash', ['-c', 'rm -f -- "$1"', 'rm', item], { encoding: 'utf-8' });
-                        if (rmResult.status !== 0) {
-                            rmResult = spawnSync('powershell', ['-Command', `Remove-Item -Force -LiteralPath '${item}'`], { encoding: 'utf-8' });
-                        }
                     } else {
                         rmResult = spawnSync('bash', ['-c', 'rm -f -- "$1"', 'rm', item], { encoding: 'utf-8' });
+                    }
+                    // Shell-free fallback — never interpolate filenames into a command line
+                    if (rmResult.status !== 0) {
+                        try {
+                            fs.rmSync(item, { force: true });
+                            rmResult = { ...rmResult, status: 0, stderr: '' };
+                        } catch (e) {
+                            rmResult = { ...rmResult, status: 1, stderr: String(e) };
+                        }
                     }
                     if (rmResult.status === 0) {
                         Warn(`Auto-deleted Windows device name artifact: ${item} (external tool wrote to Git Bash "nul" filename)`);
@@ -1431,6 +1532,38 @@ if (!LIFECYCLE_ONLY && fs.existsSync('templates')) {
     checkLeakage('templates');
     if (leakageErrors === 0) {
         Pass('L0 Leakage check: no unauthorized CONSTITUTION references in templates');
+    }
+}
+
+// Check: GitHub Actions workflow permission hygiene (workspace root and templates)
+if (!LIFECYCLE_ONLY) {
+    const workflowDirs = ['.github/workflows'];
+    if (fs.existsSync('templates')) {
+        workflowDirs.push('templates/common/.github/workflows');
+    }
+    let permChecked = 0;
+    let permErrors = 0;
+    for (const wfDir of workflowDirs) {
+        if (!fs.existsSync(wfDir)) continue;
+        for (const item of fs.readdirSync(wfDir)) {
+            if (!item.endsWith('.yml') && !item.endsWith('.yaml')) continue;
+            const wfPath = path.join(wfDir, item);
+            // Skip comment-only lines so commented-out examples don't trigger
+            const content = readUTF8File(wfPath)
+                .split(String.fromCharCode(10))
+                .filter((l: string) => !l.trimStart().startsWith('#'))
+                .join(String.fromCharCode(10));
+            permChecked++;
+            if (/permissions:[\s\S]{0,60}(all|write-all)|write-all/i.test(content)) {
+                Fail(`Workflow permission over-grant: ${wfPath} requests write-all/all permissions`);
+                permErrors++;
+            } else if (!/permissions:/.test(content)) {
+                Warn(`Workflow without explicit permissions block (defaults may over-grant): ${wfPath}`);
+            }
+        }
+    }
+    if (permChecked > 0 && permErrors === 0) {
+        Pass(`Workflow permission hygiene: ${permChecked} workflow files checked, no write-all grants`);
     }
 }
 
