@@ -16,11 +16,11 @@
 | `analyze-git-history.ts` | L0 | 1.0.2 | active | — | — | common | — |
 | `archive-memory.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `audit-variant.ts` | L2 | 1.0.0 | active | — | — | variant | co-abap integrity checks (gitleaks allowlist, MCP SAP guard, AGENTS.md markers, wrapper import paths) |
-| `audit.ts` | L0 | 2.14.1 | active | — | — | common | — |
+| `audit.ts` | L0 | 2.21.2 | active | — | — | common | — |
 | `cleanup-completed-md.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `clear-pm-approval.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `compile-tokens.ts` | L0 | 1.0.0 | active | — | — | common | — |
-| `dev-sync.ts` | L0 | 1.5.5 | active | — | — | common | — |
+| `dev-sync.ts` | L0 | 1.7.2 | active | — | — | common | — |
 | `dispatch-parallel.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `dispatch-serial.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `dispatch.ts` | L0 | 1.0.0 | active | — | — | common | — |
@@ -46,7 +46,7 @@
 | `lib/pipeline-state.ts` | L0 | 1.1.1 | active | — | — | common | — |
 | `lib/platform-context.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `lib/ssrf.ts` | L0 | 1.1.0 | active | — | — | common | — |
-| `lifecycle-sync-audit.ts` | L0 | 1.4.6 | active | — | — | common | — |
+| `lifecycle-sync-audit.ts` | L0 | 1.4.8 | active | — | — | common | — |
 | `md-to-ooxml.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `new-requirement.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `new-requirement.ts` | L0 | 1.0.0 | active | — | — | common | — |
@@ -82,8 +82,8 @@
 | `verify-agent-deliverables.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `verify-memory.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `verify-platform-lifecycle.ts` | L0 | 1.1.2 | active | — | — | common | — |
-| `verify-readme-sync.ts` | L0 | 1.1.1 | active | — | — | common | — |
-| `verify-scripts.ts` | L0 | 1.4.0 | active | — | — | common | — |
+| `verify-readme-sync.ts` | L0 | 1.2.0 | active | — | — | common | — |
+| `verify-scripts.ts` | L0 | 1.4.1 | active | — | — | common | — |
 | `verify-skills.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `verify-skills.ts` | L0 | 1.2.1 | active | — | — | common | — |
 | `vsp-audit.ts` | L0 | 1.0.0 | active | — | — | common | — |
