@@ -1,4 +1,8 @@
-// @version 2.21.2
+// @version 2.21.1
+// v2.21.1: fix(lint+types): stripComment now strips trailing \r before matching — under
+//           core.autocrlf checkouts the $ anchors never matched, so the > nul lint flagged
+//           its own prose comments (ported from co-abap 2.21.2); validators import switched
+//           to a non-literal specifier so variant checkouts type-check (L0-only module)
 // v2.15.0: New checkStalePromotedContent() — WARN-only check flagging docs/<variant>.context.md
 //   sections that duplicate a same-heading section already present in the common
 //   templates/common/docs/context.md. checkVariantContextCommonization() only ever compared
@@ -83,8 +87,8 @@ if (fs.existsSync('CHANGELOG.md')) {
     Fail('CHANGELOG.md missing');
 }
 
-// 2. context.md must be accessible (workspace root / L1 template context only —
-//    L2 variant templates and L3 projects intentionally omit context.md and use
+// 2. CONSTITUTION.md must be accessible (workspace root / L1 template context only —
+//    L2 variant templates and L3 projects intentionally omit CONSTITUTION.md and use
 //    docs/context.md instead; variant.json, when present, also marks a generated project copy)
 // isWorkspaceRoot is reused below (§6-8) to tell "we ARE the workspace root" apart from
 // "we're a scaffolded project that's simply missing its docs/context.md" — the two cases
@@ -514,7 +518,7 @@ if (hasBun) {
             Fail("Skill audit detected issues (run 'bun scripts/skill-lifecycle-audit.ts' to see details)");
         }
     }
-    // Variant registry validators (scripts/validators/ — the framework context.md §6.6
+    // Variant registry validators (scripts/validators/ — the framework CONSTITUTION.md §6.6
     // documents as audit-enforced). This wiring is L0-only: `scripts/validators/` is a layer-L0
     // directory and is not propagated to templates/common/scripts/, so the existsSync guard
     // makes the L1 copy of this file skip the check rather than crash.
@@ -522,11 +526,12 @@ if (hasBun) {
     // which is how `phase: active`/`beta` drift and 6 unparseable SKILL.md frontmatters went
     // unnoticed. Error-severity findings Fail the audit; warnings stay visible as WARN.
     if (fs.existsSync(path.join('scripts', 'validators', 'index.ts')) && fs.existsSync('templates')) {
-        // L0-only module (scripts/validators/ is not propagated to variants); the existsSync
-        // guard makes this safe at runtime, but a static specifier breaks strict tsc in L1/L2
-        // checkouts where the directory is absent — hence the suppression.
-        // @ts-expect-error scripts/validators/ is L0-only and may legitimately be absent here
-        const { runAllValidators } = await import('./validators/index.ts');
+        // Non-literal specifier: scripts/validators/ is L0-only (never propagated), and a
+        // literal specifier is statically resolved by tsc in variant checkouts — TS2307 even
+        // though this existsSync guard makes the import unreachable there. Resolved to a
+        // file URL so runtime ESM resolution is cwd/module-independent.
+        const validatorsUrl = new URL('./validators/index.ts', import.meta.url).href;
+        const { runAllValidators } = await import(validatorsUrl);
         let validatorErrors = 0;
         let validatorWarnings = 0;
         for (const variant of fs.readdirSync('templates').filter(d => d.startsWith('co-'))) {
@@ -593,7 +598,7 @@ if (hasBun) {
         else
             Pass("README lifecycle audit: all READMEs healthy");
     }
-    if (fs.existsSync(path.join('scripts', 'verify-memory.ts')) && fs.existsSync('context.md') && !SKIP_MEMORY) {
+    if (fs.existsSync(path.join('scripts', 'verify-memory.ts')) && fs.existsSync('CONSTITUTION.md') && !SKIP_MEMORY) {
         // explicitly skip any files located in memory/archive/
         const memoryFiles = fs.readdirSync('memory')
             .filter(f => f.endsWith('.md') && fs.statSync(path.join('memory', f)).isFile())
@@ -1471,7 +1476,7 @@ checkVariantSkillSections();
 checkVariantJsonSchema();
 }
 
-// Workspace root detection: presence of context.md (and absence of variant.json)
+// Workspace root detection: presence of CONSTITUTION.md (and absence of variant.json)
 // distinguishes the governance root from generated project copies.
 const IS_WORKSPACE_ROOT = fs.existsSync('CONSTITUTION.md') && !fs.existsSync('variant.json');
 
@@ -1701,7 +1706,7 @@ if (IS_WORKSPACE_ROOT) {
 // Layer 4 of the 2026-08-07 meeting (memory/archive/meeting-2026-08-07-prevent-nul-file-creation.md).
 // The sweep above is remediation; this is prevention. On Windows, `> nul` / `2> nul` in a shell
 // context can materialize a physical file named `nul` that then blocks deleting the whole
-// directory tree from PowerShell. context.md §8 bans the pattern outright: use
+// directory tree from PowerShell. CONSTITUTION.md §8 bans the pattern outright: use
 // `> /dev/null 2>&1` in Bash, or `$null` / `Out-Null` in PowerShell.
 //
 // A full-tree scan on 2026-08-21 found zero violations in workspace source, so this check starts
@@ -1716,7 +1721,7 @@ if (!LIFECYCLE_ONLY) {
     const LINT_ROOTS = ['scripts', 'templates', '.githooks', 'tests'];
 
     /** Strip line comments so prose *about* the banned pattern isn't mistaken for a use of it.
-     * Trailing \r is removed first: with autocrlf checkouts lines end CRLF, and the
+     * Trailing \r is removed first: under core.autocrlf checkouts lines end CRLF, and the
      * end-anchors below would otherwise fail to match, leaving comments unstripped. */
     const stripComment = (line: string): string =>
         line
@@ -1761,10 +1766,10 @@ if (!LIFECYCLE_ONLY) {
     }
 }
 
-// Check: L0 Leakage (context.md references in templates)
+// Check: L0 Leakage (CONSTITUTION.md references in templates)
 if (!LIFECYCLE_ONLY && fs.existsSync('templates')) {
     let leakageErrors = 0;
-    // Matches: context.md (literal), docs/constitution/ or docs\constitution\ path patterns
+    // Matches: CONSTITUTION.md (literal), docs/constitution/ or docs\constitution\ path patterns
     const L0_LEAK_PATTERN = /CONSTITUTION\.md|docs[\/\\]constitution[\/\\]/i;
     const SKIP_DIRS = new Set(['node_modules', '.git', '.bun']);
     const checkLeakage = (dir: string) => {
