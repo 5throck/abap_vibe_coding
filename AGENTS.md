@@ -6,7 +6,8 @@
 > Your behavioral instructions are in `CLAUDE.md` (Claude Code), `GEMINI.md` (Gemini CLI), or `.codex/config.toml` (Codex).
 
 > **Scope**: Agent role definitions live in [`agents/*.md`](agents/) — this file is the registry index and orchestration contract only.
-> Shared engineering rules (memory logging, language, file isolation, post-write chain, git) live in [docs/context.md](docs/context.md#project-wide-rules-all-tools).
+> Non-runtime reference documents also live in `agents/` ([handoff-spec.md](agents/handoff-spec.md), [handoff-spec_ko.md](agents/handoff-spec_ko.md)) — they are inter-agent handoff specifications, not dispatchable agents.
+> Shared engineering rules (memory logging, language, file isolation, post-write chain, git) live in [docs/context.md](docs/context.md).
 > Tool-specific overrides live in [CLAUDE.md](CLAUDE.md), [GEMINI.md](GEMINI.md), and [.codex/](.codex/).
 
 <!-- variant: co-abap | version: 1.0.0 | upgraded: 2026-08-15 -->
@@ -90,7 +91,7 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
 ### 1. 🏗️ Architect _(Technical Execution Lead)_
 - **When to dispatch**: After §1 Business Analysis; PM hands off PRD + AC list for technical design
 - **Technical Lead responsibilities**: Select Pattern A/B/C; sequence code-writer → test-runner; coordinate DBA and Interface Expert as needed; produce §5 Finalization block for PM
-- **Key Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`, `GrepPackages`, `GetSource`
+- **Key Tools**: `AnalyzeCallGraph`, `GetCDSDependencies`, `GetCDSImpactAnalysis`, `GrepPackages`, `GetSource`, `SearchObject`
 - **Output**: Execution plan (pattern + object list + serial steps) + §5 Finalization block
 - **Subagent prompt**: [`agents/architect.md`](agents/architect.md)
 
@@ -108,13 +109,13 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
 
 ### 4. 🗄️ DBA (Database Agent)
 - **When to dispatch**: Task involves table/CDS/index design or complex SQL performance tuning
-- **Key Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`
+- **Key Tools**: `RunQuery`, `GetTable`, `GetTableContents`, `SearchObject`, `TraceExecution`, `ListSQLTraces`, `GetCallGraph`, `AnalyzeCallGraph`
 - **Output**: ERD, normalization review, index recommendations, optimized SQL
 - **Subagent prompt**: [`agents/dba.md`](agents/dba.md)
 
 ### 5. 🚀 DevOps / Admin
 - **When to dispatch**: Transport management, infrastructure install (`ZADT_VSP`, abapGit), system audit
-- **Key Tools**: `InstallZADTVSP`, `InstallAbapGit`, `GetSystemInfo`, `CreateTransport`, `ReleaseTransport`
+- **Key Tools**: `InstallZADTVSP`, `InstallAbapGit`, `GetSystemInfo`, `CreateTransport`, `ReleaseTransport`, `GetTransport`, `AddToTransport`, `GetConnectionInfo`, `ListDumps`, `GetDump`
 - **Output**: Transport CTS report, install status, environment audit
 - **Subagent prompt**: [`agents/devops-admin.md`](agents/devops-admin.md)
 
@@ -257,7 +258,7 @@ These subagents can be run simultaneously during initial triage and design phase
 |----------|-------------|:--------------:|---------------------------|
 | `sap-investigator` | `agents/sap-investigator.md` | ✅ Always | `GrepPackages`, `GrepObjects`, `SearchObject` |
 | `read-only-analyst` | `agents/read-only-analyst.md` | ✅ Always | `RunQuery`, `GetTable`, `GetTableContents` |
-| `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read) |
+| `schema-inspector` | `agents/schema-inspector.md` | ✅ Always | `GetTable`, `GetCDSDependencies`, `GetSource` (read), `SearchObject` |
 | `security-monitor` | `agents/security-monitor.md` | ✅ Always | `GrepObjects`, `GetSource` (read) |
 | `fiori-dev` (Design Mode) | `agents/fiori-developer.md` | ✅ Design only | `UI5ListApps`, `UI5GetApp`, `UI5GetFileContent`, `GetODataMetadata`, `GetCDSExposure` |
 | `form-expert` (Design Mode) | `agents/form-expert.md` | ✅ Design only | `GrepObjects` |

@@ -292,7 +292,9 @@ const PARITY_RULES: Record<string, ParityRule[]> = {
 // FILE MAPPINGS
 // ============================================================================
 
-const FILE_MAPPINGS = {
+type FileMapping = { L1: string; L2s?: string[] };
+
+const FILE_MAPPINGS: Record<string, FileMapping> = {
   'CLAUDE.md': {
     L1: 'templates/common/CLAUDE.md',
     // L2 variants use L1 common files - no need to check individual L2 files
@@ -352,7 +354,7 @@ function usesExtends(filePath: string): { usesExtends: boolean; extendsPath?: st
       removeSections = removeSectionsMatch[1]
         .split('\n')
         .map(line => line.match(/\s*-\s*"([^"]+)"/)?.[1])
-        .filter(Boolean);
+        .filter((s): s is string => s !== undefined);
     }
 
     return {
