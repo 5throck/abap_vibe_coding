@@ -51,7 +51,7 @@
 | `new-requirement.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `qa-gate.ts` | L0 | 1.2.0 | active | — | — | common | — |
 | `readme-lifecycle-audit.ts` | L0 | 1.0.4 | active | — | — | common | — |
-| `render-pdf-deck.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `render-pdf-deck.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `retry-handler.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `retry-handler.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `scratch-cleanup.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
@@ -63,11 +63,11 @@
 | `sync-mcp.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `sync-mcp.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `sync-md.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
-| `sync-md.ts` | L0 | 1.3.0 | active | — | — | common | — |
+| `sync-md.ts` | L0 | 1.3.1 | active | — | — | common | — |
 | `sync-skill-status.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `sync-skills.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `sync-skills.ts` | L0 | 1.4.1 | active | — | — | common | — |
-| `team-builder.ts` | L0 | 1.2.1 | active | — | — | common | — |
+| `team-builder.ts` | L0 | 1.2.2 | active | — | — | common | — |
 | `test-platform-parity.ts` | L0 | 0.2.4 | active | — | — | common | — |
 | `test-runner.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `translate-readme.ts` | L0 | 1.0.0 | active | — | — | common | — |
@@ -84,7 +84,7 @@
 | `verify-readme-sync.ts` | L0 | 1.1.1 | active | — | — | common | — |
 | `verify-scripts.ts` | L0 | 1.4.0 | active | — | — | common | — |
 | `verify-skills.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
-| `verify-skills.ts` | L0 | 1.2.0 | active | — | — | common | — |
+| `verify-skills.ts` | L0 | 1.2.1 | active | — | — | common | — |
 | `vsp-audit.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `vsp-publish.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `vsp-publish.ts` | L0 | 1.0.0 | active | — | — | common | — |

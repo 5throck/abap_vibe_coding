@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// @version 1.3.0
+// @version 1.3.1
 // sync-md.ts - Update memory/MEMORY.md index
 // Usage:
 //   bun run scripts/sync-md.ts "YYYY-MM-DD" "summary"              # session entry
@@ -40,7 +40,7 @@ const INIT_CONTENT = `# Memory Index
 |----|-------|--------|------|
 `;
 
-// â”€â”€ Initialize MEMORY.md with 3-section structure if missing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€ Initialize MEMORY.md with 3-section structure if missing ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 const file = Bun.file(MEMORY_FILE);
 let exists = await file.exists();
 if (!exists) {
@@ -49,14 +49,14 @@ if (!exists) {
 
 let content = await Bun.file(MEMORY_FILE).text();
 
-// â”€â”€ Migrate legacy flat index if no ## Sessions section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€ Migrate legacy flat index if no ## Sessions section ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 //
 // Idempotency matters here. The previous version keyed the whole migration off a
 // single `## Sessions` guard and then appended the Meetings/ADRs sections
 // unconditionally. Its heading regex required the line to be exactly
 // "# Memory Index", so any project using a suffixed title (e.g.
-// "# Memory Index â€” co-newbiz") never got `## Sessions` inserted, the guard stayed
-// false on every subsequent run, and the two sections were re-appended each time â€”
+// "# Memory Index ??co-newbiz") never got `## Sessions` inserted, the guard stayed
+// false on every subsequent run, and the two sections were re-appended each time ??
 // three copies of each after two syncs. Each section is now inserted only if it is
 // actually absent, and the heading match tolerates a suffix.
 if (!content.includes('## Sessions')) {
@@ -94,7 +94,7 @@ if (!content.includes('## ADRs')) {
 await Bun.write(MEMORY_FILE, content);
 content = await Bun.file(MEMORY_FILE).text();
 
-// â”€â”€ Append to appropriate section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€ Append to appropriate section ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 function makeSlug(str: string, maxLen: number): string {
   return str
     .toLowerCase()
@@ -138,3 +138,6 @@ if (type === 'meeting') {
     await Bun.write(MEMORY_FILE, content);
   }
 }
+
+export {}
+

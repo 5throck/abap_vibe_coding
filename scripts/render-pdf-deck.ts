@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
+/// <reference lib="dom" />
 /**
  * HTML Presentation Deck PDF Renderer
- * @version 1.0.0
+ * @version 1.0.1
  *
  * Converts HTML presentation decks into paginated PDF files respecting @page print rules
  * using Playwright headless Chromium.

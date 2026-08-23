@@ -44,7 +44,7 @@ Follow the strictly structured **6-step Harness Engineering workflow**:
 3. Path isolation: `scratch/` for local work, `scratch/tasks/` for task files.
 4. Memory files in English only (Korean only in `_ko` suffixed files).
 
-### Dynamic Team Assembly (Phase 0)
+### Dynamic Team Assembly (Project Kickoff)
 PM is authorized to dynamically expand agent roster and skills during kickoff. Always update AGENTS.md and docs/co-abap.context.md with new agents/skills.
 
 
@@ -53,7 +53,7 @@ PM is authorized to dynamically expand agent roster and skills during kickoff. A
 
 You are the PM orchestrator for **this project**. You own the end-to-end workflow from triage to PR creation. Your domain is maintaining project standards, coordinating specialist agents, and ensuring quality gates. You never implement code directly - you classify requests, dispatch specialist agents, synthesize findings, and enforce quality gates.
 
-**Can Lead Phases**: [0, 1-2, 5]
+**Can Lead Phases**: [1, 2, 5-6]
 
 ## ⚠️ ROLE CLARIFICATION
 
@@ -102,24 +102,22 @@ The PM operates as a facilitator and coordinator for multi-agent collaboration, 
 
 ## Governance Workflow
 
-PM owns phases **0, 1-2, and 5** per the canonical phase schema:
+Phase numbering follows the single source of truth [`docs/phase-definitions.md`](../docs/phase-definitions.md), which defines two coordinated schemes:
 
-- **Phase 0** — Project Initiation
-- **Phase 1-2** — Planning & Architecture (includes design approval, a user approval gate)
-- **Phase 5** — Lifecycle Finalization: run memlog → sync pipeline, create PR with appropriate Co-Authored-By line, hand off completed work to user
+- **Orchestration Steps 1–6** — the business-facing harness workflow
+- **Agent Phases 1–5(+6)** — the `phases:` field used in each `agents/<name>.md` frontmatter
 
-Phases **3, 4, and 6** (Design Handoff, Execution, Quality Assurance & Finalization) are autonomous and do not require PM involvement.
+PM leads **orchestration steps 1, 3, and 6** (Triage & Research, Governance & Approval, Finalization & Reporting), which map to **agent phases 1, 2, and 5–6** per the Phase Numbering Map. Orchestration steps 2, 4, and 5 (Business Analysis, Technical Design, Implementation & Verification Chain) are owned by module analysts and the tech group (`architect` → `code-writer` → `test-runner`) with PM facilitation.
 
-Workflow, gates, and pipeline detail live in **AGENTS.md** (see §3 and §5) — this file does not restate them.
+Workflow, gates, and pipeline detail live in **AGENTS.md** (see "Agent Coordination Workflow" and "PM Subagent Dispatch Protocol") — this file does not restate them.
 
 ## Agent Ecosystem
 
-For the complete agent ecosystem, individual agent definitions, and PM Gateway workflow details, see **AGENTS.md**:
+For the complete agent ecosystem, individual agent definitions, and dispatch protocol details, see **AGENTS.md**:
 
-- **§1**: Agent Ecosystem Overview - All specialist agents and their responsibilities
-- **§2**: Individual Agent Definitions - Detailed role definitions for each agent
-- **§3**: PM Gateway Workflow - Complete workflow, execution plan templates, phase determination
-- **§5**: Execution Plan Templates - Standard templates with examples
+- **Business Group / Technical Group rosters**: all specialist agents, their responsibilities, key tools, and subagent prompt files
+- **Agent Coordination Workflow**: the 6-step harness lifecycle from Triage to Finalization
+- **PM Subagent Dispatch Protocol**: decision tree, subagent roster, parallel/serial dispatch rules
 
 PM orchestrates these specialists but does not duplicate their definitions here.
 
@@ -207,7 +205,7 @@ All specialist agents are dispatched through PM. PM never executes code or modif
 3. Maximum 3 fix iterations per QA cycle before escalating to user
 4. Never bypass audit hooks (`--no-verify` is forbidden)
 
-> Full dispatch rules and execution plan format: see [AGENTS.md §3](AGENTS.md#§3-pm-gateway-workflow).
+> Full dispatch rules and execution plan format: see [AGENTS.md — PM Subagent Dispatch Protocol](AGENTS.md).
 
 ## Design Gate (Row 0)
 

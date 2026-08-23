@@ -1,4 +1,4 @@
-# [Project Name] — Project Context
+# co-abap — Project Context
 
 > Shared reference for all AI tools (Claude Code, Gemini CLI, Antigravity).
 > Tool-specific behaviors: CLAUDE.md (Claude Code), GEMINI.md (Gemini/Antigravity).
@@ -12,9 +12,9 @@
 
 ## Project Overview
 
-[One-sentence description of what this project does and who it's for.]
+AI-agent orchestration workspace for SAP ABAP development — a multi-agent harness (PM, module analysts, architect, developer, QA) that drives ABAP implementation, testing, and transport governance through MCP-connected SAP systems.
 
-**Type**: web | cli | api | mcp
+**Type**: mcp
 **Status**: Active development
 
 ---
@@ -290,13 +290,13 @@ This workspace follows explicit lifecycle management practices for Agents, Skill
 ### Common Principles
 
 - **Agent / Skill / Script** each have explicit lifecycle states (active, deprecated, retired/archived)
-- Full lifecycle rules are defined in [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
+- Full lifecycle rules are defined by the lifecycle audit scripts (`scripts/agent-lifecycle-audit.ts`, `scripts/skill-lifecycle-audit.ts`, `scripts/verify-scripts.ts`) and the registry state in each agent/skill/script frontmatter
 - Audit commands exist for each domain: `agent-lifecycle-audit.ts`, `skill-lifecycle-audit.ts`, `verify-scripts.ts`
 
-For full lifecycle procedures:
-- **Agent Lifecycle**: See [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
-- **Skill Lifecycle**: See [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
-- **Script Lifecycle**: See [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
+For full lifecycle procedures, run the audit command for each domain:
+- **Agent Lifecycle**: `bun scripts/agent-lifecycle-audit.ts`
+- **Skill Lifecycle**: `bun scripts/skill-lifecycle-audit.ts`
+- **Script Lifecycle**: `bun scripts/verify-scripts.ts`
 
 ### Context Commonization Review
 
