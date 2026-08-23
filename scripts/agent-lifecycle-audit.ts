@@ -148,13 +148,13 @@ function parseAgentFrontmatter(filePath: string): AgentFrontmatter | null {
         }
         // Strip comments and clean the value
         const cleanValue = value.split('#')[0].trim().replace(/^['"]|['"]$/g, '');
-        frontmatter['tier'][key] = cleanValue;
+        (frontmatter['tier'] as Record<string, string>)[key] = cleanValue;
       } else {
         frontmatter[key] = value.replace(/^['"]|['"]$/g, '');
       }
     }
 
-    return frontmatter as AgentFrontmatter;
+    return frontmatter as unknown as AgentFrontmatter;
   } catch {
     return null;
   }
@@ -379,9 +379,10 @@ function auditAgents(jsonMode = false): AuditResult {
       });
     } else {
       // Check 9: Tier validation - missing platforms
+      const tier = frontmatter.tier as Record<string, string | undefined>;
       const requiredPlatforms = ['claude', 'antigravity', 'gemini-cli'];
       for (const platform of requiredPlatforms) {
-        if (!frontmatter.tier[platform]) {
+        if (!tier[platform]) {
           errors.push({
             level: 'error',
             file: relPath,
@@ -391,11 +392,11 @@ function auditAgents(jsonMode = false): AuditResult {
         } else {
           // Check 10: Tier validation - invalid tier values
           const validTiers = ['high', 'medium', 'low'];
-          if (!validTiers.includes(frontmatter.tier[platform])) {
+          if (!validTiers.includes(tier[platform]!)) {
             errors.push({
               level: 'error',
               file: relPath,
-              message: `Invalid tier.${platform} value: "${frontmatter.tier[platform]}"`,
+              message: `Invalid tier.${platform} value: "${tier[platform]}"`,
               fix: `Use one of: ${validTiers.join(', ')}`,
             });
           }

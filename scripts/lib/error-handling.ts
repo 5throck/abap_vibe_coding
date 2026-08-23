@@ -92,7 +92,8 @@ export function fatalError(
   code: string,
   message: string,
   details?: string,
-  suggestedRemediation?: string
+  suggestedRemediation?: string,
+  context?: Record<string, unknown>
 ): PipelineError {
   return createError(
     ErrorSeverity.FATAL,
@@ -100,7 +101,8 @@ export function fatalError(
     code,
     message,
     details,
-    suggestedRemediation
+    suggestedRemediation,
+    context
   );
 }
 

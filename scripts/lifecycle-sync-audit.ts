@@ -17,6 +17,7 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import type { Dirent } from 'node:fs';
 import { join, basename } from 'node:path';
 import { cwd } from 'node:process';
 import { createHash } from 'node:crypto';
@@ -391,7 +392,7 @@ function runCheckX(): SyncIssue[] {
   // Recursively collect all .ts files under templateScriptsDir (including helpers/, hooks/, lib/, etc.)
   function collectTsFiles(dir: string): string[] {
     const result: string[] = [];
-    let entries: ReturnType<typeof readdirSync>;
+    let entries: Dirent[];
     try {
       entries = readdirSync(dir, { withFileTypes: true });
     } catch {
@@ -456,7 +457,7 @@ function runCheckD(): DuplicateEntry[] {
   // Skip context.md itself (contains the annotation definition/example, not a real duplicate)
 
   function walkDir(dir: string): void {
-    let items: ReturnType<typeof readdirSync>;
+    let items: Dirent[];
     try {
       items = readdirSync(dir, { withFileTypes: true });
     } catch {

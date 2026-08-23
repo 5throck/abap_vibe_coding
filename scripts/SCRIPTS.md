@@ -15,6 +15,7 @@
 | `agent-verify.ts` | L0 | 1.0.2 | active | — | — | common | — |
 | `analyze-git-history.ts` | L0 | 1.0.2 | active | — | — | common | — |
 | `archive-memory.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `audit-variant.ts` | L2 | 1.0.0 | active | — | — | variant | co-abap integrity checks (gitleaks allowlist, MCP SAP guard, AGENTS.md markers, wrapper import paths) |
 | `audit.ts` | L0 | 2.14.1 | active | — | — | common | — |
 | `cleanup-completed-md.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `clear-pm-approval.ts` | L0 | 1.0.0 | active | — | — | common | — |
@@ -37,7 +38,7 @@
 | `hooks/pre-commit.ts` | L0 | 1.5.10 | active | — | — | common | — |
 | `hooks/pre-push.ts` | L0 | 1.2.9 | active | — | — | common | — |
 | `install-bun.ts` | L0 | 1.0.0 | active | — | — | common | — |
-| `install-vsp.ts` | L0 | 1.0.0 | active | — | — | common | — |
+| `install-vsp.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `lib/auth.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `lib/encoding-utils.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `lib/error-handling.ts` | L0 | 1.3.0 | active | — | — | common | — |

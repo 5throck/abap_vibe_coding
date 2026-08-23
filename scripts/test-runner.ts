@@ -86,8 +86,8 @@ async function executeTestFile(
       stderr: 'pipe',
     });
 
-    const stdoutPromise = proc.stdout ? new Response(proc.stdout).text() : Promise.resolve('');
-    const stderrPromise = proc.stderr ? new Response(proc.stderr).text() : Promise.resolve('');
+    const stdoutPromise = proc.stdout ? new Response(proc.stdout as ReadableStream).text() : Promise.resolve('');
+    const stderrPromise = proc.stderr ? new Response(proc.stderr as ReadableStream).text() : Promise.resolve('');
 
     const timeoutPromise = new Promise<{ timedOut: boolean }>((resolve) => {
       timer = setTimeout(() => {
