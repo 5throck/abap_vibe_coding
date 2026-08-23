@@ -1,11 +1,28 @@
 # Upstream Fix List — co-abap → workspace root
 
-Status: **§1 RESOLVED (2026-08-24)** — applied upstream in ai-workspace-standards PR #631
-(`dev-sync.ts` 1.7.1) and propagated to this project by the 2026-08-24 `upgrade-project` resync;
-the temporary tsconfig exclusion has been removed. §2 remains open (regression hazard confirmed
-again during that same upgrade). §4 is new.
+Status (2026-08-24 review): **§1 RESOLVED** (#631, propagated). Open items: **§6 dev-sync
+spec-exempt arg bug (High)**, **§5 CRLF stripComment (Med-High)**, **§4 validators import (Med)**,
+**§7 ADR-0058 prune upgrade-path hole (Med, new)**, **§2 patch-ledger (Med, framing updated)**.
+§6–§7 discovered during the 2026-08-24 L0↔L1 comparison analysis.
 
-## 4. NEW (2026-08-24): audit.ts L0-only import breaks variant strict tsc
+## 6. NEW (2026-08-24, High): dev-sync `--spec-exempt` CLI flag is inert inside the pipeline
+
+`dev-sync.ts` line ~244 interpolates the exemption into the Bun `$` shell template:
+
+```ts
+const specRes = await $`bun scripts/audit.ts --spec-check --lifecycle-only${specExempt ? ` --spec-exempt=${specExempt}` : ''}`.nothrow();
+```
+
+The interpolated value `" --spec-exempt=E3"` (leading space included) is passed by Bun's shell as a
+**single argv word**, so audit.ts's `process.argv.find(a => a.startsWith('--spec-exempt='))` never
+matches. Net effect: the ADR-0055 Stage 2 escape hatch works when audit is invoked directly but is
+**silently inert on every `/sync` run** — exactly when it is needed. Root happened to pass its last
+runs on genuine spec activity, masking the defect. The documented env fallback
+(`SYNC_SPEC_EXEMPT`, audit.ts SPEC_EXEMPT_RAW) works fine. Local fix (co-abap `dev-sync.ts`
+1.7.2): pass via `.env({ ...process.env, SYNC_SPEC_EXEMPT: specExempt })`. Upstream options:
+port that, or trim in audit's parser (`arg.trim().startsWith(...)`).
+
+## 4. audit.ts L0-only import breaks variant strict tsc
 
 Upstream `audit.ts` 2.21.0 wires the variant-registry validator framework:
 
@@ -21,23 +38,41 @@ the directory legitimately doesn't exist. Locally suppressed via documented `@ts
 (`await import(path.join('scripts','validators','index.ts'))`), or scope the import behind an
 indirection that variants don't typecheck, or ship a stub module.
 
-## 2. upgrade-project.ts — local-fix regression hazard (CONFIRMED AGAIN 2026-08-24)
+## 2. upgrade-project.ts — local-patch overwrite hazard (framing updated 2026-08-24)
 
-The 2026-08-24 upgrade re-introduced the `lifecycle-sync-audit.ts` Dirent typing bug fixed locally
-one day earlier (template copy overwrote the patch; re-applied as 1.4.8 locally). Combined with the
-two 2026-08-15 fixes reverted on 2026-08-21, this is now a pattern, not an incident. Recommendation
-unchanged: merge-awareness or a "local patch ledger" in `upgrade-project.ts` before overwriting
-LOCKED-adjacent files.
+Original LOCKED-overwrite class is largely resolved upstream (v1.10.0 moved `.gitleaks.toml` to
+`mergeGitleaksToml()`; LOCKED list now only githooks + `.gitattributes`; context.md moved to
+VARIANT_DOCS_SYNC in v1.9.0). The remaining vector is **SYNC-category script copies**: local
+fixes to template-synced scripts were silently reverted twice (2026-08-21: sync-md module marker,
+dev-sync typing fixes; 2026-08-24: lifecycle-sync-audit Dirent annotations). Recommendation:
+a lightweight **patch ledger** — after each sync, record sha256 of every SYNC-category file; on the
+next upgrade, if a project-side file's hash differs from both the previous ledger entry and the new
+template, WARN with a diff pointer before overwriting (mirrors `mergeGitleaksToml`'s philosophy).
+Operational stopgap until then: local emergency patches must be upstreamed within ~48h (the
+#631 flow worked well).
 
-## 5. NEW (2026-08-24): audit.ts nul-lint stripComment is not CRLF-safe
+## 5. audit.ts nul-lint stripComment is not CRLF-safe
 
 `audit.ts` 2.21.x `stripComment()` anchors both regexes with `$` (no `m` flag). Under
 `core.autocrlf=true` checkouts every line ends `\r`, and since JS `.` does not match `\r`,
 `.*$` fails to reach the anchor — comment stripping silently no-ops and the scanner then flags
-its own prose comments that mention `> nul`. Root passes only because its working tree is LF.
-Local fix (co-abap 2.21.2): prepend `.replace(/\r$/, "")` inside `stripComment`. Upstream fix:
-apply the same normalization (or split on `/\r?\n/`) in the root copy so Windows/autocrlf
-checkouts of every variant pass the lint out of the box.
+its own prose comments that mention `> nul`. Root passes only because its `.gitattributes`
+enforces `*.ts eol=lf`; variants without that attribute line (e.g. co-abap) check out CRLF and
+trip the lint. Local fix (co-abap 2.21.2): prepend `.replace(/\r$/, "")` inside `stripComment`.
+Upstream fix: same normalization in the root copy (defense in depth), plus consider adding
+`eol=lf` coverage guidance for variant `.gitattributes`.
+
+## 7. NEW (2026-08-24, Med): country-scoped prune never runs on the upgrade path
+
+ADR-0058 wires `helpers/prune-country-scoped-assets.ts` into `new-project.ts` and
+`create-l3-scaffold.ts`, but **not** into `upgrade-project.ts`. Consequence (observed): the
+region-neutral co-abap project (no `country=` marker in `.claude/template-version.txt`, no
+`docs/countries/`) received `k-kosis` — and already holds `k-dart`/`k-law` — through upgrades,
+which scaffolding would have pruned. Suggested direction: at upgrade time, read the project's
+country marker; if absent/region-neutral and scoped skills exist, either auto-prune (matching
+scaffold semantics) or emit a visible WARN naming the files and the manual command. Auto-prune
+needs care for pre-marker legacy projects that intentionally keep k-* — hence possibly
+WARN-first burn-in, mirroring the ADR-0055 Stage pattern.
 
 ---
 
