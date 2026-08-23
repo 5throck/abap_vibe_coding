@@ -15,5 +15,5 @@
     "noEmit": true
   },
   "include": ["*.ts"],
-  "exclude": ["node_modules", "dev-sync.ts"]
+  "exclude": ["node_modules"]
 }

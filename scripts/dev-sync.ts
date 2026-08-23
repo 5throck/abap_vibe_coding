@@ -1,4 +1,7 @@
-// @version 1.5.5
+// @version 1.7.2
+// v1.7.1: fix(types): coerce Bun Shell stderr to string before .trim() (2 sites) and
+//           widen the five withRetry isSuccess lambdas to the (result: unknown) contract
+//           — typing-only, no behavior change (ported from co-abap docs/upstream-fix-list.md)
 // v1.5.4: fix(pr-check): "PR already exists for branch" step now checks PR state —
 //           previously `gh pr view <branch>` matched ANY PR regardless of state, so
 //           reusing a branch name whose earlier PR was already MERGED/CLOSED caused
@@ -38,6 +41,7 @@ if (path.resolve(actualCwd) !== expectedRoot) {
 // chain below still applies.
 const rawArgs = process.argv.slice(2);
 let bodyFilePath = '';
+let specExempt = '';
 const msgArgs: string[] = [];
 for (let i = 0; i < rawArgs.length; i++) {
   const arg = rawArgs[i];
@@ -45,6 +49,8 @@ for (let i = 0; i < rawArgs.length; i++) {
     bodyFilePath = rawArgs[++i] ?? '';
   } else if (arg.startsWith('--body-file=')) {
     bodyFilePath = arg.slice('--body-file='.length);
+  } else if (arg.startsWith('--spec-exempt=')) {
+    specExempt = arg.slice('--spec-exempt='.length);
   } else {
     msgArgs.push(arg);
   }
@@ -230,12 +236,29 @@ if (fs.existsSync(archiveMemoryTs)) {
     }
 }
 
-// 3.9 Spec registry check (non-blocking — warns if approved specs are stale or code has no spec)
-// Output is intentionally visible (no .quiet()) — Stage 1 of the spec-registry-enforcement
-// rollout; see docs/designs/2026-08-16-spec-registry-enforcement-design.md.
+// 3.9 Spec registry check (BLOCKING since ADR-0055 Stage 2 — the relevance check
+// Fails when a code diff has no spec activity; stale/missing-spec stay WARN).
+// Output is intentionally visible (no .quiet()); same idiom as step 3.97.
 const specRegPath = path.join('docs', 'specs', 'registry.json');
 if (fs.existsSync(specRegPath)) {
-    await $`bun scripts/audit.ts --spec-check --lifecycle-only`.nothrow();
+    // Pass the exemption via SYNC_SPEC_EXEMPT (documented env fallback in audit.ts):
+    // interpolating ` --spec-exempt=X` into the Bun $ shell keeps the leading space in
+    // a single argv word, which defeats audit's startsWith('--spec-exempt=') parse.
+    const specEnv = specExempt ? { SYNC_SPEC_EXEMPT: specExempt } : {};
+    const specRes = await $`bun scripts/audit.ts --spec-check --lifecycle-only`
+        .env({ ...process.env, ...specEnv })
+        .nothrow();
+    if (specRes.exitCode !== 0) {
+        console.error(`${RED}✗ Step 3.9: spec-check FAILED (exit ${specRes.exitCode})${RESET}`);
+        console.error('  The diff touches code (scripts/templates/agents) with no relevant spec activity.');
+        console.error('  Fix: update docs/specs/ (or docs/designs/) alongside the change, or legitimize the');
+        console.error('  sync with --spec-exempt=E1..E5 (AGENTS.md §5.1.1 categories; e.g. --spec-exempt=E3 for a typo hotfix).');
+        if (import.meta.main) process.exit(1);
+    } else {
+        console.log(`${GREEN}✓ Spec registry check passed${RESET}`);
+    }
+} else {
+    console.log('📋 Step 3.9: skipped — no docs/specs/registry.json');
 }
 
 // 3.95 QA Pre-checks (non-fatal — unique checks from qa-gate.ts)
@@ -248,7 +271,7 @@ if (fs.existsSync('package.json')) {
             const testResult = await $`bun test`.nothrow();
             if (testResult.exitCode !== 0) {
                 console.warn(`⚠️  Project tests failed (non-blocking, exit ${testResult.exitCode})`);
-                if (testResult.stderr) console.warn(testResult.stderr.trim());
+                if (testResult.stderr) console.warn(String(testResult.stderr).trim());
             }
         }
     } catch { /* ignore parse errors */ }
@@ -256,6 +279,27 @@ if (fs.existsSync('package.json')) {
 // Check 2: README_ko pair
 if (fs.existsSync('README.md') && !fs.existsSync('README_ko.md')) {
     console.warn('⚠️  README_ko.md missing (non-blocking)');
+}
+
+// 3.97 ADR governance linkage gate (blocking — Stage 2 of ADR-0059).
+//     The validator is L0-only (no docs/adr corpus exists in generated projects),
+//     so this step is guarded by existsSync — scaffolded projects skip it.
+if (fs.existsSync('scripts/verify-adr-governance.ts')) {
+    console.log('📋 Step 3.97: ADR governance linkage check...');
+    const govRes = await $`bun scripts/verify-adr-governance.ts --strict`.nothrow();
+    if (govRes.exitCode !== 0) {
+        console.error(`${RED}❌ ADR governance linkage check failed.${RESET}`);
+        console.error(`${YELLOW}   One or more post-cutoff Accepted ADRs lack governance-doc references, or marker-drift findings exist.${RESET}`);
+        console.error(`${YELLOW}   For linkage: Add ADR-00NN pointers to CONSTITUTION.md, docs/constitution/, or docs/governance/ per docs/adr/0059 and re-run /sync.${RESET}`);
+        console.error(`${YELLOW}   For marker-drift: Review the duplicated section, update it if stale, then re-seed with: bun scripts/verify-adr-governance.ts --update-marker-hashes${RESET}`);
+        if (import.meta.main) {
+            process.exit(1);
+        }
+    } else {
+        console.log(`${GREEN}✓ ADR governance linkage check passed${RESET}`);
+    }
+} else {
+    console.log('📋 Step 3.97: skipped — ADR governance validator is L0-only (not present in scaffolded projects)');
 }
 
 // 4.5 L0→L1 publish — must run BEFORE audit gate so that CONSTITUTION scrub
@@ -295,10 +339,10 @@ console.log('📋 Step 4.6: Syncing skills to platform directories...');
 const syncSkillsResult = await $`bun scripts/sync-skills.ts`.nothrow();
 if (syncSkillsResult.exitCode !== 0) {
     console.warn(`⚠️  Skill sync had warnings (exit ${syncSkillsResult.exitCode}), continuing...`);
-    if (syncSkillsResult.stderr) console.warn(syncSkillsResult.stderr.trim());
+    if (syncSkillsResult.stderr) console.warn(String(syncSkillsResult.stderr).trim());
 }
 
-// 4. Generate VERSION_MANIFEST.md
+// 4.7 Generate VERSION_MANIFEST.md
 const genManifestTs = path.join('scripts', 'generate-version-manifest.ts');
 if (fs.existsSync(genManifestTs)) {
     const genRes = await $`bun ${genManifestTs}`.quiet().nothrow();
@@ -447,7 +491,7 @@ try {
 
 const pushRetry = await withRetry(
     () => $`git push -u origin ${branch}`.nothrow(),
-    { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
+    { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => typeof r === "object" && r !== null && (r as { exitCode: number }).exitCode === 0 },
     'git push'
 );
 const pushProc = pushRetry.result as { exitCode: number; stderr: { toString(): string } } | undefined;
@@ -526,26 +570,26 @@ if (existingPrUrl) {
     if (bodySourceFile) {
         prCreateRetry = await withRetry(
             () => $`gh pr create --title ${msg} --body-file ${bodySourceFile}`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => typeof r === "object" && r !== null && (r as { exitCode: number }).exitCode === 0 },
             'gh pr create'
         );
     } else if (prBody) {
         prCreateRetry = await withRetry(
             () => $`gh pr create --title ${msg} --body ${prBody}`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => typeof r === "object" && r !== null && (r as { exitCode: number }).exitCode === 0 },
             'gh pr create'
         );
     } else if (fs.existsSync(path.join('.github', 'pull_request_template.md'))) {
         const prTpl = fs.readFileSync(path.join('.github', 'pull_request_template.md'), 'utf-8');
         prCreateRetry = await withRetry(
             () => $`gh pr create --title ${msg} --body ${prTpl}`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => typeof r === "object" && r !== null && (r as { exitCode: number }).exitCode === 0 },
             'gh pr create'
         );
     } else {
         prCreateRetry = await withRetry(
             () => $`gh pr create --fill`.nothrow(),
-            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: { exitCode: number }) => r.exitCode === 0 },
+            { ...DEFAULT_CONFIG, maxRetries: 3, initialDelay: 1000, isSuccess: (r: unknown) => typeof r === "object" && r !== null && (r as { exitCode: number }).exitCode === 0 },
             'gh pr create'
         );
     }

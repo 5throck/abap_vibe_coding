@@ -1,4 +1,4 @@
-# co-abap — Project Context
+# [Project Name] — Project Context
 
 > Shared reference for all AI tools (Claude Code, Gemini CLI, Antigravity).
 > Tool-specific behaviors: CLAUDE.md (Claude Code), GEMINI.md (Gemini/Antigravity).
@@ -12,9 +12,9 @@
 
 ## Project Overview
 
-AI-agent orchestration workspace for SAP ABAP development — a multi-agent harness (PM, module analysts, architect, developer, QA) that drives ABAP implementation, testing, and transport governance through MCP-connected SAP systems.
+[One-sentence description of what this project does and who it's for.]
 
-**Type**: mcp
+**Type**: web | cli | api | mcp
 **Status**: Active development
 
 ---
@@ -27,14 +27,16 @@ This project follows the workspace-wide 3-Tier model architecture to decouple ag
 The mapping is immutable per generation:
 
 **Gemini Tier Mapping (3.x Generation):**
-- **High**: `gemini-3.1-pro` (Complex reasoning, planning, PM/Architect)
-- **Medium**: `gemini-3.7-flash` (Reviews, testing, QA)
+- **High**: `gemini-3.1-pro` (Complex reasoning, planning, architecture)
+- **Medium**: `gemini-3.7-flash` (Orchestration, coordination, reviews, testing, QA)
 - **Low**: `gemini-3.7-flash` (Fast, repetitive execution)
 
 **Claude Tier Mapping:**
 - **High**: `claude-opus-5-0`
 - **Medium**: `claude-sonnet-5-0`
 - **Low**: `claude-haiku-4-5`
+
+Tier layering: the workspace-root PM stays High (workspace governance and design adjudication); template PMs are Medium (project orchestration). A variant whose PM must own design adjudication re-declares `tier: high` in its own `agents/pm.md` frontmatter.
 
 Standard directory layout for all projects in this workspace:
 
@@ -127,11 +129,20 @@ Every entry under `[Unreleased]` MUST include a PR reference:
 - Short description of change (#PR-number)
 ```
 
+### Country Profiles (`docs/countries/`)
+
+If the project was scaffolded with a target country (`--country <CODE>`),
+`docs/countries/ACTIVE.md` points at the active profile (`docs/countries/<CODE>.md`) —
+advisory jurisdiction knowledge (regulatory framework, operational formats, language
+defaults, tooling) loaded at Phase 0 intake. With no country selected, the project is
+region-neutral: agents confirm the applicable jurisdiction with the client before
+assuming one. Convention: [`docs/country-profiles.md`](country-profiles.md).
+
 ### Language Policy
 
 | Content | Language |
 |---------|----------|
-| Conversational replies to user | Korean (default) |
+| Conversational replies to user | Match the user's language; when an active country profile defines a communication default (KR: Korean), follow it |
 | Code, config, commit messages | English only |
 | PR titles, bodies, branch names | English only |
 | CHANGELOG.md entries | English only |
@@ -266,7 +277,7 @@ Use an external computation tool when the task involves ANY of the following:
 
 ## Git / PR Workflow
 
-<!-- intentional-duplicate: workspace standards §3 — maintained locally for AI context proximity; update when source changes -->
+<!-- intentional-duplicate: workspace standards §3 — maintained locally for AI context proximity; source: docs/constitution/03-pr-workflow.md; hash: e43638d6 -->
 
 ```
 /sync "feat: description"
@@ -283,6 +294,23 @@ Use an external computation tool when the task involves ANY of the following:
 
 ---
 
+## Scripts
+
+<!-- Source Layer: L0 = templates/common (SSOT) | L1 = workspace root | L2 = project-local -->
+<!-- Status: active | deprecated | experimental -->
+
+| Script | Type | Entrypoint | Source Layer | Status |
+|--------|------|------------|-------------|--------|
+| `audit` | Tier 2 | `package.json` (`bun run audit`) | L0 | active |
+| `dev-sync` | Tier 2 | `package.json` (`bun run dev-sync`) | L0 | active |
+| `sync-md` | Tier 2 | `package.json` (`bun run sync-md`) | L0 | active |
+
+> See SCRIPTS.md in templates/common/scripts/ for full lifecycle registry.
+
+### Hybrid Scripting
+All scripts are TypeScript (`.ts`) executed via Bun — no `.sh`/`.ps1` counterparts (ADR-0036).
+
+
 ## Lifecycle Management
 
 This workspace follows explicit lifecycle management practices for Agents, Skills, and Scripts to ensure consistency and maintainability.
@@ -290,13 +318,13 @@ This workspace follows explicit lifecycle management practices for Agents, Skill
 ### Common Principles
 
 - **Agent / Skill / Script** each have explicit lifecycle states (active, deprecated, retired/archived)
-- Full lifecycle rules are defined by the lifecycle audit scripts (`scripts/agent-lifecycle-audit.ts`, `scripts/skill-lifecycle-audit.ts`, `scripts/verify-scripts.ts`) and the registry state in each agent/skill/script frontmatter
+- Full lifecycle rules are defined in [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
 - Audit commands exist for each domain: `agent-lifecycle-audit.ts`, `skill-lifecycle-audit.ts`, `verify-scripts.ts`
 
-For full lifecycle procedures, run the audit command for each domain:
-- **Agent Lifecycle**: `bun scripts/agent-lifecycle-audit.ts`
-- **Skill Lifecycle**: `bun scripts/skill-lifecycle-audit.ts`
-- **Script Lifecycle**: `bun scripts/verify-scripts.ts`
+For full lifecycle procedures:
+- **Agent Lifecycle**: See [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
+- **Skill Lifecycle**: See [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
+- **Script Lifecycle**: See [AGENTS.md §8 Lifecycle Management](../AGENTS.md#8-lifecycle-management)
 
 ### Context Commonization Review
 
@@ -369,4 +397,4 @@ See the workspace governance documentation (Governance Enforcement Layers) and A
 
 ---
 
-*context.md version: 2.4 — promoted "Git / PR Workflow" section from 6 variants (co-consult, co-design, co-develop, co-export, co-security, co-work)*
+*context.md version: 2.5 — promoted "Scripts" section from 7 variants (co-consult, co-design, co-develop, co-export, co-game, co-security, co-work)*

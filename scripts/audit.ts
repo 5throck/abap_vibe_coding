@@ -1,4 +1,12 @@
-// @version 2.14.1
+// @version 2.21.2
+// v2.15.0: New checkStalePromotedContent() — WARN-only check flagging docs/<variant>.context.md
+//   sections that duplicate a same-heading section already present in the common
+//   templates/common/docs/context.md. checkVariantContextCommonization() only ever compared
+//   variants against EACH OTHER, so a section promoted into the common file (ADR-0050 Part 3)
+//   but left behind in one or more variant files went undetected once fewer than 2 variants
+//   still carried it — exactly the gap that let co-abap/co-architect/co-consult/co-game's
+//   "Git / PR Workflow" duplicates linger unnoticed after the promotion PR (ai-workspace-standards
+//   #578/#579) until a manual follow-up review caught them.
 // v2.14.1: checkVariantContextCommonization()'s section-parsing extracted to
 //   helpers/context-sections.ts (shared with the new promote-context-section.ts) —
 //   behavior-preserving refactor, no output change.
@@ -25,6 +33,20 @@ import { detectEncoding, detectHomoglyphs, detectZeroWidthChars, readUTF8File } 
 const LIFECYCLE_ONLY = process.argv.includes('--lifecycle-only');
 const SKIP_MEMORY = process.argv.includes('--skip-memory');
 const SPEC_CHECK = process.argv.includes('--spec-check');
+const GOVERNANCE_CHECK = process.argv.includes('--governance-check');
+
+// ADR-0055 Stage 2: spec-relevance exemption escape hatch (--spec-exempt=E3[,E5] or SYNC_SPEC_EXEMPT env).
+// Valid codes map 1:1 to the AGENTS.md §5.1.1 Design Gate exemption categories.
+const SPEC_EXEMPT_CATEGORIES: Record<string, string> = {
+  E1: 'memory-log',
+  E2: 'changelog',
+  E3: 'hotfix-typo',
+  E4: 'pure-readme',
+  E5: 'sync-only',
+};
+const specExemptArg = process.argv.find(a => a.startsWith('--spec-exempt='));
+const SPEC_EXEMPT_RAW = specExemptArg ? specExemptArg.slice('--spec-exempt='.length) : (process.env.SYNC_SPEC_EXEMPT ?? '');
+const SPEC_EXEMPT_CODES = SPEC_EXEMPT_RAW.split(/[,\s]+/).map(c => c.trim()).filter(Boolean);
 
 // Project context path (used in multiple checks)
 const projectCtxPath = path.join('docs', 'context.md');
@@ -490,6 +512,57 @@ if (hasBun) {
             Pass('Skill audit: all skills healthy');
         } else {
             Fail("Skill audit detected issues (run 'bun scripts/skill-lifecycle-audit.ts' to see details)");
+        }
+    }
+    // Variant registry validators (scripts/validators/ — the framework context.md §6.6
+    // documents as audit-enforced). This wiring is L0-only: `scripts/validators/` is a layer-L0
+    // directory and is not propagated to templates/common/scripts/, so the existsSync guard
+    // makes the L1 copy of this file skip the check rather than crash.
+    // First wired 2026-08-21 — before that the framework was imported by nothing (dead code),
+    // which is how `phase: active`/`beta` drift and 6 unparseable SKILL.md frontmatters went
+    // unnoticed. Error-severity findings Fail the audit; warnings stay visible as WARN.
+    if (fs.existsSync(path.join('scripts', 'validators', 'index.ts')) && fs.existsSync('templates')) {
+        // L0-only module (scripts/validators/ is not propagated to variants); the existsSync
+        // guard makes this safe at runtime, but a static specifier breaks strict tsc in L1/L2
+        // checkouts where the directory is absent — hence the suppression.
+        // @ts-expect-error scripts/validators/ is L0-only and may legitimately be absent here
+        const { runAllValidators } = await import('./validators/index.ts');
+        let validatorErrors = 0;
+        let validatorWarnings = 0;
+        for (const variant of fs.readdirSync('templates').filter(d => d.startsWith('co-'))) {
+            const variantDir = path.join('templates', variant);
+            const vjPath = path.join(variantDir, 'variant.json');
+            if (!fs.existsSync(vjPath)) continue;
+            let variantJson: Record<string, unknown>;
+            try { variantJson = JSON.parse(readUTF8File(vjPath)); } catch { continue; }
+            const agentsDir = path.join(variantDir, 'agents');
+            const agentFiles = fs.existsSync(agentsDir)
+                ? fs.readdirSync(agentsDir).filter(f => f.endsWith('.md') && !f.startsWith('README'))
+                : [];
+            const rawSkills = (variantJson as { skills?: unknown }).skills ?? [];
+            const skillFiles = (rawSkills as unknown[]).map(s => (typeof s === 'string' ? s : (s as { name?: string })?.name ?? ''));
+            const results = await runAllValidators({
+                variantDir,
+                variantType: (variantJson as { variant_type?: string }).variant_type ?? variant,
+                variantJson: variantJson as Record<string, any>,
+                agentFiles,
+                skillFiles,
+                policy: null,
+            });
+            for (const r of results) {
+                if (r.skipped) continue;
+                for (const issue of r.issues ?? []) {
+                    if (issue.severity === 'error') {
+                        Fail(`Variant registry validation [${variant}] ${issue.category}: ${issue.message}`);
+                        validatorErrors++;
+                    } else if (issue.severity === 'warning') {
+                        validatorWarnings++;
+                    }
+                }
+            }
+        }
+        if (validatorErrors === 0) {
+            Pass(`Variant registry validation: all variants clean (${validatorWarnings} warning(s) surfaced)`);
         }
     }
     if (fs.existsSync(path.join('scripts', 'verify-scripts.ts'))) {
@@ -1331,6 +1404,65 @@ function checkVariantContextCommonization() {
 }
 checkVariantContextCommonization();
 
+// Stale promoted-content check (WARN-only). Complements checkVariantContextCommonization():
+// that check only compares variants against EACH OTHER, so once a shared section is promoted
+// into the common docs/context.md (ADR-0050 Part 3) and cleaned up in most variants, a single
+// remaining variant-file duplicate falls below the "2+ variants" threshold and goes silently
+// undetected. This check instead compares every docs/<variant>.context.md section directly
+// against templates/common/docs/context.md's own sections — a >50% overlap here means the
+// variant's copy is stale and should simply be deleted (promote-context-section.ts already did
+// the promotion; nothing left to decide).
+function checkStalePromotedContent() {
+    const commonContextPath = path.join('templates', 'common', 'docs', 'context.md');
+    if (!fs.existsSync(commonContextPath)) return;
+
+    const templatesDir = 'templates';
+    if (!fs.existsSync(templatesDir)) return;
+    const variants = fs.readdirSync(templatesDir)
+        .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+    if (variants.length === 0) return;
+
+    const commonSections = splitIntoSections(readUTF8File(commonContextPath));
+    const commonByHeading = new Map<string, Set<string>>();
+    for (const { heading, body } of commonSections) {
+        const bodyLines = getContentLines(body);
+        if (bodyLines.size >= 3) commonByHeading.set(heading, bodyLines);
+    }
+    if (commonByHeading.size === 0) return;
+
+    let flaggedCount = 0;
+    for (const variant of variants) {
+        const docsDir = path.join(templatesDir, variant, 'docs');
+        if (!fs.existsSync(docsDir)) continue;
+        for (const file of fs.readdirSync(docsDir)) {
+            if (!file.endsWith('.context.md')) continue;
+            const filePath = path.join(docsDir, file);
+            const content = readUTF8File(filePath);
+            for (const { heading, body } of splitIntoSections(content)) {
+                const commonLines = commonByHeading.get(heading);
+                if (!commonLines) continue;
+                const variantLines = getContentLines(body);
+                if (variantLines.size < 3) continue;
+                let intersection = 0;
+                for (const line of variantLines) if (commonLines.has(line)) intersection++;
+                const denominator = Math.min(variantLines.size, commonLines.size);
+                const similarity = denominator > 0 ? intersection / denominator : 0;
+                if (similarity > 0.50) {
+                    flaggedCount++;
+                    Warn(`Stale promoted content: ${filePath} § "${heading}" is ${(similarity * 100).toFixed(0)}% similar to the already-promoted docs/context.md § "${heading}" — this variant copy is likely a leftover duplicate and should be removed (ADR-0050 Part 3)`);
+                }
+            }
+        }
+    }
+
+    if (flaggedCount === 0) {
+        Pass('Stale promoted content check: no variant sections duplicate already-promoted common content');
+    } else {
+        Warn(`Stale promoted content check: ${flaggedCount} variant section(s) duplicate content already promoted to docs/context.md (WARN-only — see ADR-0050 Part 3)`);
+    }
+}
+checkStalePromotedContent();
+
 // Script sync: validated by bun scripts/propagate-to-templates.ts --dry-run --domain scripts
 checkL2VariantIntegrity();
 checkVariantContextGuidelinesSection();
@@ -1425,8 +1557,10 @@ if (IS_WORKSPACE_ROOT && fs.existsSync('AGENTS.md')) {
 
 // Check: Workspace root should not contain stray test artifacts or unauthorized files
 if (IS_WORKSPACE_ROOT) {
-    // Windows reserved device names that external tools (codegraph, antivirus, etc.)
-    // can create as files when run inside Git Bash (where > nul writes a file, not the device).
+    // Windows reserved device names. Observed producers (2026-08-21): a `bun build` whose output
+    // path resolved to `nul` left a physical file inside templates/co-deck/, which — gitignored
+    // and thus invisible to review — copyDir shipped into every scaffold from that variant.
+    // The sweep below therefore covers tracked trees, not just untracked scratch dirs.
     const WINDOWS_DEVICE_NAMES = new Set([
         'nul', 'NUL', 'con', 'CON', 'prn', 'PRN', 'aux', 'AUX',
         'com1','com2','com3','com4','com5','com6','com7','com8','com9',
@@ -1500,13 +1634,133 @@ if (IS_WORKSPACE_ROOT) {
                 }
             }
         }
-        if (strayFound === 0) {
+        // Sweep RECURSIVELY into local project directories too. The root-level loop above only
+        // sees './nul'; in practice these artifacts land inside scaffolded project dirs (observed
+        // 2026-08-21 in two of six freshly scaffolded projects), where nothing ever cleaned them.
+        // They then block deletion of the whole directory from PowerShell — Remove-Item resolves
+        // 'nul' to the Win32 device rather than the file — which is the actual user-visible pain.
+        // Depth matters: a device-name file at ANY depth blocks deleting every parent above it,
+        // so a one-level sweep would leave the same symptom one directory down.
+        // No repo script writes '> nul' (verified by full-tree scan; Check "nul redirect" below
+        // now enforces that), so the producer is an external tool and cannot be fixed at the
+        // source from here — sweeping is what makes recurrence self-healing.
+        // Closes Layer 3 of the 2026-08-07 meeting
+        // (memory/archive/meeting-2026-08-07-prevent-nul-file-creation.md).
+        const SWEEP_SKIP_DIRS = new Set(['node_modules', '.git', '.venv', '.bun', 'dist', 'build', '.next', 'coverage']);
+        let nestedSwept = 0;
+        const sweepDeviceNames = (dir: string, depth: number): void => {
+            if (depth > 8) return; // guard against pathological trees / symlink loops
+            let entries: fs.Dirent[];
+            try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+            for (const entry of entries) {
+                const entryPath = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                    if (SWEEP_SKIP_DIRS.has(entry.name)) continue;
+                    sweepDeviceNames(entryPath, depth + 1);
+                    continue;
+                }
+                if (!WINDOWS_DEVICE_NAMES.has(entry.name)) continue;
+                // Shell-free: never interpolate the filename into a command line. Pass a
+                // FORWARD-SLASH path: Git Bash's rm treats backslashes as escapes/quoting quirks.
+                // Trust only the exit status for success — fs.existsSync() is unreliable here
+                // because Win32 device-name resolution makes it return true for paths that
+                // no longer exist (and false for backslash forms that do). Observed live:
+                // rm exited 0 and the file was gone, yet existsSync(path.join(...)) was true,
+                // producing a false "could not be auto-deleted" warning.
+                const posixPath = entryPath.split(path.sep).join('/');
+                const rm = spawnSync('bash', ['-c', 'rm -f -- "$1"', 'rm', posixPath], { encoding: 'utf-8' });
+                if (rm.status === 0) {
+                    Warn(`Auto-deleted Windows device name artifact: ${entryPath} (blocks directory deletion from PowerShell)`);
+                    nestedSwept++;
+                } else {
+                    Warn(`Windows device name artifact '${entryPath}' could not be auto-deleted — remove it from Git Bash with: rm -f -- "${posixPath}"`);
+                }
+            }
+        };
+        // Sweep EVERY top-level directory, tracked or not. Tracked trees matter as much as
+        // untracked ones — a device-name file inside templates/ is gitignored (the template's
+        // own .gitignore lists NUL), so it never shows in git status, yet the scaffold's
+        // copyDir ignores .gitignore and ships it into every project made from that variant.
+        // That exact case (templates/co-deck/nul, created 2026-08-17, propagated into every
+        // co-deck scaffold) is why this sweep covers templates/ now.
+        for (const item of fs.readdirSync('.')) {
+            if (item.startsWith('.') || SWEEP_SKIP_DIRS.has(item)) continue;
+            let isDir = false;
+            try { isDir = fs.statSync(item).isDirectory(); } catch { continue; }
+            if (isDir) sweepDeviceNames(item, 1);
+        }
+        if (strayFound === 0 && nestedSwept === 0) {
             Pass('Workspace root is clean from stray test artifacts');
         }
     } catch (_e) {
         Warn('Could not read docs/workspace-schema.json for stray-artifact check — skipping');
     }
 }
+
+// Check: `> nul` redirect linting — prevent the artifact at the source
+// Layer 4 of the 2026-08-07 meeting (memory/archive/meeting-2026-08-07-prevent-nul-file-creation.md).
+// The sweep above is remediation; this is prevention. On Windows, `> nul` / `2> nul` in a shell
+// context can materialize a physical file named `nul` that then blocks deleting the whole
+// directory tree from PowerShell. context.md §8 bans the pattern outright: use
+// `> /dev/null 2>&1` in Bash, or `$null` / `Out-Null` in PowerShell.
+//
+// A full-tree scan on 2026-08-21 found zero violations in workspace source, so this check starts
+// clean and exists to keep it that way. Scanning is limited to executable file types — .md is
+// deliberately excluded because the governance docs quote the banned pattern in order to ban it.
+// Comment lines are stripped before matching for the same reason (audit.ts's own comments above
+// discuss `> nul` at length).
+if (!LIFECYCLE_ONLY) {
+    const NUL_REDIRECT = /(?:^|[^\w/])(?:[12]|&)?>\s*nul(?![\w./\\-])/i;
+    const LINT_EXTS = ['.ts', '.js', '.mjs', '.sh', '.ps1', '.cmd', '.bat'];
+    const LINT_SKIP_DIRS = new Set(['node_modules', '.git', '.venv', '.bun', 'dist', 'build', '.next', 'coverage', 'Projects']);
+    const LINT_ROOTS = ['scripts', 'templates', '.githooks', 'tests'];
+
+    /** Strip line comments so prose *about* the banned pattern isn't mistaken for a use of it.
+     * Trailing \r is removed first: with autocrlf checkouts lines end CRLF, and the
+     * end-anchors below would otherwise fail to match, leaving comments unstripped. */
+    const stripComment = (line: string): string =>
+        line
+            .replace(/\r$/, '')
+            .replace(/^\s*(?:\/\/|#|<#|\*).*$/, '')
+            .replace(/\s+(?:\/\/|#)\s.*$/, '');
+
+    let nulLintHits = 0;
+    let nulLintScanned = 0;
+    const lintDir = (dir: string, depth: number): void => {
+        if (depth > 10) return;
+        let entries: fs.Dirent[];
+        try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+        for (const entry of entries) {
+            const entryPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                if (LINT_SKIP_DIRS.has(entry.name)) continue;
+                lintDir(entryPath, depth + 1);
+                continue;
+            }
+            const isHook = dir.includes('.githooks');
+            if (!isHook && !LINT_EXTS.some(ext => entry.name.endsWith(ext))) continue;
+            let content: string;
+            try { content = fs.readFileSync(entryPath, 'utf-8'); } catch { continue; }
+            nulLintScanned++;
+            content.split('\n').forEach((line, i) => {
+                // Escape hatch for lines that must contain the literal pattern — e.g. this check's
+                // own diagnostic strings below, which quote what they forbid.
+                if (line.includes('nul-lint-ignore')) return;
+                if (NUL_REDIRECT.test(stripComment(line))) {
+                    Fail(`Banned '> nul' redirect at ${entryPath}:${i + 1} — creates an undeletable Windows device-name file. Use '> /dev/null 2>&1' (Bash) or '$null' / 'Out-Null' (PowerShell).`); // nul-lint-ignore
+                    nulLintHits++;
+                }
+            });
+        }
+    };
+    for (const root of LINT_ROOTS) {
+        if (fs.existsSync(root)) lintDir(root, 1);
+    }
+    if (nulLintHits === 0) {
+        Pass(`'> nul' redirect check: no banned redirects found (${nulLintScanned} files scanned)`); // nul-lint-ignore
+    }
+}
+
 // Check: L0 Leakage (context.md references in templates)
 if (!LIFECYCLE_ONLY && fs.existsSync('templates')) {
     let leakageErrors = 0;
@@ -1856,15 +2110,31 @@ if (fs.existsSync(variantAuditPath)) {
     }
 }
 
-// ── Spec Registry Checks (--spec-check mode, warn-only) ─────────────────────
+// ── Spec Registry Checks (--spec-check mode) ─────────────────────
+// ADR-0055 Stage 2 (2026-08-23): relevance check is FAIL; stale/missing-spec stay WARN.
 // NOTE: guarded by SPEC_CHECK alone (not !LIFECYCLE_ONLY) because dev-sync.ts's
 // only call site passes --spec-check --lifecycle-only together; gating on
 // !LIFECYCLE_ONLY here made this block permanently unreachable.
 if (SPEC_CHECK) {
-    const SPEC_REGISTRY = path.join('docs', 'specs', 'registry.json');
-    if (!fs.existsSync(SPEC_REGISTRY)) {
-        Warn('Spec registry not found at docs/specs/registry.json — run: bun scripts/spec-register.ts to initialize');
-    } else {
+    // Validate exemption codes (runs whenever SPEC_CHECK is active OR if codes were provided without --spec-check)
+    if (SPEC_EXEMPT_CODES.length > 0) {
+        const invalidCodes = SPEC_EXEMPT_CODES.filter(c => !SPEC_EXEMPT_CATEGORIES[c]);
+        if (invalidCodes.length > 0) {
+            Fail(`Invalid --spec-exempt code(s): ${invalidCodes.join(', ')} — valid codes: E1 (memory-log), E2 (changelog), E3 (hotfix-typo), E4 (pure-readme), E5 (sync-only) (AGENTS.md §5.1.1)`);
+            // Skip the rest of spec-check on invalid codes (the Fail alone produces exit 1)
+            // Note: we must exit the SPEC_CHECK block early here
+        } else {
+            console.log('── spec relevance EXEMPT: ' + SPEC_EXEMPT_CODES.map(c => `${c} (${SPEC_EXEMPT_CATEGORIES[c]})`).join(', ') + ' ──');
+        }
+    }
+
+    // Only proceed if exemption codes were valid (or none provided)
+    const invalidCodes = SPEC_EXEMPT_CODES.filter(c => !SPEC_EXEMPT_CATEGORIES[c]);
+    if (invalidCodes.length === 0) {
+        const SPEC_REGISTRY = path.join('docs', 'specs', 'registry.json');
+        if (!fs.existsSync(SPEC_REGISTRY)) {
+            Warn('Spec registry not found at docs/specs/registry.json — run: bun scripts/spec-register.ts to initialize');
+        } else {
         interface SpecEntry { id: string; file: string; status: string; created: string; last_updated: string; }
         interface Registry { specs: SpecEntry[]; }
 	        const registry: Registry = JSON.parse(readUTF8File(SPEC_REGISTRY));
@@ -1894,7 +2164,11 @@ if (SPEC_CHECK) {
             // (out of scope for this pass — see docs/designs/2026-08-16-spec-registry-enforcement-design.md).
             const relevant = changedSpecArea || recentActiveSpec;
             if (!relevant) {
-                Warn(`Spec check: ${changedCode.length} code file(s) changed but no recent/relevant spec activity (diff doesn't touch docs/specs|docs/designs, and no approved/implemented spec updated within ${RECENT_DAYS}d) — consider running the brainstorming skill or spec-register.ts`);
+                if (SPEC_EXEMPT_CODES.length > 0 && SPEC_EXEMPT_CODES.every(c => SPEC_EXEMPT_CATEGORIES[c])) {
+                    console.log('ℹ️  spec relevance check skipped (exempt)');
+                } else {
+                    Fail(`Spec check: ${changedCode.length} code file(s) changed but no recent/relevant spec activity (diff doesn't touch docs/specs|docs/designs, and no approved/implemented spec updated within ${RECENT_DAYS}d) — consider running the brainstorming skill or spec-register.ts`);
+                }
             } else {
                 Pass('Spec check: code changes covered by spec registry activity');
             }
@@ -1927,6 +2201,24 @@ if (SPEC_CHECK) {
         if (missingSpecFiles === 0 && registry.specs.length > 0) {
             Pass(`Spec check: all ${registry.specs.length} spec file(s) exist`);
         }
+        }
+    }
+}
+
+// ── ADR Governance Linkage Checks (--governance-check mode, warn-only) ─────────────
+// NOTE: dev-sync step 3.97 now invokes `verify-adr-governance.ts --strict` as a
+// blocking gate on ADR-linkage findings (Stage 2 of ADR-0059). This audit flag path
+// remains a non-blocking diagnostic — no flags forwarded to the spawned script here.
+if (GOVERNANCE_CHECK) {
+    const { status, stdout, stderr } = spawnSync('bun', ['scripts/verify-adr-governance.ts'], {
+        encoding: 'utf-8',
+    });
+    console.log(stdout);
+    if (stderr) {
+        console.error(stderr);
+    }
+    if (status !== 0) {
+        Fail('ADR governance linkage check failed with operational error — script exited non-zero');
     }
 }
 
