@@ -74,6 +74,20 @@ scaffold semantics) or emit a visible WARN naming the files and the manual comma
 needs care for pre-marker legacy projects that intentionally keep k-* — hence possibly
 WARN-first burn-in, mirroring the ADR-0055 Stage pattern.
 
+## 8. NEW (2026-08-24, Med): `skills` propagation domain carries only SKILL.md
+
+`scripts/propagation-map.json` `domains.skills` uses `include_pattern: "*/SKILL.md"`, so
+L0→L1 propagation drops every companion asset of multi-file skills. Observed: `explain-me`
+ships its `references/` (BUILD_GUIDE, PLATFORM_HARNESS, loanword-refinements.json),
+`scripts/validate_report.py`, and `templates/publish/*` only at L0 — a scaffolded project
+receives the SKILL.md but none of the assets it references. Same shape as the `docs` domain
+that was `disabled` until its glob bug was fixed (see map history). Suggested direction: a
+policy decision (ADR) — either widen the pattern (e.g. `**/*` minus exclusions) or declare
+single-file-only skills as a contract and move multi-file payloads into a documented
+non-propagated location. Related data point from the 2026-08-24 L0↔L1 comparison:
+k-* country-scoped skills live L1-only WITH their `references/` intact (scaffold path copies
+whole directories), so the two paths already disagree about asset handling.
+
 ---
 
 Historical sections retained below for provenance.

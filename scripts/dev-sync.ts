@@ -1,4 +1,8 @@
 // @version 1.7.2
+// v1.7.2: fix(pipeline): forward --spec-exempt via SYNC_SPEC_EXEMPT env instead of shell
+//           interpolation — the interpolated " --spec-exempt=X" (leading space) reached
+//           audit as a single argv word and defeated its startsWith parse, making the
+//           ADR-0055 escape hatch inert on every /sync run (ported from co-abap 1.7.2)
 // v1.7.1: fix(types): coerce Bun Shell stderr to string before .trim() (2 sites) and
 //           widen the five withRetry isSuccess lambdas to the (result: unknown) contract
 //           — typing-only, no behavior change (ported from co-abap docs/upstream-fix-list.md)
@@ -61,7 +65,7 @@ const msg = (msgArgs.join(' ') || "chore: update")
   .replace(/\s+/g, ' ')
   .trim() || "chore: update";
 
-// Language gate — commit messages / PR titles must be English (context.md §3).
+// Language gate — commit messages / PR titles must be English (CONSTITUTION.md §3).
 // Runs before any git mutation so a non-English message never reaches a commit or PR
 // (previously this was only checked late, inside gen-pr-body.ts, and its failure was
 // silently swallowed by the PR-creation fallback below). Shared detector also catches
@@ -305,7 +309,7 @@ if (fs.existsSync('scripts/verify-adr-governance.ts')) {
 // 4.5 L0→L1 publish — must run BEFORE audit gate so that CONSTITUTION scrub
 //     is applied to templates/common/ files before the L0-leakage check.
 const isWorkspaceRoot = fs.existsSync('templates/common') && fs.existsSync('scripts/propagation-map.json');
-// L0 context: context.md exists at workspace root — publish failures are fatal here.
+// L0 context: CONSTITUTION.md exists at workspace root — publish failures are fatal here.
 const isL0Context = fs.existsSync('CONSTITUTION.md');
 if (isWorkspaceRoot) {
     console.log('\n📦 Publishing L0→L1 (scripts, skills, commands)...');
