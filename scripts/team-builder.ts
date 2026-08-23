@@ -1,16 +1,16 @@
 /**
  * @file team-builder.ts
- * @description Agent team builder script â€” execution layer for the team-builder skill.
+ * @description Agent team builder script ??execution layer for the team-builder skill.
  *   Receives an approved proposal JSON (from skills/team-builder/SKILL.md Step 5) and
  *   executes all agent/skill changes in a fixed, safe order with checkpoint logging.
- * @version 1.2.1
+ * @version 1.2.2
  * @usage bun scripts/team-builder.ts <proposal-json-path> [--dry-run]
  */
 
-import { existsSync, mkdirSync, unlinkSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, unlinkSync } from "node:fs";
 import { join, dirname } from "node:path";
 
-// â”€â”€â”€ ANSI Colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ ANSI Colors ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 const G = "\x1b[32m"; // green
 const Y = "\x1b[33m"; // yellow
@@ -18,7 +18,7 @@ const R = "\x1b[31m"; // red
 const C = "\x1b[36m"; // cyan
 const Z = "\x1b[0m";  // reset
 
-// â”€â”€â”€ Interfaces â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Interfaces ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 interface AgentToCreate {
   name: string;
@@ -129,7 +129,7 @@ interface Checkpoint {
   timestamp?: string;
 }
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Constants ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 const CWD = process.cwd();
 const CHECKPOINT_FILE = join(CWD, "memory", ".team-builder-checkpoint.json");
@@ -148,7 +148,7 @@ const STEP_DEFS: Omit<Checkpoint, "status">[] = [
   { step: 16, label: "Record change history in memory/" },
 ];
 
-// â”€â”€â”€ Checkpoint helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Checkpoint helpers ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 function initCheckpoints(): Checkpoint[] {
   return STEP_DEFS.map((s) => ({ ...s, status: "pending" as const }));
@@ -157,7 +157,7 @@ function initCheckpoints(): Checkpoint[] {
 function loadCheckpoints(): Checkpoint[] {
   if (existsSync(CHECKPOINT_FILE)) {
     try {
-      const raw = Bun.file(CHECKPOINT_FILE).textSync();
+      const raw = readFileSync(CHECKPOINT_FILE, "utf-8");
       return JSON.parse(raw) as Checkpoint[];
     } catch (err) {
       console.error(`[team-builder] Error: ${err}`);
@@ -185,7 +185,7 @@ function isDone(checkpoints: Checkpoint[], step: number): boolean {
   return checkpoints.find((c) => c.step === step)?.status === "done";
 }
 
-// â”€â”€â”€ Shell helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Shell helpers ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 function run(cmd: string): { success: boolean; stdout: string; stderr: string } {
   const parts = cmd.split(" ");
@@ -197,7 +197,7 @@ function run(cmd: string): { success: boolean; stdout: string; stderr: string } 
   };
 }
 
-// â”€â”€â”€ File helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ File helpers ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function readFile(path: string): Promise<string> {
   return await Bun.file(path).text();
@@ -213,7 +213,7 @@ function deleteFile(filePath: string): void {
   try { unlinkSync(filePath); } catch (err) { console.error(`[team-builder] Error: ${err}`); }
 }
 
-// â”€â”€â”€ Template generators â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Template generators ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 function generateAgentMd(a: AgentToCreate): string {
   const claudeTier      = a.tier.claude;
@@ -317,7 +317,7 @@ prerequisites: ${prereqs}
 `;
 }
 
-// â”€â”€â”€ Step 6: Pre-conditions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 6: Pre-conditions ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function checkPreconditions(
   proposal: TeamBuilderProposal,
@@ -369,7 +369,7 @@ async function checkPreconditions(
   return ok;
 }
 
-// â”€â”€â”€ Step 7: Proactive skill transfer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 7: Proactive skill transfer ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function proactiveSkillTransfer(
   proposal: TeamBuilderProposal
@@ -407,11 +407,11 @@ async function proactiveSkillTransfer(
     let content = await readFile(skillFile);
     content = content.replace(/^owner: .+$/m, `owner: ${t.toOwner}`);
     await writeFile(skillFile, content);
-    console.log(`  Reassigned skill "${t.skill}" from ${t.fromOwner} â†’ ${t.toOwner}`);
+    console.log(`  Reassigned skill "${t.skill}" from ${t.fromOwner} ??${t.toOwner}`);
   }
 }
 
-// â”€â”€â”€ Step 8: Delete agents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 8: Delete agents ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function deleteAgents(proposal: TeamBuilderProposal): Promise<void> {
   for (const del of proposal.changes.agentsToDelete) {
@@ -425,7 +425,7 @@ async function deleteAgents(proposal: TeamBuilderProposal): Promise<void> {
   }
 }
 
-// â”€â”€â”€ Step 9: Convert agents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 9: Convert agents ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function convertAgents(proposal: TeamBuilderProposal): Promise<void> {
   for (const conv of proposal.changes.agentsToConvert) {
@@ -457,7 +457,7 @@ async function convertAgents(proposal: TeamBuilderProposal): Promise<void> {
 
     // Write to new file path
     await writeFile(dstPath, content);
-    console.log(`  Converted agent: ${conv.currentFile} â†’ ${conv.newFile}`);
+    console.log(`  Converted agent: ${conv.currentFile} ??${conv.newFile}`);
 
     // Remove old file if path changed
     if (srcPath !== dstPath && existsSync(srcPath)) {
@@ -467,7 +467,7 @@ async function convertAgents(proposal: TeamBuilderProposal): Promise<void> {
   }
 }
 
-// â”€â”€â”€ Step 10: Create new agents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 10: Create new agents ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function createAgents(proposal: TeamBuilderProposal): Promise<void> {
   for (const agent of proposal.changes.agentsToCreate) {
@@ -481,7 +481,7 @@ async function createAgents(proposal: TeamBuilderProposal): Promise<void> {
   }
 }
 
-// â”€â”€â”€ Step 11: Update AGENTS.md â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 11: Update AGENTS.md ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function updateAgentsMd(proposal: TeamBuilderProposal): Promise<void> {
   const agentsMdPath = join(CWD, "AGENTS.md");
@@ -516,7 +516,7 @@ async function updateAgentsMd(proposal: TeamBuilderProposal): Promise<void> {
     if (oldBasename !== newBasename) {
       content = content.split(oldBasename).join(newBasename);
     }
-    console.log(`  Updated AGENTS.md for converted agent: ${oldBasename} â†’ ${newBasename}`);
+    console.log(`  Updated AGENTS.md for converted agent: ${oldBasename} ??${newBasename}`);
   }
 
   // Add rows for new agents
@@ -563,7 +563,7 @@ function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// â”€â”€â”€ Step 12: Update workflow documentation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 12: Update workflow documentation ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function updateWorkflowDocs(proposal: TeamBuilderProposal): Promise<void> {
   if (proposal.changes.workflowPhases.length === 0) {
@@ -604,7 +604,7 @@ async function updateWorkflowDocs(proposal: TeamBuilderProposal): Promise<void> 
     let changed = false;
     for (const del of proposal.changes.agentsToDelete) {
       if (content.includes(del.name)) {
-        console.log(`  ${Y}[WARN] co-work.context.md references deleted agent "${del.name}" â€” manual review recommended.${Z}`);
+        console.log(`  ${Y}[WARN] co-work.context.md references deleted agent "${del.name}" ??manual review recommended.${Z}`);
       }
     }
     for (const conv of proposal.changes.agentsToConvert) {
@@ -613,7 +613,7 @@ async function updateWorkflowDocs(proposal: TeamBuilderProposal): Promise<void> 
         const newName = conv.newFile.replace(/^agents\//, "").replace(/\.md$/, "");
         content = content.split(oldName).join(newName);
         changed = true;
-        console.log(`  Updated co-work.context.md: ${oldName} â†’ ${newName}`);
+        console.log(`  Updated co-work.context.md: ${oldName} ??${newName}`);
       }
     }
     if (changed) {
@@ -622,7 +622,7 @@ async function updateWorkflowDocs(proposal: TeamBuilderProposal): Promise<void> 
   }
 }
 
-// â”€â”€â”€ Step 13: Modify existing skills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 13: Modify existing skills ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function modifySkills(proposal: TeamBuilderProposal): Promise<void> {
   for (const mod of proposal.changes.skillsToModify) {
@@ -636,11 +636,11 @@ async function modifySkills(proposal: TeamBuilderProposal): Promise<void> {
     const note = `\n<!-- team-builder modification: ${mod.changes} -->\n`;
     content += note;
     await writeFile(skillFile, content);
-    console.log(`  Modified skill: ${mod.name} (change note appended â€” manual edit may be needed)`);
+    console.log(`  Modified skill: ${mod.name} (change note appended ??manual edit may be needed)`);
   }
 }
 
-// â”€â”€â”€ Step 14: Create new skills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 14: Create new skills ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function createSkills(proposal: TeamBuilderProposal): Promise<void> {
   for (const skill of proposal.changes.skillsToCreate) {
@@ -655,7 +655,7 @@ async function createSkills(proposal: TeamBuilderProposal): Promise<void> {
   }
 }
 
-// â”€â”€â”€ Step 15: Validation gate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 15: Validation gate ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function runValidationGate(): Promise<boolean> {
   let allPass = true;
@@ -681,7 +681,7 @@ async function runValidationGate(): Promise<boolean> {
   return allPass;
 }
 
-// â”€â”€â”€ Step 16: Change history â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Step 16: Change history ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function recordChangeHistory(proposal: TeamBuilderProposal): Promise<void> {
   const today = new Date().toISOString().slice(0, 10);
@@ -698,11 +698,11 @@ async function recordChangeHistory(proposal: TeamBuilderProposal): Promise<void>
   const deleted = proposal.changes.agentsToDelete.map((a) => a.name).join(", ") || "none";
   const skillsCreated = proposal.changes.skillsToCreate.map((s) => s.name).join(", ") || "none";
   const skillsReassigned = proposal.changes.skillsToReassign
-    .map((s) => `${s.skill} (â†’${s.toOwner})`)
+    .map((s) => `${s.skill} (??{s.toOwner})`)
     .join(", ") || "none";
 
   const entry = `
-## Team Builder Execution â€” ${new Date().toISOString()}
+## Team Builder Execution ??${new Date().toISOString()}
 
 **Proposal**: ${proposal.teamName}
 **Approved by**: ${proposal.approvedBy} at ${proposal.approvedAt}
@@ -721,20 +721,20 @@ ${proposal.changeHistoryEntry}
   console.log(`  Appended change history to memory/${today}.md`);
 }
 
-// â”€â”€â”€ Dry-run mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Dry-run mode ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 function runDryRun(proposal: TeamBuilderProposal): void {
-  console.log(`\n${Y}â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—`);
-  console.log(`â•‘           DRY-RUN MODE â€” NO CHANGES          â•‘`);
-  console.log(`â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•${Z}\n`);
+  console.log(`\n${Y}?”â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•—`);
+  console.log(`??          DRY-RUN MODE ??NO CHANGES          ??);
+  console.log(`?šâ•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•${Z}\n`);
 
   // Skills to reassign
   for (const r of proposal.changes.skillsToReassign) {
-    console.log(`${Y}[DRY-RUN] Would reassign skill "${r.skill}": ${r.fromOwner} â†’ ${r.toOwner}${Z}`);
+    console.log(`${Y}[DRY-RUN] Would reassign skill "${r.skill}": ${r.fromOwner} ??${r.toOwner}${Z}`);
   }
   for (const del of proposal.changes.agentsToDelete) {
     for (const t of del.skillsToTransfer) {
-      console.log(`${Y}[DRY-RUN] Would transfer skill "${t.skill}" from ${del.name} â†’ ${t.newOwner}${Z}`);
+      console.log(`${Y}[DRY-RUN] Would transfer skill "${t.skill}" from ${del.name} ??${t.newOwner}${Z}`);
     }
   }
 
@@ -745,8 +745,8 @@ function runDryRun(proposal: TeamBuilderProposal): void {
 
   // Agents to convert
   for (const conv of proposal.changes.agentsToConvert) {
-    console.log(`${Y}[DRY-RUN] Would rename: ${conv.currentFile} â†’ ${conv.newFile}${Z}`);
-    console.log(`${Y}[DRY-RUN] Would update frontmatter in: ${conv.newFile} (formal_name â†’ ${conv.newFormalName})${Z}`);
+    console.log(`${Y}[DRY-RUN] Would rename: ${conv.currentFile} ??${conv.newFile}${Z}`);
+    console.log(`${Y}[DRY-RUN] Would update frontmatter in: ${conv.newFile} (formal_name ??${conv.newFormalName})${Z}`);
   }
 
   // Agents to create
@@ -790,14 +790,14 @@ function runDryRun(proposal: TeamBuilderProposal): void {
   console.log(`\n${Y}Dry-run complete. No files were written.${Z}\n`);
 }
 
-// â”€â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ?€?€?€ Main ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
     console.log(`
-${C}team-builder.ts${Z} â€” Agent team builder execution layer
+${C}team-builder.ts${Z} ??Agent team builder execution layer
 
 ${G}Usage:${Z}
   bun scripts/team-builder.ts <proposal-json-path> [--dry-run] [--skip-checks]
@@ -858,14 +858,14 @@ ${G}Examples:${Z}
   // Load or init checkpoints
   const checkpoints = loadCheckpoints();
 
-  console.log(`\n${C}â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—`);
-  console.log(`â•‘         team-builder.ts â€” Execution          â•‘`);
-  console.log(`â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•${Z}`);
+  console.log(`\n${C}?”â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•—`);
+  console.log(`??        team-builder.ts ??Execution          ??);
+  console.log(`?šâ•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•${Z}`);
   console.log(`Proposal  : ${proposal.teamName}`);
   console.log(`Approved  : ${proposal.approvedBy} @ ${proposal.approvedAt}`);
   console.log(`Timestamp : ${new Date().toISOString()}\n`);
 
-  // â”€â”€ Step 6 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 6 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 6)) {
     console.log(`${C}[Step 6] ${STEP_DEFS[0].label}${Z}`);
     const ok = await checkPreconditions(proposal, skipChecks);
@@ -880,7 +880,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 6] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 7 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 7 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 7)) {
     console.log(`${C}[Step 7] ${STEP_DEFS[1].label}${Z}`);
     try {
@@ -896,7 +896,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 7] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 8 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 8 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 8)) {
     console.log(`${C}[Step 8] ${STEP_DEFS[2].label}${Z}`);
     try {
@@ -912,7 +912,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 8] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 9 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 9 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 9)) {
     console.log(`${C}[Step 9] ${STEP_DEFS[3].label}${Z}`);
     try {
@@ -928,7 +928,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 9] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 10 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 10 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 10)) {
     console.log(`${C}[Step 10] ${STEP_DEFS[4].label}${Z}`);
     try {
@@ -944,7 +944,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 10] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 11 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 11 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 11)) {
     console.log(`${C}[Step 11] ${STEP_DEFS[5].label}${Z}`);
     try {
@@ -960,7 +960,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 11] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 12 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 12 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 12)) {
     console.log(`${C}[Step 12] ${STEP_DEFS[6].label}${Z}`);
     try {
@@ -976,7 +976,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 12] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 13 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 13 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 13)) {
     console.log(`${C}[Step 13] ${STEP_DEFS[7].label}${Z}`);
     try {
@@ -992,7 +992,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 13] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 14 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 14 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 14)) {
     console.log(`${C}[Step 14] ${STEP_DEFS[8].label}${Z}`);
     try {
@@ -1008,7 +1008,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 14] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 15 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 15 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 15)) {
     console.log(`${C}[Step 15] ${STEP_DEFS[9].label}${Z}`);
     const passed = await runValidationGate();
@@ -1023,7 +1023,7 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 15] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Step 16 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Step 16 ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   if (!isDone(checkpoints, 16)) {
     console.log(`${C}[Step 16] ${STEP_DEFS[10].label}${Z}`);
     try {
@@ -1039,16 +1039,16 @@ ${G}Examples:${Z}
     console.log(`${Y}[Step 16] Skipped (already done)${Z}`);
   }
 
-  // â”€â”€ Cleanup & Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ?€?€ Cleanup & Summary ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
   try {
     if (existsSync(CHECKPOINT_FILE)) unlinkSync(CHECKPOINT_FILE);
   } catch (err) {
     console.error(`[team-builder] Error: ${err}`);
   }
 
-  console.log(`\n${G}â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—`);
-  console.log(`â•‘         team-builder.ts â€” COMPLETE           â•‘`);
-  console.log(`â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•${Z}`);
+  console.log(`\n${G}?”â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•—`);
+  console.log(`??        team-builder.ts ??COMPLETE           ??);
+  console.log(`?šâ•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•${Z}`);
   console.log(`${G}Team: ${proposal.teamName}${Z}`);
   console.log(`Agents created  : ${proposal.changes.agentsToCreate.map((a) => a.name).join(", ") || "none"}`);
   console.log(`Agents converted: ${proposal.changes.agentsToConvert.map((a) => a.newFile).join(", ") || "none"}`);

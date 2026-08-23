@@ -102,7 +102,7 @@ Full behavioral rules, tool contracts, and output formats live in the linked `ag
 
 ### 3. 🧪 QA Engineer
 - **When to dispatch**: After code-writer completes all writes in the execution plan
-- **Key Tools**: `RunUnitTests`, `RunATCCheck`, `SyntaxCheck`, `GetSource`
+- **Key Tools**: `SyntaxCheck`, `RunUnitTests`, `GetCodeCoverage`, `RunATCCheck`, `GetSource`
 - **Output**: Unit test pass/fail + ATC Priority-1/2/3 findings; P2 requires PM disposition
 - **Subagent prompt**: [`agents/test-runner.md`](agents/test-runner.md)
 
@@ -220,7 +220,7 @@ All software requirements and implementation logs must be structured and stored 
 #### **Stage 4: Quality Gate Verification (`04_qa_report.md`)**
 *   **Responsible Agent**: **QA Engineer** (`test-runner`).
 *   **Deliverable**: `/deliverables/REQ-NNN-[slug]/04_qa_report.md`.
-*   **Scope**: Run the mandatory QA chain (`SyntaxCheck` -> `RunUnitTests` -> `GetCodeCoverage` -> `RunATCCheck`). Record raw logs, code coverage percentages (70% threshold — see [skills/post-write-chain/SKILL.md](../skills/post-write-chain/SKILL.md)), and enforce zero Priority-1 findings. Mark as **[QUALITY GATE STATUS: PASSED]**.
+*   **Scope**: Run the mandatory QA chain (`SyntaxCheck` -> `RunUnitTests` -> `GetCodeCoverage` -> `RunATCCheck`). Record raw logs, code coverage percentages (70% threshold — see [skills/post-write-chain/SKILL.md](skills/post-write-chain/SKILL.md)), and enforce zero Priority-1 findings. Mark as **[QUALITY GATE STATUS: PASSED]**.
 
 #### **Stage 5: Governance & Release**
 *   **Responsible Agent**: **PM** & **DevOps/Admin**.
@@ -238,9 +238,9 @@ Request received
   │
   ├─ Read-only? (analyze, search, query, inspect)
   │    └─► PARALLEL SKILLS — Primary Agent dispatches research subagents
-  │          ├── sap-investigator   → codebase scan (Skills: memory-intelligence, bapi-explorer)
+  │          ├── sap-investigator   → codebase scan (Skill: abap-dev — BAPI exploration)
   │          ├── read-only-analyst  → business data queries (Module analyst contexts)
-  │          └── schema-inspector   → table/CDS structure (Skill: impact-architecture)
+  │          └── schema-inspector   → table/CDS structure (Skill: abap-dev — impact architecture)
   │
   └─ Write? (EditSource, WriteSource, SyntaxCheck)
        └─► SERIAL SUBAGENTS — delegate to specialized execution subagents
@@ -270,7 +270,7 @@ These subagents are run sequentially because they execute write operations (lock
 | `code-writer` | `agents/code-writer.md` | ❌ Never | `EditSource`, `WriteSource`, `SyntaxCheck` |
 | `fiori-dev` (Write Mode) | `agents/fiori-developer.md` | ❌ Serial Write | `EditSource`, `SyntaxCheck` |
 | `form-expert` (Write Mode) | `agents/form-expert.md` | ❌ Serial Write | `EditSource` |
-| `test-runner` | `agents/test-runner.md` | ❌ After write | `RunUnitTests`, `RunATCCheck` (verification) |
+| `test-runner` | `agents/test-runner.md` | ❌ After write | `SyntaxCheck`, `RunUnitTests`, `GetCodeCoverage`, `RunATCCheck` |
 | `gui-scripter` | `agents/gui-scripter.md` | ❌ Never | `GetSource`, `GrepObjects`, `SearchObject`, `RunQuery` |
 
 #### Parallel Dispatch Rules
@@ -379,7 +379,7 @@ If the cross-module analysis reveals conflicting ACs (e.g., SD wants field X, FI
 
 ---
 
-*Last Updated: 2026-07-09 (rev 3)*
+*Last Updated: 2026-08-23 (rev 3)*
 
 
 ## Universal Baseline Behaviors
@@ -430,7 +430,7 @@ if (!result.success) {
 ---
 
 ## Dynamic Roster Updates
-**Note on Phase 0 Kickoff:** The PM agent is explicitly authorized to assess project requirements during kickoff and dynamically expand this AGENTS.md registry by creating new specialist agents or skills.
+**Note on Project Kickoff:** The PM agent is explicitly authorized to assess project requirements during kickoff and dynamically expand this AGENTS.md registry by creating new specialist agents or skills.
 
 ---
 

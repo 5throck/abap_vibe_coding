@@ -1,11 +1,12 @@
 #!/usr/bin/env bun
 /**
  * Skill Verification Script
- * @version 1.2.0
+ * @version 1.2.1
  * Verifies all skills in skills/ directory are loadable and properly formatted
  */
 
 import path from "node:path";
+import { existsSync } from "node:fs";
 
 const scriptDir = path.dirname(import.meta.path);
 const projectRoot = path.resolve(scriptDir, "..");
@@ -54,7 +55,7 @@ async function checkSkillsMdSchema(): Promise<SkillCheck | null> {
         path: skillsMdPath,
         status: 'WARN',
         issues: [
-          "SKILLS.md has a stale 'layer' column — this column no longer controls propagation (SKILL.md frontmatter is the SSOT). Run 'bun scripts/upgrade-project.ts <project-path>' to migrate."
+          "SKILLS.md has a stale 'layer' column ??this column no longer controls propagation (SKILL.md frontmatter is the SSOT). Run 'bun scripts/upgrade-project.ts <project-path>' to migrate."
         ]
       };
     }
@@ -65,7 +66,7 @@ async function checkSkillsMdSchema(): Promise<SkillCheck | null> {
 }
 
 async function main(): Promise<void> {
-  console.log("🔍 Verifying Skills\n");
+  console.log("?�� Verifying Skills\n");
 
   const checks = await scanSkills();
 
@@ -74,7 +75,7 @@ async function main(): Promise<void> {
   if (skillsMdCheck) checks.push(skillsMdCheck);
 
   for (const check of checks) {
-    const icon = check.status === "PASS" ? "✅" : check.status === "WARN" ? "⚠️" : "❌";
+    const icon = check.status === "PASS" ? "?? : check.status === "WARN" ? "?�️" : "??;
     console.log(`${icon} ${check.name}`);
     for (const issue of check.issues) {
       console.log(`   ${issue}`);
@@ -86,12 +87,12 @@ async function main(): Promise<void> {
 
   console.log(`\n${checks.length} skills checked`);
   if (failed > 0) {
-    console.log(`❌ ${failed} failed`);
+    console.log(`??${failed} failed`);
     process.exit(1);
   } else if (warned > 0) {
-    console.log(`⚠️  ${warned} warnings`);
+    console.log(`?�️  ${warned} warnings`);
   } else {
-    console.log("✅ All skills verified");
+    console.log("??All skills verified");
   }
 
   // Generate skills index
@@ -105,10 +106,12 @@ async function scanSkills(): Promise<SkillCheck[]> {
   async function scanDirectory(dir: string): Promise<string[]> {
     const files: string[] = [];
     const skillsPath = path.isAbsolute(dir) ? dir : path.join(projectRoot, dir);
+    if (!existsSync(skillsPath)) return files;
 
-    for await (const entry of Bun.glob(`${skillsPath}/**/*`)) {
+    const globber = new Bun.Glob("**/*");
+    for await (const entry of globber.scan({ cwd: skillsPath, onlyFiles: true })) {
       if (entry.endsWith("SKILL.md")) {
-        files.push(entry);
+        files.push(path.join(skillsPath, entry));
       }
     }
     return files;
@@ -122,7 +125,7 @@ async function scanSkills(): Promise<SkillCheck[]> {
     checks.push(check);
   }
 
-  // A-03: L1 Orphan Check — L0 skills with l2_propagate: false or scope: workspace
+  // A-03: L1 Orphan Check ??L0 skills with l2_propagate: false or scope: workspace
   // must NOT exist in templates/common/skills/
   for (const l0File of skillFiles) {
     try {
@@ -153,7 +156,7 @@ async function scanSkills(): Promise<SkillCheck[]> {
             path: l0File,
             status: 'FAIL',
             issues: [
-              `L1 orphan detected: skill has l2_propagate: false or scope: workspace in SKILL.md but exists in templates/common/skills/ — delete templates/common/skills/${skillName}/`
+              `L1 orphan detected: skill has l2_propagate: false or scope: workspace in SKILL.md but exists in templates/common/skills/ ??delete templates/common/skills/${skillName}/`
             ]
           });
         }
@@ -242,7 +245,7 @@ async function generateSkillsIndex(checks: SkillCheck[]): Promise<void> {
   }
 
   await Bun.write(indexPath, content);
-  console.log(`\n📝 Generated skills index: ${indexPath}`);
+  console.log(`\n?�� Generated skills index: ${indexPath}`);
 }
 
 async function verifySkill(skillFile: string): Promise<SkillCheck> {
@@ -282,12 +285,12 @@ async function verifySkill(skillFile: string): Promise<SkillCheck> {
         // Check l2_propagate field for skills in templates/common/skills/
         if (skillFile.includes('templates/common/skills') || skillFile.includes('templates\\common\\skills')) {
           if (!frontmatter.includes('l2_propagate:')) {
-            issues.push('Missing l2_propagate field — add l2_propagate: true or l2_propagate: false to clarify L2 propagation intent');
+            issues.push('Missing l2_propagate field ??add l2_propagate: true or l2_propagate: false to clarify L2 propagation intent');
             if (status !== 'FAIL') status = 'WARN';
           } else {
             const l2Match = frontmatter.match(/^l2_propagate:\s*(true|false)\b/m);
             if (!l2Match) {
-              issues.push('Invalid l2_propagate value — must be true or false (boolean, not quoted)');
+              issues.push('Invalid l2_propagate value ??must be true or false (boolean, not quoted)');
               if (status !== 'FAIL') status = 'WARN';
             }
           }

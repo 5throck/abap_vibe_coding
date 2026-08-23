@@ -2,7 +2,7 @@
 
 This document defines the workflow phases used by the co-abap variant. It formalizes the
 orchestration workflow and phase-numbering map that previously lived only inline in
-[`AGENTS.md § 3`](../AGENTS.md), matching the `docs/phase-definitions.md` convention used by every
+[AGENTS.md](../AGENTS.md), matching the `docs/phase-definitions.md` convention used by every
 other variant in this workspace.
 
 co-abap uses a **6-step orchestration workflow** (business-facing steps) that maps onto a
@@ -107,5 +107,6 @@ handoff_from: [pm]
 required_skills: [skill-name]
 ```
 
-See [`AGENTS.md § 2`](../AGENTS.md) for the full agent roster and individual agent definitions,
-and [`AGENTS.md § 3`](../AGENTS.md) for the PM subagent dispatch decision tree.
+See [AGENTS.md — Business/Technical Group rosters](../AGENTS.md) for the full agent roster and
+individual agent definitions, and [AGENTS.md — PM Subagent Dispatch Protocol](../AGENTS.md) for the
+PM subagent dispatch decision tree.
