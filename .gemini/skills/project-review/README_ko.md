@@ -4,7 +4,7 @@
 
 ## 목적
 
-Performs a comprehensive parallel review of the current project using all
+현재 프로젝트에 대해 사용 가능한 모든 전문 에이전트를 활용한 종합적인 병렬 리뷰를 수행합니다. 프로젝트 유형과 에이전트 로스터를 자동 감지하고, 실행 계획을 생성하고, 에이전트를 병렬로 배치하며, 우선순위가 매겨진 개선 계획(Critical/High/Medium/Low)을 산출합니다.
 
 - **스코프(scope)**: `common`
 - **버전**: 1.1.0
