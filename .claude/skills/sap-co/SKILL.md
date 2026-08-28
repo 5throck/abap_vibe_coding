@@ -4,6 +4,7 @@ description: Use when working on CO module tasks — cost center accounting, int
 metadata:
   type: module
 version: 1.0.0
+scope: co-abap
 owner: pm
 status: active
 ---

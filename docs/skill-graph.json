@@ -267,11 +267,6 @@
       "layer": "L3"
     },
     {
-      "id": "sound-synth",
-      "type": "skill",
-      "layer": "L3"
-    },
-    {
       "id": "source-command-celebrate",
       "type": "skill",
       "layer": "L3"

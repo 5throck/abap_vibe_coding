@@ -40,7 +40,6 @@
 | `script-lifecycle-manager` | L3 | — | — | — |
 | `security-scan` | L3 | — | — | — |
 | `skill-lifecycle-manager` | L3 | — | — | — |
-| `sound-synth` | L3 | — | — | — |
 | `source-command-celebrate` | L3 | — | — | — |
 | `standup-synthesizer` | L3 | — | — | — |
 | `stride-threat-matrix` | L3 | — | — | — |

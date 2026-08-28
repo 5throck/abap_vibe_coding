@@ -4,6 +4,7 @@ description: Use when working on SAP ABAP development tasks — provides special
 metadata:
   type: core
 version: 1.1.0
+scope: co-abap
 owner: pm
 status: active
 ---

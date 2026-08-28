@@ -40,7 +40,6 @@ Generated: 2026-08-23T14:47:47.014Z
 
 ## Audio-synthesis
 
-- [C:\git\ai_workspace\Projects\co-abap\skills\sound-synth\SKILL.md](skills/C:\git\ai_workspace\Projects\co-abap\skills\sound-synth\SKILL.md/SKILL.md)
 
 ## Security-reporting
 

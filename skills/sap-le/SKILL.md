@@ -4,6 +4,7 @@ description: Use when working on LE module tasks — shipping, transport, wareho
 metadata:
   type: module
 version: 1.0.0
+scope: co-abap
 owner: pm
 status: active
 ---
