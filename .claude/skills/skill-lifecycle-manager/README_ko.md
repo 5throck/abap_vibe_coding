@@ -4,7 +4,7 @@
 
 ## 목적
 
-Manages the creation, validation, and maintenance of skill files across the project.
+프로젝트 전반의 스킬 파일 생성, 검증, 유지관리를 담당합니다. 새 스킬을 생성할 때, 스킬 메타데이터를 업데이트할 때, 스킬 구조를 검증할 때, 스킬-에이전트 매핑을 관리할 때 사용합니다.
 
 - **스코프(scope)**: `common`
 - **버전**: 1.2.0

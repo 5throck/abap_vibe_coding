@@ -4,7 +4,7 @@
 
 ## 목적
 
-Locale identification and configuration: BCP 47 locale ID structure,
+로케일 식별과 구성: BCP 47 로케일 ID 구조, 언어 대 국가 구분 원칙, 언어별 정렬 순서, 시간대 처리, 지역/언어 매트릭스를 다룹니다. 로케일 코드를 선택할 때, locales/<lang>.json을 구성할 때, 특정 언어의 정렬 순서를 수정할 때, 산출물에 표시할 시간대를 결정할 때 사용합니다.
 
 - **스코프(scope)**: `common`
 - **버전**: 1.0.0
