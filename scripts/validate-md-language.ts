@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// @version 1.6.0
+// @version 1.8.0
 /**
  * Markdown Language Validation Script with I18N Support
  *
@@ -24,15 +24,36 @@
 
 import { readFileSync, existsSync } from "fs";
 import { join, dirname } from "node:path";
+import { execFileSync } from "node:child_process";
 import { die } from "./lib/error-handling.ts";
+
+const _TRACKED_CO_VARIANTS: Set<string> | null = (() => {
+  try {
+    const out = execFileSync('git', ['ls-files', '--cached', '--', 'templates/'], { encoding: 'utf-8' }).trim();
+    const dirs = new Set<string>();
+    if (!out) return dirs;
+    for (const line of out.split('\n')) {
+      const m = line.match(/^templates\/(co-[^/]+)\//);
+      if (m) dirs.add(m[1]);
+    }
+    return dirs;
+  } catch { return null; }
+})();
+
+function isCoVariantTracked(name: string): boolean {
+  if (!_TRACKED_CO_VARIANTS) return true;
+  return _TRACKED_CO_VARIANTS.has(name);
+}
 
 /**
  * Supported locale codes are loaded from docs/workspace-schema.json (i18n.locale_codes).
  * To add a new locale: update docs/workspace-schema.json — do NOT hardcode here.
- * Falls back to a built-in list if the schema file is unavailable.
+ * If the schema file is unavailable, falls back to ['ko'] only (degraded mode,
+ * with a warning) — the language policy names ko/ and locales/ko/ as translation
+ * zones independent of the schema registry.
  */
 // Read locale codes from workspace-schema.json (SSOT for i18n policy)
-// Falls back to a minimal default if schema is unavailable
+// Falls back to ['ko'] (degraded mode) if schema is unavailable
 function loadSupportedLocales(): string[] {
   try {
     const schemaPath = join(dirname(import.meta.path), '..', 'docs', 'workspace-schema.json');
@@ -40,10 +61,12 @@ function loadSupportedLocales(): string[] {
     const codes = schema?.i18n?.locale_codes;
     if (Array.isArray(codes) && codes.length > 0) return codes;
   } catch {
-    // fall through to default
+    // fall through to degraded fallback
   }
-  // Fallback: minimal set if schema unavailable
-  return ['ko', 'ja', 'zh-CN', 'zh-TW', 'de', 'es', 'fr', 'pt', 'vi', 'ms', 'id', 'th', 'ru', 'it', 'ar'];
+  // Degraded mode (schema missing, e.g. project-local runs where the workspace
+  // schema is not shipped): only 'ko' is guaranteed without the registry.
+  console.warn('[validate-md-language] docs/workspace-schema.json unavailable — using degraded locale list (ko only); other translation zones will not be exempted.');
+  return ['ko'];
 }
 
 const SUPPORTED_LOCALES: string[] = loadSupportedLocales();
@@ -252,6 +275,28 @@ async function validateMarkdownLanguage(): Promise<void> {
     }
   } catch { /* ignore scan errors */ }
 
+  // Collect templates/<variant>/ directories whose variant.json has country_config.locales
+  // Files under those variants are exempt from Korean language validation
+  const variantLocaleExemptions = new Map<string, Set<string>>(); // variantDir -> Set<locale>
+  try {
+    const templatesDir = join(cwd, 'templates');
+    if (existsSync(templatesDir)) {
+      const { readdirSync } = await import('fs');
+      for (const entry of readdirSync(templatesDir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        const vf = join(templatesDir, entry.name, 'variant.json');
+        if (!existsSync(vf)) continue;
+        try {
+          const vjson = JSON.parse(readFileSync(vf, 'utf-8'));
+          const locales: string[] = vjson?.country_config?.locales ?? [];
+          if (locales.length > 0) {
+            variantLocaleExemptions.set(entry.name + '/', new Set(locales));
+          }
+        } catch { /* ignore parse errors */ }
+      }
+    }
+  } catch { /* ignore scan errors */ }
+
   const mdFiles = allFiles.filter((f) => {
     const normalized = f.replace(/\\/g, "/");
     if (normalized.includes("node_modules/") ||
@@ -262,6 +307,15 @@ async function validateMarkdownLanguage(): Promise<void> {
     // Exclude root-level generated project directories
     for (const dir of rootProjectDirs) {
       if (normalized.startsWith(dir)) return false;
+    }
+    // Skip untracked template variants (WIP scaffolds on disk)
+    if (normalized.startsWith("templates/co-")) {
+      const afterTemplates = normalized.slice("templates/".length);
+      const slashIdx = afterTemplates.indexOf('/');
+      if (slashIdx > 0) {
+        const variantName = afterTemplates.slice(0, slashIdx);
+        if (!isCoVariantTracked(variantName)) return false;
+      }
     }
     return true;
   });
@@ -281,6 +335,23 @@ async function validateMarkdownLanguage(): Promise<void> {
     }
 
     officialCount++;
+
+    // Check variant locale exemption (templates/<variant>/ with country_config.locales)
+    const normed = file.replace(/\\/g, "/");
+    let variantExempt = false;
+    if (normed.startsWith("templates/")) {
+      const afterTemplates = normed.slice("templates/".length);
+      const slashIdx = afterTemplates.indexOf('/');
+      if (slashIdx > 0) {
+        const variantDir = afterTemplates.slice(0, slashIdx + 1);
+        const exemptLocales = variantLocaleExemptions.get(variantDir);
+        if (exemptLocales?.has('ko')) {
+          variantExempt = true;
+        }
+      }
+    }
+    if (variantExempt) continue;
+
     const violation = analyzeFile(file);
     if (violation) {
       violations.push(violation);

@@ -1,8 +1,8 @@
 ---
 name: sync
 description: Runs the full project sync pipeline — lifecycle update, audit, L0→L1 publish, commit, push, and PR creation.
-version: 1.2.0
-last_reviewed: 2026-08-03
+version: 1.2.2
+last_reviewed: 2026-08-25
 status: active
 scope: common
 l2_propagate: true
@@ -83,11 +83,15 @@ Runs the full project sync pipeline (`scripts/dev-sync.ts`). This is the single 
 | 3.6 | Deprecated Script Warnings | non-fatal | Scans `SCRIPTS.md` for deprecated scripts and prints warnings |
 | 3.7 | L0/L1 Script Drift Check | non-fatal | Runs `verify-scripts.ts --check-drift` to detect drift between L0 and L1 script copies |
 | 3.8 | Memory File Archival | non-fatal | Runs `archive-memory.ts` to archive old memory files |
-| 3.9 | Spec Registry Check | non-fatal | Runs `audit.ts --spec-check --lifecycle-only` to warn about stale specs |
-| 4 | AUDIT GATE | **FATAL** | Runs `audit.ts` — must exit 0 before proceeding |
-| 4.5 | VERSION_MANIFEST.md Generation | **FATAL** | Generates `VERSION_MANIFEST.md` via `generate-version-manifest.ts` |
-| 4.7 | L0 to L1 Publish | **FATAL** (L0) / non-fatal (L1) | Propagates scripts, skills, commands, docs via `propagate-to-templates.ts --apply`; fatal only in L0 context (context.md present) |
-| 4.8 | Skill Sync to Platforms | non-fatal | Runs `sync-skills.ts` to distribute skills to `.claude/skills/`, `.gemini/skills/`, `.agents/skills/`; warnings only |
+| 3.9 | Spec Registry Check | **FATAL** (L0) | Runs `audit.ts --spec-check --lifecycle-only` — blocks on the spec-relevance Fail (code diff with no spec activity; ADR-0055 Stage 2) and any always-on audit Fail; stale/missing-spec stay WARN; escape hatch `--spec-exempt=E1-E5` (AGENTS.md §5.1.1); skipped when `docs/specs/registry.json` is absent |
+| 3.95 | QA Pre-checks | non-fatal | Runs project tests (if `package.json` has `test` script) and warns if `README_ko.md` is missing |
+| 3.97 | Governance Reflection Gate | **FATAL** (L0) | Runs `verify-adr-governance.ts --strict` — blocks sync when post-cutoff Accepted ADRs lack governance-doc references (ADR-0059 Stages 2+2b: unlinked-ADR and marker-drift findings block); skipped in scaffolded projects (L0-only validator) |
+| 4.5 | L0 to L1 Publish | **FATAL** (L0) / non-fatal (L1) | Propagates scripts, skills, commands, docs via `propagate-to-templates.ts --apply`; fatal only in L0 context (context.md present) |
+| 4.52 | Template Dependency Sync | **FATAL** (L0) | Runs `sync-template-deps.ts --apply` — aligns shared dependency versions from root `package.json` into `templates/common/package.json` and regenerates `bun.lock` (shared keys only; root-only deps never added, template-only deps never removed); workspace-root gated |
+| 4.62 | Cascade Re-publish | **FATAL** (L0) / non-fatal (L1) | Re-runs propagate-to-templates.ts --apply after skill sync — heals template platform skill copies (templates/common/.claude/.gemini/.agents/skills) changed by step 4.6 within the same sync; same gating and fatality as step 4.5 |
+| 4.6 | Skill Sync to Platforms | non-fatal | Runs `sync-skills.ts` to distribute skills to `.claude/skills/`, `.gemini/skills/`, `.agents/skills/`; warnings only |
+| 4.7 | VERSION_MANIFEST.md Generation | **FATAL** | Generates `VERSION_MANIFEST.md` via `generate-version-manifest.ts` |
+| 4.9 | AUDIT GATE | **FATAL** | Runs `audit.ts` — must exit 0 before proceeding |
 | 5 | Branch Creation | **FATAL** | Creates `pr/<timestamp>-<slug>` branch if on main/master; reuses existing branch otherwise |
 | 6 | Sensitive File Guard + Git Add/Commit/Push | **FATAL** | Guards against `.pem`, `.key`, `.env`, `credentials.json`, etc.; runs `git add -A`, `git commit`, `git push` |
 | 7 | PR Creation | **FATAL** | If `--body-file` was passed, validates it (English) and opens the PR via `gh pr create --body-file`; otherwise falls back to `gen-pr-body.ts` template, `.github/pull_request_template.md`, then `gh pr create --fill`; idempotent — updates existing PR if one already exists for the branch |

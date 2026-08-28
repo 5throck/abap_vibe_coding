@@ -1,4 +1,13 @@
-// @version 2.21.1
+// @version 2.26.0
+// v2.26.0: New checkProjectDocMarkerDrift() (WARN-only, local-only) — detects when a
+//           Projects/co-*/CLAUDE.md or GEMINI.md has fewer COMMON-CLAUDE/COMMON-GEMINI managed
+//           blocks than templates/common/{CLAUDE,GEMINI}.md, meaning upgrade-project.ts has lost
+//           its merge point for that file (happened to co-price/co-abap in 2026-08 when both
+//           files were hand-rewritten without preserving the marker comments).
+// v2.25.1: (previous)
+// v2.25.0: Variant-scanning checks now skip untracked templates/co-* directories so
+//           WIP template scaffolds on disk do not block commits. Tracked variant set
+//           is computed once via git ls-files at module load.
 // v2.21.1: fix(lint+types): stripComment now strips trailing \r before matching — under
 //           core.autocrlf checkouts the $ anchors never matched, so the > nul lint flagged
 //           its own prose comments (ported from co-abap 2.21.2); validators import switched
@@ -32,6 +41,24 @@ import { sourceShellInjectionPatterns } from './helpers/security-validator.ts';
 import { splitIntoSections, getContentLines } from './helpers/context-sections.ts';
 import * as url from 'node:url';
 import { detectEncoding, detectHomoglyphs, detectZeroWidthChars, readUTF8File } from './lib/encoding-utils.ts';
+
+const _TRACKED_CO_VARIANTS: Set<string> | null = (() => {
+  try {
+    const out = execFileSync('git', ['ls-files', '--cached', '--', 'templates/'], { encoding: 'utf-8' }).trim();
+    const dirs = new Set<string>();
+    if (!out) return dirs;
+    for (const line of out.split('\n')) {
+      const m = line.match(/^templates\/(co-[^/]+)\//);
+      if (m) dirs.add(m[1]);
+    }
+    return dirs;
+  } catch { return null; }
+})();
+
+function isCoVariantTracked(name: string): boolean {
+  if (!_TRACKED_CO_VARIANTS) return true;
+  return _TRACKED_CO_VARIANTS.has(name);
+}
 
 // Check for --lifecycle-only flag
 const LIFECYCLE_ONLY = process.argv.includes('--lifecycle-only');
@@ -87,8 +114,8 @@ if (fs.existsSync('CHANGELOG.md')) {
     Fail('CHANGELOG.md missing');
 }
 
-// 2. CONSTITUTION.md must be accessible (workspace root / L1 template context only —
-//    L2 variant templates and L3 projects intentionally omit CONSTITUTION.md and use
+// 2. context.md must be accessible (workspace root / L1 template context only —
+//    L2 variant templates and L3 projects intentionally omit context.md and use
 //    docs/context.md instead; variant.json, when present, also marks a generated project copy)
 // isWorkspaceRoot is reused below (§6-8) to tell "we ARE the workspace root" apart from
 // "we're a scaffolded project that's simply missing its docs/context.md" — the two cases
@@ -183,6 +210,62 @@ if (fs.existsSync('CHANGELOG.md')) {
         Fail("CHANGELOG.md is missing '[Unreleased]' section");
     }
 }
+
+// 3.2. Decision records soft-check (ADR-0061): fires only when docs/decisions/
+// exists — adoption is per-project opt-in, never a day-one gate. Validates the
+// DEC frontmatter shape (required keys + status vocabulary) and warns, never
+// fails, so malformed prose cannot block a pipeline; it just becomes visible.
+if (fs.existsSync('docs/decisions') && fs.statSync('docs/decisions').isDirectory()) {
+    const decFiles = fs.readdirSync('docs/decisions')
+        .filter((f) => /^DEC-\d{8}-\d{2}\.md$/.test(f))
+        .sort();
+    if (decFiles.length === 0) {
+        Warn('Decision records: docs/decisions/ exists but holds no DEC-YYYYMMDD-NN.md files');
+    } else {
+        let decWarns = 0;
+        const REQUIRED_DEC_FIELDS = ['id', 'date', 'agent', 'decision', 'alternatives', 'status'];
+        for (const f of decFiles) {
+            const relPath = 'docs/decisions/' + f;
+            const raw = readUTF8File(relPath);
+            const fmMatch = /^---\r?\n([\s\S]*?)\r?\n---/.exec(raw);
+            if (!fmMatch) {
+                Warn(`Decision record ${f}: no frontmatter block`);
+                decWarns++;
+                continue;
+            }
+            // Deliberately regex-based, not yaml.load: audit.ts runs in L2/L3
+            // projects where js-yaml may not be installed, and every REQUIRED
+            // DEC field is a plain scalar line.
+            const fmText = fmMatch[1];
+            const scalar = (field: string): string | undefined => {
+                const m = new RegExp(`^${field}:\\s*(.*)$`, 'm').exec(fmText);
+                const v = m ? m[1].trim() : undefined;
+                return v && v !== '' && v !== '<...>' ? v : undefined;
+            };
+            const fm: Record<string, string | undefined> = {};
+            for (const field of REQUIRED_DEC_FIELDS) fm[field] = scalar(field);
+            for (const field of REQUIRED_DEC_FIELDS) {
+                if (fm[field] === undefined) {
+                    Warn(`Decision record ${f}: missing required field '${field}'`);
+                    decWarns++;
+                }
+            }
+            if (fm['id'] !== undefined && fm['id'] !== f.replace(/\.md$/, '')) {
+                Warn(`Decision record ${f}: frontmatter id does not match filename`);
+                decWarns++;
+            }
+            const status = fm['status'] ?? '';
+            if (status && !['proposed', 'accepted', 'superseded'].includes(status)) {
+                Warn(`Decision record ${f}: status '${status}' outside proposed|accepted|superseded`);
+                decWarns++;
+            }
+        }
+        if (decWarns === 0) {
+            Pass(`Decision records: ${decFiles.length} file(s), frontmatter shape valid`);
+        }
+    }
+}
+
 
 // 3.5. UTF-8 BOM check for Markdown files
 if (!LIFECYCLE_ONLY) {
@@ -518,7 +601,7 @@ if (hasBun) {
             Fail("Skill audit detected issues (run 'bun scripts/skill-lifecycle-audit.ts' to see details)");
         }
     }
-    // Variant registry validators (scripts/validators/ — the framework CONSTITUTION.md §6.6
+    // Variant registry validators (scripts/validators/ — the framework context.md §6.6
     // documents as audit-enforced). This wiring is L0-only: `scripts/validators/` is a layer-L0
     // directory and is not propagated to templates/common/scripts/, so the existsSync guard
     // makes the L1 copy of this file skip the check rather than crash.
@@ -534,7 +617,7 @@ if (hasBun) {
         const { runAllValidators } = await import(validatorsUrl);
         let validatorErrors = 0;
         let validatorWarnings = 0;
-        for (const variant of fs.readdirSync('templates').filter(d => d.startsWith('co-'))) {
+        for (const variant of fs.readdirSync('templates').filter(d => d.startsWith('co-') && isCoVariantTracked(d))) {
             const variantDir = path.join('templates', variant);
             const vjPath = path.join(variantDir, 'variant.json');
             if (!fs.existsSync(vjPath)) continue;
@@ -598,7 +681,7 @@ if (hasBun) {
         else
             Pass("README lifecycle audit: all READMEs healthy");
     }
-    if (fs.existsSync(path.join('scripts', 'verify-memory.ts')) && fs.existsSync('CONSTITUTION.md') && !SKIP_MEMORY) {
+    if (fs.existsSync(path.join('scripts', 'verify-memory.ts')) && fs.existsSync('context.md') && !SKIP_MEMORY) {
         // explicitly skip any files located in memory/archive/
         const memoryFiles = fs.readdirSync('memory')
             .filter(f => f.endsWith('.md') && fs.statSync(path.join('memory', f)).isFile())
@@ -785,7 +868,7 @@ function checkL2VariantIntegrity() {
   if (!fs.existsSync(templatesDir)) return;
 
   const variants = fs.readdirSync(templatesDir)
-    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
 
   if (variants.length === 0) return;
 
@@ -839,7 +922,7 @@ function checkVariantContextGuidelinesSection() {
   if (!fs.existsSync(templatesDir)) return;
 
   const variants = fs.readdirSync(templatesDir)
-    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
 
   if (variants.length === 0) return;
 
@@ -885,7 +968,7 @@ function checkVariantAgentSections() {
   if (!fs.existsSync(templatesDir)) return;
 
   const variants = fs.readdirSync(templatesDir)
-    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
 
   if (variants.length === 0) return;
 
@@ -928,7 +1011,7 @@ function checkVariantSkillSections() {
   if (!fs.existsSync(templatesDir)) return;
 
   const variants = fs.readdirSync(templatesDir)
-    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
 
   if (variants.length === 0) return;
 
@@ -982,7 +1065,7 @@ function checkVariantJsonSchema() {
   if (!fs.existsSync(schemaPath) || !fs.existsSync(templatesDir)) return;
 
   const variants = fs.readdirSync(templatesDir)
-    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+    .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
 
   if (variants.length === 0) return;
 
@@ -1067,6 +1150,63 @@ function checkVariantJsonSchema() {
 
   if (schemaWarnings === 0) {
     Pass(`Variant JSON schema: all ${variants.length} variant.json files validated`);
+  }
+}
+
+// Template dependency mirror check
+function checkTemplateDependencyMirror() {
+  const rootPkgPath = path.join('package.json');
+  const templatePkgPath = path.join('templates', 'common', 'package.json');
+
+  // Skip if template package.json doesn't exist (L1/L3 context)
+  if (!fs.existsSync(templatePkgPath)) {
+    return;
+  }
+
+  // Parse both package.json files
+  let rootPkg: any;
+  let templatePkg: any;
+  try {
+    rootPkg = JSON.parse(fs.readFileSync(rootPkgPath, 'utf-8'));
+    templatePkg = JSON.parse(fs.readFileSync(templatePkgPath, 'utf-8'));
+  } catch (e: any) {
+    Fail(`Template dependency mirror: failed to parse package.json files — ${e.message}`);
+    return;
+  }
+
+  const sections: Array<'dependencies' | 'devDependencies'> = ['dependencies', 'devDependencies'];
+  let driftFound = false;
+
+  for (const section of sections) {
+    const rootSection = rootPkg[section] || {};
+    const templateSection = templatePkg[section] || {};
+
+    // Check shared keys for drift
+    for (const key of Object.keys(templateSection)) {
+      if (key in rootSection) {
+        const rootVersion = rootSection[key];
+        const templateVersion = templateSection[key];
+
+        if (rootVersion !== templateVersion) {
+          Fail(`Template dep drift: templates/common/package.json ${section}.${key} "${templateVersion}" != root "${rootVersion}" — fix: bun scripts/sync-template-deps.ts --apply`);
+          driftFound = true;
+        }
+      }
+    }
+  }
+
+  // Check engines drift
+  if (rootPkg.engines && templatePkg.engines) {
+    for (const field of Object.keys(rootPkg.engines)) {
+      if (field in templatePkg.engines && templatePkg.engines[field] !== rootPkg.engines[field]) {
+        Fail(`Template dep drift: templates/common/package.json engines.${field} "${templatePkg.engines[field]}" != root "${rootPkg.engines[field]}" — fix: bun scripts/sync-template-deps.ts --apply`);
+        driftFound = true;
+      }
+    }
+  }
+
+  if (!driftFound) {
+    Pass('template dependency mirror: shared dep versions match root package.json');
   }
 }
 
@@ -1163,7 +1303,7 @@ function checkShellInjectionPatterns() {
     const scanRoots = ['scripts'];
     if (fs.existsSync('templates')) {
         for (const variant of fs.readdirSync('templates')) {
-            if (!variant.startsWith('co-')) continue;
+            if (!variant.startsWith('co-') || !isCoVariantTracked(variant)) continue;
             const variantScriptsDir = path.join('templates', variant, 'scripts');
             if (fs.existsSync(variantScriptsDir)) scanRoots.push(variantScriptsDir);
         }
@@ -1280,7 +1420,7 @@ function checkVariantScriptDrift() {
     const templatesDir = path.join('templates');
     if (fs.existsSync(templatesDir)) {
         for (const variant of fs.readdirSync(templatesDir)) {
-            if (!variant.startsWith('co-')) continue;
+            if (!variant.startsWith('co-') || !isCoVariantTracked(variant)) continue;
             const variantScriptsDir = path.join(templatesDir, variant, 'scripts');
             if (!fs.existsSync(variantScriptsDir)) continue;
 
@@ -1330,6 +1470,64 @@ function checkVariantScriptDrift() {
 }
 checkVariantScriptDrift();
 
+// Project CLAUDE.md / GEMINI.md managed-block drift detection (WARN-only, local-only).
+// upgrade-project.ts syncs the COMMON-CLAUDE:START/END and COMMON-GEMINI:START/END managed
+// blocks in each project's CLAUDE.md / GEMINI.md against templates/common/{CLAUDE,GEMINI}.md.
+// If a project's file is ever hand-rewritten without preserving those markers (as happened to
+// co-price and co-abap in 2026-08), upgrade-project.ts silently loses its merge point and the
+// file drifts out of sync forever after. Projects/ is gitignored and not present in CI, so this
+// only runs against whatever `Projects/co-*` checkouts exist on the local machine.
+function checkProjectDocMarkerDrift() {
+    const projectsDir = 'Projects';
+    if (!fs.existsSync(projectsDir)) {
+        Pass('Project CLAUDE.md/GEMINI.md marker drift check: Projects/ not present locally, skipped');
+        return;
+    }
+
+    function countMarkers(filePath: string, markerLabel: string): number {
+        if (!fs.existsSync(filePath)) return -1; // file absent, not a drift signal
+        try {
+            const content = readUTF8File(filePath);
+            const matches = content.match(new RegExp(`<!-- ${markerLabel}:START -->`, 'g'));
+            return matches ? matches.length : 0;
+        } catch {
+            return -1;
+        }
+    }
+
+    const expectedClaude = countMarkers(path.join('templates', 'common', 'CLAUDE.md'), 'COMMON-CLAUDE');
+    const expectedGemini = countMarkers(path.join('templates', 'common', 'GEMINI.md'), 'COMMON-GEMINI');
+
+    let warnCount = 0;
+    for (const entry of fs.readdirSync(projectsDir)) {
+        if (!entry.startsWith('co-')) continue;
+        const projectDir = path.join(projectsDir, entry);
+        if (!fs.statSync(projectDir).isDirectory()) continue;
+
+        if (expectedClaude > 0) {
+            const actual = countMarkers(path.join(projectDir, 'CLAUDE.md'), 'COMMON-CLAUDE');
+            if (actual >= 0 && actual < expectedClaude) {
+                Warn(`CLAUDE.md drift: Projects/${entry}/CLAUDE.md has ${actual}/${expectedClaude} COMMON-CLAUDE managed blocks vs templates/common/CLAUDE.md — run 'bun scripts/upgrade-project.ts Projects/${entry}' or verify markers were not stripped by a hand rewrite.`);
+                warnCount++;
+            }
+        }
+        if (expectedGemini > 0) {
+            const actual = countMarkers(path.join(projectDir, 'GEMINI.md'), 'COMMON-GEMINI');
+            if (actual >= 0 && actual < expectedGemini) {
+                Warn(`GEMINI.md drift: Projects/${entry}/GEMINI.md has ${actual}/${expectedGemini} COMMON-GEMINI managed blocks vs templates/common/GEMINI.md — run 'bun scripts/upgrade-project.ts Projects/${entry}' or verify markers were not stripped by a hand rewrite.`);
+                warnCount++;
+            }
+        }
+    }
+
+    if (warnCount === 0) {
+        Pass('Project CLAUDE.md/GEMINI.md marker drift check: no drift found');
+    } else {
+        Warn(`Project CLAUDE.md/GEMINI.md marker drift check: ${warnCount} project file(s) drifted from the template baseline`);
+    }
+}
+checkProjectDocMarkerDrift();
+
 // Cross-variant context commonization check (WARN-only, first-pass heuristic).
 // Flags docs/<variant>.context.md sections that duplicate the SAME-heading section in
 // another variant's context.md by >50% content overlap — a candidate for promotion into
@@ -1341,7 +1539,7 @@ function checkVariantContextCommonization() {
     if (!fs.existsSync(templatesDir)) return;
 
     const variants = fs.readdirSync(templatesDir)
-        .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+        .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
     if (variants.length < 2) return; // nothing to compare cross-variant
 
     type Section = { variant: string; heading: string; lines: Set<string> };
@@ -1424,7 +1622,7 @@ function checkStalePromotedContent() {
     const templatesDir = 'templates';
     if (!fs.existsSync(templatesDir)) return;
     const variants = fs.readdirSync(templatesDir)
-        .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+        .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
     if (variants.length === 0) return;
 
     const commonSections = splitIntoSections(readUTF8File(commonContextPath));
@@ -1474,9 +1672,10 @@ checkVariantContextGuidelinesSection();
 checkVariantAgentSections();
 checkVariantSkillSections();
 checkVariantJsonSchema();
+checkTemplateDependencyMirror();
 }
 
-// Workspace root detection: presence of CONSTITUTION.md (and absence of variant.json)
+// Workspace root detection: presence of context.md (and absence of variant.json)
 // distinguishes the governance root from generated project copies.
 const IS_WORKSPACE_ROOT = fs.existsSync('CONSTITUTION.md') && !fs.existsSync('variant.json');
 
@@ -1520,7 +1719,7 @@ if (IS_WORKSPACE_ROOT && fs.existsSync('AGENTS.md')) {
         let checkedVariants = 0;
         if (fs.existsSync(templatesDir)) {
             for (const entry of fs.readdirSync(templatesDir)) {
-                if (!entry.startsWith('co-')) continue;
+                if (!entry.startsWith('co-') || !isCoVariantTracked(entry)) continue;
                 const variantAgentsMd = path.join(templatesDir, entry, 'AGENTS.md');
                 if (!fs.existsSync(variantAgentsMd)) continue;
                 const variantContent = readUTF8File(variantAgentsMd);
@@ -1706,7 +1905,7 @@ if (IS_WORKSPACE_ROOT) {
 // Layer 4 of the 2026-08-07 meeting (memory/archive/meeting-2026-08-07-prevent-nul-file-creation.md).
 // The sweep above is remediation; this is prevention. On Windows, `> nul` / `2> nul` in a shell
 // context can materialize a physical file named `nul` that then blocks deleting the whole
-// directory tree from PowerShell. CONSTITUTION.md §8 bans the pattern outright: use
+// directory tree from PowerShell. context.md §8 bans the pattern outright: use
 // `> /dev/null 2>&1` in Bash, or `$null` / `Out-Null` in PowerShell.
 //
 // A full-tree scan on 2026-08-21 found zero violations in workspace source, so this check starts
@@ -1766,10 +1965,10 @@ if (!LIFECYCLE_ONLY) {
     }
 }
 
-// Check: L0 Leakage (CONSTITUTION.md references in templates)
+// Check: L0 Leakage (context.md references in templates)
 if (!LIFECYCLE_ONLY && fs.existsSync('templates')) {
     let leakageErrors = 0;
-    // Matches: CONSTITUTION.md (literal), docs/constitution/ or docs\constitution\ path patterns
+    // Matches: context.md (literal), docs/constitution/ or docs\constitution\ path patterns
     const L0_LEAK_PATTERN = /CONSTITUTION\.md|docs[\/\\]constitution[\/\\]/i;
     const SKIP_DIRS = new Set(['node_modules', '.git', '.bun']);
     const checkLeakage = (dir: string) => {
@@ -1778,6 +1977,8 @@ if (!LIFECYCLE_ONLY && fs.existsSync('templates')) {
             const stat = fs.statSync(itemPath);
             if (stat.isDirectory()) {
                 if (SKIP_DIRS.has(item)) continue;
+                const dirName = path.basename(itemPath);
+                if (dirName.startsWith('co-') && !isCoVariantTracked(dirName)) continue;
                 checkLeakage(itemPath);
             } else if (stat.isFile() && itemPath.endsWith('.md')) {
                 const content = readUTF8File(itemPath);
@@ -1833,7 +2034,7 @@ if (fs.existsSync('templates')) {
     const templatesDir = 'templates';
 
     for (const entry of fs.readdirSync(templatesDir)) {
-        if (!entry.startsWith('co-')) continue;
+        if (!entry.startsWith('co-') || !isCoVariantTracked(entry)) continue;
         const variantAgentsDir = path.join(templatesDir, entry, 'agents');
         if (!fs.existsSync(variantAgentsDir)) continue;
 
@@ -2036,7 +2237,7 @@ if (!LIFECYCLE_ONLY && IS_WORKSPACE_ROOT) {
         const templatesDir = 'templates';
         if (fs.existsSync(templatesDir)) {
             const variants = fs.readdirSync(templatesDir)
-                .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory());
+                .filter(d => d.startsWith('co-') && fs.statSync(path.join(templatesDir, d)).isDirectory() && isCoVariantTracked(d));
 
             for (const variant of variants) {
                 const l2PmPath = path.join(templatesDir, variant, 'agents', 'pm.md');
@@ -2065,11 +2266,18 @@ if (!LIFECYCLE_ONLY && IS_WORKSPACE_ROOT) {
                     return false;
                 }
 
-                // L2 YAML should NOT have L0-only fields
+                // L2 YAML should NOT have L0-only fields, except `lifecycle:` for variants
+                // that ship their own recursive validate-agents.ts requiring
+                // lifecycle.phase/lifecycle.governance on every agents/**/*.md file
+                // (e.g. co-safety) — see docs/architecture/extends-pattern.md schema table.
+                const variantsAllowingLifecycle = new Set(['co-safety']);
+                const l2OnlyFields = variantsAllowingLifecycle.has(variant)
+                    ? l0OnlyFields.filter(f => f !== 'lifecycle:')
+                    : l0OnlyFields;
                 const l2YamlMatch = l2Content.match(/^---\n([\s\S]+?)\n---/);
                 if (l2YamlMatch) {
                     const l2Yaml = l2YamlMatch[1];
-                    for (const field of l0OnlyFields) {
+                    for (const field of l2OnlyFields) {
                         const fieldRegex = new RegExp(`^${field}`, 'm');
                         if (fieldRegex.test(l2Yaml)) {
                             Fail(`L2 ${variant}/agents/pm.md: contains L0-only field "${field}"`);
