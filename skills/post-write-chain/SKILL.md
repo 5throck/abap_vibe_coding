@@ -4,6 +4,7 @@ description: Use after ANY WriteSource, EditSource, or Activate operation on SAP
 metadata:
   type: core
 version: 1.1.0
+scope: co-abap
 owner: pm
 status: active
 ---

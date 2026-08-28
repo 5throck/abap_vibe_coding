@@ -4,6 +4,7 @@ description: Use when checking SAP system health, investigating reported errors,
 metadata:
   type: core
 version: 1.0.0
+scope: co-abap
 owner: pm
 status: active
 ---

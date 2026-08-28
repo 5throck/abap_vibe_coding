@@ -4,6 +4,7 @@ description: Use when working on MM module tasks — purchasing, goods receipt, 
 metadata:
   type: module
 version: 1.0.0
+scope: co-abap
 owner: pm
 status: active
 ---
