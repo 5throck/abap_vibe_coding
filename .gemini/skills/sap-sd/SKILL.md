@@ -1,5 +1,5 @@
 ---
-name: SAP SD Module — Sales & Distribution
+name: sap-sd
 description: Use when working on SD module tasks — sales orders, deliveries, billing, pricing, or order-to-cash processes. Provides process flows, key table relationships, common query patterns, field notes, SAP quirks, and standard BAPIs for the SD module.
 metadata:
   type: module

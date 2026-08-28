@@ -1,5 +1,5 @@
 ---
-name: SAP MM Module — Materials Management
+name: sap-mm
 description: Use when working on MM module tasks — purchasing, goods receipt, material master, inventory, or procure-to-pay processes. Provides process flows, key table relationships, common query patterns, field notes, SAP quirks, and standard BAPIs for the MM module.
 metadata:
   type: module
