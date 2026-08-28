@@ -11,13 +11,15 @@
  *   bun scripts/lifecycle-sync-audit.ts --json
  *   bun scripts/lifecycle-sync-audit.ts --fix
  *
- * @version 1.4.8
- * @last_updated 2026-08-20
+ * @version 1.5.0
+ * @last_updated 2026-08-28
+ * v1.5.0: Added 'audit:upgrade-project' to INTENTIONAL_CROSS_REFS — audit.ts's new
+ *          checkProjectDocMarkerDrift() mentions upgrade-project.ts in a WARN hint, guarded by
+ *          existsSync('Projects') (same shape as the other existsSync-guarded L0-only refs).
  * @license MIT
  */
 
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
-import type { Dirent } from 'node:fs';
 import { join, basename } from 'node:path';
 import { cwd } from 'node:process';
 import { createHash } from 'node:crypto';
@@ -365,8 +367,13 @@ const INTENTIONAL_CROSS_REFS = new Set([
   'pre-commit:fix-script-versions',             // pre-commit.ts: guarded by existsSync — string in error hint only
   'verify-skills:upgrade-project',              // verify-skills.ts: warning string mention only
   'audit:spec-register',                          // audit.ts: string mention in warning message only (--spec-check mode)
+  'audit:upgrade-project',                        // audit.ts: guarded by existsSync('Projects') — checkProjectDocMarkerDrift skips entirely when Projects/ is absent (gitignored, L0-dev-machine-only directory; scaffolded/L1 projects have no Projects/ to check)
   'audit:test-platform-parity',                   // audit.ts: guarded by existsSync — skipped when L0 script absent (L3/L1 projects have no templates/ to test parity on)
   'dev-sync:verify-adr-governance',               // dev-sync.ts step 3.97: guarded by existsSync — skipped when L0 validator absent (ADR-0059 Stage 2 gate; scaffolded projects have no docs/adr corpus)
+  'dev-sync:generate-skill-graph',                // dev-sync.ts step 4.65: guarded by existsSync — skipped when L0 generator absent (ADR-0060 skill graph gate; scaffolded projects ship no skill graph tooling)
+  'dev-sync:verify-skill-graph',                  // dev-sync.ts step 4.65: guarded by existsSync — skipped when L0 verifier absent (ADR-0060 skill graph gate; scaffolded projects ship no skill graph tooling)
+  'dev-sync:sync-template-deps',                  // dev-sync.ts step 4.52: called only inside isWorkspaceRoot guard (same shape as dev-sync:propagate-to-templates; template dep mirror is L0-only tooling)
+  'audit:sync-template-deps',                     // audit.ts: string mention in FAIL fix hint only; checkTemplateDependencyMirror skips entirely when templates/common/package.json is absent (L1/L3)
 ]);
 
 function runCheckX(): SyncIssue[] {
@@ -393,7 +400,7 @@ function runCheckX(): SyncIssue[] {
   // Recursively collect all .ts files under templateScriptsDir (including helpers/, hooks/, lib/, etc.)
   function collectTsFiles(dir: string): string[] {
     const result: string[] = [];
-    let entries: Dirent[];
+    let entries: ReturnType<typeof readdirSync>;
     try {
       entries = readdirSync(dir, { withFileTypes: true });
     } catch {
@@ -458,7 +465,7 @@ function runCheckD(): DuplicateEntry[] {
   // Skip context.md itself (contains the annotation definition/example, not a real duplicate)
 
   function walkDir(dir: string): void {
-    let items: Dirent[];
+    let items: ReturnType<typeof readdirSync>;
     try {
       items = readdirSync(dir, { withFileTypes: true });
     } catch {

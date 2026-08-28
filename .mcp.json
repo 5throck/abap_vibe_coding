@@ -2,7 +2,10 @@
   "mcpServers": {
     "abap": {
       "command": "./vsp",
-      "args": ["--mode", "hyperfocused"],
+      "args": [
+        "--mode",
+        "hyperfocused"
+      ],
       "env": {
         "SAP_MODE": "hyperfocused",
         "SAP_ALLOWED_PACKAGES": "Z*,$TMP,$ZADT_VSP,$VSP_ADT",
@@ -19,10 +22,6 @@
     "sap-docs": {
       "type": "http",
       "url": "https://mcp-sap-docs.marianzeis.de/mcp"
-    },
-    "codegraph": {
-      "command": "npx",
-      "args": ["-y", "@colbymchenry/codegraph", "serve"]
     }
   }
 }

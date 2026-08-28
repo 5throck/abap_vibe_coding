@@ -1,4 +1,19 @@
-// @version 1.7.2
+// @version 1.7.8
+// v1.7.8: feat(skill-graph): step 4.65 scope loop (ADR-0060 Amendment 2) — after the L0
+//           unified graph gate, generate+verify every template scope (templates/common +
+//           templates/co-*) so each variant template ships its own docs/skill-graph.json;
+//           workspace-root-gated on templates/common so scaffolded projects never enter
+//           the loop (their own local graph comes from the existing guarded calls).
+//           Corrected the stale "generator is L0-only" comment.
+// v1.7.7: fix(pipeline): step 3.95 QA pre-check ran bare `bun test` instead of `bun run test`
+//           (the package.json script) — bare `bun test` recursively scans the whole CWD tree,
+//           pulling in every nested Projects/*/ repo's test suite (Playwright visual regression,
+//           MCP integration tests, etc.), turning a non-fatal check into a multi-minute noisy
+//           detour. `bun run test` correctly delegates to the scoped `test-runner.ts integration`.
+// v1.7.6: fix(pipeline): add step 4.62 cascade re-publish — heals template platform skill
+//           copies after sync-skills step 4.6 updates root platform dirs (mirrors 4.5 gating)
+// v1.7.3: feat(pipeline): add step 4.65 skill graph gate (ADR-0060) — generates and
+//           verifies skill relationship graph before VERSION_MANIFEST generation
 // v1.7.2: fix(pipeline): forward --spec-exempt via SYNC_SPEC_EXEMPT env instead of shell
 //           interpolation — the interpolated " --spec-exempt=X" (leading space) reached
 //           audit as a single argv word and defeated its startsWith parse, making the
@@ -65,13 +80,13 @@ const msg = (msgArgs.join(' ') || "chore: update")
   .replace(/\s+/g, ' ')
   .trim() || "chore: update";
 
-// Language gate — commit messages / PR titles must be English (CONSTITUTION.md §3).
+// Language gate — commit messages / PR titles must be English (context.md §3).
 // Runs before any git mutation so a non-English message never reaches a commit or PR
 // (previously this was only checked late, inside gen-pr-body.ts, and its failure was
 // silently swallowed by the PR-creation fallback below). Shared detector also catches
 // Japanese/Chinese, not just Korean — see scripts/lib/language-guard.ts.
 if (hasNonEnglish(msg)) {
-    console.log(`${RED}❌ Commit message / PR title must be written in English (CONSTITUTION.md §3).${RESET}`);
+    console.log(`${RED}❌ Commit message / PR title must be written in English (context.md §3).${RESET}`);
     console.log(`${YELLOW}   Translate the message and re-run: /sync "<english message>"${RESET}`);
     if (import.meta.main) {
       process.exit(1);
@@ -272,7 +287,15 @@ if (fs.existsSync('package.json')) {
     try {
         const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
         if (pkg.scripts?.test) {
-            const testResult = await $`bun test`.nothrow();
+            // Bare `bun test` (no path) recursively scans the entire CWD tree for *.test.ts,
+            // which includes every nested Projects/*/ repo (separate git repos scaffolded
+            // from templates/ — see README.md § Repository Structure). That pulled in
+            // unrelated suites (Playwright visual-regression, MCP integration, etc.) from
+            // other projects, making this non-fatal check take many minutes and print noise
+            // irrelevant to this repo. `bun run test` invokes the actual package.json script
+            // (`bun scripts/test-runner.ts integration`), which is already correctly scoped
+            // to this repo's own tests/ directory.
+            const testResult = await $`bun run test`.nothrow();
             if (testResult.exitCode !== 0) {
                 console.warn(`⚠️  Project tests failed (non-blocking, exit ${testResult.exitCode})`);
                 if (testResult.stderr) console.warn(String(testResult.stderr).trim());
@@ -309,7 +332,7 @@ if (fs.existsSync('scripts/verify-adr-governance.ts')) {
 // 4.5 L0→L1 publish — must run BEFORE audit gate so that CONSTITUTION scrub
 //     is applied to templates/common/ files before the L0-leakage check.
 const isWorkspaceRoot = fs.existsSync('templates/common') && fs.existsSync('scripts/propagation-map.json');
-// L0 context: CONSTITUTION.md exists at workspace root — publish failures are fatal here.
+// L0 context: context.md exists at workspace root — publish failures are fatal here.
 const isL0Context = fs.existsSync('CONSTITUTION.md');
 if (isWorkspaceRoot) {
     console.log('\n📦 Publishing L0→L1 (scripts, skills, commands)...');
@@ -337,6 +360,68 @@ if (isWorkspaceRoot) {
     }
 }
 
+// ── Step 4.52: Dependency version sync (root → templates/common) ──
+//     Aligns shared dependency versions from root package.json to
+//     templates/common/package.json and regenerates bun.lock.
+//     Runs after 4.5 (propagate never touches package.json) and before
+//     audit 4.9 so the dependency-mirror audit check passes on the
+//     self-healed state. Files written here are swept into the same
+//     commit by git add -A.
+if (isWorkspaceRoot) {
+    console.log('\n📦 Syncing dependency versions (root → templates/common)...');
+    try {
+        const depSyncRes = await $`bun scripts/sync-template-deps.ts --apply`.nothrow();
+        if (depSyncRes.exitCode !== 0) {
+            console.error(`${RED}❌ Dependency sync failed.${RESET}`);
+            if (depSyncRes.stderr) {
+                console.error(String(depSyncRes.stderr).trim());
+            }
+            if (import.meta.main) {
+                process.exit(1);
+            }
+        } else {
+            console.log(`${GREEN}✓ Dependency sync completed${RESET}`);
+        }
+    } catch (e) {
+        console.error(`${RED}❌ Dependency sync failed: ${e}${RESET}`);
+        if (import.meta.main) {
+            process.exit(1);
+        }
+    }
+}
+
+// ── Step 4.55: COMMON-CONTEXT marker-rewrite drift check (WARN stage, L0-only) ──
+// Per ADR-0062 + the ADR-0055 WARN-first playbook: the pilot propagation domains
+// (constitution-context, variant-context) are checked for zone drift at sync time.
+// Dry-run only — drift is reported as a WARN (non-fatal); the operator runs
+// `bun scripts/propagate-to-templates.ts --marker-rewrite --domain <name> --apply`
+// manually to refresh zones. Promotion to a hard gate waits for pilot soak.
+// Wired 2026-08-25 after the 4-variant pilot held 0 would-overwrite across ~10 PRs
+// (design doc: docs/designs/2026-08-24-marker-propagation-engine-design.md).
+if (isWorkspaceRoot && isL0Context) {
+    console.log('\n🔍 COMMON-CONTEXT marker-rewrite drift check (WARN stage)...');
+    for (const domain of ['constitution-context', 'variant-context']) {
+        try {
+            const res = await $`bun scripts/propagate-to-templates.ts --marker-rewrite --domain ${domain}`.nothrow();
+            const out = res.stdout.toString();
+            const m = out.match(/Would overwrite: (\d+)/);
+            const wouldOverwrite = m ? parseInt(m[1], 10) : null;
+            if (res.exitCode !== 0) {
+                console.log(`${YELLOW}⚠️  marker-rewrite check failed for domain '${domain}' (exit ${res.exitCode}) — investigate manually${RESET}`);
+            } else if (wouldOverwrite === null) {
+                console.log(`${YELLOW}⚠️  marker-rewrite output for domain '${domain}' had no drift counter — investigate manually${RESET}`);
+            } else if (wouldOverwrite > 0) {
+                console.log(`${YELLOW}⚠️  COMMON-CONTEXT drift in domain '${domain}': ${wouldOverwrite} zone(s) would be overwritten${RESET}`);
+                console.log(`${YELLOW}   Refresh manually: bun scripts/propagate-to-templates.ts --marker-rewrite --domain ${domain} --apply${RESET}`);
+            } else {
+                console.log(`${GREEN}✓ COMMON-CONTEXT domain '${domain}' in sync (0 would-overwrite)${RESET}`);
+            }
+        } catch {
+            console.log(`${YELLOW}⚠️  marker-rewrite check could not run for domain '${domain}' — investigate manually${RESET}`);
+        }
+    }
+}
+
 // 4.6 Skill sync to platform directories — must run BEFORE audit gate so
 //     that templates/common/ platform skills are current.
 console.log('📋 Step 4.6: Syncing skills to platform directories...');
@@ -344,6 +429,113 @@ const syncSkillsResult = await $`bun scripts/sync-skills.ts`.nothrow();
 if (syncSkillsResult.exitCode !== 0) {
     console.warn(`⚠️  Skill sync had warnings (exit ${syncSkillsResult.exitCode}), continuing...`);
     if (syncSkillsResult.stderr) console.warn(String(syncSkillsResult.stderr).trim());
+}
+
+// 4.62 Cascade re-publish — unconditional second L0→L1 pass after skill sync.
+//     Step 4.5 runs propagate-to-templates.ts --apply BEFORE step 4.6 sync-skills.ts
+//     updates root platform dirs (.claude/.gemini/.agents/skills). This causes a lag:
+//     4.5 compares stale platform copies to templates, then 4.6 updates platforms,
+//     leaving template platform copies stale until the NEXT sync. Fix: re-run
+//     propagate-to-templates.ts --apply unconditionally after 4.6 (new step 4.62).
+//     Transforms are directional and idempotent, so the converged pass copies nothing.
+//     Design doc: docs/designs/2026-08-25-pipeline-cascade-repass-design.md
+if (isWorkspaceRoot) {
+    console.log('📦 Step 4.62: Cascade re-publish (L0→L1 after skill sync)...');
+    try {
+        const repassRes = await $`bun scripts/propagate-to-templates.ts --apply`.nothrow();
+        if (repassRes.exitCode !== 0) {
+            if (isL0Context) {
+                console.log(`${RED}❌ Cascade re-publish failed — fatal in L0 context${RESET}`);
+                if (import.meta.main) {
+                    process.exit(1);
+                }
+            } else {
+                console.log(`${YELLOW}⚠️  Cascade re-publish failed — continuing sync${RESET}`);
+            }
+        } else {
+            const stdout = repassRes.stdout.toString();
+            if (stdout.includes('Nothing to apply')) {
+                console.log(`${GREEN}✓ Step 4.62: template mirrors already converged (nothing to apply)${RESET}`);
+            } else {
+                const match = stdout.match(/Done\. (\d+) file\(s\) copied\./);
+                if (match) {
+                    const n = match[1];
+                    console.log(`${GREEN}✓ Step 4.62: cascade re-publish complete — ${n} file(s) copied${RESET}`);
+                } else {
+                    console.log(`${GREEN}✓ Step 4.62: cascade re-publish complete${RESET}`);
+                }
+            }
+        }
+    } catch (e) {
+        if (isL0Context) {
+            console.log(`${RED}❌ Cascade re-publish failed — fatal in L0 context${RESET}`);
+            if (import.meta.main) {
+                process.exit(1);
+            }
+        } else {
+            console.log(`${YELLOW}⚠️  Cascade re-publish failed — continuing sync${RESET}`);
+        }
+    }
+}
+
+// 4.65 Skill Graph Gate — generates and verifies skill relationship graph (ADR-0060
+//     + Amendment 2). At the workspace root this covers the L0 unified graph plus a
+//     generate+verify loop over every template scope (templates/common and
+//     templates/co-* ship their own docs/skill-graph.json). Scaffolded projects have
+//     no templates/ directory, so the scope loop skips; the project's own local
+//     graph is emitted by the same guarded calls below (run-context auto-detection
+//     tags project assets L3). Must run BEFORE VERSION_MANIFEST generation so graph
+//     files are committed.
+if (fs.existsSync('scripts/generate-skill-graph.ts')) {
+    console.log('📋 Step 4.65: Skill relationship graph gate...');
+    const graphGenRes = await $`bun scripts/generate-skill-graph.ts`.nothrow();
+    if (graphGenRes.exitCode !== 0) {
+        console.error(`${RED}❌ Skill graph generation failed.${RESET}`);
+        console.error(`${YELLOW}   Run manually: bun scripts/generate-skill-graph.ts${RESET}`);
+        if (import.meta.main) {
+            process.exit(1);
+        }
+    }
+
+    const graphVerifyRes = await $`bun scripts/verify-skill-graph.ts`.nothrow();
+    if (graphVerifyRes.exitCode !== 0) {
+        console.error(`${RED}❌ Skill graph verification failed.${RESET}`);
+        console.error(`${YELLOW}   The committed skill graph does not match the current workspace state.${RESET}`);
+        console.error(`${YELLOW}   Fix: Review changes to skills/, agents/, or variant.json, then re-run: bun scripts/generate-skill-graph.ts${RESET}`);
+        if (import.meta.main) {
+            process.exit(1);
+        }
+    }
+
+    // Template scopes (workspace root only — projects have no templates/ directory).
+    if (fs.existsSync('templates/common')) {
+        const scopes = ['common'];
+        for (const entry of fs.readdirSync('templates', { withFileTypes: true })) {
+            if (entry.isDirectory() && entry.name.startsWith('co-')) scopes.push(entry.name);
+        }
+        for (const scope of scopes) {
+            const scopeGenRes = await $`bun scripts/generate-skill-graph.ts --scope ${scope}`.nothrow();
+            if (scopeGenRes.exitCode !== 0) {
+                console.error(`${RED}❌ Skill graph generation failed for scope: ${scope}.${RESET}`);
+                if (import.meta.main) {
+                    process.exit(1);
+                }
+            }
+            const scopeVerifyRes = await $`bun scripts/verify-skill-graph.ts --scope ${scope}`.nothrow();
+            if (scopeVerifyRes.exitCode !== 0) {
+                console.error(`${RED}❌ Skill graph verification failed for scope: ${scope}.${RESET}`);
+                console.error(`${YELLOW}   Fix: bun scripts/generate-skill-graph.ts --scope ${scope}${RESET}`);
+                if (import.meta.main) {
+                    process.exit(1);
+                }
+            }
+        }
+        console.log(`${GREEN}✓ Skill graph scope artifacts verified (${scopes.length} scopes)${RESET}`);
+    }
+
+    console.log(`${GREEN}✓ Skill graph verification passed${RESET}`);
+} else {
+    console.log('📋 Step 4.65: skipped — skill graph generator not present in this context');
 }
 
 // 4.7 Generate VERSION_MANIFEST.md

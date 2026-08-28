@@ -1,11 +1,11 @@
-// @version 1.0.0
 #!/usr/bin/env bun
+// @version 1.0.2
 // setup.ts - Post-scaffold environment setup
 // Detects OS and tech stack, installs dependencies, audits licenses, copies .env,
 // and makes initial commit.
 //
 // Supported stacks:
-//   Node.js    package.json          → npm install  → license-checker audit
+//   Node.js    package.json          → bun install  → license-checker audit
 //   Python     requirements.txt /    → uv venv + uv pip install (fallback: python -m venv + pip)
 //              pyproject.toml           → pip-licenses audit
 //   Ruby       Gemfile               → bundle install
@@ -19,7 +19,7 @@
 //              Makefile              → info only (not run automatically)
 //   Unknown    (none of the above)   → stack-setup agent invocation required
 //
-// Usage: bun scripts/setup.ts [--skip-install] [--skip-license-check] [--skip-commit] [--with-gemini-plugins] [--with-codegraph]
+// Usage: bun scripts/setup.ts [--skip-install] [--skip-license-check] [--skip-commit] [--with-gemini-plugins]
 
 import path from "node:path";
 import * as fs from "node:fs";
@@ -45,7 +45,6 @@ const SKIP_LICENSE = args.includes("--skip-license-check");
 const SKIP_COMMIT = args.includes("--skip-commit");
 // Remote-code installs are opt-in: they clone/download and execute third-party code.
 const WITH_GEMINI_PLUGINS = args.includes("--with-gemini-plugins");
-const WITH_CODEGRAPH = args.includes("--with-codegraph");
 
 function pass(msg: string) {
   console.log(`${GREEN}[PASS]${RESET} ${msg}`);
@@ -79,18 +78,18 @@ async function licenseAuditNode() {
     return;
   }
   info("Running Node.js license audit...");
-  if (await cmdExists("npx")) {
+  if (await cmdExists("bunx")) {
     const { exitCode } =
-      await $`npx --yes license-checker --summary --onlyAllow ${OSS_LICENSES}`.quiet().nothrow();
+      await $`bunx license-checker --summary --onlyAllow ${OSS_LICENSES}`.quiet().nothrow();
     if (exitCode === 0) {
       pass("License audit passed - all packages use OSI-approved licenses");
     } else {
       warn("⚠  License audit flagged non-OSS packages. Review before committing.");
-      warn("   Run: npx license-checker --summary");
+      warn("   Run: bunx license-checker --summary");
       warn("   Document any justified exceptions in docs/context.md § Non-OSS Dependencies");
     }
   } else {
-    warn("npx not available - skipping Node.js license audit");
+    warn("bunx not available - skipping Node.js license audit");
   }
 }
 
@@ -184,13 +183,13 @@ async function main() {
 
     // ── Node.js ──────────────────────────────────────────────────────────────────
     if (fs.existsSync("package.json")) {
-      if (await cmdExists("npm")) {
-        info("Node.js project detected - running npm install");
-        await $`npm install`.quiet().nothrow();
-        pass("npm install complete");
+      if (await cmdExists("bun")) {
+        info("Node.js project detected - running bun install");
+        await $`bun install`.quiet().nothrow();
+        pass("bun install complete");
         await licenseAuditNode();
       } else {
-        warn("npm not found - install Node.js from https://nodejs.org");
+        warn("bun not found - install Bun from https://bun.sh");
       }
     }
 
@@ -429,17 +428,7 @@ async function main() {
     info("Skipping rtk installation (Windows native is not fully supported).");
   }
 
-  // ── 5. Initialize CodeGraph MCP (opt-in: --with-codegraph) ──────────────────
-  if (WITH_CODEGRAPH && (await cmdExists("npx"))) {
-    info("Initializing and indexing CodeGraph for AI context...");
-    await $`npx -y @colbymchenry/codegraph init`.quiet().nothrow();
-    await $`npx -y @colbymchenry/codegraph index`.quiet().nothrow();
-    pass("CodeGraph initialized successfully");
-  } else {
-    info("Skipping CodeGraph initialization (pass --with-codegraph to enable; requires npx).");
-  }
-
-  // ── 5b. Install githooks ─────────────────────────────────────────────────────
+  // ── 5. Install githooks ─────────────────────────────────────────────────────
   const githooksDir = path.join(projectRoot, ".githooks");
   if (fs.existsSync(githooksDir)) {
     const { exitCode: hookDir } = await $`git config core.hooksPath .githooks`.quiet().nothrow();

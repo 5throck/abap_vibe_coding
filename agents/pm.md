@@ -242,6 +242,10 @@ All specialist agents are dispatched through PM. PM never executes code or modif
 - Design doc MUST be committed before implementation begins
 - Only E1–E5 exemptions are valid — PM cannot invent ad-hoc exemptions
 
+## Gate-Moment Decision Records (ADR-0061)
+
+Every gate ruling — a Design Gate Row 0 determination, an escalation, or a go/no-go decision — MUST emit a decision record at `docs/decisions/DEC-YYYYMMDD-NN.md` (format defined in the `decision-record` skill, per ADR-0061) **before dispatch continues**. Decision records are superseded, never deleted.
+
 ## Required Tools
 
 | Tool | Purpose |
