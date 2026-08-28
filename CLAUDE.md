@@ -78,6 +78,7 @@ Custom slash commands in `.claude/commands/` are natively recognized by Claude C
 Config file: `.mcp.json` (project root) - auto-loaded by both the CLI and the Desktop App. `enableAllProjectMcpServers: true` is set in `.claude/settings.local.json` to activate the abap MCP server.
 * **Path Resolving**: relative paths (e.g., `./server` or `python scripts/mcp.py`) are automatically resolved by Claude Code relative to the individual project's root folder. When defining commands inside `.mcp.json`, always keep command executable paths relative to the project directory for portable cross-platform runs.
 
+<!-- COMMON-CLAUDE:START -->
 ### 4. Language Policy for Documentation
 
 All `.md` files you create or modify MUST be in English, except in `ko/` or `locales/ko/` directories (Korean translation zones) or when explicitly declared as a Korean legal/regulatory content exception.
@@ -95,6 +96,7 @@ lang: ko
 lang_reason: legal # legal | source-material | proper-noun
 ```
 *(Not available for: context.md, CLAUDE.md, GEMINI.md, AGENTS.md, or any variant context.md)*
+<!-- COMMON-CLAUDE:END -->
 
 ### 4.5 Skill Resolution Priority
 
@@ -120,6 +122,7 @@ For the **4-level enforcement model**, **mandatory criteria**, **execution plan 
 
 Before any multi-agent dispatch (2+ agents), PM **must** output an execution plan table prior to invoking the `Agent` tool.
 
+<!-- COMMON-CLAUDE:START -->
 ## Execution Plan Boilerplate
 
 The execution plan table format, the Design Gate (Row 0) rule, exemption categories, and the `/sync`-as-final-step rule are the Single Source of Truth in **[AGENTS.md §5.1 Standard Execution Plan Template](AGENTS.md#51-standard-execution-plan-template)** and **[§5.1.1 Design Gate Exemptions](AGENTS.md#511-design-gate-exemptions)** — do not restate them here.
@@ -127,6 +130,7 @@ The execution plan table format, the Design Gate (Row 0) rule, exemption categor
 > **Note (Claude Code-specific)**: The `Model` column shows the Claude Code short alias (`sonnet`/`opus`/`haiku`/`fable`) actually passed to the `Agent()` tool's `model` parameter — not the registry ID (e.g. `claude-sonnet-5-0`). See §6 (Native Sub-agents) below for the registry-ID → alias translation table. On Gemini/Antigravity, use the literal model ID instead (see GEMINI.md's equivalent note).
 
 **Claude Code execution**: Use the native `Agent` tool for specialist dispatch. See §6 (Native Sub-agents) and §7 (Native Plan Mode) in this file.
+<!-- COMMON-CLAUDE:END -->
 
 ### 6. Native Sub-agents (`Agent` Tool)
 Use the native `Agent` tool to spawn sub-agents for parallel or isolated tasks. Sub-agents load their role-based configurations from `agents/<name>.md`.
@@ -172,6 +176,7 @@ The High/Medium/Low tier concept and its usage rules are the Single Source of Tr
 **Relationship to execution plan table**: teammateMode controls parallel execution mode. The execution plan table defines the multi-agent task dispatch.
 <!-- COMMON-CLAUDE:END -->
 
+<!-- COMMON-CLAUDE:START -->
 ### 7. Native Plan Mode (`EnterPlanMode`)
 Enter native plan mode using the `EnterPlanMode` tool when:
 - The user requests a new feature or significant refactor.
@@ -183,21 +188,27 @@ Once in plan mode:
 2. Obtain explicit user approval before modifying any code.
 3. Track progress using the native `TaskCreate` / `TaskUpdate` toolset.
 4. After completion, summarize outcomes in the active `memory/YYYY-MM-DD.md` daily log.
+<!-- COMMON-CLAUDE:END -->
 
+<!-- COMMON-CLAUDE:START -->
 ### 8. Task Tracking (`TaskCreate` / `TaskUpdate`)
 When working in a plan-mode session:
 - Call `TaskCreate` before starting any multi-step execution.
 - Set status `in_progress` prior to beginning each atomic step.
 - Update status to `completed` immediately upon verification of the step.
 - Never leave tasks `in_progress` at the end of a session.
+<!-- COMMON-CLAUDE:END -->
 
+<!-- COMMON-CLAUDE:START -->
 ### 9. Project Boundary Policy
 
 - **Strict Scope**: Work only within the current project directory.
 - **No Cross-Project Modification**: Modifying files outside the project root during a session is forbidden.
 
 > For lifecycle management rules, see [docs/context.md — Lifecycle Management](docs/context.md#lifecycle-management).
+<!-- COMMON-CLAUDE:END -->
 
+<!-- COMMON-CLAUDE:START -->
 ### 10. Custom Command Error Recovery
 If a custom slash command or background script returns a non-zero exit code:
 * **Don't bypass hooks**: Never attempt to run git commands with `--no-verify` to bypass the hook system unless under explicit, written user instruction.
@@ -205,7 +216,9 @@ If a custom slash command or background script returns a non-zero exit code:
 * **Diagnostic Audit**: Immediately read the failure stdout log. Common errors include:
   * Missing staged `CHANGELOG.md` edits (caught by `pre-commit`). Fix by running `/changelog` and staging the file.
   * Direct push attempt to `main` (caught by `pre-push`). Fix by executing the `/sync` pipeline script which handles target branch generation and PR staging automatically.
+<!-- COMMON-CLAUDE:END -->
 
+<!-- COMMON-CLAUDE:START -->
 ### 11. Windows Platform Requirement
 
 **Git Bash required on Windows**: This workspace uses Unix-style shell scripts (`.sh`) for `.githooks/` hook files. Windows users must have Git Bash installed and configured as the default shell for git hooks.
@@ -214,14 +227,17 @@ If a custom slash command or background script returns a non-zero exit code:
 - Verify: `git config core.hooksPath` should point to `.githooks/`
 - All `scripts/` operational scripts are TypeScript (`.ts`) — run via `bun scripts/<name>.ts`. No `.sh/.ps1` counterparts (ADR-0036).
 - If a hook fails on Windows with "command not found", run it via Git Bash: `"C:\Program Files\Git\bin\bash.exe" .githooks/pre-commit`
+<!-- COMMON-CLAUDE:END -->
 
 ---
 
+<!-- COMMON-CLAUDE:START -->
 ## Git & PR Additions (Claude Code)
 
 All shared Git/PR rules are in [docs/context.md](docs/context.md). Claude Code-specific additions:
 
 - **PR Language**: Governed by [docs/context.md](docs/context.md). All PR titles, bodies, and review comments must be written in English - no exceptions.
+<!-- COMMON-CLAUDE:END -->
 
 ---
 
