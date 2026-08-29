@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-// @version 1.0.0
 /**
  * Agent Dispatcher CLI
+ * @version 1.0.0
  * Main entry point for agent dispatch operations
  *
  * Usage:
@@ -13,22 +13,34 @@
  */
 
 import path from "node:path";
-import type { SerialAgentTask } from "./dispatch-serial.ts";
 
 const scriptDir = path.dirname(import.meta.path);
 const projectRoot = path.resolve(scriptDir, "..");
+
+// ─── Minimal interfaces (matching dispatch-parallel.ts / dispatch-serial.ts) ───
 
 interface ParallelAgentTask {
   description: string;
   role: string;
   task: string;
+  context?: string[];
+  outputFormat?: string;
   priority?: 'high' | 'medium' | 'low';
 }
 
-interface SerialOptions {
-  stopOnError: boolean;
-  verbose: boolean;
-  dryRun: boolean;
+interface SerialAgentTask {
+  description: string;
+  role: string;
+  task: string;
+  dependsOn?: string;
+  verifyOutput?: boolean;
+  continueOnError?: boolean;
+}
+
+interface SerialExecutionOptions {
+  stopOnError?: boolean;
+  verbose?: boolean;
+  dryRun?: boolean;
 }
 
 interface CliOptions {
@@ -38,10 +50,6 @@ interface CliOptions {
 
 /**
  * Display help information
- *
- * TODO(Task 25): Consider migrating to a proper CLI parser library (e.g., commander, yargs)
- * to handle --task, --pipeline, --continue-on-error, --verbose, --dry-run more robustly.
- * Current manual parsing works but is fragile for new options.
  */
 function showHelp(): void {
   console.log(`
@@ -130,12 +138,11 @@ async function runParallel(args: string[]): Promise<void> {
     if (args[i] === '--task' && args[i + 1]) {
       const parts = args[i + 1].split(':');
       if (parts.length >= 3) {
-        const priority = parts[3] === 'high' || parts[3] === 'low' ? parts[3] : 'medium';
         tasks.push({
           description: parts[0],
           role: parts[1],
           task: parts[2],
-          priority
+          priority: parts[3] || 'medium'
         });
       }
       i++;
@@ -159,7 +166,7 @@ async function runParallel(args: string[]): Promise<void> {
 async function runSerial(args: string[]): Promise<void> {
   console.log('🔄 Serial Dispatch Mode\n');
 
-  const options: SerialOptions = {
+  const options: SerialExecutionOptions = {
     stopOnError: !args.includes('--continue-on-error'),
     verbose: args.includes('--verbose') || args.includes('-v'),
     dryRun: args.includes('--dry-run')
@@ -171,6 +178,10 @@ async function runSerial(args: string[]): Promise<void> {
 
   if (pipelineIndex >= 0 && args[pipelineIndex + 1]) {
     const pipelinePath = path.resolve(projectRoot, args[pipelineIndex + 1]);
+    if (!pipelinePath.startsWith(projectRoot + path.sep) || !pipelinePath.endsWith('.ts')) {
+      console.error(`[dispatch] Invalid pipeline path: ${pipelinePath}`);
+      process.exit(1);
+    }
     try {
       const pipelineModule = await import(pipelinePath);
       pipeline = pipelineModule.default || pipelineModule.pipeline;

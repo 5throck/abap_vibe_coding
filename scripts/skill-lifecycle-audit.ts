@@ -147,7 +147,7 @@ function parseFrontmatter(filePath: string): SkillFrontmatter | null {
       }
     }
 
-    return frontmatter as unknown as SkillFrontmatter;
+    return frontmatter as SkillFrontmatter;
   } catch {
     return null;
   }

@@ -102,12 +102,20 @@ const schemaPath = join(WORKSPACE_ROOT, "docs", "workspace-schema.json");
 let schema: WorkspaceSchema;
 try {
   schema = JSON.parse(readFileSync(schemaPath, "utf-8"));
-} catch {
-  die(`Could not read docs/workspace-schema.json at ${schemaPath}`, 1);
+} catch (err) {
+  if (import.meta.main) {
+    die(`Could not read docs/workspace-schema.json at ${schemaPath}`, 1);
+  } else {
+    console.error(`ERROR: Could not read docs/workspace-schema.json at ${schemaPath}`);
+  }
 }
 
 if (!schema.models) {
-  die("docs/workspace-schema.json is missing the 'models' block.", 1);
+  if (import.meta.main) {
+    die("docs/workspace-schema.json is missing the 'models' block.", 1);
+  } else {
+    console.error("ERROR: docs/workspace-schema.json is missing the 'models' block.");
+  }
 }
 
 const missingPlatforms = PLATFORMS.filter((p) => !schema.models![p]);
@@ -128,8 +136,12 @@ try {
   agentFiles = readdirSync(agentsDir)
     .filter((f) => f.endsWith(".md"))
     .map((f) => join(agentsDir, f));
-} catch {
-  die(`Could not read agents directory at ${agentsDir}`, 1);
+} catch (err) {
+  if (import.meta.main) {
+    die(`Could not read agents directory at ${agentsDir}`, 1);
+  } else {
+    console.error(`ERROR: Could not read agents directory at ${agentsDir}`);
+  }
 }
 
 if (agentFiles.length === 0) {
