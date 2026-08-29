@@ -10,7 +10,6 @@
 |-------|-------|-------------------|--------|------------|
 | `abap-code-review` | L3 | — | — | — |
 | `abap-dev` | L3 | — | — | — |
-| `accessibility-audit` | L3 | — | — | — |
 | `agent-lifecycle-manager` | L3 | — | — | — |
 | `api-documentation` | L3 | — | — | — |
 | `decision-record` | L3 | — | — | — |
@@ -23,11 +22,9 @@
 | `i18n-formatting` | L3 | — | — | — |
 | `i18n-layout` | L3 | — | — | — |
 | `i18n-locale-config` | L3 | — | — | — |
-| `mece-logic-auditor` | L3 | — | — | — |
 | `meeting-facilitation` | L3 | — | — | — |
 | `performance-tuning` | L3 | — | — | — |
 | `post-write-chain` | L3 | — | — | — |
-| `presenter-mode` | L3 | — | — | — |
 | `project-review` | L3 | — | — | — |
 | `research-analysis` | L3 | — | — | — |
 | `sap-co` | L3 | — | — | — |
@@ -36,14 +33,11 @@
 | `sap-mm` | L3 | — | — | — |
 | `sap-pp` | L3 | — | — | — |
 | `sap-sd` | L3 | — | — | — |
-| `sarif-exporter` | L3 | — | — | — |
 | `script-lifecycle-manager` | L3 | — | — | — |
 | `security-scan` | L3 | — | — | — |
 | `skill-lifecycle-manager` | L3 | — | — | — |
 | `source-command-celebrate` | L3 | — | — | — |
 | `standup-synthesizer` | L3 | — | — | — |
-| `stride-threat-matrix` | L3 | — | — | — |
-| `swe-solve` | L3 | — | — | — |
 | `sync` | L3 | — | — | — |
 | `team-builder` | L3 | — | — | — |
 | `translate` | L3 | — | — | — |
