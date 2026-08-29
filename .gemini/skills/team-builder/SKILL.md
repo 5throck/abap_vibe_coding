@@ -10,6 +10,7 @@ status: active
 scope: common
 owner: pm
 prerequisites: none
+relates_to:
 last_reviewed: 2026-06-13
 metadata:
   type: process

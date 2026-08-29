@@ -78,7 +78,7 @@
 | `validate-md-language.ts` | L0 | 1.8.0 | active | — | — | common | — |
 | `validate-model-registry.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `validate-pm-extends.ts` | L0 | 0.3.1 | active | — | — | common | — |
-| `validate-skills.ts` | L0 | 1.0.3 | active | — | — | common | — |
+| `validate-skills.ts` | L0 | 1.3.0 | active | — | — | common | — |
 | `verify-agent-deliverables.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `verify-memory.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `verify-platform-lifecycle.ts` | L0 | 1.1.2 | active | — | — | common | — |
@@ -90,8 +90,9 @@
 | `vsp-publish.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `vsp-publish.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `vsp-task.ts` | L0 | 1.0.0 | active | — | — | common | — |
-| `generate-skill-graph.ts` | L0 | 1.3.0 | active | —| —| L0+L1 | —|
-| `verify-skill-graph.ts` | L0 | 1.1.0 | active | —| —| L0+L1 | —|
+| `generate-skill-graph.ts` | L0 | 1.7.0 | active | —| —| L0+L1 | —|
+| `verify-skill-graph.ts` | L0 | 1.5.0 | active | —| —| L0+L1 | —|
+| `validate-decisions.ts` | L0 | 1.0.0 | active | —| —| L0+L1 | —|
 | `lib/context-md-schema.ts` | L0 | 1.0.1 | active | —| —| L0+L1 | —|
 
 ---

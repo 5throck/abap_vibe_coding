@@ -8,6 +8,7 @@ scope: common
 l2_propagate: true
 owner: pm
 prerequisites: Bun runtime
+relates_to:
 metadata:
   type: process
   triggers:
