@@ -1,12 +1,35 @@
 ---
 name: dump-monitor
 description: Use when checking SAP system health, investigating reported errors, or performing a periodic operational health check. Provides a standardized workflow using ListDumps/GetDump to detect ABAP short dumps and route new findings into /triage for investigation.
+version: 1.0.0
+last_reviewed: 2026-08-15
+status: active
+scope: co-abap
+owner: devops-admin
+prerequisites: vsp MCP server
+relates_to:
+  - skill: sap-fi
+    type: composes_with
+  - skill: sap-co
+    type: composes_with
+  - skill: sap-sd
+    type: composes_with
+  - skill: sap-mm
+    type: composes_with
+  - skill: sap-le
+    type: composes_with
+  - skill: abap-dev
+    type: follows
+  - skill: research-analysis
+    type: composes_with
 metadata:
   type: core
-version: 1.0.0
-scope: co-abap
-owner: pm
-status: active
+  triggers:
+    - dump-monitor
+    - ListDumps
+    - GetDump
+    - short dump
+    - system health
 ---
 
 # Dump Monitoring Workflow
@@ -73,3 +96,29 @@ it to one platform's session-level scheduler.
 - [agents/devops-admin.md](../../agents/devops-admin.md) — primary owner
 - [.claude/commands/triage.md](../../.claude/commands/triage.md) — destination for actionable findings
 - [skills/performance-tuning/SKILL.md](../performance-tuning/SKILL.md) — use together when a dump indicates a performance-related timeout
+
+## Context
+
+This skill provides a standardized workflow for detecting and triaging ABAP short dumps in an SAP system. Without it, dumps are only found reactively when users report errors. The workflow uses `ListDumps` and `GetDump` to proactively identify runtime errors and route actionable findings into the triage process for investigation and resolution.
+
+## Execution Steps
+
+1. **List recent dumps** — Call `ListDumps` with a time window (default: last 24 hours or last check timestamp).
+2. **Retrieve details** — For each new dump not already triaged, call `GetDump` to capture program, exception, call stack, timestamp, and user/client.
+3. **Classify** — Determine if the dump is in a custom Z* object (actionable) or SAP standard (note only). Flag repeated dumps for escalation.
+4. **Route** — Actionable dumps are routed to `/triage` for investigation; already-tracked dumps are skipped to avoid duplicates.
+5. **Record** — Append a Dump Monitoring Report to the current session's `memory/YYYY-MM-DD.md`.
+
+## Output Format
+
+A structured Dump Monitoring Report appended to the session memory log, containing:
+- Window checked (timestamp range)
+- Total dumps found and breakdown of new vs. previously triaged
+- Summary table with program, exception, timestamp, occurrences, and action taken
+- Overall verdict (Clean or N actionable dumps routed)
+
+## Related Skills
+
+- [post-write-chain](../post-write-chain/SKILL.md) — QA gate that may catch syntax errors before they become dumps
+- [abap-dev](../abap-dev/SKILL.md) — Core development workflows that produce the code under observation
+- [performance-tuning](../performance-tuning/SKILL.md) — Use in conjunction when dumps indicate performance-related timeouts

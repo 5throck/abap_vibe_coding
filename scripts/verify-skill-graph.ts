@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Skill Relationship Graph Verification Script
- * @version 1.1.0
+ * @version 1.5.0
  *
  * Verifies that the committed skill graph files match the current state.
  * Re-derives the graph and compares against docs/skill-graph.json.
@@ -12,9 +12,18 @@
  * Also validates:
  * - No country marks in relation fields (ADR-0060 invariant)
  * - No unknown targets in relates_to or overrides
- * - Staleness warnings for overrides (last_reviewed > 12 months)
+ * - Stale override warnings (last_reviewed > 12 months)
+ * - Typed `relates_to` schema (ADR-0060 Amendment 3, 2026-08-29): legacy vs.
+ *   typed {skill, type} forms via the shared `parseRelatesTo()`, including the
+ *   legacy/typed no-mixing rule (a mixed array is a reported finding, not a
+ *   silent parse failure).
+ * - Procedure-derived graph invariants (Procedure Schema v1.0, 2026-08-29):
+ *   orphan procedure detection, invalid procedure relation endpoints, and
+ *   `--determinism` mode (two consecutive builds must produce exactly equal
+ *   normalized graphs — INV-5 of
+ *   docs/designs/2026-08-29-procedure-schema-design.md).
  *
- * Usage: bun scripts/verify-skill-graph.ts [--scope <common|co-*>]
+ * Usage: bun scripts/verify-skill-graph.ts [--scope <common|co-*>] [--determinism]
  *
  * Exit codes:
  * - 0: Verification passed
@@ -24,7 +33,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildGraph, buildScopeGraph } from './generate-skill-graph.ts';
+import { buildGraph, buildScopeGraph, parseFrontmatter, parseRelatesTo } from './generate-skill-graph.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -55,8 +64,10 @@ interface OverrideEdge {
   from: string;
   to: string;
   reason: string;
-  last_reviewed: string;
+  since?: string;
+  last_reviewed?: string;
   expires_at?: string;
+  suppress?: boolean;
 }
 
 interface Overrides {
@@ -274,27 +285,10 @@ function validateRelations(
       if (!require('node:fs').existsSync(skillFile)) continue;
 
       const content = readFileSync(skillFile, 'utf-8');
-      const lines = content.split('\n');
-      let inFrontmatter = false;
-      let frontmatterText = '';
 
-      for (const line of lines) {
-        if (line.trim() === '---') {
-          if (!inFrontmatter) {
-            inFrontmatter = true;
-            continue;
-          } else {
-            inFrontmatter = false;
-            break;
-          }
-        }
-        if (inFrontmatter) {
-          frontmatterText += line + '\n';
-        }
-      }
-
-      // Check prerequisites field
-      const prereqMatch = frontmatterText.match(/prerequisites:\s*(.+)/);
+      // Check prerequisites field (still free text; scanned as raw line, unchanged)
+      const frontmatterBlock = content.split('---')[1] ?? '';
+      const prereqMatch = frontmatterBlock.match(/prerequisites:\s*(.+)/);
       if (prereqMatch) {
         const prereqText = prereqMatch[1].trim();
         if (hasCountryMark(prereqText, countryCodes)) {
@@ -302,66 +296,98 @@ function validateRelations(
         }
       }
 
-      // Check relates_to field (both inline array and YAML list formats)
-      const relatesInlineMatch = frontmatterText.match(/relates_to:\s*\[(.+?)\]/);
-      const relatesListMatch = frontmatterText.match(/relates_to:\s*\n((?:\s*-\s*[^\n]+\n?)+)/);
-
-      let relatesArray: string[] = [];
-
-      if (relatesInlineMatch) {
-        // Inline array format: relates_to: [skill1, skill2]
-        relatesArray = relatesInlineMatch[1].split(',').map(s => s.trim().replace(/'/g, '').replace(/"/g, ''));
-      } else if (relatesListMatch) {
-        // YAML list format: relates_to:\n  - skill1\n  - skill2
-        const listText = relatesListMatch[1];
-        const itemMatches = listText.matchAll(/-\s*([^\n]+)/g);
-        for (const match of itemMatches) {
-          relatesArray.push(match[1].trim().replace(/'/g, '').replace(/"/g, ''));
+      // relates_to: parsed via the real YAML parser + schema validator (ADR-0060
+      // Amendment 3) so both legacy string-array and typed {skill, type} entries
+      // are checked correctly — the previous line-regex scan mis-tokenized typed
+      // multi-line entries (only their first `- skill: ...` line matched).
+      const frontmatter = parseFrontmatter(content) as { relates_to?: unknown[] } | null;
+      if (frontmatter?.relates_to) {
+        let relations: ReturnType<typeof parseRelatesTo> = [];
+        try {
+          relations = parseRelatesTo(frontmatter.relates_to, skillFile);
+        } catch (err) {
+          unknownTargets.push(`skills/${entry.name}/SKILL.md: ${(err as Error).message}`);
+          relations = [];
         }
-      }
-
-      for (const related of relatesArray) {
-        if (hasCountryMark(related, countryCodes)) {
-          countryMarkViolations.push(`skills/${entry.name}/SKILL.md relates_to contains country mark: ${related}`);
-        }
-        if (!allNodeIds.has(related) && related) {
-          unknownTargets.push(`skills/${entry.name}/SKILL.md relates_to unknown target: ${related}`);
+        for (const rel of relations) {
+          if (hasCountryMark(rel.to, countryCodes)) {
+            countryMarkViolations.push(`skills/${entry.name}/SKILL.md relates_to contains country mark: ${rel.to}`);
+          }
+          if (!allNodeIds.has(rel.to)) {
+            unknownTargets.push(`skills/${entry.name}/SKILL.md relates_to unknown target: ${rel.to}`);
+          }
         }
       }
     }
   }
 
-  // Check overrides file
-  const overridesPath = join(ROOT, 'docs', 'skill-graph.overrides.json');
-  if (existsSync(overridesPath)) {
-    try {
-      const overrides: Overrides = JSON.parse(readFileSync(overridesPath, 'utf-8'));
-
-      for (const override of overrides.edges) {
-        // Check reason field for country marks
-        if (hasCountryMark(override.reason, countryCodes)) {
-          countryMarkViolations.push(`Override ${override.from} -> ${override.to} reason contains country mark`);
-        }
-
-        // Check for unknown targets
-        if (override.from && !allNodeIds.has(override.from)) {
-          unknownTargets.push(`Override references unknown from node: ${override.from}`);
-        }
-        if (override.to && !allNodeIds.has(override.to)) {
-          unknownTargets.push(`Override references unknown to node: ${override.to}`);
-        }
-
-        // Check staleness
-        if (isStaleOverride(override)) {
-          staleWarnings.push(`Override ${override.from} -> ${override.to} last reviewed ${override.last_reviewed} (> 12 months)`);
-        }
-      }
-    } catch {
-      // Invalid overrides JSON, will be caught by graph generation
-    }
-  }
+  // Check overrides file (L0)
+  checkOverridesFile(join(ROOT, 'docs', 'skill-graph.overrides.json'), allNodeIds, countryCodes, {
+    countryMarkViolations,
+    unknownTargets,
+    staleWarnings,
+  });
 
   return { countryMarkViolations, unknownTargets, staleWarnings };
+}
+
+/**
+ * Policy checks for one skill-graph.overrides.json file (reledgev §3 L-B layer):
+ * - `reason` required (fail) + country-mark scan
+ * - `since` required and must be a date (fail) — the experimental-layer admission date
+ * - `since` older than 90 days → warning (overrides are a waiting room, not a home:
+ *   promote to frontmatter or drop)
+ * - unknown endpoints → fail
+ * - legacy `last_reviewed` staleness (> 12 months) → warning (kept for pre-reledgev entries)
+ */
+function checkOverridesFile(
+  overridesPath: string,
+  allNodeIds: Set<string>,
+  countryCodes: string[],
+  sink: { countryMarkViolations: string[]; unknownTargets: string[]; staleWarnings: string[] }
+): void {
+  if (!existsSync(overridesPath)) return;
+  let overrides: Overrides;
+  try {
+    overrides = JSON.parse(readFileSync(overridesPath, 'utf-8'));
+  } catch {
+    // Invalid overrides JSON, will be caught by graph generation
+    return;
+  }
+
+  const NOW = Date.now();
+  const NINETY_DAYS = 90 * 24 * 60 * 60 * 1000;
+
+  for (const override of overrides.edges) {
+    const label = `Override ${override.from} -> ${override.to}`;
+
+    // reason is required (fail) + country-mark scan
+    if (!override.reason || typeof override.reason !== 'string') {
+      sink.unknownTargets.push(`${overridesPath}: ${label} is missing required field "reason"`);
+    } else if (hasCountryMark(override.reason, countryCodes)) {
+      sink.countryMarkViolations.push(`${label} reason contains country mark`);
+    }
+
+    // since is required (fail) + 90-day review warning
+    if (!override.since || Number.isNaN(new Date(override.since).getTime())) {
+      sink.unknownTargets.push(`${overridesPath}: ${label} is missing required field "since" (YYYY-MM-DD)`);
+    } else if (NOW - new Date(override.since).getTime() > NINETY_DAYS) {
+      sink.staleWarnings.push(`${label} has been in overrides since ${override.since} (> 90 days) — promote to frontmatter relates_to or drop it`);
+    }
+
+    // Check for unknown endpoints
+    if (override.from && !allNodeIds.has(override.from)) {
+      sink.unknownTargets.push(`Override references unknown from node: ${override.from}`);
+    }
+    if (override.to && !allNodeIds.has(override.to)) {
+      sink.unknownTargets.push(`Override references unknown to node: ${override.to}`);
+    }
+
+    // Legacy staleness (pre-reledgev entries carrying last_reviewed)
+    if (override.last_reviewed && isStaleOverride(override)) {
+      sink.staleWarnings.push(`${label} last reviewed ${override.last_reviewed} (> 12 months)`);
+    }
+  }
 }
 
 /**
@@ -447,6 +473,23 @@ async function verifyScopeGraph(scope: string): Promise<void> {
     process.exit(1);
   }
 
+  // Scope overrides policy checks (reledgev §3 L-B layer): reason/since required,
+  // 90-day review warning, country marks, endpoint existence
+  const scopeOverridesPath = join(ROOT, 'templates', scope, 'docs', 'skill-graph.overrides.json');
+  if (existsSync(scopeOverridesPath)) {
+    const scopeSink = { countryMarkViolations: [] as string[], unknownTargets: [] as string[], staleWarnings: [] as string[] };
+    checkOverridesFile(scopeOverridesPath, new Set(derived.nodes.map(n => n.id)), countryCodes, scopeSink);
+    if (scopeSink.unknownTargets.length > 0) {
+      console.log('');
+      console.log(`❌ Override violations in templates/${scope}/docs/skill-graph.overrides.json:`);
+      for (const t of scopeSink.unknownTargets.slice(0, 20)) console.log(`   ${t}`);
+      process.exit(1);
+    }
+    if (scopeSink.staleWarnings.length > 0) {
+      for (const w of scopeSink.staleWarnings) console.log(`⚠️  ${w}`);
+    }
+  }
+
   console.log(`✓ Scope graph verification passed: ${scope}`);
   console.log(`  ${derived.nodes.length} nodes, ${derived.edges.length} edges`);
   process.exit(0);
@@ -455,6 +498,7 @@ async function verifyScopeGraph(scope: string): Promise<void> {
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const scopeIdx = args.indexOf('--scope');
+  const determinism = args.includes('--determinism');
 
   if (scopeIdx !== -1) {
     const scope = args[scopeIdx + 1];
@@ -480,6 +524,65 @@ async function main(): Promise<void> {
 
   // Derive current graph from sources
   const derived = buildGraph();
+
+  // ── Determinism check (INV-5): two consecutive builds of the same source set
+  // must serialize to exactly the same normalized artifact. Run before any
+  // drift comparison — this is a property of the generator, not the committed
+  // file.
+  if (determinism) {
+    const second = buildGraph();
+    const first = JSON.stringify(derived);
+    const secondJson = JSON.stringify(second);
+    if (first !== secondJson) {
+      console.error('❌ Determinism check failed: two consecutive graph builds differ.');
+      // Show a bounded, useful hint about where they diverge.
+      const a = derived.edges.length, b = second.edges.length;
+      console.error(`   Edges: build#1=${a}, build#2=${b}; Nodes: build#1=${derived.nodes.length}, build#2=${second.nodes.length}`);
+      process.exit(1);
+    }
+    console.log('✓ Determinism check passed: two consecutive builds are exactly equal');
+  }
+
+  // ── Procedure-derived graph invariants (Procedure Schema v1.0) ──
+  // The procedure YAML is the canonical source; these checks only assert that
+  // the derivation is well-formed (INV-1: repair procedures, never the graph).
+  const nodeIds = new Set(derived.nodes.map(n => n.id));
+  const procedureErrors: string[] = [];
+
+  const PROC_DERIVED_EDGE_TYPES = new Set([
+    'step_uses_skill', 'step_by_agent', 'produces', 'follows', 'enables', 'composes_with',
+  ]);
+  for (const edge of derived.edges) {
+    if (edge.source !== 'procedure_schema' && !PROC_DERIVED_EDGE_TYPES.has(edge.type as never)) continue;
+    if (edge.source === 'procedure_schema') {
+      if (!nodeIds.has(edge.from)) procedureErrors.push(`${edge.type}: unknown source node ${edge.from}`);
+      if (!nodeIds.has(edge.to)) procedureErrors.push(`${edge.type}: unknown target node ${edge.to}`);
+    }
+  }
+
+  const orphanProcedures = derived.nodes
+    .filter(n => n.type === 'procedure')
+    .filter(p => !derived.edges.some(e => e.from === p.id && (e.type === 'step_uses_skill' || e.type === 'step_by_agent')));
+  for (const orphan of orphanProcedures) {
+    procedureErrors.push(`orphan procedure "${orphan.id}" has no step_uses_skill/step_by_agent edges`);
+  }
+
+  if (procedureErrors.length > 0) {
+    console.log('');
+    console.log('❌ Procedure graph invariant violations:');
+    for (const err of procedureErrors.slice(0, 20)) {
+      console.log(`   ${err}`);
+    }
+    if (procedureErrors.length > 20) {
+      console.log(`   ... and ${procedureErrors.length - 20} more`);
+    }
+    console.log('');
+    console.log('   Fix the procedure schema files (canonical source), never skill-graph.json (INV-1).');
+    process.exit(1);
+  }
+  if (derived.nodes.some(n => n.type === 'procedure')) {
+    console.log(`  Procedure invariants: ${derived.nodes.filter(n => n.type === 'procedure').length} procedures checked (orphans/endpoints OK)`);
+  }
 
   // Compare graphs
   const { equal, missingNodes, extraNodes, missingEdges, extraEdges } = compareGraphs(derived, committed);

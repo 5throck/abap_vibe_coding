@@ -6,44 +6,44 @@
 
 ## Skill Catalog
 
-| Skill | Layer | Required-by Agents | Phases | Relates-to |
-|-------|-------|-------------------|--------|------------|
-| `abap-code-review` | L3 | — | — | — |
-| `abap-dev` | L3 | — | — | — |
-| `agent-lifecycle-manager` | L3 | — | — | — |
-| `api-documentation` | L3 | — | — | — |
-| `decision-record` | L3 | — | — | — |
-| `desktop-app-fallback` | L3 | — | — | — |
-| `documentation-writing` | L3 | — | — | — |
-| `dump-monitor` | L3 | — | — | — |
-| `evidence-ledger` | L3 | — | — | — |
-| `explain-me` | L3 | — | — | — |
-| `gateguard` | L3 | — | — | — |
-| `i18n-formatting` | L3 | — | — | — |
-| `i18n-layout` | L3 | — | — | — |
-| `i18n-locale-config` | L3 | — | — | — |
-| `meeting-facilitation` | L3 | — | — | — |
-| `performance-tuning` | L3 | — | — | — |
-| `post-write-chain` | L3 | — | — | — |
-| `project-review` | L3 | — | — | — |
-| `research-analysis` | L3 | — | — | — |
-| `sap-co` | L3 | — | — | — |
-| `sap-fi` | L3 | — | — | — |
-| `sap-le` | L3 | — | — | — |
-| `sap-mm` | L3 | — | — | — |
-| `sap-pp` | L3 | — | — | — |
-| `sap-sd` | L3 | — | — | — |
-| `script-lifecycle-manager` | L3 | — | — | — |
-| `security-scan` | L3 | — | — | — |
-| `skill-lifecycle-manager` | L3 | — | — | — |
-| `source-command-celebrate` | L3 | — | — | — |
-| `standup-synthesizer` | L3 | — | — | — |
-| `sync` | L3 | — | — | — |
-| `team-builder` | L3 | — | — | — |
-| `translate` | L3 | — | — | — |
-| `update-bun-packages` | L3 | — | — | — |
-| `validate-docs-links` | L3 | — | — | — |
-| `zod-contract-gate` | L3 | — | — | — |
+| Skill | Layer | Required-by Agents | Phases | Relates-to | Inputs | Outputs |
+|-------|-------|-------------------|--------|------------|--------|---------|
+| `abap-code-review` | L3 | — | — | abap-dev (composes_with), abap-dev (follows) | — | — |
+| `abap-dev` | L3 | — | — | dump-monitor (composes_with), research-analysis (composes_with), sap-co (composes_with), sap-co (composes_with), sap-fi (composes_with), sap-fi (follows), sap-le (composes_with), sap-le (composes_with), sap-mm (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-pp (composes_with), sap-sd (composes_with), sap-sd (composes_with) | — | — |
+| `agent-lifecycle-manager` | L3 | — | — | skill-lifecycle-manager (composes_with) | — | — |
+| `api-documentation` | L3 | — | — | — | — | — |
+| `decision-record` | L3 | — | — | — | — | — |
+| `desktop-app-fallback` | L3 | — | — | — | — | — |
+| `documentation-writing` | L3 | — | — | — | — | — |
+| `dump-monitor` | L3 | — | — | abap-dev (follows), research-analysis (composes_with), sap-co (composes_with), sap-fi (composes_with), sap-le (composes_with), sap-mm (composes_with), sap-sd (composes_with) | — | — |
+| `evidence-ledger` | L3 | — | — | — | — | — |
+| `explain-me` | L3 | — | — | — | — | — |
+| `gateguard` | L3 | — | — | — | — | — |
+| `i18n-formatting` | L3 | i18n-specialist | — | — | — | — |
+| `i18n-layout` | L3 | i18n-specialist | — | — | — | — |
+| `i18n-locale-config` | L3 | i18n-specialist | — | — | — | — |
+| `meeting-facilitation` | L3 | — | — | — | — | — |
+| `performance-tuning` | L3 | — | — | — | — | — |
+| `post-write-chain` | L3 | — | — | — | — | — |
+| `project-review` | L3 | — | — | — | — | — |
+| `research-analysis` | L3 | — | — | documentation-writing (enables) | — | — |
+| `sap-co` | L3 | — | — | sap-le (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-sd (follows) | — | — |
+| `sap-fi` | L3 | — | — | sap-co (follows), sap-le (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-sd (composes_with) | — | — |
+| `sap-le` | L3 | — | — | sap-pp (follows), sap-sd (composes_with) | — | — |
+| `sap-mm` | L3 | — | — | sap-le (follows), sap-pp (composes_with) | — | — |
+| `sap-pp` | L3 | — | — | dump-monitor (follows), sap-sd (composes_with) | — | — |
+| `sap-sd` | L3 | — | — | sap-mm (follows) | — | — |
+| `script-lifecycle-manager` | L3 | — | — | — | — | — |
+| `security-scan` | L3 | — | — | — | — | — |
+| `skill-lifecycle-manager` | L3 | — | — | script-lifecycle-manager (composes_with) | — | — |
+| `source-command-celebrate` | L3 | — | — | — | — | — |
+| `standup-synthesizer` | L3 | — | — | — | — | — |
+| `sync` | L3 | — | — | — | — | — |
+| `team-builder` | L3 | — | — | — | — | — |
+| `translate` | L3 | — | — | documentation-writing (composes_with) | — | — |
+| `update-bun-packages` | L3 | — | — | — | — | — |
+| `validate-docs-links` | L3 | — | — | — | — | — |
+| `zod-contract-gate` | L3 | — | — | — | — | — |
 
 ## Lifecycle Phase Grouping
 
@@ -61,3 +61,22 @@ Skills used in specific lifecycle phases (from `variant.json` `skill_manifest`):
 | `supersedes` | Supersession — overrides (manual) or decision-record prose labels |
 | `references` | Backtick reference in SKILL.md/agent/ADR body prose, or DEC `knowledge_refs[]` naming an ADR |
 | `cites_skill` | Decision record `skills_used[]` validated against the skill set (ADR-0061 amendment 2026-08-25) |
+| `composes_with` | Typed `relates_to` entry — symmetric, used together in the same phase/workflow (ADR-0060 Amendment 3) |
+| `follows` | Typed `relates_to` entry — sequential/ordering relation, no dependency implication (ADR-0060 Amendment 3) |
+| `enables` | Typed `relates_to` entry — this skill's output unlocks another skill/workflow (ADR-0060 Amendment 3) |
+| `step_uses_skill` | Procedure step → skill, derived from procedure schema.yaml (Procedure Schema v1.0) |
+| `step_by_agent` | Procedure step → agent, derived from procedure schema.yaml (Procedure Schema v1.0) |
+| `produces` | Procedure or skill → output_type node, derived per the INV-4 rule (Procedure Schema v1.0) |
+
+`composes_with` edges carry `symmetric: true` in the JSON and are stored once
+(source→target as declared); consumers MUST treat them as traversable both ways.
+Every edge additionally carries a JSON-only `provenance: {file, field, index?}`
+object recording exactly which frontmatter field/entry produced it (not rendered
+in this table). `inputs`/`outputs` are opaque per-skill labels, shown in the Skill
+Catalog table above — not skill references and not yet resolved as graph edges.
+
+## Decisions & ADRs
+
+| Document | Type | Cites skills | References | Supersedes |
+|----------|------|--------------|------------|------------|
+| `adr:0001` | adr | — | — | — |
