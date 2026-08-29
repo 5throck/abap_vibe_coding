@@ -1192,6 +1192,78 @@
       "source": "procedure_schema"
     },
     {
+      "type": "composes_with",
+      "from": "research-analysis",
+      "to": "sap-co",
+      "source": "relates_to",
+      "symmetric": true,
+      "provenance": {
+        "file": "skills/research-analysis/SKILL.md",
+        "field": "relates_to",
+        "index": 2
+      }
+    },
+    {
+      "type": "composes_with",
+      "from": "research-analysis",
+      "to": "sap-fi",
+      "source": "relates_to",
+      "symmetric": true,
+      "provenance": {
+        "file": "skills/research-analysis/SKILL.md",
+        "field": "relates_to",
+        "index": 1
+      }
+    },
+    {
+      "type": "composes_with",
+      "from": "research-analysis",
+      "to": "sap-le",
+      "source": "relates_to",
+      "symmetric": true,
+      "provenance": {
+        "file": "skills/research-analysis/SKILL.md",
+        "field": "relates_to",
+        "index": 5
+      }
+    },
+    {
+      "type": "composes_with",
+      "from": "research-analysis",
+      "to": "sap-mm",
+      "source": "relates_to",
+      "symmetric": true,
+      "provenance": {
+        "file": "skills/research-analysis/SKILL.md",
+        "field": "relates_to",
+        "index": 4
+      }
+    },
+    {
+      "type": "composes_with",
+      "from": "research-analysis",
+      "to": "sap-pp",
+      "source": "relates_to",
+      "symmetric": true,
+      "provenance": {
+        "file": "skills/research-analysis/SKILL.md",
+        "field": "relates_to",
+        "index": 6
+      }
+    },
+    {
+      "type": "composes_with",
+      "from": "research-analysis",
+      "to": "sap-sd",
+      "source": "relates_to",
+      "symmetric": true,
+      "provenance": {
+        "file": "skills/research-analysis/SKILL.md",
+        "field": "relates_to",
+        "index": 3
+      }
+    },
+    {
       "type": "references",
       "from": "sap-co",
       "to": "abap-dev",
