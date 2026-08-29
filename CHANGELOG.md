@@ -356,3 +356,6 @@ First stable release cut — consolidates all changes accumulated since 0.5.0 (2
 
 ### Added
 - **[2026-08-29]**: feat(skills): **Skill relationship graph adoption (reledgev wave, upstream ADR-0060 Amendments 3–6).** Graph pipeline scripts refreshed (generate-skill-graph 1.7.0, verify-skill-graph 1.5.0, validate-skills 1.3.0, validate-decisions 1.0.0); typed `relates_to` relations adopted for skills whose upstream definitions gained them (procedure-derived follows/composes_with); `docs/skill-graph.overrides.json` seeded with the fail-closed reason/since/90-day policy; `docs/context.md` gains the Skill Relationship Graph section; adoption recorded in docs/adr/ (per-project ADR). Project graph regenerated and determinism-verified.
+
+### Added
+- **[2026-08-29]**: feat(procedures): **Procedure corpus adoption (ADR-0063).** Variant workflow procedures copied into `procedures/` (add-if-missing); project skill graph regenerated — procedure/output_type nodes and step_uses_skill/produces edges now present; determinism-verified. Adoption ADR addendum records the wave.

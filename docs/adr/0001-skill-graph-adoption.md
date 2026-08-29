@@ -49,3 +49,14 @@ Adopt the upstream skill-graph feature into this project:
 - ai_workspace ADR-0060 (Amendments 1–6) — skill relationship graph as generated projection
 - ai_workspace `docs/designs/2026-08-29-relation-graph-evolution-and-decision-chain-design.md`
 - ai_workspace ADR-0063 — Procedure Schema as canonical workflow source
+
+## Addendum (2026-08-29): Procedures Adoption
+
+Adopted the variant template's procedure corpus into `procedures/` (ADR-0063):
+schema.yaml workflows + `_output-types.yaml` vocabulary. Procedure/output_type nodes
+and step edges now participate in the regenerated project graph. Retained upstream:
+- new-project scaffolds copy `procedures/` via the variant overlay (generic copy),
+- `upgrade-project.ts` v1.15.0 adds the PROCEDURES SYNC pass (add-if-missing,
+  project-owned entries preserved),
+- the L3→variant promotion scan (scan-l3-project) carries `procedures/` so promotion
+  includes the workflow corpus.
