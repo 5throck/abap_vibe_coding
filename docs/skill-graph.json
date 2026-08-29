@@ -112,6 +112,11 @@
       "layer": "L3"
     },
     {
+      "id": "i18n-audit",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
       "id": "i18n-formatting",
       "type": "skill",
       "layer": "L3"
@@ -776,6 +781,24 @@
       "type": "references",
       "from": "evidence-ledger",
       "to": "decision-record",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-audit",
+      "to": "i18n-formatting",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-audit",
+      "to": "i18n-layout",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-audit",
+      "to": "i18n-locale-config",
       "source": "prose"
     },
     {

@@ -20,7 +20,7 @@
 | `cleanup-completed-md.ts` | L0 | 1.1.0 | active | — | — | common | — |
 | `clear-pm-approval.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `compile-tokens.ts` | L0 | 1.1.0 | active | — | — | common | — |
-| `dev-sync.ts` | L0 | 1.7.8 | active | — | — | common | — |
+| `dev-sync.ts` | L0 | 1.8.0 | active | — | — | common | — |
 | `dispatch-parallel.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `dispatch-serial.ts` | L0 | 1.0.1 | active | — | — | common | — |
 | `dispatch.ts` | L0 | 1.0.0 | active | — | — | common | — |
@@ -85,12 +85,12 @@
 | `verify-readme-sync.ts` | L0 | 1.4.0 | active | — | — | common | — |
 | `verify-scripts.ts` | L0 | 1.4.1 | active | — | — | common | — |
 | `verify-skills.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
-| `verify-skills.ts` | L0 | 1.2.1 | active | — | — | common | — |
+| `verify-skills.ts` | L0 | 1.3.0 | active | — | — | common | — |
 | `vsp-audit.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `vsp-publish.test.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `vsp-publish.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `vsp-task.ts` | L0 | 1.0.0 | active | — | — | common | — |
-| `generate-skill-graph.ts` | L0 | 1.7.1 | active | —| —| L0+L1 | —|
+| `generate-skill-graph.ts` | L0 | 1.8.3 | active | —| —| L0+L1 | —|
 | `validate-procedures.ts` | L0 | 1.1.0 | active | —| —| L0+L1 | —|
 | `verify-skill-graph.ts` | L0 | 1.5.0 | active | —| —| L0+L1 | —|
 | `validate-decisions.ts` | L0 | 1.0.0 | active | —| —| L0+L1 | —|
