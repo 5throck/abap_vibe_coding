@@ -13,6 +13,18 @@ prerequisites: none
 relates_to:
   - skill: documentation-writing
     type: enables
+  - skill: sap-fi
+    type: composes_with
+  - skill: sap-co
+    type: composes_with
+  - skill: sap-sd
+    type: composes_with
+  - skill: sap-mm
+    type: composes_with
+  - skill: sap-le
+    type: composes_with
+  - skill: sap-pp
+    type: composes_with
 gemini-parity: skip
 metadata:
   type: process

@@ -27,7 +27,7 @@
 | `performance-tuning` | L3 | — | — | — | — | — |
 | `post-write-chain` | L3 | — | — | — | — | — |
 | `project-review` | L3 | — | — | — | — | — |
-| `research-analysis` | L3 | — | — | documentation-writing (enables) | — | — |
+| `research-analysis` | L3 | — | — | documentation-writing (enables), sap-co (composes_with), sap-fi (composes_with), sap-le (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-sd (composes_with) | — | — |
 | `sap-co` | L3 | — | — | sap-le (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-sd (follows) | — | — |
 | `sap-fi` | L3 | — | — | sap-co (follows), sap-le (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-sd (composes_with) | — | — |
 | `sap-le` | L3 | — | — | sap-pp (follows), sap-sd (composes_with) | — | — |
