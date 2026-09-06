@@ -1,4 +1,4 @@
-// @version 2.28.0
+// @version 2.29.1
 // v2.28.0: nul-redirect lint no longer scans .bat/.cmd — cmd.exe `>nul` targets the NUL device and
 //           is the idiomatic, safe Windows batch redirect; the literal-file hazard is POSIX-only.
 // v2.26.0: New checkProjectDocMarkerDrift() (WARN-only, local-only) — detects when a
@@ -116,8 +116,8 @@ if (fs.existsSync('CHANGELOG.md')) {
     Fail('CHANGELOG.md missing');
 }
 
-// 2. context.md must be accessible (workspace root / L1 template context only —
-//    L2 variant templates and L3 projects intentionally omit context.md and use
+// 2. CONSTITUTION.md must be accessible (workspace root / L1 template context only —
+//    L2 variant templates and L3 projects intentionally omit CONSTITUTION.md and use
 //    docs/context.md instead; variant.json, when present, also marks a generated project copy)
 // isWorkspaceRoot is reused below (§6-8) to tell "we ARE the workspace root" apart from
 // "we're a scaffolded project that's simply missing its docs/context.md" — the two cases
@@ -616,7 +616,7 @@ if (hasBun) {
             Fail("Skill audit detected issues (run 'bun scripts/skill-lifecycle-audit.ts' to see details)");
         }
     }
-    // Variant registry validators (scripts/validators/ — the framework context.md §6.6
+    // Variant registry validators (scripts/validators/ — the framework CONSTITUTION.md §6.6
     // documents as audit-enforced). This wiring is L0-only: `scripts/validators/` is a layer-L0
     // directory and is not propagated to templates/common/scripts/, so the existsSync guard
     // makes the L1 copy of this file skip the check rather than crash.
@@ -696,7 +696,7 @@ if (hasBun) {
         else
             Pass("README lifecycle audit: all READMEs healthy");
     }
-    if (fs.existsSync(path.join('scripts', 'verify-memory.ts')) && fs.existsSync('context.md') && !SKIP_MEMORY) {
+    if (fs.existsSync(path.join('scripts', 'verify-memory.ts')) && fs.existsSync('CONSTITUTION.md') && !SKIP_MEMORY) {
         // explicitly skip any files located in memory/archive/
         const memoryFiles = fs.readdirSync('memory')
             .filter(f => f.endsWith('.md') && fs.statSync(path.join('memory', f)).isFile())
@@ -1364,6 +1364,45 @@ function checkShellInjectionPatterns() {
 }
 checkShellInjectionPatterns();
 
+// Design-lint gate (blocking): token SSOT compliance for UI source directories.
+// Scope/escape-hatch are schema-driven (docs/workspace-schema.json `designLint`:
+// { enabled, scanRoots, allowlist }) so variants/projects without UI sources or
+// with grandfathered literals are not false-failed. Runs the promoted L0+L1
+// scripts/design-lint.ts (token-usage-lint skill companion). Blocking per the
+// 2026-09-06 unified plan decision; see
+// docs/designs/2026-09-06-universal-design-extension-design.md §3.
+function checkDesignLint() {
+    const lintScript = path.join('scripts', 'design-lint.ts');
+    if (!fs.existsSync(lintScript)) {
+        Pass('Design-lint gate: scripts/design-lint.ts not present — skipped');
+        return;
+    }
+    const schemaPath = path.join('docs', 'workspace-schema.json');
+    let config: { enabled?: boolean; scanRoots?: string[] } = {};
+    if (fs.existsSync(schemaPath)) {
+        try {
+            config = JSON.parse(readUTF8File(schemaPath) || '{}')?.designLint ?? {};
+        } catch { /* schema unreadable — treat as disabled below */ }
+    }
+
+    if (config.enabled !== true) {
+        Pass('Design-lint gate: disabled (workspace-schema.json designLint.enabled) — skipped');
+        return;
+    }
+    const roots = (config.scanRoots ?? []).filter((r) => fs.existsSync(r));
+    if (roots.length === 0) {
+        Pass('Design-lint gate: no configured scan roots present — skipped');
+        return;
+    }
+    const result = spawnSync('bun', [lintScript, '--dir', ...roots], { encoding: 'utf-8' });
+    if (result.status === 0) {
+        Pass(`Design-lint gate: token SSOT compliance CLEAN across ${roots.length} scan root(s)`);
+    } else {
+        Fail(`Design-lint gate: should-be-token finding(s) in UI source — run: bun scripts/design-lint.ts --dir ${roots.join(' --dir ')} (exempt literals with a "design-token-exempt: <reason>" comment or list them in workspace-schema.json designLint)`);
+    }
+}
+checkDesignLint();
+
 // Variant script drift detection (WARN-only, first-pass heuristic).
 // Flags templates/co-*/scripts files that duplicate templates/common/scripts files by >50% content overlap.
 // See docs/designs/2026-08-16-august-regression-coverage-design.md §2 for design, rationale, and denominator choice.
@@ -1690,7 +1729,7 @@ checkVariantJsonSchema();
 checkTemplateDependencyMirror();
 }
 
-// Workspace root detection: presence of context.md (and absence of variant.json)
+// Workspace root detection: presence of CONSTITUTION.md (and absence of variant.json)
 // distinguishes the governance root from generated project copies.
 const IS_WORKSPACE_ROOT = fs.existsSync('CONSTITUTION.md') && !fs.existsSync('variant.json');
 
@@ -1920,7 +1959,7 @@ if (IS_WORKSPACE_ROOT) {
 // Layer 4 of the 2026-08-07 meeting (memory/archive/meeting-2026-08-07-prevent-nul-file-creation.md).
 // The sweep above is remediation; this is prevention. On Windows, `> nul` / `2> nul` in a shell
 // context can materialize a physical file named `nul` that then blocks deleting the whole
-// directory tree from PowerShell. context.md §8 bans the pattern outright: use
+// directory tree from PowerShell. CONSTITUTION.md §8 bans the pattern outright: use
 // `> /dev/null 2>&1` in Bash, or `$null` / `Out-Null` in PowerShell.
 //
 // A full-tree scan on 2026-08-21 found zero violations in workspace source, so this check starts
@@ -1985,10 +2024,10 @@ if (!LIFECYCLE_ONLY) {
     }
 }
 
-// Check: L0 Leakage (context.md references in templates)
+// Check: L0 Leakage (CONSTITUTION.md references in templates)
 if (!LIFECYCLE_ONLY && fs.existsSync('templates')) {
     let leakageErrors = 0;
-    // Matches: context.md (literal), docs/constitution/ or docs\constitution\ path patterns
+    // Matches: CONSTITUTION.md (literal), docs/constitution/ or docs\constitution\ path patterns
     const L0_LEAK_PATTERN = /CONSTITUTION\.md|docs[\/\\]constitution[\/\\]/i;
     const SKIP_DIRS = new Set(['node_modules', '.git', '.bun']);
     const checkLeakage = (dir: string) => {

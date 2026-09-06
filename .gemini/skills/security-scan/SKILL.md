@@ -1,8 +1,8 @@
 ---
 name: security-scan
-description: Runs static analysis and secret detection (via gitleaks) across the workspace.
-version: 1.0.0
-last_reviewed: 2026-05-30
+description: Runs static analysis, secret detection (via gitleaks), and dependency vulnerability auditing (via bun audit) across the workspace.
+version: 1.2.0
+last_reviewed: 2026-08-30
 status: active
 scope: common
 owner: pm
@@ -25,7 +25,21 @@ Used by the `security-expert` agent to ensure that no hardcoded credentials or m
 
 1. Execute the built-in secret scan hook:
    - Check if `gitleaks` is available. If so, run `gitleaks detect -v`.
+   - **Always pass the workspace config explicitly**: `gitleaks detect -v --config .gitleaks.toml`.
+     Gitleaks only auto-discovers `.gitleaks.toml` in the scan target directory — a
+     subdirectory scan (e.g. `--source templates`) without `--config` silently falls
+     back to the upstream default ruleset, losing every workspace allowlist entry and
+     reporting documentation placeholders as leaks (observed 2026-08-30).
+   - For working-tree / untracked scans, add `--no-git` (config still required).
    - If not available, manually check `.env` patterns using regex search across all tracked files.
-2. Verify `.githooks/` permissions (should be executable on Unix-like systems).
-3. Verify `.gitignore` rules effectively exclude `memory/`, `scripts/temp/`, and `.env` files.
-4. Report any security violations immediately.
+2. Check dependency vulnerabilities (on-demand CVE gate):
+   - Run `bun audit` in the repo root (and in any project directory under review).
+   - Fail on **high or critical** vulnerabilities — same threshold as the CI gate
+     (`.github/workflows/test.yml` "Security audit - dependency vulnerabilities").
+     Low/moderate findings are reported as a summary without failing.
+   - Remediation path: dispatch `update-bun-packages` (do not hand-edit lockfiles).
+   - This complements CI: CI catches regressions at PR time, this step gives
+     immediate visibility when a newly disclosed CVE arrives between runs.
+3. Verify `.githooks/` permissions (should be executable on Unix-like systems).
+4. Verify `.gitignore` rules effectively exclude `memory/`, `scripts/temp/`, and `.env` files.
+5. Report any security violations immediately.

@@ -10,6 +10,7 @@
 |-------|-------|-------------------|--------|------------|--------|---------|
 | `abap-code-review` | L3 | — | — | abap-dev (composes_with), abap-dev (follows) | — | — |
 | `abap-dev` | L3 | — | — | dump-monitor (composes_with), research-analysis (composes_with), sap-co (composes_with), sap-co (composes_with), sap-fi (composes_with), sap-fi (follows), sap-le (composes_with), sap-le (composes_with), sap-mm (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-pp (composes_with), sap-sd (composes_with), sap-sd (composes_with) | — | — |
+| `accessibility-audit` | L3 | — | — | — | — | — |
 | `agent-lifecycle-manager` | L3 | — | — | skill-lifecycle-manager (composes_with) | — | — |
 | `api-documentation` | L3 | — | — | — | — | — |
 | `decision-record` | L3 | — | — | — | — | — |
@@ -18,13 +19,19 @@
 | `dump-monitor` | L3 | — | — | abap-dev (follows), research-analysis (composes_with), sap-co (composes_with), sap-fi (composes_with), sap-le (composes_with), sap-mm (composes_with), sap-sd (composes_with) | — | — |
 | `evidence-ledger` | L3 | — | — | — | — | — |
 | `explain-me` | L3 | — | — | — | — | — |
+| `finishing-a-development-branch` | L3 | — | — | — | — | — |
 | `gateguard` | L3 | — | — | — | — | — |
-| `i18n-audit` | L3 | — | — | — | — | — |
-| `i18n-formatting` | L3 | — | — | — | — | — |
-| `i18n-layout` | L3 | — | — | — | — | — |
-| `i18n-locale-config` | L3 | — | — | — | — | — |
+| `handbook` | L3 | — | — | — | — | — |
+| `handbook-sync-audit` | L3 | — | — | — | — | — |
+| `i18n-audit` | L3 | i18n-specialist | — | — | — | — |
+| `i18n-formatting` | L3 | i18n-specialist | — | — | — | — |
+| `i18n-layout` | L3 | i18n-specialist | — | — | — | — |
+| `i18n-locale-config` | L3 | i18n-specialist | — | — | — | — |
+| `meeting` | L3 | — | — | — | — | — |
 | `meeting-facilitation` | L3 | — | — | — | — | — |
 | `performance-tuning` | L3 | — | — | — | — | — |
+| `platform-command-lifecycle-manager` | L3 | — | — | — | — | — |
+| `platform-skill-lifecycle-manager` | L3 | — | — | — | — | — |
 | `post-write-chain` | L3 | — | — | — | — | — |
 | `project-review` | L3 | — | — | — | — | — |
 | `research-analysis` | L3 | — | — | documentation-writing (enables), sap-co (composes_with), sap-fi (composes_with), sap-le (composes_with), sap-mm (composes_with), sap-pp (composes_with), sap-sd (composes_with) | — | — |
@@ -38,10 +45,13 @@
 | `security-scan` | L3 | — | — | — | — | — |
 | `skill-lifecycle-manager` | L3 | — | — | script-lifecycle-manager (composes_with) | — | — |
 | `source-command-celebrate` | L3 | — | — | — | — | — |
+| `source-command-commit-push-pr` | L3 | — | — | — | — | — |
 | `standup-synthesizer` | L3 | — | — | — | — | — |
 | `sync` | L3 | — | — | — | — | — |
 | `team-builder` | L3 | — | — | — | — | — |
+| `token-usage-lint` | L3 | — | — | ui-ux-design-intelligence (follows) | — | — |
 | `translate` | L3 | — | — | documentation-writing (composes_with) | — | — |
+| `ui-ux-design-intelligence` | L3 | — | — | documentation-writing (follows) | — | — |
 | `update-bun-packages` | L3 | — | — | — | — | — |
 | `validate-docs-links` | L3 | — | — | — | — | — |
 | `zod-contract-gate` | L3 | — | — | — | — | — |
