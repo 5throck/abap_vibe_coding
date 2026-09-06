@@ -3,11 +3,12 @@ name: meeting
 status: active
 scope: common
 description: >
-  Shortcut alias for the meeting-facilitation skill. Facilitates structured multi-agent
-  meetings for collaborative decision-making and problem resolution.
+  Facilitates structured multi-agent meetings using the /meeting command for collaborative
+  decision-making and problem resolution. Use when: running agent meetings, coordinating
+  multi-agent discussions, or facilitating collaborative problem-solving sessions.
 owner: pm
-version: 1.1.0
-last_reviewed: 2026-07-09
+version: 1.4.0
+last_reviewed: 2026-07-05
 metadata:
   type: process
   triggers:
@@ -18,12 +19,16 @@ metadata:
     - facilitate meeting
 ---
 
-Shortcut skill for `meeting-facilitation`. Run via the platform-specific command:
+This is a shortcut alias for the `meeting-facilitation` skill. The actual implementation resides in `.claude/commands/meeting.md` and `.gemini/commands/meeting.md`.
 
-| Platform | Command |
-|----------|---------|
-| Claude Code | `/meeting "topic" --agents agent1,agent2 --rounds 2 --dialogue` |
-| Gemini CLI | Read `.gemini/commands/meeting.md` and follow the full procedure |
-| Antigravity | Read `.gemini/commands/meeting.md` and follow the full procedure |
+## When to Use
 
-Full skill definition: `skills/meeting-facilitation/SKILL.md`
+Use `/meeting "topic"` to run a structured multi-agent meeting for collaborative decision-making and problem resolution.
+
+## Usage
+
+```
+/meeting "Comprehensive project review" --agents [comma-separated agent list] --rounds 2 --dialogue
+```
+
+See `meeting-facilitation` skill for full documentation.

@@ -12,6 +12,11 @@
       "layer": "L3"
     },
     {
+      "id": "accessibility-audit",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
       "id": "adr:0001",
       "type": "adr",
       "layer": "L3"
@@ -87,6 +92,11 @@
       "layer": "L3"
     },
     {
+      "id": "finishing-a-development-branch",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
       "id": "fiori-developer",
       "type": "agent",
       "layer": "L3"
@@ -104,6 +114,16 @@
     {
       "id": "gui-scripter",
       "type": "agent",
+      "layer": "L3"
+    },
+    {
+      "id": "handbook",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
+      "id": "handbook-sync-audit",
+      "type": "skill",
       "layer": "L3"
     },
     {
@@ -132,6 +152,11 @@
       "layer": "L3"
     },
     {
+      "id": "i18n-specialist",
+      "type": "agent",
+      "layer": "L3"
+    },
+    {
       "id": "interface-expert",
       "type": "agent",
       "layer": "L3"
@@ -139,6 +164,11 @@
     {
       "id": "le-analyst",
       "type": "agent",
+      "layer": "L3"
+    },
+    {
+      "id": "meeting",
+      "type": "skill",
       "layer": "L3"
     },
     {
@@ -238,6 +268,16 @@
     },
     {
       "id": "performance-tuning",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
+      "id": "platform-command-lifecycle-manager",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
+      "id": "platform-skill-lifecycle-manager",
       "type": "skill",
       "layer": "L3"
     },
@@ -362,6 +402,11 @@
       "layer": "L3"
     },
     {
+      "id": "source-command-commit-push-pr",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
       "id": "standup-synthesizer",
       "type": "skill",
       "layer": "L3"
@@ -382,7 +427,17 @@
       "layer": "L3"
     },
     {
+      "id": "token-usage-lint",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
       "id": "translate",
+      "type": "skill",
+      "layer": "L3"
+    },
+    {
+      "id": "ui-ux-design-intelligence",
       "type": "skill",
       "layer": "L3"
     },
@@ -780,6 +835,24 @@
     },
     {
       "type": "references",
+      "from": "handbook-sync-audit",
+      "to": "handbook",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "handbook-sync-audit",
+      "to": "project-review",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "handbook-sync-audit",
+      "to": "validate-docs-links",
+      "source": "prose"
+    },
+    {
+      "type": "references",
       "from": "i18n-audit",
       "to": "i18n-formatting",
       "source": "prose"
@@ -797,6 +870,17 @@
       "source": "prose"
     },
     {
+      "type": "used_by",
+      "from": "i18n-audit",
+      "to": "i18n-specialist",
+      "source": "required_skills",
+      "provenance": {
+        "file": "agents/i18n-specialist.md",
+        "field": "required_skills",
+        "index": 3
+      }
+    },
+    {
       "type": "references",
       "from": "i18n-formatting",
       "to": "i18n-layout",
@@ -807,6 +891,17 @@
       "from": "i18n-formatting",
       "to": "i18n-locale-config",
       "source": "prose"
+    },
+    {
+      "type": "used_by",
+      "from": "i18n-formatting",
+      "to": "i18n-specialist",
+      "source": "required_skills",
+      "provenance": {
+        "file": "agents/i18n-specialist.md",
+        "field": "required_skills",
+        "index": 1
+      }
     },
     {
       "type": "references",
@@ -827,6 +922,17 @@
       "source": "prose"
     },
     {
+      "type": "used_by",
+      "from": "i18n-layout",
+      "to": "i18n-specialist",
+      "source": "required_skills",
+      "provenance": {
+        "file": "agents/i18n-specialist.md",
+        "field": "required_skills",
+        "index": 2
+      }
+    },
+    {
       "type": "references",
       "from": "i18n-layout",
       "to": "translate",
@@ -845,9 +951,68 @@
       "source": "prose"
     },
     {
+      "type": "used_by",
+      "from": "i18n-locale-config",
+      "to": "i18n-specialist",
+      "source": "required_skills",
+      "provenance": {
+        "file": "agents/i18n-specialist.md",
+        "field": "required_skills",
+        "index": 0
+      }
+    },
+    {
       "type": "references",
       "from": "i18n-locale-config",
       "to": "translate",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-specialist",
+      "to": "i18n-audit",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-specialist",
+      "to": "i18n-formatting",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-specialist",
+      "to": "i18n-layout",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-specialist",
+      "to": "i18n-locale-config",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "i18n-specialist",
+      "to": "translate",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "meeting",
+      "to": "meeting-facilitation",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "meeting-facilitation",
+      "to": "project-review",
+      "source": "prose"
+    },
+    {
+      "type": "references",
+      "from": "meeting-facilitation",
+      "to": "team-builder",
       "source": "prose"
     },
     {
@@ -1696,6 +1861,12 @@
       }
     },
     {
+      "type": "references",
+      "from": "security-scan",
+      "to": "update-bun-packages",
+      "source": "prose"
+    },
+    {
       "type": "composes_with",
       "from": "skill-lifecycle-manager",
       "to": "script-lifecycle-manager",
@@ -1720,6 +1891,17 @@
       "source": "prose"
     },
     {
+      "type": "follows",
+      "from": "token-usage-lint",
+      "to": "ui-ux-design-intelligence",
+      "source": "relates_to",
+      "provenance": {
+        "file": "skills/token-usage-lint/SKILL.md",
+        "field": "relates_to",
+        "index": 0
+      }
+    },
+    {
       "type": "composes_with",
       "from": "translate",
       "to": "documentation-writing",
@@ -1727,6 +1909,17 @@
       "symmetric": true,
       "provenance": {
         "file": "skills/translate/SKILL.md",
+        "field": "relates_to",
+        "index": 0
+      }
+    },
+    {
+      "type": "follows",
+      "from": "ui-ux-design-intelligence",
+      "to": "documentation-writing",
+      "source": "relates_to",
+      "provenance": {
+        "file": "skills/ui-ux-design-intelligence/SKILL.md",
         "field": "relates_to",
         "index": 0
       }
