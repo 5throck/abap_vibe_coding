@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Variant-Specific Audit Hook (co-abap)
- * @version 1.0.0
+ * @version 1.1.0
  * Pluggable hook invoked by scripts/audit.ts (check #27). Core scripts stay
  * standardized across variants; variant projects add custom verification here.
  *
@@ -20,6 +20,7 @@
  */
 
 import { readFileSync, existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
 const ROOT = process.cwd();
@@ -99,6 +100,23 @@ for (const wrapper of ["dispatch-parallel.ts", "dispatch-serial.ts"]) {
 }
 
 console.log("");
+
+// ── Skill-graph drift gate (ADR-0060) ────────────────────────────────────────
+// The committed docs/skill-graph.json projection must match the SSOTs
+// (agents/ + skills/ + procedures/). verify-skill-graph.ts re-derives the
+// graph and exits 1 on drift; the remedy is regenerating + committing.
+{
+  const res = spawnSync(process.execPath, ["scripts/verify-skill-graph.ts"], {
+    cwd: ROOT,
+    encoding: "utf-8",
+  });
+  check(
+    "skill-graph projection in sync with SSOTs",
+    res.status === 0,
+    (res.stdout || "") + (res.stderr || "verify-skill-graph.ts failed — regenerate docs/skill-graph.json and commit")
+  );
+}
+
 if (failures.length > 0) {
   console.log(`❌ co-abap variant audit: ${failures.length} check(s) failed`);
   process.exit(1);

@@ -74,7 +74,7 @@ bun run <alias>                     # via package.json alias (preferred for CI)
 | `sync-skills-to-l2.ts` | L0 | 1.0.1 | active | — | — | L0 | — |
 | `sync-skills.ts` | L0 | 1.4.1 | active | `--dir <path>`, `--all-variants` | — | L0+L1 | — |
 | `verify-skills.ts` | L0 | 1.3.0 | active | —| —| L0+L1 | —|
-| `audit-variant.ts` | L2 | 1.0.0 | active | — | — | variant | co-abap integrity checks (gitleaks allowlist, MCP SAP guard, AGENTS.md markers, wrapper import paths) |
+| `audit-variant.ts` | L2 | 1.1.0 | active | — | — | variant | co-abap integrity checks (gitleaks allowlist, MCP SAP guard, AGENTS.md markers, wrapper import paths) |
 | `git-sync.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `install-bun.ts` | L0 | 1.0.0 | active | — | — | common | — |
 | `install-vsp.ts` | L0 | 1.1.0 | active | — | — | common | — |
